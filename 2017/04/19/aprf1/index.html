@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>机器学习评价标准 - 中龄程序猿</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="table th:nth-of-type(1) {    width: 80px; }   机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价指标往往有如下几点:准确率(Accuracy),精确率(Precision),召回率(Recall)和F1-Measure。(注：相对来说，IR的ground truth很多时候是一个O">
+<meta name="keywords" content="机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习评价标准">
+<meta property="og:url" content="www.shanruifeng.win/2017/04/19/aprf1/index.html">
+<meta property="og:site_name" content="中龄程序猿">
+<meta property="og:description" content="table th:nth-of-type(1) {    width: 80px; }   机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价指标往往有如下几点:准确率(Accuracy),精确率(Precision),召回率(Recall)和F1-Measure。(注：相对来说，IR的ground truth很多时候是一个O">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-02-26T07:28:18.785Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习评价标准">
+<meta name="twitter:description" content="table th:nth-of-type(1) {    width: 80px; }   机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价指标往往有如下几点:准确率(Accuracy),精确率(Precision),召回率(Recall)和F1-Measure。(注：相对来说，IR的ground truth很多时候是一个O">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+          <a class="main-nav-link" href="/love">爱情</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-aprf1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      机器学习评价标准
+      <small class="article-detail-date-index">&nbsp; 2017-04-19</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/2017/04/19/aprf1/" class="article-date">
+  <time datetime="2017-04-19T07:30:25.000Z" itemprop="datePublished">2017-04-19</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <style>
+table th:nth-of-type(1) {
+   width: 80px;
+}
+</style>
+
+<p>机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价指标往往有如下几点:准确率(Accuracy),精确率(Precision),召回率(Recall)和F1-Measure。(注：相对来说，IR的ground truth很多时候是一个Ordered List, 而不是一个Bool类型的Unordered Collection，在都找到的情况下，排在第三名还是第四名损失并不是很大，而排在第一名和第一百名，虽然都是“找到了”，但是意义是不一样的，因此更多可能适用于 MAP 之类评估指标。)</p>
+<a id="more"></a>
+<p>本文将简单介绍其中几个概念。中文中这几个评价指标翻译各有不同，所以一般情况下推荐使用英文。</p>
+<p>现在我先假定一个具体场景作为例子。</p>
+<blockquote>
+<p>假如某个班级有男生80人,女生20人,共计100人.目标是找出所有女生. 现在某人挑选出50个人,其中20人是女生,另外还错误的把30个男生也当作女生挑选出来了. 作为评估者的你需要来评估(evaluation)下他的工作</p>
+</blockquote>
+<h3 id="准确率-accuracy"><a href="#准确率-accuracy" class="headerlink" title="准确率(accuracy)"></a>准确率(accuracy)</h3><p>首先我们可以计算准确率(accuracy),其定义是: 对于给定的测试数据集，分类器正确分类的样本数与总样本数之比。也就是损失函数是0-1损失时测试数据集上的准确率[1].</p>
+<p>这样说听起来有点抽象，简单说就是，前面的场景中，实际情况是那个班级有男的和女的两类，某人(也就是定义中所说的分类器)他又把班级中的人分为男女两类。accuracy需要得到的是此君分正确的人占总人数的比例。很容易，我们可以得到:他把其中70(20女+50男)人判定正确了,而总人数是100人，所以它的accuracy就是(70/100)=70%.</p>
+<p>由准确率，我们的确可以在一些场合，从某种意义上得到一个分类器是否有效，但它并不总是能有效的评价一个分类器的工作。举个例子,google抓取了argcv 100个页面，而它索引中共有10,000,000个页面,随机抽一个页面，分类下,这是不是argcv的页面呢?如果以accuracy来判断我的工作，那我会把所有的页面都判断为”不是argcv的页面”,因为我这样效率非常高(return false,一句话),而accuracy已经到了99.999%(9,999,900/10,000,000),完爆其它很多分类器辛辛苦苦算的值,而我这个算法显然不是需求期待的,那怎么解决呢?这就是precision,recall和f1-measure出场的时间了.</p>
+<p>在说precision,recall和f1-measure之前,我们需要先需要定义TP,FN,FP,TN四种分类情况. 按照前面例子,我们需要从一个班级中的人中寻找所有女生,如果把这个任务当成一个分类器的话,那么女生就是我们需要的,而男生不是,所以我们称女生为”正类”,而男生为”负类”.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">-</th>
+<th style="text-align:center">相关(Relevant),正类</th>
+<th style="text-align:left">无关(NonRelevant),负类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">被检索到(Retrieved)</td>
+<td style="text-align:center">true positives(TP 正类判定为正类,例子中就是正确的判定”这位是女生”)</td>
+<td style="text-align:left">false positives(FP 负类判定为正类,”存伪”,例子中就是分明是男生却判断为女生,当下伪娘横行,这个错常有人犯)</td>
+</tr>
+<tr>
+<td style="text-align:left">未被检索到(Not Retrieved)</td>
+<td style="text-align:center">false negatives(FN 正类判定为负类,”去真”,例子中就是,分明是女生,这哥们却判断为男生–梁山伯同学犯的错就是这个)</td>
+<td style="text-align:left">true negatives(TN 负类判定为负类,也就是一个男生被判断为男生,像我这样的纯爷们一准儿就会在此处)</td>
+</tr>
+</tbody>
+</table>
+<p>通过这张表,我们可以很容易得到这几个值: TP=20 FP=30 FN=0 TN=50</p>
+<h3 id="精确率-precision"><a href="#精确率-precision" class="headerlink" title="精确率(precision)"></a>精确率(precision)</h3><p>精确率(precision)的公式是$P = \frac{TP}{TP+FP}$,它计算的是所有”正确被检索的item(TP)”占所有”实际被检索到的(TP+FP)”的比例.</p>
+<p>在例子中就是希望知道此君得到的所有人中,正确的人(也就是女生)占有的比例.所以其precision也就是40%(20女生/(20女生+30误判为女生的男生)).</p>
+<h3 id="召回率-recall"><a href="#召回率-recall" class="headerlink" title="召回率(recall)"></a>召回率(recall)</h3><p>召回率(recall)的公式是$R = \frac{TP}{TP+FN}$,它计算的是所有”正确被检索的item(TP)”占所有”应该检索到的item(TP+FN)”的比例。</p>
+<p>在例子中就是希望知道此君得到的女生占本班中所有女生的比例,所以其recall也就是100%(20女生/(20女生+ 0 误判为男生的女生))</p>
+<h3 id="F1值-F1-measure"><a href="#F1值-F1-measure" class="headerlink" title="F1值(F1-measure)"></a>F1值(F1-measure)</h3><p>F1值就是精确值和召回率的调和均值,也就是 $\frac{2}{F_1} = \frac{1}{P} + \frac{1}{R}  $调整下也就是 $F_1 = \frac{2PR}{P+R} = \frac{2TP}{2TP + FP + FN} $<br>例子中 F1-measure 也就是约为 $(\frac{2 <em> 0.4 </em> 1}{0.4 + 1})$ = 57.143%.</p>
+<p>需要说明的是,有人[2]列了这样个公式 $F_a = \frac{(a^2 + 1 )PR}{a^2(P+R)} $将F-measure一般化.</p>
+<p>F1-measure认为精确率和召回率的权重是一样的,但有些场景下,我们可能认为精确率会更加重要,调整参数a,使用Fa-measure可以帮助我们更好的evaluate结果.</p>
+<p>话虽然很多,其实实现非常轻松,点击此处可以看到我的一个简单的实现.</p>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><p>[1] 李航. 统计学习方法[M]. 北京:清华大学出版社,2012.<br>[2] 准确率（Precision）、召回率（Recall）以及综合评价指标（F1-Measure ）</p>
+<p>原文地址：<a href="https://argcv.com/articles/1036.c" target="_blank" rel="noopener">https://argcv.com/articles/1036.c</a></p>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+<!--
+<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
+<div>
+<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
+</div>
+-->
+</div>
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
+  <a href="/about">aaronshan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#准确率-accuracy"><span class="toc-number">1.</span> <span class="toc-text">准确率(accuracy)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#精确率-precision"><span class="toc-number">2.</span> <span class="toc-text">精确率(precision)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#召回率-recall"><span class="toc-number">3.</span> <span class="toc-text">召回率(recall)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#F1值-F1-measure"><span class="toc-number">4.</span> <span class="toc-text">F1值(F1-measure)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#References"><span class="toc-number">5.</span> <span class="toc-text">References</span></a></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/机器学习/">机器学习</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/03/26/2017-read-book/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">2017年看的书单.md&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 aaronshan&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

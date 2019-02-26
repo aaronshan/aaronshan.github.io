@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>caffe学习-模型定义 - 中龄程序猿</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
+<meta name="keywords" content="caffe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="caffe学习-模型定义">
+<meta property="og:url" content="www.shanruifeng.win/2016/10/26/caffe-learn-1/index.html">
+<meta property="og:site_name" content="中龄程序猿">
+<meta property="og:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.imgur.com/30XJEsL.png">
+<meta property="og:image" content="https://i.imgur.com/lirD0lH.png">
+<meta property="og:updated_time" content="2019-02-26T07:28:18.787Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="caffe学习-模型定义">
+<meta name="twitter:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
+<meta name="twitter:image" content="https://i.imgur.com/30XJEsL.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+          <a class="main-nav-link" href="/love">爱情</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-caffe-learn-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      caffe学习-模型定义
+      <small class="article-detail-date-index">&nbsp; 2016-10-26</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/2016/10/26/caffe-learn-1/" class="article-date">
+  <time datetime="2016-10-26T11:30:25.000Z" itemprop="datePublished">2016-10-26</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。</p>
+<a id="more"></a>
+<h3 id="1、数据层"><a href="#1、数据层" class="headerlink" title="1、数据层"></a>1、数据层</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">  type:</span> DATA</span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"data"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"label"</span></span><br><span class="line">  <span class="class">include </span>&#123;</span><br><span class="line"><span class="symbol">    phase:</span> TRAIN</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class">transform_param </span>&#123;</span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">0.00390625</span></span><br><span class="line"><span class="symbol">    mean_file:</span> <span class="string">"examples/mnist/mean.binaryproto"</span></span><br><span class="line"><span class="symbol">    mirror:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">    crop_size:</span> <span class="number">227</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class">data_param </span>&#123;</span><br><span class="line"><span class="symbol">    source:</span> <span class="string">"examples/mnist/mnist_train_lmdb"</span></span><br><span class="line"><span class="symbol">    backend:</span> LMDB</span><br><span class="line"><span class="symbol">    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">0.00390625</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是第一个层。以下是参数定义：</p>
+<ul>
+<li>name指定当前层的名称。名字可以随便取，不重复即可。</li>
+<li>type指定当前层的类型，这里就是输入层，所以指定为DATA。</li>
+<li>top或bottom: 每一层用bottom来输入数据，用top来输出数据。如果只有top没有bottom，则此层只有输出，没有输入。反之亦然。如果有多个 top或多个bottom，表示有多个blobs数据的输入和输出。上例中的第一个top是指定往后传递data，第二个是指定往后传递label.</li>
+<li>include: 一般训练和测试的时候，模型的层是不一样的。include来用指定该层（layer）是属于训练阶段的层，还是属于测试阶段的层。如果没有include参数，则表示该层既在训练模型中，又在测试模型中。</li>
+<li>transform_param中的参数用来对数据进行预处理。<ul>
+<li>scale是将数据进行尺寸变换，比如这里设置的0.00390625，就是1/255，用来将输入数据由0-255归一化到0-1之间。</li>
+<li>mean_file用来指定配置文件进行均值操作</li>
+<li>mirror值为1表示开启镜像，值为0表示关闭，也可用ture和false来表示</li>
+<li>crop_size表示裁剪的大小。上例中的227表示剪裁一个227*227的图块，在训练阶段随机剪裁，在测试阶段从中间裁剪。</li>
+</ul>
+</li>
+<li>data_param指定当前层输入数据相关的参数，其中:<ul>
+<li>source就是输入数据的路径（可以写绝对路径）</li>
+<li>backend就是数据类型</li>
+<li>batch_size是指定运行时的batch大小</li>
+</ul>
+</li>
+</ul>
+<p>根据data_param指定的输入数据来源不同，可以分为以下几种。</p>
+<h4 id="1-1-数据来自于数据库-如LevelDB和LMDB"><a href="#1-1-数据来自于数据库-如LevelDB和LMDB" class="headerlink" title="1.1 数据来自于数据库(如LevelDB和LMDB)"></a>1.1 数据来自于数据库(如LevelDB和LMDB)</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"Data"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/mnist/mnist_train_lmdb"</span></span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">	    backend:</span> LMDB</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，type必须指定为Data，而data_param中中指定LevelDB和LMDB的文件路径，并指定backend为LevelDB或LMDB。</p>
+<h4 id="1-2-数据来自于内存"><a href="#1-2-数据来自于内存" class="headerlink" title="1.2 数据来自于内存"></a>1.2 数据来自于内存</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"MemoryData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">memory_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">	    height:</span> <span class="number">100</span></span><br><span class="line"><span class="symbol">    	width:</span> <span class="number">100</span></span><br><span class="line"><span class="symbol">    	channels:</span> <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，type必须指定为MemoryData。memory_data_param：</p>
+<ul>
+<li>channels表示通道数</li>
+<li>height表示高度</li>
+<li>width表示宽度</li>
+</ul>
+<h4 id="1-3-数据来自于HDF5"><a href="#1-3-数据来自于HDF5" class="headerlink" title="1.3 数据来自于HDF5"></a>1.3 数据来自于HDF5</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"HDF5Data"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">hdf5_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/hdf5_classification/data/train.txt"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，type必须指定为HDF5Data。</p>
+<h4 id="1-4-数据来自于图片"><a href="#1-4-数据来自于图片" class="headerlink" title="1.4 数据来自于图片"></a>1.4 数据来自于图片</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"ImageData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">image_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/_temp/file_list.txt"</span></span><br><span class="line"><span class="symbol">	    new_height:</span> <span class="number">256</span></span><br><span class="line"><span class="symbol">    	new_width:</span> <span class="number">256</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，type必须指定为ImageData。此外，image_data_param有一些可选参数：</p>
+<ul>
+<li>rand_skip: 在开始的时候，路过某个数据的输入。通常对异步的SGD很有用。</li>
+<li>shuffle: 随机打乱顺序，默认值为false</li>
+<li>new_height,new_width: 如果设置，则将图片进行resize</li>
+</ul>
+<h4 id="1-5-数据来源于Windows"><a href="#1-5-数据来源于Windows" class="headerlink" title="1.5 数据来源于Windows"></a>1.5 数据来源于Windows</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"WindowData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">window_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/finetune_pascal_detection/window_file_2007_trainval.txt"</span></span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">128</span></span><br><span class="line"><span class="symbol">	    fg_threshold:</span> <span class="number">0.5</span></span><br><span class="line"><span class="symbol">	    bg_threshold:</span> <span class="number">0.5</span></span><br><span class="line"><span class="symbol">	    fg_fraction:</span> <span class="number">0.25</span></span><br><span class="line"><span class="symbol">	    context_pad:</span> <span class="number">16</span></span><br><span class="line"><span class="symbol">	    crop_mode:</span> <span class="string">"warp"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，type必须指定为WindowData。</p>
+<h3 id="2、卷积层"><a href="#2、卷积层" class="headerlink" title="2、卷积层"></a>2、卷积层</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"conv1"</span></span><br><span class="line"><span class="symbol">  type:</span> CONVOLUTION</span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">1.</span></span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">2.</span></span><br><span class="line">  <span class="class">convolution_param </span>&#123;</span><br><span class="line"><span class="symbol">    num_output:</span> <span class="number">20</span></span><br><span class="line"><span class="symbol">    kernel_size:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">    stride:</span> <span class="number">1</span></span><br><span class="line">    <span class="class">weight_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"xavier"</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class">bias_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"constant"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"data"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"conv1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的type就是CONVOLUTION了。</p>
+<ul>
+<li>blobs_lr: 1. 就是指定weight的学习率的倍数，这里就是1.0了</li>
+<li>blobs_lr: 2. 就是指定bias学习率的倍数。</li>
+<li>convolution_param的参数含义如下：<ul>
+<li>num_output指定输出数据个数</li>
+<li>kernelsize是指定卷积模板的大小，也就卷积核的矩阵大小。</li>
+<li>stride就是指定卷积的步长，默认为1。也可以用stride_h和stride_w来设置。</li>
+<li>pad: 扩充边缘，默认为0，不扩充。 扩充的时候是左右、上下对称的，比如卷积核的大小为5*5，那么pad设置为2，则四个边缘都扩充2个像素，即宽度和高度都扩充了4个像素,这样卷积运算之后的特征图就不会变小。也可以通过pad_h和pad_w来分别设定。</li>
+<li>weight_filler是指定weight初始化，其中type是指定初始化的方式，这里用的是xavier算法（根据输入输出的神经元个数自动决定初始化的尺度）。</li>
+<li>bias_filler是类似的，constant就是说指定为常数了，默认为0.</li>
+<li>bias_term: 是否开启偏置项，默认为true, 开启</li>
+<li>group: 分组，默认为1组。如果大于1，我们限制卷积的连接操作在一个子集内。如果我们根据图像的通道来分组，那么第i个输出分组只能与第i个输入分组进行连接。</li>
+</ul>
+</li>
+<li>bottom就是指定这一层的输入数据，显然就是数据层传来的那个data，top就是输出数据。</li>
+</ul>
+<p>在卷积层中：<br>输入：n*c0*w0*h0<br>输出：n*c1*w1*h1<br>其中，c1就是参数中的num_output，即生成的特征图个数<br>$$w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>$$h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>如果设置stride为1，前后两次卷积部分存在重叠。如果设置pad=(kernel_size-1)/2,则运算后，宽度和高度不变。</p>
+<h3 id="3、pooling层"><a href="#3、pooling层" class="headerlink" title="3、pooling层"></a>3、pooling层</h3><p>也叫池化层，为了减少运算量和数据维度而设置的一种层。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"pool1"</span></span><br><span class="line"><span class="symbol">  type:</span> POOLING</span><br><span class="line">  <span class="class">pooling_param </span>&#123;</span><br><span class="line"><span class="symbol">    kernel_size:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    stride:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    pool:</span> MAX</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"conv1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"pool1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>必须设置的参数：</p>
+<ul>
+<li>kernel_size: 池化的核大小。也可以用kernel_h和kernel_w分别设定。</li>
+</ul>
+<p>其它参数：</p>
+<ul>
+<li>pool: 池化方法，默认为MAX。目前可用的方法有MAX, AVE, 或STOCHASTIC</li>
+<li>pad: 和卷积层的pad的一样，进行边缘扩充。默认为0</li>
+<li>stride: 池化的步长，默认为1。一般我们设置为2，即不重叠。也可以用stride_h和stride_w来设置。</li>
+</ul>
+<p>pooling_param就是设置这个pooling层的参数，pool的方式就是max pooling。值得一提的是这里的kernel_size和stride的设置，这里恰好就相等，所以所有的pooling都不会出现重叠，一般来说，kernel_size的尺寸不小于stride的。</p>
+<p>pooling层的运算方法基本是和卷积层是一样的。<br>输入：n*c*w0*h0<br>输出：n*c*w1*h1<br>和卷积层的区别就是其中的c保持不变<br>$$w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>$$h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>如果设置stride为2，前后两次卷积部分不重叠。100*100的特征图池化后，变成50*50.</p>
+<h3 id="4、Local-Response-Normalization-LRN-层"><a href="#4、Local-Response-Normalization-LRN-层" class="headerlink" title="4、Local Response Normalization (LRN)层"></a>4、Local Response Normalization (LRN)层</h3><p>此层是对一个输入的局部区域进行归一化，达到“侧抑制”的效果。可去搜索AlexNet或GoogLenet，里面就用到了这个功能。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"norm1"</span></span><br><span class="line"><span class="symbol">  type:</span> LRN</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"pool1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"norm1"</span></span><br><span class="line">  <span class="class">lrn_param </span>&#123;</span><br><span class="line"><span class="symbol">    local_size:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">    alpha:</span> <span class="number">0.0001</span></span><br><span class="line"><span class="symbol">    beta:</span> <span class="number">0.75</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数：全部为可选，没有必须</p>
+<ul>
+<li>local_size: 默认为5。如果是跨通道LRN，则表示求和的通道数；如果是在通道内LRN，则表示求和的正方形区域长度。</li>
+<li>alpha: 默认为1，归一化公式中的参数。</li>
+<li>beta: 默认为5，归一化公式中的参数。</li>
+<li>norm_region: 默认为ACROSS_CHANNELS。有两个选择，ACROSS_CHANNELS表示在相邻的通道间求和归一化。WITHIN_CHANNEL表示在一个通道内部特定的区域内进行求和归一化。与前面的local_size参数对应。</li>
+</ul>
+<p>归一化公式：对于每一个输入, 去除以$(1+(\frac{\alpha}{n})\sum_{i}{x_i}^2 )^{\beta}$得到归一化后的输出</p>
+<h3 id="5、im2col层"><a href="#5、im2col层" class="headerlink" title="5、im2col层"></a>5、im2col层</h3><p>im2col先将一个大矩阵，重叠地划分为多个子矩阵，对每个子矩阵序列化成向量，最后得到另外一个矩阵。<br>如下图所示：<br><img src="https://i.imgur.com/30XJEsL.png" alt></p>
+<p>在caffe中，卷积运算就是先对数据进行im2col操作，再进行内积运算（inner product)。这样做，比原始的卷积操作速度更快。<br>对比一下两种卷积操作的异同：<br><img src="https://i.imgur.com/lirD0lH.png" alt></p>
+<h3 id="6、激活层（Activiation-Layers-及参数"><a href="#6、激活层（Activiation-Layers-及参数" class="headerlink" title="6、激活层（Activiation Layers)及参数"></a>6、激活层（Activiation Layers)及参数</h3><p>在激活层中，对输入数据进行激活操作（实际上就是一种函数变换），是逐元素进行运算的。从bottom得到一个blob数据输入，运算后，从top输入一个blob数据。在运算过程中，没有改变数据的大小，即输入和输出的数据大小是相等的。<br>输入：n*c*h*w<br>输出：n*c*h*w</p>
+<p>常用的激活函数有sigmoid, tanh,relu等，下面分别介绍。</p>
+<h4 id="6-1-Sigmoid层"><a href="#6-1-Sigmoid层" class="headerlink" title="6.1 Sigmoid层"></a>6.1 Sigmoid层</h4><p>对每个输入数据，利用sigmoid函数执行操作。这种层设置比较简单，没有额外的参数。<br>$$s(x)=\frac{1}{1+e^{-x}}$$<br>示例：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"sigmode"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"encode1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"encode1neuron"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Sigmoid"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="6-2-ReLU层"><a href="#6-2-ReLU层" class="headerlink" title="6.2 ReLU层"></a>6.2 ReLU层</h4><p>ReLU是目前使用最多的激活函数，主要因为其收敛更快，并且能保持同样效果。<br>标准的ReLU函数为max(x, 0)，当x&gt;0时，输出x; 当x&lt;=0时，输出0<br>$$f(x)=max(x,0)$$</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"relu1"</span></span><br><span class="line"><span class="symbol">  type:</span> RELU</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"ip1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有趣的地方在于输入和输出是同一个，官网上说只是因为这个ReLU操作可以原地操作（in place），能够节省内存。ReLU是一个替换sigmoid units的一个函数，全称是Rectified Linear Unit，是一个激活函数。<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks" target="_blank" rel="noopener">wiki</a>)和<a href="https://www.douban.com/note/348196265/" target="_blank" rel="noopener">豆瓣</a>有些资料，可以自己看看。</p>
+<h4 id="6-3-TanH-Hyperbolic-Tangent"><a href="#6-3-TanH-Hyperbolic-Tangent" class="headerlink" title="6.3 TanH/Hyperbolic Tangent"></a>6.3 TanH/Hyperbolic Tangent</h4><p>利用双曲正切函数对数据进行变换。<br>$$tanh x = \frac{\sinh x}{\cosh x} = \frac{e^x  - e^{ - x}}{e^x  + e^{ - x}}$$</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"TanH"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6-4-Absolute-Value"><a href="#6-4-Absolute-Value" class="headerlink" title="6.4 Absolute Value"></a>6.4 Absolute Value</h4><p>求每个输入数据的绝对值。<br>$$f(x)=abs(x)$$</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"AbsVal"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6-5-Power"><a href="#6-5-Power" class="headerlink" title="6.5 Power"></a>6.5 Power</h4><p>对每个输入数据进行幂运算<br>$$f(x)= (shift + scale * x) ^ {power}$$</p>
+<p>可选参数：</p>
+<ul>
+<li>power: 默认为1</li>
+<li>scale: 默认为1</li>
+<li>shift: 默认为0</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Power"</span></span><br><span class="line">  <span class="class">power_param </span>&#123;</span><br><span class="line"><span class="symbol">    power:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">    shift:</span> <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6-6-BNLL"><a href="#6-6-BNLL" class="headerlink" title="6.6 BNLL"></a>6.6 BNLL</h4><p>binomial normal log likelihood的简称<br>$$f(x)=log(1 + e ^ x)$$</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> “BNLL”</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="7、完全连接层"><a href="#7、完全连接层" class="headerlink" title="7、完全连接层"></a>7、完全连接层</h3><p>全连接层，把输入当作成一个向量，输出也是一个简单向量（把输入数据blobs的width和height全变为1）。<br>输入： n*c0*h*w<br>输出： n*c1*1*1<br>全连接层实际上也是一种卷积层，只是它的卷积核大小和原数据大小一致。因此它的参数基本和卷积层的参数一样。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"ip2"</span></span><br><span class="line"><span class="symbol">  type:</span> INNER_PRODUCT</span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">1.</span></span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">2.</span></span><br><span class="line">  <span class="class">inner_product_param </span>&#123;</span><br><span class="line"><span class="symbol">    num_output:</span> <span class="number">10</span></span><br><span class="line">    <span class="class">weight_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"xavier"</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class">bias_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"constant"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"ip2"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="8、Loss层"><a href="#8、Loss层" class="headerlink" title="8、Loss层"></a>8、Loss层</h3><p>softmax-loss层和softmax层计算大致是相同的。softmax是一个分类器，计算的是类别的概率（Likelihood），是逻辑回归（Logistic Regression） 的一种推广。逻辑回归只能用于二分类，而softmax可以用于多分类。</p>
+<p><em>softmax与softmax-loss的区别：</em></p>
+<p>softmax计算公式：</p>
+<p>$$\sigma_{i}(z)=\frac{exp(z_{i})}{\sum_{j=1}^{m}{exp(z_j)}}, i=1,…m$$</p>
+<p>而softmax-loss计算公式：</p>
+<p>$$L(y,z)=-log(\frac{exp(z_y)}{\sum_{j=1}^{m}exp(z_j)})=log({\sum_{j=1}^{m}exp(z_j)})-z_y$$</p>
+<p>用户可能最终目的就是得到各个类别的概率似然值，这个时候就只需要一个Softmax层，而不一定要进行softmax-Loss 操作；或者是用户有通过其他什么方式已经得到了某种概率似然值，然后要做最大似然估计，此时则只需要后面的softmax-Loss而不需要前面的Softmax 操作。因此提供两个不同的Layer结构比只提供一个合在一起的Softmax-Loss Layer要灵活许多。</p>
+<p>不管是softmax层还是softmax-loss层,都是没有参数的，只是层类型不同而已。</p>
+<p>softmax-loss层：输出loss值<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"loss"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"SoftmaxWithLoss"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"label"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"loss"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>到这里也解开了我们心头的一个疑惑哈，为什么第一层的top有两个，哈哈，label是传递到这儿来的。</p>
+<p>softmax层: 输出似然值<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">layers</span> &#123;</span><br><span class="line">  <span class="attribute">bottom</span>: <span class="string">"cls3_fc"</span></span><br><span class="line">  <span class="attribute">top</span>: <span class="string">"prob"</span></span><br><span class="line">  <span class="attribute">name</span>: <span class="string">"prob"</span></span><br><span class="line">  <span class="attribute">type</span>: “Softmax"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="9、accuracy层"><a href="#9、accuracy层" class="headerlink" title="9、accuracy层"></a>9、accuracy层</h3><p>输出分类（预测）精确度，只有test阶段才有，因此需要加入include参数。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"accuracy"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Accuracy"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip2"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"label"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"accuracy"</span></span><br><span class="line">  <span class="class">include </span>&#123;</span><br><span class="line"><span class="symbol">    phase:</span> TEST</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="10、reshape层"><a href="#10、reshape层" class="headerlink" title="10、reshape层"></a>10、reshape层</h3><p>在不改变数据的情况下，改变输入的维度。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">   name:</span> <span class="string">"reshape"</span></span><br><span class="line"><span class="symbol">   type:</span> <span class="string">"Reshape"</span></span><br><span class="line"><span class="symbol">   bottom:</span> <span class="string">"input"</span></span><br><span class="line"><span class="symbol">   top:</span> <span class="string">"output"</span></span><br><span class="line">   <span class="class">reshape_param </span>&#123;</span><br><span class="line">     <span class="class">shape </span>&#123;</span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">0</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">3</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">-1</span></span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>有一个可选的参数组shape, 用于指定blob数据的各维的值（blob是一个四维的数据：n*c*w*h）。</p>
+<ul>
+<li>dim:0  表示维度不变，即输入和输出是相同的维度。</li>
+<li>dim:2 或 dim:3 将原来的维度变成2或3</li>
+<li>dim:-1 表示由系统自动计算维度。数据的总量不变，系统会根据blob数据的其它三维来自动计算当前维的维度值 。</li>
+</ul>
+<p>假设原数据为：64*3*28*28，表示64张3通道的28*28的彩色图片<br>经过reshape变换：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">reshape_param </span>&#123;</span><br><span class="line">   <span class="class">shape </span>&#123;</span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">0</span> </span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">0</span></span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">14</span></span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">-1</span></span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出数据为：64*3*14*56</p>
+<h3 id="11、Dropout层"><a href="#11、Dropout层" class="headerlink" title="11、Dropout层"></a>11、Dropout层</h3><p>Dropout是一个防止过拟合的手段。可以随机让网络某些隐含层节点的权重不工作。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"drop7"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Dropout"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"fc7-conv"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"fc7-conv"</span></span><br><span class="line">  <span class="class">dropout_param </span>&#123;</span><br><span class="line"><span class="symbol">    dropout_ratio:</span> <span class="number">0.5</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只需要设置一个dropout_ratio就可以了。</p>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+<!--
+<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
+<div>
+<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
+</div>
+-->
+</div>
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
+  <a href="/about">aaronshan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、数据层"><span class="toc-number">1.</span> <span class="toc-text">1、数据层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-数据来自于数据库-如LevelDB和LMDB"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 数据来自于数据库(如LevelDB和LMDB)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-数据来自于内存"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 数据来自于内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-数据来自于HDF5"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 数据来自于HDF5</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-数据来自于图片"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 数据来自于图片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-数据来源于Windows"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 数据来源于Windows</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、卷积层"><span class="toc-number">2.</span> <span class="toc-text">2、卷积层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、pooling层"><span class="toc-number">3.</span> <span class="toc-text">3、pooling层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、Local-Response-Normalization-LRN-层"><span class="toc-number">4.</span> <span class="toc-text">4、Local Response Normalization (LRN)层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、im2col层"><span class="toc-number">5.</span> <span class="toc-text">5、im2col层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、激活层（Activiation-Layers-及参数"><span class="toc-number">6.</span> <span class="toc-text">6、激活层（Activiation Layers)及参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-Sigmoid层"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 Sigmoid层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-ReLU层"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 ReLU层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-TanH-Hyperbolic-Tangent"><span class="toc-number">6.3.</span> <span class="toc-text">6.3 TanH/Hyperbolic Tangent</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-Absolute-Value"><span class="toc-number">6.4.</span> <span class="toc-text">6.4 Absolute Value</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-5-Power"><span class="toc-number">6.5.</span> <span class="toc-text">6.5 Power</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-6-BNLL"><span class="toc-number">6.6.</span> <span class="toc-text">6.6 BNLL</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7、完全连接层"><span class="toc-number">7.</span> <span class="toc-text">7、完全连接层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8、Loss层"><span class="toc-number">8.</span> <span class="toc-text">8、Loss层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9、accuracy层"><span class="toc-number">9.</span> <span class="toc-text">9、accuracy层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10、reshape层"><span class="toc-number">10.</span> <span class="toc-text">10、reshape层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11、Dropout层"><span class="toc-number">11.</span> <span class="toc-text">11、Dropout层</span></a></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/caffe/">caffe</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/10/26/shell-special-variable/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          shell特殊变量
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/10/25/mac-install-caffe/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">mac安装caffe&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 aaronshan&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

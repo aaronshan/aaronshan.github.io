@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>mac安装Faster R-CNN - 中龄程序猿</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在mac上安装fast-r-cnn时遇到了一些坑。所以整理下，以便对有需要的人有所帮助。 1. 下载代码12$ cd /Users/ruifengshan/githubRepos/$ git clone --recursive https://github.com/rbgirshick/py-faster-rcnn.git 2. 下载模型12345678$ cd /Users/ruifengsha">
+<meta name="keywords" content="rcnn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mac安装Faster R-CNN">
+<meta property="og:url" content="www.shanruifeng.win/2016/12/02/mac-install-faster-rcnn/index.html">
+<meta property="og:site_name" content="中龄程序猿">
+<meta property="og:description" content="在mac上安装fast-r-cnn时遇到了一些坑。所以整理下，以便对有需要的人有所帮助。 1. 下载代码12$ cd /Users/ruifengshan/githubRepos/$ git clone --recursive https://github.com/rbgirshick/py-faster-rcnn.git 2. 下载模型12345678$ cd /Users/ruifengsha">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.imgur.com/hNRh1rd.png">
+<meta property="og:updated_time" content="2019-02-26T07:28:18.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mac安装Faster R-CNN">
+<meta name="twitter:description" content="在mac上安装fast-r-cnn时遇到了一些坑。所以整理下，以便对有需要的人有所帮助。 1. 下载代码12$ cd /Users/ruifengshan/githubRepos/$ git clone --recursive https://github.com/rbgirshick/py-faster-rcnn.git 2. 下载模型12345678$ cd /Users/ruifengsha">
+<meta name="twitter:image" content="https://i.imgur.com/hNRh1rd.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+          <a class="main-nav-link" href="/love">爱情</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-mac-install-faster-rcnn" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mac安装Faster R-CNN
+      <small class="article-detail-date-index">&nbsp; 2016-12-02</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/2016/12/02/mac-install-faster-rcnn/" class="article-date">
+  <time datetime="2016-12-02T13:50:21.000Z" itemprop="datePublished">2016-12-02</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在mac上安装fast-r-cnn时遇到了一些坑。所以整理下，以便对有需要的人有所帮助。</p>
+<h3 id="1-下载代码"><a href="#1-下载代码" class="headerlink" title="1. 下载代码"></a>1. 下载代码</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/githubRepos/</span></span><br><span class="line">$ git clone --recursive https:<span class="regexp">//gi</span>thub.com<span class="regexp">/rbgirshick/</span>py-faster-rcnn.git</span><br></pre></td></tr></table></figure>
+<h3 id="2-下载模型"><a href="#2-下载模型" class="headerlink" title="2. 下载模型"></a>2. 下载模型</h3><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">$</span> cd /Users/ruifengshan/githubRepos/py-faster-rcnn</span><br><span class="line"><span class="symbol">$</span> ./data/scripts/fetch_faster_rcnn_models.sh</span><br><span class="line"><span class="function"><span class="title">Downloading</span></span> Faster R-CNN demo <span class="keyword">models</span> (<span class="number">695</span>M)...</span><br><span class="line">...</span><br><span class="line"><span class="function"><span class="title">Unzipping</span></span>...</span><br><span class="line">faster_rcnn_models/</span><br><span class="line">faster_rcnn_models/ZF_faster_rcnn_final.caffemodel</span><br><span class="line">faster_rcnn_models/VGG16_faster_rcnn_final.caffemodel</span><br></pre></td></tr></table></figure>
+<p>国内下载的有点慢。</p>
+<a id="more"></a>
+<h3 id="3-编译cython"><a href="#3-编译cython" class="headerlink" title="3. 编译cython"></a>3. 编译cython</h3><p>进入lib目录，修改setup.py，注释掉GPU相关代码，如下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">def locate_cuda():</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="string">""</span><span class="string">"Locate the CUDA environment on the system</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    Returns a dict with keys <span class="string">'home'</span>, <span class="string">'nvcc'</span>, <span class="string">'include'</span>, and <span class="string">'lib64'</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    and values giving the absolute path to each directory.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    Starts by looking <span class="keyword">for</span> the CUDAHOME env variable. If not found, everything</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    is based on finding <span class="string">'nvcc'</span> <span class="keyword">in</span> the PATH.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="string">""</span><span class="string">"</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="comment"># first check if the CUDAHOME env variable is in use</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="keyword">if</span> <span class="string">'CUDAHOME'</span> <span class="keyword">in</span> os.environ:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        home = os.environ[<span class="string">'CUDAHOME'</span>]</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        nvcc = pjoin(home, <span class="string">'bin'</span>, <span class="string">'nvcc'</span>)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="keyword">else</span>:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="comment"># otherwise, search the PATH for NVCC</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">        default_path = pjoin(os.sep, <span class="string">'usr'</span>, <span class="string">'local'</span>, <span class="string">'cuda'</span>, <span class="string">'bin'</span>)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        nvcc = find_in_path(<span class="string">'nvcc'</span>, os.environ[<span class="string">'PATH'</span>] + os.pathsep + default_path)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="keyword">if</span> nvcc is None:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">            raise EnvironmentError(<span class="string">'The nvcc binary could not be '</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">                <span class="string">'located in your $PATH. Either add it to your path, or set $CUDAHOME'</span>)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        home = os.path.dirname(os.path.dirname(nvcc))</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    cudaconfig = &#123;<span class="string">'home'</span>:home, <span class="string">'nvcc'</span>:nvcc,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                  <span class="string">'include'</span>: pjoin(home, <span class="string">'include'</span>),</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                  <span class="string">'lib64'</span>: pjoin(home, <span class="string">'lib64'</span>)&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="keyword">for</span> k, v <span class="keyword">in</span> cudaconfig.iteritems():</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="keyword">if</span> not os.path.exists(v):</span></span><br><span class="line"><span class="meta">#</span><span class="bash">            raise EnvironmentError(<span class="string">'The CUDA %s path could not be located in %s'</span> % (k, v))</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">    <span class="built_in">return</span> cudaconfig</span></span><br><span class="line"><span class="meta">#</span><span class="bash">CUDA = locate_cuda()</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#            self.set_executable(<span class="string">'compiler_so'</span>, CUDA[<span class="string">'nvcc'</span>])</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">    Extension(<span class="string">'nms.gpu_nms'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        [<span class="string">'nms/nms_kernel.cu'</span>, <span class="string">'nms/gpu_nms.pyx'</span>],</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        library_dirs=[CUDA[<span class="string">'lib64'</span>]],</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        libraries=[<span class="string">'cudart'</span>],</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        language=<span class="string">'c++'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        runtime_library_dirs=[CUDA[<span class="string">'lib64'</span>]],</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="comment"># this syntax is specific to this build system</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="comment"># we're only going to use certain compiler args with nvcc and not with</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">        <span class="comment"># gcc the implementation of this trick is in customize_compiler() below</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">        extra_compile_args=&#123;<span class="string">'gcc'</span>: [<span class="string">"-Wno-unused-function"</span>],</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                            <span class="string">'nvcc'</span>: [<span class="string">'-arch=sm_35'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                                     <span class="string">'--ptxas-options=-v'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                                     <span class="string">'-c'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                                     <span class="string">'--compiler-options'</span>,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                                     <span class="string">"'-fPIC'"</span>]&#125;,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        include_dirs = [numpy_include, CUDA[<span class="string">'include'</span>]]</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    ),</span></span><br></pre></td></tr></table></figure>
+<p>然后执行：<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>make</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-安装自带的caffe（不是通用的）"><a href="#4-安装自带的caffe（不是通用的）" class="headerlink" title="4. 安装自带的caffe（不是通用的）"></a>4. 安装自带的caffe（不是通用的）</h3><p>进入caffe-fast-rcnn目录，大部分跟前面caffe安装记录一样，参考之前的Makefile.config文件进行修改（可以直接拷贝过来）。<br>然后进行编译过程，也和安装通用的caffe是一样的。记得执行<code>make pycaffe</code>语句：</p>
+<h3 id="5-运行示例程序"><a href="#5-运行示例程序" class="headerlink" title="5. 运行示例程序"></a>5. 运行示例程序</h3><p>为了让程序能正常运行，我们需要修改：tools/demo.py和lib/fast_rcnn/test.py文件。<br>将程序中原本的<code>import caffe</code>改为：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sys<span class="selector-class">.path</span><span class="selector-class">.insert</span>(<span class="number">0</span>, <span class="string">'/Users/ruifengshan/githubRepos/py-faster-rcnn/caffe-fast-rcnn/python'</span>)</span><br><span class="line">import caffe</span><br></pre></td></tr></table></figure></p>
+<p>然后执行命令：<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">./tools/demo.py</span> <span class="params">--cpu</span></span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><img src="https://i.imgur.com/hNRh1rd.png" alt></p>
+<h3 id="6-常见错误"><a href="#6-常见错误" class="headerlink" title="6. 常见错误"></a>6. 常见错误</h3><h4 id="1）-No-module-named-easydict"><a href="#1）-No-module-named-easydict" class="headerlink" title="1） No module named easydict"></a>1） No module named easydict</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent <span class="keyword">call</span> <span class="keyword">last</span>):</span><br><span class="line"><span class="keyword">File</span> <span class="string">"./tools/demo.py"</span>, line <span class="number">17</span>, <span class="keyword">in</span></span><br><span class="line"> <span class="keyword">from</span> fast_rcnn.config <span class="keyword">import</span> cfg</span><br><span class="line"> <span class="keyword">File</span> <span class="string">"/Users/ruifengshan/githubRepos/py-faster-rcnn/tools/../lib/fast_rcnn/config.py"</span>, line <span class="number">23</span>, <span class="keyword">in</span></span><br><span class="line"><span class="keyword">from</span> easydict <span class="keyword">import</span> EasyDict <span class="keyword">as</span> edict</span><br><span class="line">ImportError: <span class="keyword">No</span> <span class="keyword">module</span> named easydict</span><br></pre></td></tr></table></figure>
+<p>这是缺少Python库easydict，所以使用命令<code>pip install easydict</code>进行安装即可。</p>
+<h4 id="2）-No-module-named-cv2"><a href="#2）-No-module-named-cv2" class="headerlink" title="2） No module named cv2"></a>2） No module named cv2</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent <span class="keyword">call</span> <span class="keyword">last</span>):</span><br><span class="line">  <span class="keyword">File</span> <span class="string">"./tools/demo.py"</span>, line <span class="number">18</span>, <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">from</span> fast_rcnn.test <span class="keyword">import</span> im_detect</span><br><span class="line">  <span class="keyword">File</span> <span class="string">"/Users/ruifengshan/githubRepos/py-faster-rcnn/tools/../lib/fast_rcnn/test.py"</span>, line <span class="number">15</span>, <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">import</span> cv2</span><br><span class="line">ImportError: <span class="keyword">No</span> <span class="keyword">module</span> named cv2</span><br></pre></td></tr></table></figure>
+<p>这是因为没有安装opencv2,使用如下命令安装即可：<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">brew tap homebrew/science</span><br><span class="line">brew info opencv</span><br><span class="line">brew install opencv</span><br><span class="line"></span><br><span class="line">cd /usr/local/Cellar/opencv/<span class="number">2.4</span>.<span class="number">13_3</span>/</span><br><span class="line">cd /Library/Python/<span class="number">2.7</span>/site-packages/</span><br><span class="line">ln -s /usr/local/Cellar/opencv/<span class="number">2.4</span>.<span class="number">13_3</span>/<span class="class"><span class="keyword">lib</span>/<span class="title">python2</span>.7/<span class="title">site</span>-<span class="title">packages</span>/<span class="title">cv</span>.<span class="title">py</span> <span class="title">cv</span>.<span class="title">py</span></span></span><br><span class="line">ln -s /usr/local/Cellar/opencv/<span class="number">2.4</span>.<span class="number">13_3</span>/<span class="class"><span class="keyword">lib</span>/<span class="title">python2</span>.7/<span class="title">site</span>-<span class="title">packages</span>/<span class="title">cv2</span>.<span class="title">so</span> <span class="title">cv2</span>.<span class="title">so</span></span></span><br></pre></td></tr></table></figure></p>
+<h4 id="3-No-module-named-gpu-nms"><a href="#3-No-module-named-gpu-nms" class="headerlink" title="3) No module named gpu_nms"></a>3) No module named gpu_nms</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent <span class="keyword">call</span> <span class="keyword">last</span>):</span><br><span class="line">  <span class="keyword">File</span> <span class="string">"tools/demo.py"</span>, line <span class="number">19</span>, <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">from</span> fast_rcnn.nms_wrapper <span class="keyword">import</span> nms</span><br><span class="line">  <span class="keyword">File</span> <span class="string">"/Users/ruifengshan/githubRepos/py-faster-rcnn/tools/../lib/fast_rcnn/nms_wrapper.py"</span>, line <span class="number">9</span>, <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">from</span> nms.gpu_nms <span class="keyword">import</span> gpu_nms</span><br><span class="line">ImportError: <span class="keyword">No</span> <span class="keyword">module</span> named gpu_nms</span><br></pre></td></tr></table></figure>
+<p>修改nms_wrapper.py，改force_cpu =True<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim <span class="class"><span class="keyword">lib</span>/<span class="title">fast_rcnn</span>/<span class="title">nms_wrapper</span>.<span class="title">py</span></span></span><br></pre></td></tr></table></figure></p>
+<p>修改如下：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nms</span> <span class="params">(dets, thresh, force_cpu =True)</span></span><span class="symbol">:</span></span><br></pre></td></tr></table></figure></p>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+<!--
+<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
+<div>
+<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
+</div>
+-->
+</div>
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
+  <a href="/about">aaronshan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-下载代码"><span class="toc-number">1.</span> <span class="toc-text">1. 下载代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-下载模型"><span class="toc-number">2.</span> <span class="toc-text">2. 下载模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-编译cython"><span class="toc-number">3.</span> <span class="toc-text">3. 编译cython</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安装自带的caffe（不是通用的）"><span class="toc-number">4.</span> <span class="toc-text">4. 安装自带的caffe（不是通用的）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-运行示例程序"><span class="toc-number">5.</span> <span class="toc-text">5. 运行示例程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-常见错误"><span class="toc-number">6.</span> <span class="toc-text">6. 常见错误</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）-No-module-named-easydict"><span class="toc-number">6.1.</span> <span class="toc-text">1） No module named easydict</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）-No-module-named-cv2"><span class="toc-number">6.2.</span> <span class="toc-text">2） No module named cv2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-No-module-named-gpu-nms"><span class="toc-number">6.3.</span> <span class="toc-text">3) No module named gpu_nms</span></a></li></ol></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/rcnn/">rcnn</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/03/mac-install-apache-kylin/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          mac osx单机上安装apache-kylin
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/10/26/shell-special-variable/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">shell特殊变量&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 aaronshan&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
