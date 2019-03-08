@@ -59,6 +59,95 @@
 
     <br>
     <section id="main" class="outer">
+      <article id="post-gc-roots-obj" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/2019/03/01/gc-roots-obj/"><strong>可以作为GC Roots的对象</strong></a>
+      <small class="article-date-index">&nbsp; 2019-03-01</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/2019/03/01/gc-roots-obj/" class="article-date">
+  <time datetime="2019-03-01T12:41:00.000Z" itemprop="datePublished">2019-03-01</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/java/">java</a>
+  </div>
+
+-->
+      <!--
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、名词解释"><a href="#一、名词解释" class="headerlink" title="一、名词解释"></a>一、名词解释</h2><p>根搜索算法是JVM用来的判断对象是否存活的算法，此算法基本思路为通过一系列的“GC Roots”对象作为起始点，从这些节点往下搜索，当一个对象和GC Roots不可达时，则该对象是无用的，可被回收的。如下图所示：object5、object6、object7虽然互相有关联，但是他们到GC Roots是不可达的，因此他们都可以被回收。</p>
+<p><img src="https://i.imgur.com/xeKfNyU.png" alt></p>
+<p>在java中，可作为GC Roots的对象有：</p>
+<ol>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象；</li>
+<li>方法区中的类静态属性引用的对象；</li>
+<li>方法区中常量引用的对象；</li>
+<li>本地方法栈中JNI（即一般说的Native方法）中引用的对象</li>
+</ol>
+<h2 id="二、验证可作为GC-Roots的对象"><a href="#二、验证可作为GC-Roots的对象" class="headerlink" title="二、验证可作为GC Roots的对象"></a>二、验证可作为GC Roots的对象</h2><blockquote>
+<p><strong>此处只做最简单的验证，不涉及很复杂的GCRoots引用链。</strong></p>
+</blockquote>
+<h3 id="1-验证虚拟机栈（栈帧中的局部变量）中引用的对象作为GC-Roots"><a href="#1-验证虚拟机栈（栈帧中的局部变量）中引用的对象作为GC-Roots" class="headerlink" title="1.验证虚拟机栈（栈帧中的局部变量）中引用的对象作为GC Roots"></a>1.验证虚拟机栈（栈帧中的局部变量）中引用的对象作为GC Roots</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * GCRoots 测试：虚拟机栈（栈帧中的局部变量）中引用的对象作为GCRoots </span></span><br><span class="line"><span class="comment"> * -Xms1024m -Xmx1024m -Xmn512m -XX:+PrintGCDetails</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 扩展：虚拟机栈中存放了编译器可知的八种基本数据类型,对象引用,returnAddress类型（指向了一条字节码指令的地址）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestGCRoots01</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> _10MB = <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">byte</span>[] memory = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">8</span> * _10MB];</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span> &#123;</span><br><span class="line">		method01();</span><br><span class="line">		System.<span class="keyword">out</span>.println(<span class="string">"返回main方法"</span>);</span><br><span class="line">		System.gc();</span><br><span class="line">		System.<span class="keyword">out</span>.println(<span class="string">"main-GC完成"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method01</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">		TestGCRoots01 t = <span class="keyword">new</span> TestGCRoots01();</span><br><span class="line">		System.gc();</span><br><span class="line">		System.<span class="keyword">out</span>.println(<span class="string">"method01-GC完成"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台打印日志：<br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[GC [PSYoungGen: <span class="number">105513</span><span class="keyword">K</span>-&gt;<span class="number">616</span><span class="keyword">K</span>(<span class="number">458752</span><span class="keyword">K</span>)] <span class="number">105513</span><span class="keyword">K</span>-&gt;<span class="number">82536</span><span class="keyword">K</span>(<span class="number">983040</span><span class="keyword">K</span>), <span class="number">0.0945986</span> secs] [<span class="keyword">Times</span>: user=<span class="number">0.17</span> sys=<span class="number">0.06</span>, real=<span class="number">0.09</span> secs] </span><br><span class="line">[<span class="keyword">Full</span> GC [PSYoungGen: <span class="number">616</span><span class="keyword">K</span>-&gt;<span class="number">0</span><span class="keyword">K</span>(<span class="number">458752</span><span class="keyword">K</span>)] [ParOldGen: <span class="number">81920</span><span class="keyword">K</span>-&gt;<span class="number">82430</span><span class="keyword">K</span>(<span class="number">524288</span><span class="keyword">K</span>)] <span class="number">82536</span><span class="keyword">K</span>-&gt;<span class="number">82430</span><span class="keyword">K</span>(<span class="number">983040</span><span class="keyword">K</span>) [PSPermGen: <span class="number">2547</span><span class="keyword">K</span>-&gt;<span class="number">2546</span><span class="keyword">K</span>(<span class="number">21504</span><span class="keyword">K</span>)], <span class="number">0.0273364</span> secs] [<span class="keyword">Times</span>: user=<span class="number">0.06</span> sys=<span class="number">0.01</span>, real=<span class="number">0.03</span> secs] </span><br><span class="line">method01-GC完成</span><br><span class="line">返回main方法</span><br><span class="line">[GC [PSYoungGen: <span class="number">15728</span><span class="keyword">K</span>-&gt;<span class="number">64</span><span class="keyword">K</span>(<span class="number">458752</span><span class="keyword">K</span>)] <span class="number">98159</span><span class="keyword">K</span>-&gt;<span class="number">82494</span><span class="keyword">K</span>(<span class="number">983040</span><span class="keyword">K</span>), <span class="number">0.0014739</span> secs] [<span class="keyword">Times</span>: user=<span class="number">0.00</span> sys=<span class="number">0.00</span>, real=<span class="number">0.00</span> secs] </span><br><span class="line">[<span class="keyword">Full</span> GC [PSYoungGen: <span class="number">64</span><span class="keyword">K</span>-&gt;<span class="number">0</span><span class="keyword">K</span>(<span class="number">458752</span><span class="keyword">K</span>)] [ParOldGen: <span class="number">82430</span><span class="keyword">K</span>-&gt;<span class="number">510</span><span class="keyword">K</span>(<span class="number">524288</span><span class="keyword">K</span>)] <span class="number">82494</span><span class="keyword">K</span>-&gt;<span class="number">510</span><span class="keyword">K</span>(<span class="number">983040</span><span class="keyword">K</span>) [PSPermGen: <span class="number">2546</span><span class="keyword">K</span>-&gt;<span class="number">2546</span><span class="keyword">K</span>(<span class="number">21504</span><span class="keyword">K</span>)], <span class="number">0.0118484</span> secs] [<span class="keyword">Times</span>: user=<span class="number">0.02</span> sys=<span class="number">0.00</span>, real=<span class="number">0.01</span> secs] </span><br><span class="line">main-GC完成</span><br></pre></td></tr></table></figure></p>
+<p>method01-GC：</p>
+<blockquote>
+<p>t为局部变量，引用了new出的对象（80M），作为GC Roots，在Minor GC后被转移到老年代中，且Full GC也不会回收该对象，仍保留在老年代中。</p>
+</blockquote>
+<p>main-GC：</p>
+<blockquote>
+<p>method01方法执行完后，局部变量t跟随方法消失，不再有引用类型指向该对象，该对象在Full GC后，被完全回收，老年代腾出该对象之前所占的空间。</p>
+</blockquote>
+<h3 id="2-验证方法区中的静态变量引用的对象作为GC-Roots"><a href="#2-验证方法区中的静态变量引用的对象作为GC-Roots" class="headerlink" title="2.验证方法区中的静态变量引用的对象作为GC Roots"></a>2.验证方法区中的静态变量引用的对象作为GC Roots</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 测试方法区中的静态变量引用的对象作为GCRoots</span></span><br><span class="line"><span class="comment"> * -Xms1024m -Xmx1024m -Xmn512m -XX:+PrintGCDetails</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 扩展：方法区内存与堆一样,是各个线程共享的内存区域,用于存放已被虚拟机加载的类信息,常量,静态变量,即时编译器编译后的代码等数据。</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestGCRoots02</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> _10MB = <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">byte</span>[] memory;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> TestGCRoots02 t;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">TestGCRoots02</span>(<span class="params"><span class="keyword">int</span> size</span>)</span> &#123;</span><br><span class="line">		memory = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span> &#123;</span><br><span class="line">		TestGCRoots02 t2 = <span class="keyword">new</span> TestGCRoots02(<span class="number">4</span> * _10MB);</span><br><span class="line">		t2.t = <span class="keyword">new</span> TestGCRoots02(<span class="number">8</span> * _10MB);</span><br><span class="line">		t2 = <span class="literal">null</span>;</span><br><span class="line">		System.gc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台打印日志：<br><figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="name">GC</span> [<span class="name">PSYoungGen:</span> <span class="number">138608</span>K-&gt;632K(<span class="name">458752K</span>)] <span class="number">138608</span>K-&gt;82552K(<span class="name">983040K</span>), <span class="number">0.0684508</span> secs] [<span class="name">Times:</span> user=0.19 sys=0.06, real=0.07 secs] </span><br><span class="line">[<span class="name">Full</span> GC [<span class="name">PSYoungGen:</span> <span class="number">632</span>K-&gt;0K(<span class="name">458752K</span>)] [<span class="name">ParOldGen:</span> <span class="number">81920</span>K-&gt;82427K(<span class="name">524288K</span>)] <span class="number">82552</span>K-&gt;82427K(<span class="name">983040K</span>) [<span class="name">PSPermGen:</span> <span class="number">2513</span>K-&gt;2512K(<span class="name">21504K</span>)], <span class="number">0.0162803</span> secs] [<span class="name">Times:</span> user=0.02 sys=0.00, real=0.02 secs]</span><br></pre></td></tr></table></figure></p>
+<p>t2被置为null，Minor GC后t2之前引用的对象（40M）被完全回收；t为静态变量，存放于方法区中，引用了对象（80M），在Minor GC后，被转移到老年代中，且在Full GC后，也不会被回收，继续保留在老年代中。</p>
+<h3 id="3-验证方法区中常量引用对象作为GC-Roots"><a href="#3-验证方法区中常量引用对象作为GC-Roots" class="headerlink" title="3.验证方法区中常量引用对象作为GC Roots"></a>3.验证方法区中常量引用对象作为GC Roots</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 测试常量引用对象作为GCRoots </span></span><br><span class="line"><span class="comment"> * 注意：t修饰符如果只是final会被回收，static final不会被回收，所以static final 才是常量的正确写法</span></span><br><span class="line"><span class="comment"> * -Xms1024m -Xmx1024m -Xmn512m -XX:+PrintGCDetails</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestGCRoots03</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> _10MB = <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> final TestGCRoots03 t = <span class="keyword">new</span> TestGCRoots03(<span class="number">8</span> * _10MB);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">byte</span>[] memory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">TestGCRoots03</span>(<span class="params"><span class="keyword">int</span> size</span>)</span> &#123;</span><br><span class="line">		memory = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span> &#123;</span><br><span class="line">		TestGCRoots03 t3 = <span class="keyword">new</span> TestGCRoots03(<span class="number">4</span> * _10MB);</span><br><span class="line">		t3 = <span class="literal">null</span>;</span><br><span class="line">		System.gc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台打印日志：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="name">GC</span> [<span class="name">PSYoungGen:</span> <span class="number">138608</span>K-&gt;688K(<span class="name">458752K</span>)] <span class="number">138608</span>K-&gt;82608K(<span class="name">983040K</span>), <span class="number">0.0514407</span> secs] [<span class="name">Times:</span> user=0.13 sys=0.02, real=0.05 secs] </span><br><span class="line">[<span class="name">Full</span> GC [<span class="name">PSYoungGen:</span> <span class="number">688</span>K-&gt;0K(<span class="name">458752K</span>)] [<span class="name">ParOldGen:</span> <span class="number">81920</span>K-&gt;82428K(<span class="name">524288K</span>)] <span class="number">82608</span>K-&gt;82428K(<span class="name">983040K</span>) [<span class="name">PSPermGen:</span> <span class="number">2515</span>K-&gt;2514K(<span class="name">21504K</span>)], <span class="number">0.0153884</span> secs] [<span class="name">Times:</span> user=0.06 sys=0.00, real=0.01 secs]</span><br></pre></td></tr></table></figure>
+<p>t3被置为null，Minor GC后t3之前引用的对象（40M）被完全回收；t为常量，存放于方法区中，引用了对象（80M），在Minor GC后，被转移到老年代中，且在Full GC后，也不会被回收，继续保留在老年代中。</p>
+<h3 id="4-测试成员变量是否可作为GC-Roots"><a href="#4-测试成员变量是否可作为GC-Roots" class="headerlink" title="4.测试成员变量是否可作为GC Roots"></a>4.测试成员变量是否可作为GC Roots</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 测试成员变量引用对象是否可作为GCRoots</span></span><br><span class="line"><span class="comment"> * -Xms1024m -Xmx1024m -Xmn512m -XX:+PrintGCDetails</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestGCRoots04</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> _10MB = <span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">	<span class="keyword">private</span> TestGCRoots04 t;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">byte</span>[] memory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">TestGCRoots04</span>(<span class="params"><span class="keyword">int</span> size</span>)</span> &#123;</span><br><span class="line">		memory = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span> &#123;</span><br><span class="line">		TestGCRoots04 t4 = <span class="keyword">new</span> TestGCRoots04(<span class="number">4</span> * _10MB);</span><br><span class="line">		t4.t = <span class="keyword">new</span> TestGCRoots04(<span class="number">8</span> * _10MB);</span><br><span class="line">		t4 = <span class="literal">null</span>;</span><br><span class="line">		System.gc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台打印日志：<br><figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="name">GC</span> [<span class="name">PSYoungGen:</span> <span class="number">138608</span>K-&gt;600K(<span class="name">458752K</span>)] <span class="number">138608</span>K-&gt;600K(<span class="name">983040K</span>), <span class="number">0.0015591</span> secs] [<span class="name">Times:</span> user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[<span class="name">Full</span> GC [<span class="name">PSYoungGen:</span> <span class="number">600</span>K-&gt;0K(<span class="name">458752K</span>)] [<span class="name">ParOldGen:</span> <span class="number">0</span>K-&gt;507K(<span class="name">524288K</span>)] <span class="number">600</span>K-&gt;507K(<span class="name">983040K</span>) [<span class="name">PSPermGen:</span> <span class="number">2513</span>K-&gt;2512K(<span class="name">21504K</span>)], <span class="number">0.0144441</span> secs] [<span class="name">Times:</span> user=0.06 sys=0.00, real=0.02 secs]</span><br></pre></td></tr></table></figure></p>
+<p>t4被置为null，Minor GC后t4之前引用的对象（40M）被完全回收；t为成员变量，也叫实例变量，不同于类变量（静态变量），前面讲到类变量是存储在方法区中，而成员变量是存储在堆内存的对象中的，和对象共存亡，所以是不能作为GC Roots的，从日志中也可看出t在MinorGC后，跟随t4一起被完全回收。不再占用任何空间。</p>
+<p>以上为一个非常简单的可作为GC Roots的对象的验证，不涉及较复杂的GC Roots引用链，其实作为使用者来讲，我们只要知道，哪些对象是可作为GC Roots的，在实际开发过程中要特别注意这些对象，不要让无谓的大对象消耗了资源，拖累了性能。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-java-concurrency-1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -832,70 +921,6 @@ table th:nth-of-type(1) {
           <!-- @2018-08-27 blair add
           <p class="article-more-link">
             <a href="/2016/10/25/mac-install-caffe/">Read More</a>
-          </p> 
-          @2018-08-27 blair end
-          -->
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-useful-udf" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/2016/07/28/useful-udf/"><strong>hive和presto一些好用的自定义udf函数</strong></a>
-      <small class="article-date-index">&nbsp; 2016-07-28</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/2016/07/28/useful-udf/" class="article-date">
-  <time datetime="2016-07-28T14:37:27.000Z" itemprop="datePublished">2016-07-28</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/大数据/">大数据</a>
-  </div>
-
--->
-      <!--
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看<a href="https://github.com/aaronshan/hive-third-functions" target="_blank" rel="noopener">hive-third-functions</a>和<a href="https://github.com/aaronshan/presto-third-functions" target="_blank" rel="noopener">presto-third-functions</a>）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。</p>
-         
-          <!-- @2018-08-27 blair add
-          <p class="article-more-link">
-            <a href="/2016/07/28/useful-udf/">Read More</a>
           </p> 
           @2018-08-27 blair end
           -->
