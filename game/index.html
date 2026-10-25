@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>小猪农场 · Pig Farm</title>
+<style>
+  :root{
+    --bg:#fff8f3;
+    --card:#fffdfb;
+    --ink:#4b3540;
+    --ink-soft:#9c6f80;
+    --pink:#ffc2d1;
+    --pink-deep:#f79ab0;
+    --pink-hot:#ff7fa3;
+    --line:#f2dae4;
+    --gold:#ffb454;
+    --shadow:0 10px 26px rgba(190,150,165,.16);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 520px at 4% -14%, #ffe6ef 0%, rgba(255,230,239,0) 62%),
+      radial-gradient(820px 520px at 100% 0%, #e8f5ff 0%, rgba(232,245,255,0) 58%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  button{font:inherit;color:inherit;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+  /* ---------------- 页面骨架 ---------------- */
+  .page{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 16px 22px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    animation:pageIn .32s ease both;
+  }
+  .page[hidden]{display:none}
+  @keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:18px 2px 6px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:9px;
+    font-weight:900;font-size:17px;letter-spacing:.6px;color:#a4556f;
+  }
+  .brand .badge{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(160deg,#ffd3df,#ffb0c6);
+    display:grid;place-items:center;font-size:18px;
+    box-shadow:0 4px 10px rgba(240,150,178,.4);
+  }
+
+  .btn{
+    border-radius:999px;padding:11px 20px;font-weight:800;font-size:14px;
+    transition:transform .16s ease, box-shadow .16s ease, background .16s;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:linear-gradient(160deg,#ff9db8,#ff7a9f);
+    color:#fff;box-shadow:0 8px 18px rgba(255,122,159,.34);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(255,122,159,.4)}
+  .btn-primary:active{transform:translateY(0) scale(.98)}
+  .btn-ghost{
+    background:#fff;color:#b0657e;box-shadow:0 6px 16px rgba(190,150,165,.2);
+  }
+  .btn-ghost:hover{transform:translateY(-2px)}
+
+  /* ---------------- 余额 ---------------- */
+  .wallet-chip{
+    display:flex;align-items:center;gap:9px;
+    background:#fff;border-radius:999px;padding:8px 16px 8px 10px;
+    box-shadow:0 8px 20px rgba(190,150,165,.2);
+  }
+  .wallet-chip .coin{
+    width:26px;height:26px;border-radius:50%;
+    background:linear-gradient(160deg,#ffd889,#ffb64a);
+    color:#8a5a12;font-weight:900;display:grid;place-items:center;font-size:14px;
+    box-shadow:inset 0 -2px 0 rgba(180,110,20,.25);
+  }
+  .wallet-chip .num{font-size:19px;font-weight:900;color:#e0568a;letter-spacing:.5px}
+  .wallet-chip.pop{animation:pop .45s ease}
+  @keyframes pop{0%{transform:scale(1)}38%{transform:scale(1.14)}100%{transform:scale(1)}}
+
+  /* ---------------- 第一页：大猪 ---------------- */
+  .stage{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;padding:12px 0 6px;position:relative;
+  }
+  .bigpig{
+    width:min(340px,66vw);
+    filter:drop-shadow(0 20px 26px rgba(205,150,168,.24));
+    animation:breathe 3.8s ease-in-out infinite;
+    user-select:none;
+  }
+  .bigpig.happy{animation:happyBounce .65s ease}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+  @keyframes happyBounce{
+    0%{transform:translateY(0) rotate(0)}
+    28%{transform:translateY(-12px) rotate(-3deg)}
+    58%{transform:translateY(0) rotate(3deg)}
+    100%{transform:translateY(0) rotate(0)}
+  }
+  .stage-hint{margin:0;font-size:13px;color:#bd93a4;letter-spacing:.5px}
+
+  /* ---------------- 分割线 ---------------- */
+  .divider{
+    position:relative;height:2px;margin:14px auto 16px;width:100%;
+    background:repeating-linear-gradient(90deg,#ecc9d6 0 14px,transparent 14px 30px);
+    border-radius:2px;
+  }
+  .divider::after{
+    content:"🐽";
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:var(--bg);padding:0 12px;font-size:16px;line-height:1;
+  }
+
+  /* ---------------- 格子 ---------------- */
+  .tray{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:14px;max-width:780px;width:100%;margin:0 auto;
+  }
+  .cell{
+    position:relative;
+    aspect-ratio:1/1;
+    background:var(--card);
+    border-radius:26px;
+    box-shadow:var(--shadow), inset 0 0 0 2px rgba(255,255,255,.9);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    padding:12px;
+    transition:transform .18s ease, box-shadow .18s ease;
+    overflow:hidden;
+  }
+  .cell::before{
+    content:"";position:absolute;inset:0;border-radius:26px;
+    background:linear-gradient(180deg,rgba(255,226,236,.55),rgba(255,255,255,0) 55%);
+    pointer-events:none;
+  }
+  .cell:hover{transform:translateY(-4px);box-shadow:0 18px 32px rgba(190,150,165,.24), inset 0 0 0 2px #fff}
+  .cell:active{transform:translateY(-1px) scale(.99)}
+  .cell svg{width:64%;max-width:132px;height:auto;display:block}
+  .cell-label{
+    font-size:13.5px;font-weight:800;color:var(--ink-soft);letter-spacing:1.2px;
+  }
+  .count{
+    position:absolute;top:10px;left:12px;
+    min-width:28px;height:28px;padding:0 9px;border-radius:999px;
+    background:linear-gradient(160deg,#ffd3df,#ffb4c7);
+    color:#8c4258;font-weight:900;font-size:13px;
+    display:grid;place-items:center;
+    box-shadow:0 3px 9px rgba(214,140,165,.35);
+    z-index:2;
+  }
+  .count.empty{background:#f4e6ec;color:#c3a6b2;box-shadow:none}
+  .cell-sub{font-size:11.5px;color:#c0a0ae;margin-top:-4px}
+
+  /* ---------------- 第二页：猪圈 ---------------- */
+  .page-pen{height:100vh;height:100dvh;overflow:hidden;padding-bottom:14px}
+  .pen{
+    flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+    padding:6px 4px 2px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+  .pen::-webkit-scrollbar{width:8px}
+  .pen::-webkit-scrollbar-thumb{background:#f0d3de;border-radius:8px}
+
+  .pig-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(78px,1fr));
+    gap:6px 5px;
+    padding-bottom:6px;
+  }
+  .pig{
+    position:relative;
+    border-radius:16px;
+    transition:transform .16s ease, filter .16s ease, opacity .3s ease;
+    cursor:default;
+    user-select:none;
+  }
+  .pig .art{display:block;transition:transform .25s ease}
+  .pig .pig-svg{display:block;width:100%;height:auto}
+  .pig.alive .art{animation:bob 4.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+  .pig.alive:hover{transform:translateY(-3px)}
+
+  .pig.dead .art{animation:none;transform:rotate(-6deg)}
+  .pig.dead .pig-svg{filter:grayscale(.4) brightness(.95)}
+  .pig.chopped .art{animation:chop .36s ease}
+  @keyframes chop{
+    0%{transform:rotate(0) translateY(0)}
+    25%{transform:rotate(-9deg) translateY(3px)}
+    55%{transform:rotate(6deg) translateY(1px)}
+    100%{transform:rotate(-6deg)}
+  }
+
+  .pig.dish{cursor:pointer}
+  .pig.dish .art{animation:dishIn .42s cubic-bezier(.2,.9,.3,1.4) both}
+  @keyframes dishIn{from{transform:scale(.72) translateY(8px);opacity:0}to{transform:none;opacity:1}}
+  .pig.dish:hover .art{transform:translateY(-4px) scale(1.06)}
+  .pig.selected .art{transform:translateY(-5px) scale(1.07)}
+  .pig.selected::after{
+    content:"";position:absolute;inset:-3px;border-radius:20px;
+    border:2px dashed var(--gold);background:rgba(255,196,94,.14);
+    pointer-events:none;
+  }
+  .pig.selected::before{
+    content:"✓";position:absolute;top:-4px;right:-2px;z-index:3;
+    width:17px;height:17px;border-radius:50%;background:var(--gold);
+    color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;
+    box-shadow:0 2px 6px rgba(200,130,30,.35);
+  }
+  .pig.sold{opacity:.4;cursor:default}
+  .pig.sold .art{animation:none}
+  .sold-mark{
+    aspect-ratio:1/1;width:100%;border-radius:50%;
+    border:2px dashed #e8d2dd;display:grid;place-items:center;
+    color:#cbb0bd;font-size:11px;font-weight:800;letter-spacing:1px;
+  }
+
+  .tag-wrap{
+    position:absolute;left:50%;top:64%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;
+    pointer-events:none;
+  }
+  .tag-wrap::before,.tag-wrap::after{
+    content:"";position:absolute;top:-13px;width:2px;height:15px;
+    background:linear-gradient(#dcb894,#c39a70);border-radius:2px;
+  }
+  .tag-wrap::before{left:4px;transform:rotate(18deg)}
+  .tag-wrap::after{right:4px;transform:rotate(-18deg)}
+  .tag{
+    display:block;
+    background:#fffaf3;border:1.5px solid #d9b18a;border-radius:7px;
+    padding:0 5px;height:17px;line-height:15px;
+    font-size:10.5px;font-weight:900;color:#8a5f42;letter-spacing:.2px;
+    white-space:nowrap;
+    box-shadow:0 2px 4px rgba(140,100,70,.16);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+
+  /* 第二页底部两格 */
+  .tray-2{grid-template-columns:repeat(2,1fr);gap:14px;max-width:780px}
+  .tray-2 .cell{aspect-ratio:auto;height:clamp(118px,18vh,164px);border-radius:24px;flex-direction:column;gap:6px}
+  .tray-2 .cell svg{width:auto;height:auto;max-height:78px;max-width:104px}
+  .tray-2 .cell-label{font-size:12.5px}
+
+  .cleaver-cell{cursor:grab;touch-action:none}
+  .cleaver-cell.grabbing{cursor:grabbing}
+  .cleaver-cell .hint{
+    font-size:10px;color:#c3a4b1;letter-spacing:.4px;margin-top:-4px;
+    white-space:nowrap;
+  }
+
+  .sell-cell{
+    background:linear-gradient(170deg,#fff5f6,#ffe9ef);
+    justify-content:center;
+  }
+  .sell-cell .char{
+    font-family:"Songti SC","STSong","Noto Serif SC",serif;
+    font-size:clamp(46px,11vw,74px);font-weight:900;line-height:1;
+    color:#d84b6c;
+    text-shadow:0 3px 0 #ffd0da, 0 8px 16px rgba(216,75,108,.22);
+    transition:transform .18s ease;
+  }
+  .sell-cell:hover .char{transform:scale(1.06) rotate(-2deg)}
+  .sell-cell.ready{
+    background:linear-gradient(170deg,#fff3d9,#ffe2b8);
+    box-shadow:0 12px 26px rgba(240,170,70,.32), inset 0 0 0 2px #ffe6bd;
+    animation:readyPulse 1.5s ease-in-out infinite;
+  }
+  .sell-cell.ready .char{color:#d97a12;text-shadow:0 3px 0 #ffe6bd}
+  @keyframes readyPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .sell-cell .price-tag{
+    position:absolute;top:10px;right:12px;
+    background:#fff;border-radius:999px;padding:3px 9px;
+    font-size:10.5px;font-weight:800;color:#cf7a92;
+    box-shadow:0 2px 6px rgba(190,150,165,.2);
+  }
+
+  /* ---------------- 拖拽幽灵 ---------------- */
+  .ghost{
+    position:fixed;width:118px;height:118px;z-index:60;
+    pointer-events:none;
+    transform:translate(-26%,-62%) rotate(-16deg);
+    filter:drop-shadow(0 14px 16px rgba(120,70,90,.3));
+  }
+  .ghost svg{width:100%;height:100%}
+
+  /* ---------------- 飘字 ---------------- */
+  .float{
+    position:fixed;transform:translate(-50%,-50%);
+    font-weight:900;font-size:22px;color:#ef6f8f;
+    text-shadow:0 2px 0 #fff;
+    pointer-events:none;z-index:90;
+    animation:floatUp .95s cubic-bezier(.2,.8,.3,1) forwards;
+  }
+  @keyframes floatUp{
+    0%{opacity:0;transform:translate(-50%,-40%) scale(.6)}
+    28%{opacity:1;transform:translate(-50%,-95%) scale(1.12)}
+    100%{opacity:0;transform:translate(-50%,-190%) scale(1)}
+  }
+
+  /* ---------------- Toast ---------------- */
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);
+    background:rgba(74,50,62,.93);color:#fff;
+    padding:11px 20px;border-radius:999px;
+    font-size:13.5px;font-weight:700;letter-spacing:.3px;
+    opacity:0;pointer-events:none;transition:opacity .22s, transform .22s;
+    z-index:100;max-width:calc(100vw - 40px);text-align:center;
+    box-shadow:0 12px 26px rgba(74,50,62,.3);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------------- 购物车弹窗 ---------------- */
+  .modal-backdrop{
+    position:fixed;inset:0;z-index:80;
+    background:rgba(96,62,78,.34);
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    display:grid;place-items:center;padding:16px;
+    animation:fadeIn .2s ease;
+  }
+  .modal-backdrop[hidden]{display:none}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  .modal{
+    width:min(430px,100%);max-height:90vh;overflow-y:auto;
+    background:#fffdfb;border-radius:28px;padding:20px 20px 16px;
+    box-shadow:0 30px 70px rgba(110,60,80,.32);
+    animation:rise .3s cubic-bezier(.2,.9,.3,1.3) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .modal-head h2{margin:0;font-size:19px;letter-spacing:1px;color:#8a4a63}
+  .modal-head .close{
+    width:32px;height:32px;border-radius:50%;background:#fdeef3;color:#b2697f;
+    font-size:14px;display:grid;place-items:center;
+  }
+  .modal-head .close:hover{background:#fbe0e9}
+
+  .wallet{
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(120deg,#fff4d8,#ffeccd);
+    border-radius:16px;padding:12px 16px;margin-bottom:14px;
+    font-size:13px;font-weight:700;color:#a8802f;
+  }
+  .wallet strong{font-size:20px;color:#d9862c;letter-spacing:.5px}
+
+  .shop-item{
+    display:flex;align-items:center;gap:12px;
+    background:#fff;border-radius:18px;padding:10px 12px;margin-bottom:10px;
+    box-shadow:0 6px 16px rgba(190,150,165,.12);
+  }
+  .shop-item .thumb{
+    width:52px;height:52px;flex:0 0 52px;border-radius:14px;
+    background:linear-gradient(160deg,#fff1f5,#ffe6ee);
+    display:grid;place-items:center;
+  }
+  .shop-item .thumb svg{width:40px;height:40px}
+  .shop-item .meta{flex:1;min-width:0}
+  .shop-item .name{font-size:14.5px;font-weight:800;color:#6d4353}
+  .shop-item .price{font-size:12px;color:#c08da0;margin-top:2px}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{
+    width:28px;height:28px;border-radius:10px;background:#fdeef3;color:#b2697f;
+    font-size:15px;font-weight:900;display:grid;place-items:center;
+    transition:background .15s;
+  }
+  .stepper button:hover{background:#fadfe8}
+  .stepper input{
+    width:42px;height:28px;text-align:center;
+    border:1.5px solid #f3dbe4;border-radius:10px;
+    font:inherit;font-size:13px;font-weight:800;color:#8a4a63;
+    background:#fff;outline:none;
+  }
+  .stepper input:focus{border-color:#ffb7ca;box-shadow:0 0 0 3px rgba(255,183,202,.25)}
+
+  .total-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 4px 4px;font-size:13.5px;font-weight:700;color:#a3778a;
+  }
+  .total-row strong{font-size:22px;color:#e0568a}
+
+  .buy-btn{
+    width:100%;margin-top:10px;padding:14px;border-radius:18px;
+    background:linear-gradient(160deg,#ff9db8,#ff779e);color:#fff;
+    font-weight:900;font-size:15px;letter-spacing:1px;
+    box-shadow:0 10px 22px rgba(255,119,158,.34);
+    transition:transform .16s, filter .16s;
+  }
+  .buy-btn:hover{transform:translateY(-2px)}
+  .buy-btn:active{transform:translateY(0) scale(.99)}
+  .buy-btn.insufficient{
+    background:linear-gradient(160deg,#e9dbe1,#dcccd4);
+    box-shadow:none;color:#9d8590;
+  }
+  .reset-btn{
+    width:100%;margin-top:8px;padding:9px;border-radius:14px;
+    font-size:11.5px;font-weight:700;color:#c5a8b5;
+  }
+  .reset-btn:hover{color:#d98ba4;background:#fdf1f5}
+
+  .shake{animation:shake .38s ease}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    22%{transform:translateX(-7px)}
+    48%{transform:translateX(6px)}
+    72%{transform:translateX(-3px)}
+  }
+
+  @media (max-width:560px){
+    .page{padding:0 12px 16px}
+    .tray{gap:9px}
+    .cell{border-radius:20px;padding:8px}
+    .cell svg{width:66%}
+    .cell-label{font-size:11.5px;letter-spacing:.6px}
+    .count{top:8px;left:8px;min-width:24px;height:24px;font-size:11.5px;padding:0 7px}
+    .cell-sub{display:none}
+    .brand{font-size:15px}
+    .btn{padding:10px 15px;font-size:13px}
+    .pig-grid{grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px 4px}
+    .tag{font-size:9.5px;height:15px;line-height:13px;padding:0 4px}
+    .tray-2 .cell{height:clamp(104px,15vh,134px);gap:4px}
+    .tray-2 .cell svg{max-height:60px;max-width:80px}
+    .tray-2 .cell-label{font-size:11.5px}
+    .cleaver-cell .hint{font-size:9px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== 第一页 ==================== -->
+<section class="page" id="page1">
+  <header class="topbar">
+    <div class="brand"><span class="badge">🐷</span>小猪农场</div>
+    <button class="btn btn-primary" id="toPage2">去养肥它们 →</button>
+  </header>
+
+  <div class="stage">
+    <div class="bigpig" id="bigpig"></div>
+    <p class="stage-hint" id="stageHint">今天也想吃点好吃的…</p>
+  </div>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <div class="tray">
+    <button class="cell" id="foodCell" aria-label="食物">
+      <span class="count" id="foodCount">0</span>
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <ellipse cx="60" cy="96" rx="42" ry="8" fill="rgba(150,110,80,.12)"/>
+        <circle cx="44" cy="46" r="13" fill="#ff9070"/>
+        <circle cx="40" cy="42" r="4" fill="#ffb69c" opacity=".8"/>
+        <path d="M44 34c0-4 2-6 5-7" stroke="#8a5f42" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M44 34c-2-4-6-5-8-4 0 4 3 6 8 4z" fill="#79bf72"/>
+        <path d="M66 60l14-24 11 7-16 21z" fill="#ffb14e"/>
+        <path d="M69 56l9-15" stroke="#ffd18f" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M74 46l7-4" stroke="#79bf72" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M28 58c6-10 20-11 27-3" stroke="#79bf72" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M18 64h84l-7 25a9 9 0 0 1-9 7H34a9 9 0 0 1-9-7z" fill="#e3b489"/>
+        <rect x="14" y="58" width="92" height="11" rx="5.5" fill="#c99a6d"/>
+      </svg>
+      <span class="cell-label">食物</span>
+      <span class="cell-sub">点一下喂食</span>
+    </button>
+
+    <button class="cell" id="waterCell" aria-label="水盆">
+      <span class="count" id="waterCount">0</span>
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <ellipse cx="60" cy="96" rx="40" ry="8" fill="rgba(90,150,190,.14)"/>
+        <path d="M16 56h88c0 23-19 36-44 36S16 79 16 56z" fill="#c6e6f8"/>
+        <path d="M16 56h88c0 23-19 36-44 36S16 79 16 56z" fill="none" stroke="#9ecfe9" stroke-width="2.5"/>
+        <ellipse cx="60" cy="56" rx="44" ry="11" fill="#9ad3f2"/>
+        <ellipse cx="60" cy="55" rx="35" ry="7.5" fill="#cdeeff"/>
+        <path d="M42 52c5-2.5 10-2.5 15 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>
+        <path d="M84 28c4 6 7 10 7 13a7 7 0 1 1-14 0c0-3 3-7 7-13z" fill="#7fc9ef" opacity=".85"/>
+      </svg>
+      <span class="cell-label">水盆</span>
+      <span class="cell-sub">点一下加水</span>
+    </button>
+
+    <button class="cell" id="cartCell" aria-label="购物车">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M18 26h11l9 36h50l10-31H44" fill="none" stroke="#e8849f" stroke-width="6.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M44 44h47l-8 20H51z" fill="#ffc2d3"/>
+        <circle cx="50" cy="88" r="8.5" fill="#e8849f"/>
+        <circle cx="82" cy="88" r="8.5" fill="#e8849f"/>
+        <circle cx="50" cy="88" r="3" fill="#fff"/>
+        <circle cx="82" cy="88" r="3" fill="#fff"/>
+      </svg>
+      <span class="cell-label">购物车</span>
+      <span class="cell-sub" id="cartHint">余额 ¥0</span>
+    </button>
+  </div>
+</section>
+
+<!-- ==================== 第二页 ==================== -->
+<section class="page page-pen" id="page2" hidden>
+  <header class="topbar">
+    <button class="btn btn-ghost" id="toPage1">← 回猪圈</button>
+    <div class="wallet-chip" id="walletChip">
+      <span class="coin">¥</span>
+      <span class="num" id="balanceNum">0</span>
+    </div>
+  </header>
+
+  <div class="pen" id="pen">
+    <div class="pig-grid" id="pigGrid"></div>
+  </div>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <div class="tray tray-2">
+    <div class="cell cleaver-cell" id="cleaverCell" role="button" tabindex="0" aria-label="菜刀，拖到小猪身上">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <rect x="14" y="30" width="58" height="46" rx="8" fill="#e2ebf1" stroke="#aebdc9" stroke-width="2.5"/>
+        <path d="M14 67h58v1a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="#c3d1db"/>
+        <path d="M22 40h32" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>
+        <rect x="70" y="41" width="35" height="15" rx="7.5" fill="#8a5a35"/>
+        <rect x="76" y="44" width="4" height="9" rx="2" fill="#6a4226"/>
+        <circle cx="98" cy="48.5" r="3" fill="#6a4226"/>
+      </svg>
+      <span class="cell-label">菜刀</span>
+      <span class="hint">拖到小猪身上</span>
+    </div>
+
+    <button class="cell sell-cell" id="sellCell" aria-label="卖红烧肉">
+      <span class="price-tag">¥3 / 只</span>
+      <span class="char">卖</span>
+      <span class="cell-label" id="sellLabel">先点红烧肉</span>
+    </button>
+  </div>
+</section>
+
+<!-- ==================== 购物车弹窗 ==================== -->
+<div class="modal-backdrop" id="cartModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="购物车">
+    <div class="modal-head">
+      <h2>购物车</h2>
+      <button class="close" id="closeCart" aria-label="关闭">✕</button>
+    </div>
+
+    <div class="wallet">
+      <span>我的余额</span>
+      <strong id="cartBalance">¥0</strong>
+    </div>
+
+    <div class="shop-item">
+      <div class="thumb">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="46" cy="46" r="15" fill="#ff9070"/>
+          <path d="M46 32c-2-5-7-6-10-5 0 5 4 7 10 5z" fill="#79bf72"/>
+          <path d="M68 62l15-26 12 8-17 23z" fill="#ffb14e"/>
+          <path d="M22 66h80l-7 24a9 9 0 0 1-9 7H38a9 9 0 0 1-9-7z" fill="#e3b489"/>
+          <rect x="18" y="60" width="88" height="11" rx="5.5" fill="#c99a6d"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="name">食物</div>
+        <div class="price">¥2 / 份</div>
+      </div>
+      <div class="stepper">
+        <button data-act="minus" data-item="food" aria-label="减少食物">−</button>
+        <input type="number" id="qtyFood" data-item="food" value="1" min="0" max="99" inputmode="numeric" aria-label="食物数量" />
+        <button data-act="plus" data-item="food" aria-label="增加食物">+</button>
+      </div>
+    </div>
+
+    <div class="shop-item">
+      <div class="thumb">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <path d="M18 58h84c0 22-18 34-42 34S18 80 18 58z" fill="#c6e6f8"/>
+          <ellipse cx="60" cy="58" rx="42" ry="10.5" fill="#9ad3f2"/>
+          <ellipse cx="60" cy="57" rx="33" ry="7" fill="#cdeeff"/>
+          <path d="M44 54c5-2.5 10-2.5 15 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="name">水</div>
+        <div class="price">¥1 / 份</div>
+      </div>
+      <div class="stepper">
+        <button data-act="minus" data-item="water" aria-label="减少水">−</button>
+        <input type="number" id="qtyWater" data-item="water" value="1" min="0" max="99" inputmode="numeric" aria-label="水的数量" />
+        <button data-act="plus" data-item="water" aria-label="增加水">+</button>
+      </div>
+    </div>
+
+    <div class="total-row">
+      <span>合计</span>
+      <strong id="cartTotal">¥3</strong>
+    </div>
+    <button class="buy-btn" id="buyBtn">确认购买 ¥3</button>
+    <button class="reset-btn" id="resetBtn">重置游戏进度</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  const PIG_TOTAL   = 52;
+  const PRICE_FOOD  = 2;
+  const PRICE_WATER = 1;
+  const PRICE_PIG   = 3;
+  const COOK_MS     = 3000;
+  const SAVE_KEY    = 'pig-farm-save-v1';
+
+  /* ================= 状态 ================= */
+  const freshState = () => ({
+    balance: 0,
+    food: 0,
+    water: 0,
+    pigs: new Array(PIG_TOTAL).fill('alive')
+  });
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return freshState();
+      const s = JSON.parse(raw);
+      if (!s || !Array.isArray(s.pigs) || s.pigs.length !== PIG_TOTAL) return freshState();
+      const ok = ['alive', 'dead', 'dish', 'sold'];
+      return {
+        balance: Math.max(0, Number(s.balance) || 0),
+        food: Math.max(0, Number(s.food) || 0),
+        water: Math.max(0, Number(s.water) || 0),
+        pigs: s.pigs.map(v => (ok.includes(v) ? v : 'alive'))
+      };
+    } catch (e) {
+      return freshState();
+    }
+  }
+
+  function save() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) { /* 忽略 */ }
+  }
+
+  let state = loadState();
+
+  /* ================= 图形 ================= */
+  function smallPigSVG(isDead) {
+    const eyes = isDead
+      ? `<path d="M42 41l9 9M51 41l-9 9" stroke="#5b3a45" stroke-width="3" stroke-linecap="round"/>
+         <path d="M69 41l9 9M78 41l-9 9" stroke="#5b3a45" stroke-width="3" stroke-linecap="round"/>`
+      : `<circle cx="45" cy="44" r="4" fill="#5b3a45"/><circle cx="75" cy="44" r="4" fill="#5b3a45"/>
+         <circle cx="46.4" cy="42.6" r="1.4" fill="#fff"/><circle cx="76.4" cy="42.6" r="1.4" fill="#fff"/>`;
+
+    return `<svg viewBox="0 0 120 120" class="pig-svg" aria-hidden="true">
+      <ellipse cx="60" cy="110" rx="38" ry="6.5" fill="rgba(120,80,90,.10)"/>
+      <path d="M102 68c9-4 14 3 10 9-3 5-10 3-10-3" fill="none" stroke="#f79ab0" stroke-width="4.5" stroke-linecap="round"/>
+      <rect x="33" y="82" width="15" height="20" rx="7" fill="#f79ab0"/>
+      <rect x="70" y="82" width="15" height="20" rx="7" fill="#f79ab0"/>
+      <ellipse cx="60" cy="70" rx="43" ry="30" fill="#ffc0d0"/>
+      <path d="M37 37c-7-11-8-21-4-27 9 3 17 11 21 22z" fill="#f79ab0"/>
+      <path d="M83 37c7-11 8-21 4-27-9 3-17 11-21 22z" fill="#f79ab0"/>
+      <path d="M39 34c-5-8-6-15-4-19 6 3 12 9 15 17z" fill="#eb87a1"/>
+      <path d="M81 34c5-8 6-15 4-19-6 3-12 9-15 17z" fill="#eb87a1"/>
+      <ellipse cx="60" cy="49" rx="32" ry="27" fill="#ffc9d6"/>
+      ${eyes}
+      <ellipse cx="60" cy="62" rx="12.5" ry="8.5" fill="#f79ab0"/>
+      <ellipse cx="55.5" cy="62" rx="2.1" ry="2.7" fill="#dd7f99"/>
+      <ellipse cx="64.5" cy="62" rx="2.1" ry="2.7" fill="#dd7f99"/>
+      <ellipse cx="35" cy="58" rx="6.5" ry="4" fill="#ff9ab2" opacity=".5"/>
+      <ellipse cx="85" cy="58" rx="6.5" ry="4" fill="#ff9ab2" opacity=".5"/>
+    </svg>`;
+  }
+
+  function dishSVG() {
+    return `<svg viewBox="0 0 120 120" class="pig-svg" aria-hidden="true">
+      <ellipse cx="60" cy="100" rx="42" ry="7" fill="rgba(120,80,60,.14)"/>
+      <path d="M52 40c-7-8 4-12 0-21" stroke="#ffd9c2" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".95">
+        <animate attributeName="opacity" values=".9;.15;.9" dur="2.6s" repeatCount="indefinite"/>
+      </path>
+      <path d="M72 42c-6-7 3-11 0-18" stroke="#ffd9c2" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8">
+        <animate attributeName="opacity" values=".2;.85;.2" dur="3.1s" repeatCount="indefinite"/>
+      </path>
+      <ellipse cx="60" cy="78" rx="46" ry="22" fill="#ffffff" stroke="#f0dde3" stroke-width="2"/>
+      <ellipse cx="60" cy="75" rx="34" ry="15" fill="#fff7f9"/>
+      <rect x="34" y="62" width="23" height="21" rx="6" fill="#a94e26" transform="rotate(-6 45 72)"/>
+      <rect x="56" y="58" width="25" height="23" rx="6" fill="#c9662f" transform="rotate(5 68 69)"/>
+      <rect x="50" y="72" width="27" height="20" rx="6" fill="#b4562b"/>
+      <path d="M38 67h15" stroke="#e8a273" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M60 63h16" stroke="#f0b98d" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M55 78h18" stroke="#e8a273" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="45" cy="84" r="2.4" fill="#7bc47f"/>
+      <circle cx="74" cy="86" r="2.4" fill="#7bc47f"/>
+      <circle cx="84" cy="76" r="2" fill="#7bc47f"/>
+    </svg>`;
+  }
+
+  const cleaverSVG = () => `<svg viewBox="0 0 120 120" aria-hidden="true">
+      <rect x="14" y="30" width="58" height="46" rx="8" fill="#e2ebf1" stroke="#aebdc9" stroke-width="2.5"/>
+      <path d="M14 67h58v1a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="#c3d1db"/>
+      <path d="M22 40h32" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>
+      <rect x="70" y="41" width="35" height="15" rx="7.5" fill="#8a5a35"/>
+      <rect x="76" y="44" width="4" height="9" rx="2" fill="#6a4226"/>
+      <circle cx="98" cy="48.5" r="3" fill="#6a4226"/>
+    </svg>`;
+
+  const bigPigSVG = () => `<svg viewBox="0 0 320 280" aria-hidden="true">
+      <defs>
+        <radialGradient id="bigPigGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe0e9" stop-opacity=".9"/>
+          <stop offset="100%" stop-color="#ffe0e9" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="160" cy="250" rx="112" ry="17" fill="rgba(140,95,110,.10)"/>
+      <path d="M268 158c18-8 28 5 20 18-6 10-20 6-20-6" fill="none" stroke="#f79ab0" stroke-width="9" stroke-linecap="round"/>
+      <rect x="92" y="206" width="43" height="46" rx="19" fill="#f79ab0"/>
+      <rect x="186" y="206" width="43" height="46" rx="19" fill="#f79ab0"/>
+      <rect x="92" y="235" width="43" height="17" rx="8.5" fill="#e77f99"/>
+      <rect x="186" y="235" width="43" height="17" rx="8.5" fill="#e77f99"/>
+      <ellipse cx="160" cy="172" rx="108" ry="72" fill="#ffc0d0"/>
+      <ellipse cx="130" cy="148" rx="66" ry="50" fill="url(#bigPigGlow)"/>
+      <path d="M106 90c-16-24-20-46-12-60 22 6 44 26 56 46z" fill="#f79ab0"/>
+      <path d="M214 90c16-24 20-46 12-60-22 6-44 26-56 46z" fill="#f79ab0"/>
+      <path d="M112 80c-11-18-14-34-9-43 15 6 30 20 38 34z" fill="#eb87a1"/>
+      <path d="M208 80c11-18 14-34 9-43-15 6-30 20-38 34z" fill="#eb87a1"/>
+      <ellipse cx="160" cy="110" rx="80" ry="66" fill="#ffc9d6"/>
+      <ellipse cx="132" cy="86" rx="22" ry="14" fill="#ffd9e2" opacity=".85"/>
+      <circle cx="132" cy="102" r="9" fill="#5b3a45"/>
+      <circle cx="188" cy="102" r="9" fill="#5b3a45"/>
+      <circle cx="135" cy="98.5" r="3.2" fill="#fff"/>
+      <circle cx="191" cy="98.5" r="3.2" fill="#fff"/>
+      <ellipse cx="160" cy="136" rx="32" ry="21" fill="#f79ab0"/>
+      <ellipse cx="150" cy="136" rx="5" ry="6.5" fill="#db7c97"/>
+      <ellipse cx="170" cy="136" rx="5" ry="6.5" fill="#db7c97"/>
+      <ellipse cx="92" cy="128" rx="16" ry="10" fill="#ff9ab2" opacity=".5"/>
+      <ellipse cx="228" cy="128" rx="16" ry="10" fill="#ff9ab2" opacity=".5"/>
+      <path d="M146 168c8 6 20 6 28 0" stroke="#ef95ae" stroke-width="4" fill="none" stroke-linecap="round" opacity=".65"/>
+    </svg>`;
+
+  /* ================= 元素 ================= */
+  const page1      = $('#page1');
+  const page2      = $('#page2');
+  const bigpig     = $('#bigpig');
+  const stageHint  = $('#stageHint');
+  const foodCell   = $('#foodCell');
+  const waterCell  = $('#waterCell');
+  const cartCell   = $('#cartCell');
+  const foodCount  = $('#foodCount');
+  const waterCount = $('#waterCount');
+  const cartHint   = $('#cartHint');
+  const walletChip = $('#walletChip');
+  const balanceNum = $('#balanceNum');
+  const grid       = $('#pigGrid');
+  const cleaverCell= $('#cleaverCell');
+  const sellCell   = $('#sellCell');
+  const sellLabel  = $('#sellLabel');
+  const cartModal  = $('#cartModal');
+  const cartBalance= $('#cartBalance');
+  const cartTotalEl= $('#cartTotal');
+  const buyBtn     = $('#buyBtn');
+  const qtyInputs  = { food: $('#qtyFood'), water: $('#qtyWater') };
+  const toastEl    = $('#toast');
+
+  bigpig.innerHTML = bigPigSVG();
+
+  /* ================= 提示 ================= */
+  let toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1900);
+  }
+
+  function bump(el) {
+    el.classList.remove('shake');
+    void el.offsetWidth;
+    el.classList.add('shake');
+  }
+
+  function floatText(text, x, y) {
+    const s = document.createElement('div');
+    s.className = 'float';
+    s.textContent = text;
+    s.style.left = x + 'px';
+    s.style.top = y + 'px';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1000);
+  }
+
+  function floatFrom(el, text) {
+    const r = el.getBoundingClientRect();
+    floatText(text, r.left + r.width / 2, r.top + r.height * 0.3);
+  }
+
+  /* ================= 页面切换 ================= */
+  function showPage(n) {
+    page1.hidden = n !== 1;
+    page2.hidden = n !== 2;
+    if (n === 1) renderPage1();
+    if (n === 2) renderBalance();
+  }
+  $('#toPage2').addEventListener('click', () => showPage(2));
+  $('#toPage1').addEventListener('click', () => showPage(1));
+
+  /* ================= 余额 / 库存 ================= */
+  function renderBalance(pop) {
+    balanceNum.textContent = state.balance;
+    cartBalance.textContent = '¥' + state.balance;
+    cartHint.textContent = '余额 ¥' + state.balance;
+    if (pop) {
+      walletChip.classList.remove('pop');
+      void walletChip.offsetWidth;
+      walletChip.classList.add('pop');
+    }
+  }
+
+  function renderInventory() {
+    foodCount.textContent = state.food;
+    waterCount.textContent = state.water;
+    foodCount.classList.toggle('empty', state.food === 0);
+    waterCount.classList.toggle('empty', state.water === 0);
+  }
+
+  function renderPage1() {
+    renderBalance(false);
+    renderInventory();
+  }
+
+  /* ================= 大猪互动 ================= */
+  function pigHappy(face) {
+    bigpig.classList.remove('happy');
+    void bigpig.offsetWidth;
+    bigpig.classList.add('happy');
+    setTimeout(() => bigpig.classList.remove('happy'), 700);
+    floatFrom(bigpig, face);
+    stageHint.textContent = face === '🥤' ? '咕嘟咕嘟～喝水真舒服' : '吧唧吧唧～谢谢！';
+    setTimeout(() => { stageHint.textContent = '今天也想吃点好吃的…'; }, 2200);
+  }
+
+  foodCell.addEventListener('click', () => {
+    if (state.food > 0) {
+      state.food -= 1;
+      save();
+      renderInventory();
+      pigHappy('🍎');
+      toast('喂了一份食物，食物 -1');
+    } else {
+      openCart();
+      toast('食物吃完啦，先去购物车买一点');
+    }
+  });
+
+  waterCell.addEventListener('click', () => {
+    if (state.water > 0) {
+      state.water -= 1;
+      save();
+      renderInventory();
+      pigHappy('🥤');
+      toast('加了一份水，水 -1');
+    } else {
+      openCart();
+      toast('水盆空啦，先去购物车买一点');
+    }
+  });
+
+  /* ================= 购物车 ================= */
+  let qty = { food: 1, water: 1 };
+
+  function openCart() {
+    qty = { food: 1, water: 1 };
+    qtyInputs.food.value = 1;
+    qtyInputs.water.value = 1;
+    renderCart();
+    cartModal.hidden = false;
+  }
+
+  function closeCart() {
+    cartModal.hidden = true;
+  }
+
+  const totalPrice = () => qty.food * PRICE_FOOD + qty.water * PRICE_WATER;
+
+  function renderCart() {
+    Object.keys(qty).forEach(k => {
+      const input = qtyInputs[k];
+      if (document.activeElement !== input) input.value = qty[k];
+    });
+    cartBalance.textContent = '¥' + state.balance;
+    const total = totalPrice();
+    cartTotalEl.textContent = '¥' + total;
+    const poor = total > state.balance;
+    buyBtn.classList.toggle('insufficient', poor);
+    buyBtn.textContent = poor ? '余额不足（差 ¥' + (total - state.balance) + '）' : '确认购买 ¥' + total;
+  }
+
+  cartCell.addEventListener('click', openCart);
+  $('#closeCart').addEventListener('click', closeCart);
+  cartModal.addEventListener('click', e => {
+    if (e.target === cartModal) closeCart();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !cartModal.hidden) closeCart();
+  });
+
+  cartModal.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const item = btn.dataset.item;
+    const step = btn.dataset.act === 'plus' ? 1 : -1;
+    qty[item] = Math.max(0, Math.min(99, qty[item] + step));
+    renderCart();
+  });
+
+  cartModal.addEventListener('input', e => {
+    const input = e.target.closest('input[data-item]');
+    if (!input) return;
+    const item = input.dataset.item;
+    const v = parseInt(input.value, 10);
+    qty[item] = Number.isFinite(v) ? Math.max(0, Math.min(99, v)) : 0;
+    const total = totalPrice();
+    cartTotalEl.textContent = '¥' + total;
+    const poor = total > state.balance;
+    buyBtn.classList.toggle('insufficient', poor);
+    buyBtn.textContent = poor ? '余额不足（差 ¥' + (total - state.balance) + '）' : '确认购买 ¥' + total;
+  });
+
+  cartModal.addEventListener('blur', e => {
+    const input = e.target.closest && e.target.closest('input[data-item]');
+    if (input) input.value = qty[input.dataset.item];
+  }, true);
+
+  buyBtn.addEventListener('click', () => {
+    const total = totalPrice();
+    if (total <= 0) {
+      toast('先选一下数量吧～');
+      bump(buyBtn);
+      return;
+    }
+    if (total > state.balance) {
+      toast('余额不够啦，去第二页卖点红烧肉 💰');
+      bump(buyBtn);
+      return;
+    }
+    const addFood = qty.food;
+    const addWater = qty.water;
+    state.balance -= total;
+    state.food += addFood;
+    state.water += addWater;
+    save();
+    renderBalance(true);
+    renderInventory();
+    qty = { food: 1, water: 1 };
+    qtyInputs.food.value = 1;
+    qtyInputs.water.value = 1;
+    const parts = [];
+    if (addFood) parts.push('食物 +' + addFood);
+    if (addWater) parts.push('水 +' + addWater);
+    closeCart();
+    toast('买到啦！' + parts.join('，') + '（花费 ¥' + total + '）');
+    pigHappy('🎁');
+  });
+
+  $('#resetBtn').addEventListener('click', () => {
+    if (!confirm('确定要重置游戏进度吗？余额、食物、水和所有小猪都会复原。')) return;
+    state = freshState();
+    selected = null;
+    cookTimers.forEach(t => clearTimeout(t));
+    cookTimers.clear();
+    save();
+    renderPage1();
+    renderBalance(false);
+    paintAllPigs();
+    refreshSelection();
+    closeCart();
+    toast('已重置，一切从头开始 🐷');
+  });
+
+  /* ================= 猪圈 ================= */
+  const pigEls = [];
+  const cookTimers = new Map();
+  let selected = null;
+
+  function buildGrid() {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < PIG_TOTAL; i++) {
+      const el = document.createElement('div');
+      el.className = 'pig alive';
+      el.dataset.idx = String(i);
+      el.innerHTML = `<div class="art" style="animation-delay:-${(i % 7) * 0.42}s">${smallPigSVG(false)}</div>
+        <div class="tag-wrap"><span class="tag">3-${i + 1}</span></div>`;
+      el.addEventListener('click', () => onPigClick(i));
+      frag.appendChild(el);
+      pigEls.push(el);
+    }
+    grid.appendChild(frag);
+  }
+
+  function paintPig(i) {
+    const el = pigEls[i];
+    const st = state.pigs[i];
+    const art = el.querySelector('.art');
+    const tag = el.querySelector('.tag-wrap');
+
+    el.classList.remove('alive', 'dead', 'dish', 'sold', 'selected');
+
+    if (st === 'alive' || st === 'dead') {
+      art.innerHTML = smallPigSVG(st === 'dead');
+      tag.style.display = '';
+    } else if (st === 'dish') {
+      art.innerHTML = dishSVG();
+      tag.style.display = 'none';
+    } else {
+      art.innerHTML = '<div class="sold-mark">已售</div>';
+      tag.style.display = 'none';
+    }
+    el.classList.add(st);
+    if (st === 'dish' && selected === i) el.classList.add('selected');
+  }
+
+  function paintAllPigs() {
+    for (let i = 0; i < PIG_TOTAL; i++) paintPig(i);
+  }
+
+  function killPig(i) {
+    if (state.pigs[i] !== 'alive') return;
+    state.pigs[i] = 'dead';
+    save();
+    paintPig(i);
+    const el = pigEls[i];
+    el.classList.add('chopped');
+    setTimeout(() => el.classList.remove('chopped'), 400);
+    floatFrom(el, '💥');
+    scheduleCook(i);
+    toast('3-' + (i + 1) + ' 被砍倒了，3 秒后变红烧肉…');
+  }
+
+  function scheduleCook(i) {
+    clearTimeout(cookTimers.get(i));
+    const timer = setTimeout(() => {
+      cookTimers.delete(i);
+      if (state.pigs[i] !== 'dead') return;
+      state.pigs[i] = 'dish';
+      save();
+      paintPig(i);
+    }, COOK_MS);
+    cookTimers.set(i, timer);
+  }
+
+  function refreshSelection() {
+    pigEls.forEach((el, i) => {
+      el.classList.toggle('selected', state.pigs[i] === 'dish' && selected === i);
+    });
+    const ready = selected !== null && state.pigs[selected] === 'dish';
+    sellCell.classList.toggle('ready', ready);
+    sellLabel.textContent = ready ? '卖掉 3-' + (selected + 1) : '先点红烧肉';
+  }
+
+  function onPigClick(i) {
+    if (state.pigs[i] !== 'dish') return;
+    selected = selected === i ? null : i;
+    refreshSelection();
+    if (selected !== null) toast('选中 3-' + (i + 1) + ' 的红烧肉，再点右边的「卖」');
+  }
+
+  sellCell.addEventListener('click', () => {
+    if (selected === null || state.pigs[selected] !== 'dish') {
+      toast('先点一盘红烧肉，再点「卖」～');
+      bump(sellCell);
+      return;
+    }
+    const i = selected;
+    state.pigs[i] = 'sold';
+    state.balance += PRICE_PIG;
+    selected = null;
+    save();
+    paintPig(i);
+    refreshSelection();
+    renderBalance(true);
+    floatFrom(sellCell, '+¥' + PRICE_PIG);
+    toast('卖出 3-' + (i + 1) + ' 的红烧肉，收入 ¥' + PRICE_PIG);
+  });
+
+  /* ================= 菜刀拖拽 ================= */
+  let ghost = null;
+  let dragging = false;
+
+  function moveGhost(x, y) {
+    if (!ghost) return;
+    ghost.style.left = x + 'px';
+    ghost.style.top = y + 'px';
+  }
+
+  function onDragMove(e) {
+    if (dragging) moveGhost(e.clientX, e.clientY);
+  }
+
+  function startDrag(x, y) {
+    if (dragging) return;
+    dragging = true;
+    ghost = document.createElement('div');
+    ghost.className = 'ghost';
+    ghost.innerHTML = cleaverSVG();
+    document.body.appendChild(ghost);
+    moveGhost(x, y);
+    cleaverCell.classList.add('grabbing');
+    document.body.style.userSelect = 'none';
+    window.addEventListener('pointermove', onDragMove);
+    window.addEventListener('pointerup', endDrag, { once: true });
+    window.addEventListener('pointercancel', endDrag, { once: true });
+    window.addEventListener('blur', cancelDrag, { once: true });
+  }
+
+  function cancelDrag() {
+    if (!dragging) return;
+    dragging = false;
+    window.removeEventListener('pointermove', onDragMove);
+    cleaverCell.classList.remove('grabbing');
+    document.body.style.userSelect = '';
+    if (ghost) { ghost.remove(); ghost = null; }
+  }
+
+  function endDrag(e) {
+    if (!dragging) return;
+    const x = Number(e.clientX);
+    const y = Number(e.clientY);
+    cancelDrag();
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+    const hit = document.elementFromPoint(x, y);
+    const target = hit && hit.closest ? hit.closest('.pig') : null;
+    if (!target) return;
+
+    const i = Number(target.dataset.idx);
+    const st = state.pigs[i];
+    if (st === 'alive') {
+      killPig(i);
+    } else if (st === 'dead') {
+      toast('它已经倒下啦，再等几秒就是红烧肉～');
+    } else if (st === 'dish') {
+      toast('红烧肉做好了，点它再点「卖」');
+    } else {
+      toast('这只已经卖掉了');
+    }
+  }
+
+  cleaverCell.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+  });
+
+  cleaverCell.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toast('用鼠标（或手指）把菜刀拖到小猪身上就行～');
+    }
+  });
+
+  /* ================= 初始化 ================= */
+  buildGrid();
+  paintAllPigs();
+  state.pigs.forEach((st, i) => {
+    if (st === 'dead') scheduleCook(i);
+  });
+  refreshSelection();
+  renderPage1();
+  renderBalance(false);
+})();
+</script>
+</body>
+</html>
