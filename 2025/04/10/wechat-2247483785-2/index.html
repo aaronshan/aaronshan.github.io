@@ -1,579 +1,579 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>AI Agent协议A2A交互细节详解 | 中龄程序猿</title><meta name="description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><link rel="canonical" href="https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="AI Agent协议A2A交互细节详解 | 中龄程序猿"><meta property="og:description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><meta property="og:url" content="https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="AI Agent协议A2A交互细节详解 | 中龄程序猿"><meta name="twitter:description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"AI Agent协议A2A交互细节详解","description":"谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。","datePublished":"2025-04-10T05:27:16.000Z","dateModified":"2025-04-10T05:27:16.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DGiiUSPI.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>AI Agent协议A2A交互细节详解</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">AI Agent协议A2A交互细节详解</h1><p class="article-desc">谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2025-04-10T05:27:16.000Z">2025-04-10</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>7 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483785-2/cover.jpg" alt="AI Agent协议A2A交互细节详解"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="概要">概要</h2>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>AI Agent协议A2A交互细节详解 | 中龄程序猿</title><meta name="description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><link rel="canonical" href="https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="AI Agent协议A2A交互细节详解 | 中龄程序猿"><meta property="og:description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><meta property="og:url" content="https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="AI Agent协议A2A交互细节详解 | 中龄程序猿"><meta name="twitter:description" content="谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"AI Agent协议A2A交互细节详解","description":"谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。","datePublished":"2025-04-10T05:27:16.000Z","dateModified":"2025-04-10T05:27:16.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2025/04/10/wechat-2247483785-2/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483785-2/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>AI Agent协议A2A交互细节详解</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">AI Agent协议A2A交互细节详解</h1><p class="article-desc">谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2025-04-10T05:27:16.000Z">2025-04-10</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>7 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483785-2/cover.jpg" alt="AI Agent协议A2A交互细节详解"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="概要">概要</h2>
 <p>谷歌面向多Agent场景，发布了A2A协议（Agent2Agent），该协议将使 AI Agents 能够相互通信，安全地交换信息，并在各种企业平台或应用程序之上协调行动。本文是之前一篇文章的细节补充。</p>
 <h2 id="示例方法和-json-响应">示例方法和 JSON 响应</h2>
 <p>以下是整个交互过程的详细示例说明。</p>
 <h3 id="agentcard">AgentCard</h3>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{</span></span>
-<span class="line"><span>"name":"谷歌地图代理",</span></span>
-<span class="line"><span>"description":"规划路线、记住地点并生成导航",</span></span>
-<span class="line"><span>"url":"https://maps-agent.google.com",</span></span>
-<span class="line"><span>"provider":{</span></span>
-<span class="line"><span>    "organization":"Google",</span></span>
-<span class="line"><span>    "url":"https://google.com"</span></span>
-<span class="line"><span>},</span></span>
-<span class="line"><span>"version":"1.0.0",</span></span>
-<span class="line"><span>"authentication":{</span></span>
-<span class="line"><span>    "schemes":"OAuth2"</span></span>
-<span class="line"><span>},</span></span>
-<span class="line"><span>"defaultInputModes":["text/plain"],</span></span>
-<span class="line"><span>"defaultOutputModes":["text/plain","application/html"],</span></span>
-<span class="line"><span>"capabilities":{</span></span>
-<span class="line"><span>    "streaming":true,</span></span>
-<span class="line"><span>    "pushNotifications":false</span></span>
-<span class="line"><span>},</span></span>
-<span class="line"><span>"skills":[</span></span>
-<span class="line"><span>    {</span></span>
-<span class="line"><span>      "id":"route-planner",</span></span>
-<span class="line"><span>      "name":"路线规划",</span></span>
-<span class="line"><span>      "description":"帮助规划两个地点之间的路线",</span></span>
-<span class="line"><span>      "tags":["地图","路线","导航"],</span></span>
-<span class="line"><span>      "examples":[</span></span>
-<span class="line"><span>        "规划从桑尼维尔到山景城的路线",</span></span>
-<span class="line"><span>        "上午9点从桑尼维尔到旧金山的通勤时间是多少",</span></span>
-<span class="line"><span>        "创建从桑尼维尔到山景城的逐转导航"</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "outputModes":["application/html","video/mp4"]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    {</span></span>
-<span class="line"><span>      "id":"custom-map",</span></span>
-<span class="line"><span>      "name":"我的地图",</span></span>
-<span class="line"><span>      "description":"管理带有您保存地点的自定义地图",</span></span>
-<span class="line"><span>      "tags":["自定义地图","保存地点"],</span></span>
-<span class="line"><span>      "examples":[</span></span>
-<span class="line"><span>        "在地图上显示我最喜欢的餐厅",</span></span>
-<span class="line"><span>        "创建我过去一年访问过的所有地点的可视化"</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "outputModes":["application/html"]</span></span>
-<span class="line"><span>    }</span></span>
-<span class="line"><span>]</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"name"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"谷歌地图代理"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"description"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"规划路线、记住地点并生成导航"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"url"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"https://maps-agent.google.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"provider"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "organization"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"Google"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "url"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"https://google.com"</span></span>
+<span class="line"><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#79B8FF">"version"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"1.0.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"authentication"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "schemes"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"OAuth2"</span></span>
+<span class="line"><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#79B8FF">"defaultInputModes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"text/plain"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">"defaultOutputModes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"text/plain"</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">"application/html"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">"capabilities"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "streaming"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "pushNotifications"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#79B8FF">"skills"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"route-planner"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"路线规划"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"帮助规划两个地点之间的路线"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "tags"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"地图"</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">"路线"</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">"导航"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "examples"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">        "规划从桑尼维尔到山景城的路线"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "上午9点从桑尼维尔到旧金山的通勤时间是多少"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "创建从桑尼维尔到山景城的逐转导航"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "outputModes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"application/html"</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">"video/mp4"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"custom-map"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"我的地图"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"管理带有您保存地点的自定义地图"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "tags"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"自定义地图"</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">"保存地点"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "examples"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">        "在地图上显示我最喜欢的餐厅"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "创建我过去一年访问过的所有地点的可视化"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "outputModes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"application/html"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="发送任务">发送任务</h3>
 <p>允许客户端向远程代理发送内容以启动新任务、恢复中断的任务或重新打开已完成的任务。任务中断可能是由于代理需要额外用户输入或运行时错误导致。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/send",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "data":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"告诉我一个笑话"</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "artifacts":[{</span></span>
-<span class="line"><span>      "name":"joke",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"为什么鸡要过马路？因为想到另一边去！"</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    }],</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/send"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "data"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"告诉我一个笑话"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifacts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"joke"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"为什么鸡要过马路？因为想到另一边去！"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }],</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="获取任务">获取任务</h3>
 <p>客户端可以使用此方法检索任务生成的产物。代理决定先前提交任务的保留窗口。代理可能对超过保留窗口的任务或代理未持久化的短暂任务返回错误代码。
 客户端还可以请求任务的最后 N 项历史记录，包括客户端和服务器按顺序发送的所有消息。默认值为 0（无历史）。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/get",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "historyLength":10,</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "artifacts":[{</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"为什么鸡要过马路？因为想到另一边去！"</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    }],</span></span>
-<span class="line"><span>    "history":[</span></span>
-<span class="line"><span>      {</span></span>
-<span class="line"><span>        "role":"user",</span></span>
-<span class="line"><span>        "parts":[</span></span>
-<span class="line"><span>          {</span></span>
-<span class="line"><span>            "type":"text",</span></span>
-<span class="line"><span>            "text":"告诉我一个笑话"</span></span>
-<span class="line"><span>          }</span></span>
-<span class="line"><span>        ]</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    ],</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/get"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "historyLength"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifacts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"为什么鸡要过马路？因为想到另一边去！"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }],</span></span>
+<span class="line"><span style="color:#79B8FF">    "history"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#79B8FF">        "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "parts"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span></span>
+<span class="line"><span style="color:#79B8FF">            "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"告诉我一个笑话"</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        ]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="取消任务">取消任务</h3>
 <p>客户端可以选择取消先前提交的任务，如下所示。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/cancel",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"canceled"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/cancel"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"canceled"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="设置任务推送通知">设置任务推送通知</h3>
 <p>客户端可以为任务状态更改配置推送通知 URL 以接收更新。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/pushNotification/set",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "pushNotificationConfig":{</span></span>
-<span class="line"><span>      "url":"https://example.com/callback",</span></span>
-<span class="line"><span>      "authentication":{</span></span>
-<span class="line"><span>        "schemes":["jwt"]</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    }</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "pushNotificationConfig":{</span></span>
-<span class="line"><span>      "url":"https://example.com/callback",</span></span>
-<span class="line"><span>      "authentication":{</span></span>
-<span class="line"><span>        "schemes":["jwt"]</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    }</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/pushNotification/set"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "pushNotificationConfig"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"https://example.com/callback"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "authentication"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "schemes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"jwt"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "pushNotificationConfig"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"https://example.com/callback"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "authentication"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "schemes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"jwt"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="获取任务推送通知">获取任务推送通知</h3>
 <p>客户端可以使用此方法检索任务当前配置的推送通知配置。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/pushNotification/get",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64"</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "pushNotificationConfig":{</span></span>
-<span class="line"><span>      "url":"https://example.com/callback",</span></span>
-<span class="line"><span>      "authentication":{</span></span>
-<span class="line"><span>        "schemes":["jwt"]</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    }</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/pushNotification/get"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "pushNotificationConfig"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"https://example.com/callback"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "authentication"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "schemes"</span><span style="color:#E1E4E8">:[</span><span style="color:#9ECBFF">"jwt"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="多轮对话">多轮对话</h3>
 <p>如果远程代理需要额外的用户输入，任务可能会暂停执行。当任务处于“需要输入”状态时，客户端需要提供额外输入以使任务在远程代理上恢复处理。
 “需要输入”状态中包含的消息必须包括指示客户端必须执行的操作的细节。例如“填写表格”或“登录到 SaaS 服务 foo”。如果包括结构化数据，指令应作为一个部分发送，结构化数据作为第二个部分发送。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求 - 序列 1</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"method":"tasks/send",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"为我购买一部新手机"</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应 - 序列 2</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"input-required",</span></span>
-<span class="line"><span>      "message":{</span></span>
-<span class="line"><span>        "parts":[{</span></span>
-<span class="line"><span>          "type":"text",</span></span>
-<span class="line"><span>          "text":"选择手机类型（iPhone/Android）"</span></span>
-<span class="line"><span>        }]</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 请求 - 序列 3</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":2,</span></span>
-<span class="line"><span>"method":"tasks/send",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"Android"</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应 - 序列 4</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":2,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "artifacts":[{</span></span>
-<span class="line"><span>      "name":"order-confirmation",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"我已经为您订购了一台新的 Android 设备。您的请求编号是 R12443"</span></span>
-<span class="line"><span>      }],</span></span>
-<span class="line"><span>      "metadata":{}</span></span>
-<span class="line"><span>    }],</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求 - 序列 1</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/send"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"为我购买一部新手机"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应 - 序列 2</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"input-required"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"选择手机类型（iPhone/Android）"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }]</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 请求 - 序列 3</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/send"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"Android"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应 - 序列 4</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifacts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"order-confirmation"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"我已经为您订购了一台新的 Android 设备。您的请求编号是 R12443"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }],</span></span>
+<span class="line"><span style="color:#79B8FF">      "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">    }],</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="流式支持">流式支持</h3>
 <p>对于能够通过 HTTP 使用 SSE 通信的客户端和远程代理，客户端可以在创建新任务时发送带有方法 tasks/sendSubscribe 的 RPC 请求。远程代理可以响应一系列 TaskStatusUpdateEvents（用于传达状态更改或指令/请求）和 TaskArtifactUpdateEvents（用于流式传输生成的结果）。注意，TaskArtifactUpdateEvents 可以将新部分附加到现有产物上。客户端可以使用 task/get 在流式传输之外检索整个产物。代理必须在流结束时或代理中断并需要额外用户输入时设置 final: true 属性。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"method":"tasks/sendSubscribe",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"写一篇长文描述附带的图片"</span></span>
-<span class="line"><span>      },{</span></span>
-<span class="line"><span>        "type":"file",</span></span>
-<span class="line"><span>        "file":{</span></span>
-<span class="line"><span>          "mimeType":"image/png",</span></span>
-<span class="line"><span>          "data":"&#x3C;base64-encoded-content>"</span></span>
-<span class="line"><span>        }</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"working",</span></span>
-<span class="line"><span>      "timestamp":"2025-04-02T16:59:25.331844"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "final":false</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "artifact":[</span></span>
-<span class="line"><span>      "parts":[</span></span>
-<span class="line"><span>        {"type":"text","text":"&#x3C;section 1...>"}</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "index":0,</span></span>
-<span class="line"><span>      "append":false,</span></span>
-<span class="line"><span>      "lastChunk":false</span></span>
-<span class="line"><span>    ]</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "artifact":[</span></span>
-<span class="line"><span>      "parts":[</span></span>
-<span class="line"><span>        {"type":"text","text":"&#x3C;section 2...>"}</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "index":0,</span></span>
-<span class="line"><span>      "append":true,</span></span>
-<span class="line"><span>      "lastChunk":false</span></span>
-<span class="line"><span>    ]</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "artifact":[</span></span>
-<span class="line"><span>      "parts":[</span></span>
-<span class="line"><span>        {"type":"text","text":"&#x3C;section 3...>"}</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "index":0,</span></span>
-<span class="line"><span>      "append":true,</span></span>
-<span class="line"><span>      "lastChunk":true</span></span>
-<span class="line"><span>    ]</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed",</span></span>
-<span class="line"><span>      "timestamp":"2025-04-02T16:59:35.331844"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "final":true</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/sendSubscribe"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"写一篇长文描述附带的图片"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"file"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "file"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">          "mimeType"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"image/png"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "data"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;base64-encoded-content>"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"working"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "timestamp"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2025-04-02T16:59:25.331844"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "final"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifact"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">      "parts"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;section 1...>"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#9ECBFF">      "index"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "append"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "lastChunk"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifact"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">      "parts"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;section 2...>"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#9ECBFF">      "index"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "append"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "lastChunk"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifact"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">      "parts"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;section 3...>"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#9ECBFF">      "index"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "append"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "lastChunk"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "timestamp"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2025-04-02T16:59:35.331844"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "final"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="重新订阅任务">重新订阅任务</h3>
 <p>断开连接的客户端可以重新订阅支持流式传输的远程代理，以通过 SSE 接收任务更新。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"method":"tasks/resubscribe",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "artifact":[</span></span>
-<span class="line"><span>      "parts":[</span></span>
-<span class="line"><span>        {"type":"text","text":"&#x3C;section 2...>"}</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "index":0,</span></span>
-<span class="line"><span>      "append":true,</span></span>
-<span class="line"><span>      "lastChunk":false</span></span>
-<span class="line"><span>    ]</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "artifact":[</span></span>
-<span class="line"><span>      "parts":[</span></span>
-<span class="line"><span>        {"type":"text","text":"&#x3C;section 3...>"}</span></span>
-<span class="line"><span>      ],</span></span>
-<span class="line"><span>      "index":0,</span></span>
-<span class="line"><span>      "append":true,</span></span>
-<span class="line"><span>      "lastChunk":true</span></span>
-<span class="line"><span>    ]</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span></span></span>
-<span class="line"><span>data:{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":1,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":1,</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed",</span></span>
-<span class="line"><span>      "timestamp":"2025-04-02T16:59:35.331844"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "final":true</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/resubscribe"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifact"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">      "parts"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;section 2...>"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#9ECBFF">      "index"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "append"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "lastChunk"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifact"</span><span style="color:#E1E4E8">:[</span></span>
+<span class="line"><span style="color:#9ECBFF">      "parts"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;section 3...>"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#9ECBFF">      "index"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "append"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">      "lastChunk"</span><span style="color:#FDAEB7;font-style:italic">:</span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">data:{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "timestamp"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2025-04-02T16:59:35.331844"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "final"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="非文本媒体">非文本媒体</h3>
 <p>以下是客户端与代理之间使用非文本数据的示例交互。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求 - 序列 1</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":9,</span></span>
-<span class="line"><span>"method":"tasks/send",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"分析附带的报告并生成高级概述"</span></span>
-<span class="line"><span>      },{</span></span>
-<span class="line"><span>        "type":"file",</span></span>
-<span class="line"><span>        "file":{</span></span>
-<span class="line"><span>          "mimeType":"application/pdf",</span></span>
-<span class="line"><span>          "data":"&#x3C;base64-encoded-content>"</span></span>
-<span class="line"><span>        }</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应 - 序列 2</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":9,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"working",</span></span>
-<span class="line"><span>      "message":{</span></span>
-<span class="line"><span>        "role":"agent",</span></span>
-<span class="line"><span>        "parts":[{</span></span>
-<span class="line"><span>          "type":"text",</span></span>
-<span class="line"><span>          "text":"分析进行中，请稍候"</span></span>
-<span class="line"><span>        }],</span></span>
-<span class="line"><span>        "metadata":{}</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 请求 - 序列 3</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":10,</span></span>
-<span class="line"><span>"method":"tasks/get",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应 - 序列 4</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":9,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"completed"</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "artifacts":[{</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"&#x3C;生成分析内容>"</span></span>
-<span class="line"><span>      }],</span></span>
-<span class="line"><span>      "metadata":{}</span></span>
-<span class="line"><span>    }],</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求 - 序列 1</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/send"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"分析附带的报告并生成高级概述"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"file"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "file"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">          "mimeType"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"application/pdf"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "data"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;base64-encoded-content>"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应 - 序列 2</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"working"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"agent"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"分析进行中，请稍候"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }],</span></span>
+<span class="line"><span style="color:#79B8FF">        "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 请求 - 序列 3</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/get"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应 - 序列 4</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"completed"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "artifacts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"&#x3C;生成分析内容>"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }],</span></span>
+<span class="line"><span style="color:#79B8FF">      "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">    }],</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="结构化输出">结构化输出</h3>
 <p>客户端或代理都可以请求对方的结构化输出。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 请求</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":9,</span></span>
-<span class="line"><span>"method":"tasks/send",</span></span>
-<span class="line"><span>"params":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "message":{</span></span>
-<span class="line"><span>      "role":"user",</span></span>
-<span class="line"><span>      "parts":[{</span></span>
-<span class="line"><span>        "type":"text",</span></span>
-<span class="line"><span>        "text":"显示我未关闭的 IT 工单列表",</span></span>
-<span class="line"><span>        "metadata":{</span></span>
-<span class="line"><span>          "mimeType":"application/json",</span></span>
-<span class="line"><span>          "schema":{</span></span>
-<span class="line"><span>            "type":"array",</span></span>
-<span class="line"><span>            "items":{</span></span>
-<span class="line"><span>              "type":"object",</span></span>
-<span class="line"><span>              "properties":{</span></span>
-<span class="line"><span>                "ticketNumber":{"type":"string"},</span></span>
-<span class="line"><span>                "description":{"type":"string"}</span></span>
-<span class="line"><span>              }</span></span>
-<span class="line"><span>            }</span></span>
-<span class="line"><span>          }</span></span>
-<span class="line"><span>        }</span></span>
-<span class="line"><span>      }]</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>// 响应</span></span>
-<span class="line"><span>{</span></span>
-<span class="line"><span>"jsonrpc":"2.0",</span></span>
-<span class="line"><span>"id":9,</span></span>
-<span class="line"><span>"result":{</span></span>
-<span class="line"><span>    "id":"de38c76d-d54c-436c-8b9f-4c2703648d64",</span></span>
-<span class="line"><span>    "sessionId":"c295ea44-7543-4f78-b524-7a38915ad6e4",</span></span>
-<span class="line"><span>    "status":{</span></span>
-<span class="line"><span>      "state":"working",</span></span>
-<span class="line"><span>      "message":{</span></span>
-<span class="line"><span>        "role":"agent",</span></span>
-<span class="line"><span>        "parts":[{</span></span>
-<span class="line"><span>          "type":"text",</span></span>
-<span class="line"><span>          "text":"[{\"ticketNumber\":\"REQ12312\",\"description\":\"请求 VPN 访问权限\"},{\"ticketNumber\":\"REQ23422\",\"description\":\"添加到 DL - team-gcp-onboarding\"}]"</span></span>
-<span class="line"><span>        }],</span></span>
-<span class="line"><span>        "metadata":{}</span></span>
-<span class="line"><span>      }</span></span>
-<span class="line"><span>    },</span></span>
-<span class="line"><span>    "metadata":{}</span></span>
-<span class="line"><span>}</span></span>
-<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// 请求</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tasks/send"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"显示我未关闭的 IT 工单列表"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "metadata"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">          "mimeType"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"application/json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "schema"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">            "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">            "items"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">              "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "properties"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">                "ticketNumber"</span><span style="color:#E1E4E8">:{</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#79B8FF">                "description"</span><span style="color:#E1E4E8">:{</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">              }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#6A737D">// 响应</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">"result"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">    "id"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"de38c76d-d54c-436c-8b9f-4c2703648d64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sessionId"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"c295ea44-7543-4f78-b524-7a38915ad6e4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "status"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">      "state"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"working"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "message"</span><span style="color:#E1E4E8">:{</span></span>
+<span class="line"><span style="color:#79B8FF">        "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"agent"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "parts"</span><span style="color:#E1E4E8">:[{</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "text"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"[{</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">ticketNumber</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">REQ12312</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">,</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">description</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">请求 VPN 访问权限</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">},{</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">ticketNumber</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">REQ23422</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">,</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">description</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">添加到 DL - team-gcp-onboarding</span><span style="color:#79B8FF">\"</span><span style="color:#9ECBFF">}]"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }],</span></span>
+<span class="line"><span style="color:#79B8FF">        "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "metadata"</span><span style="color:#E1E4E8">:{}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="错误处理">错误处理</h3>
 <p>以下是服务器在处理客户端请求时遇到错误时响应客户端的错误消息格式。</p>
-<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>interface ErrorMessage {</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>interface ErrorMessage {</span></span>
 <span class="line"><span>  code: number;</span></span>
 <span class="line"><span>  message: string;</span></span>
 <span class="line"><span>  data?: any;</span></span>
