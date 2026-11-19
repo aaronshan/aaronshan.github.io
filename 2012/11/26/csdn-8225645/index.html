@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>HTTP解析 | 中龄程序猿</title><meta name="description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><link rel="canonical" href="https://www.shanruifeng.win/2012/11/26/csdn-8225645/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="HTTP解析 | 中龄程序猿"><meta property="og:description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><meta property="og:url" content="https://www.shanruifeng.win/2012/11/26/csdn-8225645/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="HTTP解析 | 中龄程序猿"><meta name="twitter:description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HTTP解析","description":"本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS","datePublished":"2012-11-26T11:48:44.000Z","dateModified":"2012-11-26T11:48:44.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2012/11/26/csdn-8225645/","articleSection":"随笔","keywords":"随笔,http,Http,HTTP,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span>/</span><span>HTTP解析</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><h1 class="article-title">HTTP解析</h1><p class="article-desc">本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2012-11-26T11:48:44.000Z">2012-11-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>随笔 · http · Http · HTTP · CSDN</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="http概述">HTTP概述</h2>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>HTTP解析 | 中龄程序猿</title><meta name="description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><link rel="canonical" href="https://www.shanruifeng.win/2012/11/26/csdn-8225645/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="HTTP解析 | 中龄程序猿"><meta property="og:description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><meta property="og:url" content="https://www.shanruifeng.win/2012/11/26/csdn-8225645/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="HTTP解析 | 中龄程序猿"><meta name="twitter:description" content="本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HTTP解析","description":"本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS","datePublished":"2012-11-26T11:48:44.000Z","dateModified":"2012-11-26T11:48:44.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2012/11/26/csdn-8225645/","articleSection":"随笔","keywords":"随笔,http,Http,HTTP,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span>/</span><span>HTTP解析</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><h1 class="article-title">HTTP解析</h1><p class="article-desc">本文深入探讨了HTTP协议的基本概念、工作原理、消息结构及关键组件，包括HTTP URL、请求与响应过程、消息报头与正文等内容。同时，介绍了GET、POST、HEAD等常见请求方法及其应用场景，以及HTTP状态码、普通报头、请求报头、响应报头和实体报头的作用。文章还分析了消息报头的格式和常见用途，并对比了GET和POS</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2012-11-26T11:48:44.000Z">2012-11-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>随笔 · http · Http · HTTP · CSDN</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="http概述">HTTP概述</h2>
 <p><strong>HTTP协议：</strong> 协议 是指计算机通信网络中两台计算机之间进行通信所必须共同遵守的规定或规则。HTTP表示超文本传输协议（Hypertext Transfer Protocol），是一种通信协议，它允许将超文本标记语言(HTML)文档从Web服务器传送到客户端的浏览器。HTTP是迄今为止使用最多的互联网协议，目前版本为1.1。HTTP运行在应用层（ISO/OSI七层参考模型包括应用层，表示层，会话层，传输层，网络层，数据链路层，物理层。），是一个基于请求/响应模式的，无状态的协议。HTTP是TCP/IP的上层协议。如果你对这些网络协议还都不太熟悉，可以这样理解：TCP负责确保从一个网络节点向另外一个网络节点发送的文件能作为一个完整的文件到达目的地，尽管在具体传输过程中这个文件可能会分解为小块传输；IP是一个底层协议，负责把数据块（数据包）沿路移动/路由到目的地。</p>
 <p>我们经常会在 浏览器 网址栏输入网址，例如www.XXX.com，然后回车。这时候，浏览器和web服务器之间就会使用HTTP协议在网络上进行数据的接收和发送。客户端（浏览器）与服务器端（服务器应用程序）建立连接之后，向服务器发送请求（Request），服务器对该请求进行处理，然后返回一个响应（Response）消息，之后双方连接关闭。其中，请求有可能是先经过代理服务器，再传递到web服务器的。</p>
 <p>在SO/OSI七层参考模型中，上层协议使用下层协议提供的服务， HTTP 作为应用层协议，其连接的建立使用传输层的TCP协议来完成。TCP是面向连接的协议，一方等待，一方发起连接。web服务器等待浏览器发起连接，默认情况下，浏览器和在web服务器上监听80端口的服务器程序建立连接。虽然HTTP基本TCP协议进行连接，但不排除基于其他协议进行连接。</p>
@@ -19,7 +19,48 @@
 <p>请求行以一个方法符号开头，后面跟着请求URI和协议的版本，以CRLF（表示回车换行）作为结尾。请求行以空格分隔，除了作为结尾的CRLF外，不允许出现单独的CR或LF字符。格式：Method Request-URI HTTP-Version CRLF。Mehtod表示请求的方法，Request-URI是一个统一资源标示符，表示了要请求的资源，HTTP-Version表示HTTP协议版本，CRLF表示回车换行。例如： GET /form.html HTTP/1.1 (CRLF)。</p>
 <p>方法</p>
 <p>在HTTP协议中，HTTP请求可以使用多种请求方法，这些方法指明了要以何种方式来访问由Request-URI标识的资源。HTTP1.1支持的请求方法如下所示：</p>
-<table border="1" cellspacing="1" cellpadding="1"><tbody><tr><td>方法</td><td>作用</td></tr><tr><td>GET</td><td>请求Request-URI标识的资源。注意：GET方法不应当被用于产生“副作用”的操作中，例如在Web Application中。其中一个原因是GET可能会被网络蜘蛛等随意访问。</td></tr><tr><td>POST</td><td>向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的创建和/或已有资源的修改。</td></tr><tr><td>HEAD</td><td>向服务器索要与GET请求相一致的响应，只不过响应体将不会被返回。这一方法可以在不必传输整个响应内容的情况下，就可以获取包含在响应消息头中的元信息。</td></tr><tr><td>PUT</td><td>向指定资源位置上传其最新内容。</td></tr><tr><td>DELETE</td><td>请求服务器删除Request-URI所标识的资源。</td></tr><tr><td>TRACE</td><td>回显服务器收到的请求，主要用于测试或诊断。</td></tr><tr><td>CONNECT</td><td>HTTP/1.1协议中预留给能够将连接改为管道方式的代理服务器。</td></tr><tr><td>OPTIONS</td><td>返回服务器针对特定资源所支持的HTTP请求方法。也可以利用向Web服务器发送'*'的请求来测试服务器的功能性。</td></tr></tbody></table>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>请求Request-URI标识的资源。注意：GET方法不应当被用于产生“副作用”的操作中，例如在Web Application中。其中一个原因是GET可能会被网络蜘蛛等随意访问。</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的创建和/或已有资源的修改。</td>
+</tr>
+<tr>
+<td>HEAD</td>
+<td>向服务器索要与GET请求相一致的响应，只不过响应体将不会被返回。这一方法可以在不必传输整个响应内容的情况下，就可以获取包含在响应消息头中的元信息。</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>向指定资源位置上传其最新内容。</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>请求服务器删除Request-URI所标识的资源。</td>
+</tr>
+<tr>
+<td>TRACE</td>
+<td>回显服务器收到的请求，主要用于测试或诊断。</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>HTTP/1.1协议中预留给能够将连接改为管道方式的代理服务器。</td>
+</tr>
+<tr>
+<td>OPTIONS</td>
+<td>返回服务器针对特定资源所支持的HTTP请求方法。也可以利用向Web服务器发送’*‘的请求来测试服务器的功能性。</td>
+</tr>
+</tbody>
+</table>
 <p>其中最常使用的请求方法是GET和POST，HEAD方法也使用较多，下面做一个简要介绍。</p>
 <p>GET方法：GET方法用于获取由Request-URI标识的资源的信息，常见的格式为：GET Request-URI HTTP/1.1</p>
 <p>当我们通过在浏览器的地址栏中直接输入网址的方式去访问网页的时候，浏览器使用的就是GET方法向服务器获取资源。</p>
@@ -51,7 +92,92 @@
 <p>4xx：请求错误——请求含有词法错误或者无法被执行</p>
 <p>5xx：服务器错误——服务器在处理某个正确请求时发生错误</p>
 <p>在HTTP1.1中定义的状态码如下表所示：</p>
-<table border="1" cellspacing="1" cellpadding="1"><tbody><tr><td>100  Continue<br>101  Switching Protocols<br>200  OK<br>201  Created<br>202  Accepted<br>203  Non-Authoritative Information<br>204  No Content<br>205  Reset Content<br>206  Partial Content<br>300  Multiple Choices<br>301  Moved Permanently<br>302  Found<br>303  See Other<br>304  Not Modified<br>305  Use Proxy<br>307  Temporary Redirect<br>400  Bad Request<br>401  Unauthorized<br>402  Payment Required<br>403  Forbidden</td><td>404  Not Found<br>405  Method Not Allowed<br>406  Not Acceptable<br>407  Proxy Authentication Required<br>408  Request Time-out<br>409  Conflict<br>410  Gone<br>411  Length Required<br>412  Precondition Failed<br>413  Request Entity Too Large<br>414  Request-URI Too Large<br>415  Unsupported Media Type<br>416  Requested range not satisfiable<br>417  Expectation Failed<br>500  Internal Server Error<br>501  Not Implemented<br>502  Bad Gateway<br>503  Service Unavailable<br>504  Gateway Time-out<br>505  HTTP Version not supported</td></tr></tbody></table>
+<table>
+<thead>
+<tr>
+<th>100 Continue</th>
+<th>404 Not Found</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>101 Switching Protocols</td>
+<td>405 Method Not Allowed</td>
+</tr>
+<tr>
+<td>200 OK</td>
+<td>406 Not Acceptable</td>
+</tr>
+<tr>
+<td>201 Created</td>
+<td>407 Proxy Authentication Required</td>
+</tr>
+<tr>
+<td>202 Accepted</td>
+<td>408 Request Time-out</td>
+</tr>
+<tr>
+<td>203 Non-Authoritative Information</td>
+<td>409 Conflict</td>
+</tr>
+<tr>
+<td>204 No Content</td>
+<td>410 Gone</td>
+</tr>
+<tr>
+<td>205 Reset Content</td>
+<td>411 Length Required</td>
+</tr>
+<tr>
+<td>206 Partial Content</td>
+<td>412 Precondition Failed</td>
+</tr>
+<tr>
+<td>300 Multiple Choices</td>
+<td>413 Request Entity Too Large</td>
+</tr>
+<tr>
+<td>301 Moved Permanently</td>
+<td>414 Request-URI Too Large</td>
+</tr>
+<tr>
+<td>302 Found</td>
+<td>415 Unsupported Media Type</td>
+</tr>
+<tr>
+<td>303 See Other</td>
+<td>416 Requested range not satisfiable</td>
+</tr>
+<tr>
+<td>304 Not Modified</td>
+<td>417 Expectation Failed</td>
+</tr>
+<tr>
+<td>305 Use Proxy</td>
+<td>500 Internal Server Error</td>
+</tr>
+<tr>
+<td>307 Temporary Redirect</td>
+<td>501 Not Implemented</td>
+</tr>
+<tr>
+<td>400 Bad Request</td>
+<td>502 Bad Gateway</td>
+</tr>
+<tr>
+<td>401 Unauthorized</td>
+<td>503 Service Unavailable</td>
+</tr>
+<tr>
+<td>402 Payment Required</td>
+<td>504 Gateway Time-out</td>
+</tr>
+<tr>
+<td>403 Forbidden</td>
+<td>505 HTTP Version not supported</td>
+</tr>
+</tbody>
+</table>
 <p>2）消息报头</p>
 <p>见后面的消息部分</p>
 <p>3）响应正文</p>

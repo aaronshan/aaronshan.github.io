@@ -9,61 +9,52 @@
 <p>要理解这一轮变革，必须先回到最底层的问题。行存储中同一行的不同列交织在一起，编码器看到的是高熵字节流，只能退回通用压缩。列存储的根本价值在于：<strong>它把同一列、同一物理域的值聚在一起，数据的分布规律性才第一次完整暴露</strong>——一列时间戳几乎单调、一列国家名只有两百个取值、一列价格集中在某个数量级。编码的全部威力来自利用这些规律。</p>
 <p>列编码的第一性原理因此可以表述为：<strong>用分布的冗余度，去换取三种资源——存储字节、带宽、CPU 周期</strong>。难点在于三者并非总同向，设计艺术在于找帕累托前沿。</p>
 <p>这里有一个贯穿全文的核心区分：</p>
-<p>|
-维度</p>
-<p>|</p>
-<p>轻量级编码（LWC）</p>
-<p>|</p>
-<p>重量级块压缩</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>代表</p>
-<p>|</p>
-<p>Dictionary、RLE、FOR、Delta、Bit-packing、FSST、ALP</p>
-<p>|</p>
-<p>LZ4、Snappy、ZSTD、gzip</p>
-<p>|
-|</p>
-<p>数据感知</p>
-<p>|</p>
-<p>是（理解类型与分布）</p>
-<p>|</p>
-<p>否（对字节流盲目）</p>
-<p>|
-|</p>
-<p>解码速度</p>
-<p>|</p>
-<p>极快（每秒数十亿值）</p>
-<p>|</p>
-<p>慢（GB/s 级）</p>
-<p>|
-|</p>
-<p>随机访问</p>
-<p>|</p>
-<p>通常保留（可单独取第 i 个值）</p>
-<p>|</p>
-<p>必须整块解压</p>
-<p>|
-|</p>
-<p>压缩态计算</p>
-<p>| <strong>可以不解码直接过滤/比较/聚合</strong> |</p>
-<p>与计算互斥</p>
-<p>|
-|</p>
-<p>SIMD/GPU 友好</p>
-<p>|</p>
-<p>可设计为完全数据并行</p>
-<p>|</p>
-<p>字节流有数据依赖，难以并行</p>
-<p>|
-|</p>
-<p>压缩率上限</p>
-<p>|</p>
-<p>中高</p>
-<p>|</p>
-<p>最高</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>轻量级编码（LWC）</th>
+<th>重量级块压缩</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代表</td>
+<td>Dictionary、RLE、FOR、Delta、Bit-packing、FSST、ALP</td>
+<td>LZ4、Snappy、ZSTD、gzip</td>
+</tr>
+<tr>
+<td>数据感知</td>
+<td>是（理解类型与分布）</td>
+<td>否（对字节流盲目）</td>
+</tr>
+<tr>
+<td>解码速度</td>
+<td>极快（每秒数十亿值）</td>
+<td>慢（GB/s 级）</td>
+</tr>
+<tr>
+<td>随机访问</td>
+<td>通常保留（可单独取第 i 个值）</td>
+<td>必须整块解压</td>
+</tr>
+<tr>
+<td>压缩态计算</td>
+<td><strong>可以不解码直接过滤/比较/聚合</strong></td>
+<td>与计算互斥</td>
+</tr>
+<tr>
+<td>SIMD/GPU 友好</td>
+<td>可设计为完全数据并行</td>
+<td>字节流有数据依赖，难以并行</td>
+</tr>
+<tr>
+<td>压缩率上限</td>
+<td>中高</td>
+<td>最高</td>
+</tr>
+</tbody>
+</table>
 <p>块压缩这条路的天花板已经被 ZSTD 摸到，而 LWC 这条路同时打开了”压缩态计算”的新维度——<strong>这才是性能引擎真正在意的东西，也是过去六年学术界全部主攻的方向</strong>。</p>
 <p>评价一种编码的完整框架是六元组：压缩率、解码吞吐、编码吞吐、随机访问、可计算性（能否在编码态执行算子）、硬件友好度与自适应性。经典通用压缩在第一项上不弱，但在后四项上几乎全输；第二波 LWC 的全部创新，正是在保住前两项的同时把后四项拉满。</p>
 <hr>
@@ -98,7 +89,7 @@
 <p>页内布局按数据特点自适应：Mini-Block 布局（4–32KB）服务整数与小字符串的细粒度随机访问；Full-Zip 布局为定长向量连续存储以减小元数据开销；Blob 布局存图片视频等大对象。zonemap 仍按固定行数维护（而非按页），1M 行切成一串 8MB 页存储，页本身即并行单位。</p>
 <p><strong>更新与版本：安全的”追加-提交”模型</strong>。数据集是一个目录，任何修改（增删改、加列）都遵循 append-only 与 immutable 原则：加列时把新列写入全新文件、旧文件完全不动，创建同时引用新旧文件的新 Manifest，最后原子性更新 <code>_latest.manifest</code> 指针。代价是需要后台 compaction/vacuum 回收垃圾；收益是零成本版本控制（时间旅行）——这对 ML 实验的可复现性至关重要。</p>
 <p><strong>索引是一等公民</strong>。Lance 原生支持数据库经典索引（B+ 树、Bitmap、Bloom Filter、Zonemap、倒排索引）与向量索引（IVF、PQ、HNSW），使随机访问的高效真正兑现为检索能力。LanceDB 作为嵌入式向量数据库（“向量界的 SQLite”）已在 AI Agent 生态中获得大量真实采用——它的新增列零拷贝设计，正是为了 ML 场景”常常要加很多新特征列”的痛点。</p>
-<p>与 Lance 相对的是学术界的** Bullion**（“改良派”）：接受 Parquet 的行组设计并在此基础上改进，额外做了数据合规性删除（deletion compliance，可立即删除某条数据而非靠 compaction 延后）和多模态存储优化（质量感知行重排、视频关键帧混合存储），并探索把量化（quantization）这类<strong>有损但可接受的编码</strong>纳入列存编码框架。Bullion 尚未开源，更多是学术验证。</p>
+<p>与 Lance 相对的是学术界的<strong>Bullion</strong>（“改良派”）：接受 Parquet 的行组设计并在此基础上改进，额外做了数据合规性删除（deletion compliance，可立即删除某条数据而非靠 compaction 延后）和多模态存储优化（质量感知行重排、视频关键帧混合存储），并探索把量化（quantization）这类<strong>有损但可接受的编码</strong>纳入列存编码框架。Bullion 尚未开源，更多是学术验证。</p>
 <h3 id="42-vortex研究即产品的体制内挑战者">4.2 Vortex：研究即产品的”体制内挑战者”</h3>
 <p>Vortex 是三个新格式中最激进、也最值得严肃对待的一个——因为它不是实验室原型，而是带着工程完成度和重量级背书进入市场的：</p>
 <ul>
@@ -125,172 +116,113 @@
 <p>Nimble（Meta，原名 Alpha，源自 CIDR 2023 论文《Shared Foundations: Modernizing Meta’s Data Lakehouse》）代表第三条路线：<strong>不是创业公司或研究组的试验，而是一家巨头把自己的整个数据仓库迁移过去的工程决断</strong>。</p>
 <p>面向 ML 宽表训练场景，Nimble 的关键改造：元数据用 <strong>FlatBuffers</strong> 以便只解码用到的列（直接解决 Thrift 顺序解析之痛）；支持<strong>级联/递归编码</strong>且刻意解耦”stream 编码”与”物理布局”（因为编码 SOTA 演进快，布局演进慢）；<strong>自适应编码选择</strong>通过”编码历史回环数据库”（encoding history loopback DB）按历史数据模式挑最优；工程上还做了特征扁平化（把 n 个特征当 n 列而非一个 map）、特征重排（常一起访问的特征排相邻磁盘位置）、合并读（选中特征流打包成单次 IO）——这一组”读取侧编排”优化是超宽特征表场景的独门经验。</p>
 <h3 id="44-格式对比矩阵">4.4 格式对比矩阵</h3>
-<p>|
-维度</p>
-<p>|</p>
-<p>Parquet</p>
-<p>|</p>
-<p>ORC</p>
-<p>|</p>
-<p>Lance</p>
-<p>|</p>
-<p>Vortex</p>
-<p>|</p>
-<p>Nimble</p>
-<p>|</p>
-<p>FastLanes FF</p>
-<p>|</p>
-<p>Bullion</p>
-<p>|
-| --- | --- | --- | --- | --- | --- | --- | --- |
-|</p>
-<p>设计年代 / 主战场</p>
-<p>|</p>
-<p>2013 / 通用分析</p>
-<p>|</p>
-<p>2013 / Hive 生态</p>
-<p>|</p>
-<p>2023 / AI/ML 随机访问</p>
-<p>|</p>
-<p>2024–25 / 通用+多模态</p>
-<p>|</p>
-<p>2024 / ML 宽表+分析</p>
-<p>|</p>
-<p>2025 / 研究参照实现</p>
-<p>|</p>
-<p>2025 / 学术（ML 训练）</p>
-<p>|
-|</p>
-<p>元数据协议</p>
-<p>|</p>
-<p>Thrift（顺序）</p>
-<p>|</p>
-<p>Protobuf（顺序）</p>
-<p>|</p>
-<p>自定义（轻量随机）</p>
-<p>|</p>
-<p>FlatBuffers（极简 footer）</p>
-<p>|</p>
-<p>FlatBuffers</p>
-<p>|</p>
-<p>FlatBuffers</p>
-<p>|</p>
-<p>—</p>
-<p>|
-|</p>
-<p>行组/页面模型</p>
-<p>|</p>
-<p>行组对齐</p>
-<p>|</p>
-<p>行组（Stripe）</p>
-<p>| <strong>列解耦独立页</strong> |</p>
-<p>Layout 树</p>
-<p>|</p>
-<p>stream 与布局解耦</p>
-<p>|</p>
-<p>转置布局</p>
-<p>|</p>
-<p>保留行组（改良）</p>
-<p>|
-|</p>
-<p>编码可扩展性</p>
-<p>|</p>
-<p>固定集合</p>
-<p>|</p>
-<p>固定集合</p>
-<p>|</p>
-<p>自适应结构编码</p>
-<p>|</p>
-<p>可插拔 + Editions</p>
-<p>|</p>
-<p>可插拔 + 历史回环</p>
-<p>|</p>
-<p>级联表达式搜索</p>
-<p>|</p>
-<p>级联 + 量化</p>
-<p>|
-|</p>
-<p>压缩态计算</p>
-<p>|</p>
-<p>否（块压缩）</p>
-<p>|</p>
-<p>否</p>
-<p>|</p>
-<p>部分</p>
-<p>| <strong>一等能力</strong> |</p>
-<p>部分</p>
-<p>|</p>
-<p>API 级支持</p>
-<p>|</p>
-<p>部分</p>
-<p>|
-|</p>
-<p>随机访问</p>
-<p>|</p>
-<p>弱</p>
-<p>|</p>
-<p>弱</p>
-<p>|</p>
-<p>强（1–2 个数量级提升）</p>
-<p>|</p>
-<p>强（100×+）</p>
-<p>|</p>
-<p>中</p>
-<p>|</p>
-<p>中</p>
-<p>|</p>
-<p>中</p>
-<p>|
-|</p>
-<p>二级/向量索引</p>
-<p>|</p>
-<p>无（依赖外置）</p>
-<p>|</p>
-<p>无</p>
-<p>| <strong>原生（IVF/PQ/HNSW/倒排）</strong> |</p>
-<p>计划中</p>
-<p>|</p>
-<p>无</p>
-<p>|</p>
-<p>无</p>
-<p>|</p>
-<p>无</p>
-<p>|
-|</p>
-<p>治理归属</p>
-<p>|</p>
-<p>Apache</p>
-<p>|</p>
-<p>Apache</p>
-<p>|</p>
-<p>LanceDB（开源）</p>
-<p>|</p>
-<p>Linux 基金会 LFAI&#x26;Data</p>
-<p>|</p>
-<p>Meta（开源）</p>
-<p>|</p>
-<p>学术</p>
-<p>|</p>
-<p>学术（未开源）</p>
-<p>|
-|</p>
-<p>生态采用</p>
-<p>|</p>
-<p>全引擎、EB 级存量</p>
-<p>|</p>
-<p>Hive 系</p>
-<p>|</p>
-<p>LanceDB/AI Agent 栈</p>
-<p>|</p>
-<p>DuckDB 扩展、MSFT Iceberg 试验</p>
-<p>|</p>
-<p>Meta 内部</p>
-<p>|</p>
-<p>研究原型</p>
-<p>|</p>
-<p>—</p>
-<p>|</p>
-<p>三条路线的分野现在很清晰：**Lance 赌的是”AI 原生负载值得一个专用格式”；Vortex 赌的是”可以在 Iceberg 体系内整体替换 Parquet”；Nimble 赌的是”一家公司的仓库现代化足以验证新范式”。**它们互不取代，但共同改变了市场的可能性边界。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Parquet</th>
+<th>ORC</th>
+<th>Lance</th>
+<th>Vortex</th>
+<th>Nimble</th>
+<th>FastLanes FF</th>
+<th>Bullion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>设计年代 / 主战场</td>
+<td>2013 / 通用分析</td>
+<td>2013 / Hive 生态</td>
+<td>2023 / AI/ML 随机访问</td>
+<td>2024–25 / 通用+多模态</td>
+<td>2024 / ML 宽表+分析</td>
+<td>2025 / 研究参照实现</td>
+<td>2025 / 学术（ML 训练）</td>
+</tr>
+<tr>
+<td>元数据协议</td>
+<td>Thrift（顺序）</td>
+<td>Protobuf（顺序）</td>
+<td>自定义（轻量随机）</td>
+<td>FlatBuffers（极简 footer）</td>
+<td>FlatBuffers</td>
+<td>FlatBuffers</td>
+<td>—</td>
+</tr>
+<tr>
+<td>行组/页面模型</td>
+<td>行组对齐</td>
+<td>行组（Stripe）</td>
+<td><strong>列解耦独立页</strong></td>
+<td>Layout 树</td>
+<td>stream 与布局解耦</td>
+<td>转置布局</td>
+<td>保留行组（改良）</td>
+</tr>
+<tr>
+<td>编码可扩展性</td>
+<td>固定集合</td>
+<td>固定集合</td>
+<td>自适应结构编码</td>
+<td>可插拔 + Editions</td>
+<td>可插拔 + 历史回环</td>
+<td>级联表达式搜索</td>
+<td>级联 + 量化</td>
+</tr>
+<tr>
+<td>压缩态计算</td>
+<td>否（块压缩）</td>
+<td>否</td>
+<td>部分</td>
+<td><strong>一等能力</strong></td>
+<td>部分</td>
+<td>API 级支持</td>
+<td>部分</td>
+</tr>
+<tr>
+<td>随机访问</td>
+<td>弱</td>
+<td>弱</td>
+<td>强（1–2 个数量级提升）</td>
+<td>强（100×+）</td>
+<td>中</td>
+<td>中</td>
+<td>中</td>
+</tr>
+<tr>
+<td>二级/向量索引</td>
+<td>无（依赖外置）</td>
+<td>无</td>
+<td><strong>原生（IVF/PQ/HNSW/倒排）</strong></td>
+<td>计划中</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>治理归属</td>
+<td>Apache</td>
+<td>Apache</td>
+<td>LanceDB（开源）</td>
+<td>Linux 基金会 LFAI&#x26;Data</td>
+<td>Meta（开源）</td>
+<td>学术</td>
+<td>学术（未开源）</td>
+</tr>
+<tr>
+<td>生态采用</td>
+<td>全引擎、EB 级存量</td>
+<td>Hive 系</td>
+<td>LanceDB/AI Agent 栈</td>
+<td>DuckDB 扩展、MSFT Iceberg 试验</td>
+<td>Meta 内部</td>
+<td>研究原型</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>三条路线的分野现在很清晰：<strong>Lance 赌的是”AI 原生负载值得一个专用格式”；Vortex 赌的是”可以在 Iceberg 体系内整体替换 Parquet”；Nimble 赌的是”一家公司的仓库现代化足以验证新范式”。</strong>它们互不取代，但共同改变了市场的可能性边界。</p>
 <hr>
 <h2 id="五被低估的另一半执行侧的压缩态计算革命">五、被低估的另一半：执行侧的压缩态计算革命</h2>
 <p>讨论格式竞争时最容易忽略的事实是：<strong>“在编码码字上直接算”早已是主流 OLAP 引擎的标配</strong>，比新格式的普及快得多。</p>
@@ -341,7 +273,7 @@
 <p>以下是我的前瞻分析，置信度随条目递减。</p>
 <p><strong>判断一：格式市场从”赢家通吃”走向”按负载分层”，Parquet 仍是基座但不再是前沿。</strong> 最可能的格局是三层：可靠性基座层（Parquet+Iceberg，承载存量 EB 级数据与全部传统 BI 负载——这一层的迁移成本在任何 ROI 计算里都不可行）；性能层（Vortex 或同类，作为 Iceberg 内的 Parquet 替换件，服务对延迟敏感的分析——Microsoft 的 TPC-DS 试验证明了这条路的技术可行性）；AI 原生层（Lance 类，专司向量检索、多模态、训练数据管理）。分层的驱动力正是本文第一节的负载分化。 Parquet 的”开放互操作层”地位让它稳坐基座，但前沿创新的重心已经移出 Parquet 本体——<strong>它会赢得很稳，但赢得不再性感</strong>。</p>
 <p><strong>判断二：计算与存储的边界重画，“格式内求值”成为标配能力。</strong> 谓词下推的下界正从”扫描算子”推进到”存储段内部”：Vortex 已支持段内表达式求值，FastLanes FF 提供部分解压 API。当对象存储上的数据可以不解压就完成过滤甚至聚合，引擎与格式的接口将从”给我字节”变成”帮我算这个表达式”。五年内，<strong>不支持压缩态计算的开放格式会在性能敏感场景失去竞争力</strong>——这是比压缩率更硬的生死线。</p>
-<p><strong>判断三：可演进性机制将收敛为行业标配，Editions 式设计胜率最高。</strong> 三种方案的比较：Parquet 双轨（保留字段+UUID）最保守，优点是零破坏，缺点是每个新能力都要走一遍双轨、文件膨胀；F3 的 WASM 内嵌解码器最激进，彻底解决兼容但引入任意代码执行的安全审计难题，短期内难被企业接受；Vortex Editions（日期戳被祝福集合+可配置兼容窗口）在中间——它承认”编码 SOTA 演进快于布局”这个现实，把演进做成产品节奏。我预计**“blessed set + 兼容窗口”会成为 2027 年后新格式的默认设计模式**，而 Parquet 也会逐步引入类似的版本化编码集合概念。</p>
+<p><strong>判断三：可演进性机制将收敛为行业标配，Editions 式设计胜率最高。</strong> 三种方案的比较：Parquet 双轨（保留字段+UUID）最保守，优点是零破坏，缺点是每个新能力都要走一遍双轨、文件膨胀；F3 的 WASM 内嵌解码器最激进，彻底解决兼容但引入任意代码执行的安全审计难题，短期内难被企业接受；Vortex Editions（日期戳被祝福集合+可配置兼容窗口）在中间——它承认”编码 SOTA 演进快于布局”这个现实，把演进做成产品节奏。我预计<strong>”blessed set + 兼容窗口”会成为 2027 年后新格式的默认设计模式</strong>，而 Parquet 也会逐步引入类似的版本化编码集合概念。</p>
 <p><strong>判断四：GPU 与 S3→GPU 直解是下一个性能数量级的来源，编码布局将围绕它重构。</strong> FastLanes 的虚拟 1024-bit ISA 是为”SIMD 还会变宽、ARM/x86/GPU 并存”做的前瞻；Vortex 把 S3 直解到 GPU 列为目标；DaMoN 2026 证明现有 Parquet 调参即可跑满 NVMe。当 GPU 成为数据处理的默认算力（而非加速器），<strong>编码的布局设计约束将从 CPU cache line 转向 GPU warp/显存分页模型</strong>，这是十年一遇的布局重设计窗口。</p>
 <p><strong>判断五：向量与量化进入统一编码框架，“有损可接受”打开新设计空间。</strong> ML 场景对精度的容忍度（int8/int4 量化已是推理标配）意味着编码框架不必死守无损原则。Bullion 已在探索量化作为列存编码；Lance 的 IVF-PQ 本质是”索引即编码”。当 Embedding 成为与 INT64 同等常见的数据类型，<strong>向量编码（含量化、稀疏化）会被格式标准化</strong>——Parquet 的 Vector 类型讨论只是这一进程的第一步。</p>
 <p><strong>判断六：表格式层将持续吸收”更新语义”，文件格式回归”不可变数据块”本位。</strong> Iceberg V4 Column Files、Lance 的 Manifest 版本化、Nimble 的 stream 演进，共同指向一个方向：列级更新、schema 演进、时间旅行都由表格式（或数据集层）负责，文件格式专注做高效的不可变列式块。<strong>分层会更清晰而不是更模糊</strong>——这对用户是好消息：换文件格式（Parquet→Vortex）可以不动表格式（Iceberg），数据栈的可替换性反而增强了。</p>
@@ -354,105 +286,82 @@
 <p>“Parquet 已死”是错的；“Parquet 永生”同样不严谨。更准确的表述或许是：<strong>Parquet 正在从”创新的载体”变成”兼容的基座”，而创新的战场已经转移到格式与引擎的边界、编码与计算的融合、以及 AI 原生的数据布局上。</strong> 对从业者而言，真正需要跟踪的不是”谁杀了 Parquet”这种戏剧化叙事，而是那条更安静的主线：<strong>编码正在成为贯穿存储、传输、计算三态的一等公民——谁先把这件事做完整，谁就定义下一个十年。</strong></p>
 <hr>
 <h2 id="附录-a关键量化数据速查均注明来源口径">附录 A：关键量化数据速查（均注明来源口径）</h2>
-<p>|
-数据点</p>
-<p>|</p>
-<p>数值</p>
-<p>|</p>
-<p>来源</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>ALP 压缩率</p>
-<p>|</p>
-<p>比 Gorilla 高 ~50%、比 Chimp128 高 ~24%、≈ ZSTD-3</p>
-<p>|</p>
-<p>SIGMOD 2024 论文</p>
-<p>|
-|</p>
-<p>ALP 解码吞吐</p>
-<p>|</p>
-<p>~2.6 元组/周期（Patas 0.157 / Gorilla 0.047 / Chimp128 0.040）</p>
-<p>|</p>
-<p>SIGMOD 2024 论文</p>
-<p>|
-|</p>
-<p>DuckDB 采用 ALP 后</p>
-<p>|</p>
-<p>解压比 Patas 快 2–4×，压缩率翻倍</p>
-<p>|</p>
-<p>DuckDB 披露</p>
-<p>|
-|</p>
-<p>FastLanes 标量解码</p>
-<p>|</p>
-<p>>1000 亿整数/秒</p>
-<p>|</p>
-<p>VLDB 2023 论文</p>
-<p>|
-|</p>
-<p>FastLanes 布局收益</p>
-<p>|</p>
-<p>8-bit 标量解码快 ~8×；SIMD 相对标量 40–70×(8-bit) 到 3–4×(64-bit)</p>
-<p>|</p>
-<p>VLDB 2023 论文</p>
-<p>|
-|</p>
-<p>Vortex vs Parquet+zstd</p>
-<p>|</p>
-<p>随机访问 ~100–200×、扫描 ~2–10×（官方亦称 10–20×）、写入 ~5×、压缩率相当</p>
-<p>|</p>
-<p>Vortex 官方</p>
-<p>|
-|</p>
-<p>Microsoft Iceberg 换 Vortex</p>
-<p>|</p>
-<p>TPC-DS SF1000：运行时 -30%、存储 -20%</p>
-<p>|</p>
-<p>Microsoft 试验</p>
-<p>|
-|</p>
-<p>Lance 随机访问</p>
-<p>|</p>
-<p>宣称比 Parquet 快 1–2 个数量级</p>
-<p>|</p>
-<p>Lance 论文/官方</p>
-<p>|
-|</p>
-<p>ClickHouse LowCardinality</p>
-<p>|</p>
-<p>低基数串列存储降 ~3–10×；DoubleDelta+ZSTD 时序可达 1:800+</p>
-<p>|</p>
-<p>ClickHouse 文档</p>
-<p>|
-|</p>
-<p>Parquet Footer 解析（10 万列×20 RG）</p>
-<p>|</p>
-<p>3380ms → 1016ms(arrow-rs 优化) → 367ms(去统计)</p>
-<p>|</p>
-<p>Community Over Code 分享</p>
-<p>|
-|</p>
-<p>FlatBuffers 元数据（2.9 万列×78 RG）</p>
-<p>|</p>
-<p>367MB → 50.4MB（-86%），解析 ~40×</p>
-<p>|</p>
-<p>Databricks 生产案例</p>
-<p>|
-|</p>
-<p>GPU 重写 Parquet</p>
-<p>|</p>
-<p>~1GiB/s → 125GiB/s（4×NVMe）</p>
-<p>|</p>
-<p>DaMoN 2026 论文</p>
-<p>|
-|</p>
-<p>Vector 三层 LIST vs FixedSizeList</p>
-<p>|</p>
-<p>读取性能约 1/3</p>
-<p>|</p>
-<p>社区测试（提案讨论中）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>数据点</th>
+<th>数值</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALP 压缩率</td>
+<td>比 Gorilla 高 ~50%、比 Chimp128 高 ~24%、≈ ZSTD-3</td>
+<td>SIGMOD 2024 论文</td>
+</tr>
+<tr>
+<td>ALP 解码吞吐</td>
+<td>~2.6 元组/周期（Patas 0.157 / Gorilla 0.047 / Chimp128 0.040）</td>
+<td>SIGMOD 2024 论文</td>
+</tr>
+<tr>
+<td>DuckDB 采用 ALP 后</td>
+<td>解压比 Patas 快 2–4×，压缩率翻倍</td>
+<td>DuckDB 披露</td>
+</tr>
+<tr>
+<td>FastLanes 标量解码</td>
+<td>>1000 亿整数/秒</td>
+<td>VLDB 2023 论文</td>
+</tr>
+<tr>
+<td>FastLanes 布局收益</td>
+<td>8-bit 标量解码快 ~8×；SIMD 相对标量 40–70×(8-bit) 到 3–4×(64-bit)</td>
+<td>VLDB 2023 论文</td>
+</tr>
+<tr>
+<td>Vortex vs Parquet+zstd</td>
+<td>随机访问 ~100–200×、扫描 ~2–10×（官方亦称 10–20×）、写入 ~5×、压缩率相当</td>
+<td>Vortex 官方</td>
+</tr>
+<tr>
+<td>Microsoft Iceberg 换 Vortex</td>
+<td>TPC-DS SF1000：运行时 -30%、存储 -20%</td>
+<td>Microsoft 试验</td>
+</tr>
+<tr>
+<td>Lance 随机访问</td>
+<td>宣称比 Parquet 快 1–2 个数量级</td>
+<td>Lance 论文/官方</td>
+</tr>
+<tr>
+<td>ClickHouse LowCardinality</td>
+<td>低基数串列存储降 ~3–10×；DoubleDelta+ZSTD 时序可达 1:800+</td>
+<td>ClickHouse 文档</td>
+</tr>
+<tr>
+<td>Parquet Footer 解析（10 万列×20 RG）</td>
+<td>3380ms → 1016ms(arrow-rs 优化) → 367ms(去统计)</td>
+<td>Community Over Code 分享</td>
+</tr>
+<tr>
+<td>FlatBuffers 元数据（2.9 万列×78 RG）</td>
+<td>367MB → 50.4MB（-86%），解析 ~40×</td>
+<td>Databricks 生产案例</td>
+</tr>
+<tr>
+<td>GPU 重写 Parquet</td>
+<td>~1GiB/s → 125GiB/s（4×NVMe）</td>
+<td>DaMoN 2026 论文</td>
+</tr>
+<tr>
+<td>Vector 三层 LIST vs FixedSizeList</td>
+<td>读取性能约 1/3</td>
+<td>社区测试（提案讨论中）</td>
+</tr>
+</tbody>
+</table>
 <h2 id="附录-b参考文献精选">附录 B：参考文献精选</h2>
 <p><strong>奠基论文</strong>：Abadi et al., <em>Integrating Compression and Execution in Column-Oriented Database Systems</em>, SIGMOD 2006；Zukowski et al., <em>Super-Scalar RAM-CPU Cache Compression</em>, ICDE 2006；Lang et al., <em>Data Blocks</em>, SIGMOD 2016；Ghita/Tomé/Boncz, <em>White-box Compression</em>, CIDR 2020；Melnik et al., <em>Dremel</em>, VLDB 2010。</p>
 <p><strong>第二波编码</strong>：Boncz/Neumann/Leis, <em>FSST: Fast Random Access String Compression</em>, VLDB 2020；Afroozeh/Kuffó/Boncz, <em>ALP: Adaptive Lossless Floating-Point Compression</em>, SIGMOD 2024；Afroozeh/Boncz, <em>The FastLanes Compression Layout</em>, VLDB 2023 及 <em>The FastLanes File Format</em>, VLDB 2025；Kuschewski et al., <em>BtrBlocks: Efficient Columnar Compression for Data Lakes</em>, SIGMOD 2023；Gorilla (VLDB 2015)、Chimp/Chimp128 (VLDB 2022)、Patas 等浮点前驱。</p>

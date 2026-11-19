@@ -176,34 +176,37 @@
 <p><img src="/images/wechat/wechat-2247483905-1/05.png" alt="图片 5"></p>
 <p>不同方法在各模型上的加速比对比</p>
 <p>EAGLE-3（紫色柱）在多个模型上 consistently 领先：</p>
-<p>|
-模型</p>
-<p>|</p>
-<p>EAGLE-3 加速比</p>
-<p>|</p>
-<p>对比 EAGLE-2</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>Vicuna 13B</p>
-<p>| <strong>5.6×</strong> |</p>
-<p>vs 4.1×</p>
-<p>|
-|</p>
-<p>LLaMA-Instruct 3.1 8B</p>
-<p>| <strong>4.4×</strong> |</p>
-<p>vs 3.2×</p>
-<p>|
-|</p>
-<p>LLaMA-Instruct 3.3 70B</p>
-<p>| <strong>4.1×</strong> |</p>
-<p>vs 2.8×</p>
-<p>|
-|</p>
-<p>DeepSeek-R1-Distill-LLaMA 8B</p>
-<p>| <strong>5.0×</strong> |</p>
-<p>vs 3.4×</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>EAGLE-3 加速比</th>
+<th>对比 EAGLE-2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vicuna 13B</td>
+<td><strong>5.6×</strong></td>
+<td>vs 4.1×</td>
+</tr>
+<tr>
+<td>LLaMA-Instruct 3.1 8B</td>
+<td><strong>4.4×</strong></td>
+<td>vs 3.2×</td>
+</tr>
+<tr>
+<td>LLaMA-Instruct 3.3 70B</td>
+<td><strong>4.1×</strong></td>
+<td>vs 2.8×</td>
+</tr>
+<tr>
+<td>DeepSeek-R1-Distill-LLaMA 8B</td>
+<td><strong>5.0×</strong></td>
+<td>vs 3.4×</td>
+</tr>
+</tbody>
+</table>
 <p>最高加速比达到 <strong>6.5×</strong>。</p>
 <h3 id="53-为什么是推理模型">5.3 为什么是推理模型？</h3>
 <p>值得注意的是 DeepSeek-R1-Distill-LLaMA 8B 上的 5.0×——这是推理模型（reasoning model），生成的是长思维链。EAGLE-3 在推理模型上的强势表现说明：</p>

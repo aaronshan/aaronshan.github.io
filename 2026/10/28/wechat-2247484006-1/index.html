@@ -2,34 +2,37 @@
 <p>现在的通行做法是：拆成三百张图，一页一页喂给模型，再把结果拼起来。跑是能跑，麻烦都在接缝处：跨页的表格被切成两半，第 137 页末尾的半句话和第 138 页开头的半句话接不上，页码、页眉、页脚到处乱飞。更要命的是，模型每翻一页就把上一页忘得干干净净。</p>
 <p>2026 年 10 月 27 日，百度开源了 <strong>Unlimited-OCR 2</strong>，想干的事情很直接：<strong>别一页一页读了，整本一次读完。</strong></p>
 <p>先看三个数字，感受一下它和现有方案的距离：</p>
-<p>|
-指标</p>
-<p>|</p>
-<p>Unlimited-OCR 2</p>
-<p>|</p>
-<p>对照</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>MPDocBench（几十页）</p>
-<p>| <strong>84.59</strong> |</p>
-<p>Qwen3.8-Max 78.30</p>
-<p>|
-|</p>
-<p>MarathonDocBench（100–300 页）</p>
-<p>| <strong>77.06</strong> |</p>
-<p>Kimi-K3 33.74</p>
-<p>|
-|</p>
-<p>300 页峰值显存</p>
-<p>| <strong>1.77 GB</strong> |</p>
-<p>47.00 GB（整本预填充）</p>
-<p>|
-|</p>
-<p>300 页每步解码</p>
-<p>| <strong>几乎不随页数增长</strong> |</p>
-<p>全注意力随页数线性变慢</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>Unlimited-OCR 2</th>
+<th>对照</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MPDocBench（几十页）</td>
+<td><strong>84.59</strong></td>
+<td>Qwen3.8-Max 78.30</td>
+</tr>
+<tr>
+<td>MarathonDocBench（100–300 页）</td>
+<td><strong>77.06</strong></td>
+<td>Kimi-K3 33.74</td>
+</tr>
+<tr>
+<td>300 页峰值显存</td>
+<td><strong>1.77 GB</strong></td>
+<td>47.00 GB（整本预填充）</td>
+</tr>
+<tr>
+<td>300 页每步解码</td>
+<td><strong>几乎不随页数增长</strong></td>
+<td>全注意力随页数线性变慢</td>
+</tr>
+</tbody>
+</table>
 <p>同一张卡上，三百页文档的峰值 KV Cache 从 <strong>47.00 GB 压到 1.77 GB</strong>，吞吐从 360 TPS 提到 1,315 TPS。</p>
 <p>这不是把上下文窗口简单堆大。它换了一套注意力机制。</p>
 <hr>

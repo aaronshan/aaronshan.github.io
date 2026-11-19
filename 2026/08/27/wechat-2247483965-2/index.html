@@ -99,231 +99,172 @@
 </ul>
 <h3 id="06-名词速查表">0.6 名词速查表</h3>
 <p>正文首次出现的名词都能在这里查到一句话解释：</p>
-<p>|
-名词</p>
-<p>|</p>
-<p>一句话</p>
-<p>|</p>
-<p>首现于</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>token / tokenizer</p>
-<p>|</p>
-<p>文本切分出的最小单位及其整数 id / 做切分的工具</p>
-<p>|</p>
-<p>0.1</p>
-<p>|
-|</p>
-<p>logits / softmax</p>
-<p>|</p>
-<p>词表大小的分数列 / 把分数变成概率分布</p>
-<p>|</p>
-<p>0.1</p>
-<p>|
-|</p>
-<p>temperature</p>
-<p>|</p>
-<p>采样温度，越高越随机</p>
-<p>|</p>
-<p>0.1</p>
-<p>|
-|</p>
-<p>自回归</p>
-<p>|</p>
-<p>逐个生成 token、边生成边拼回输入</p>
-<p>|</p>
-<p>0.1</p>
-<p>|
-|</p>
-<p>embedding</p>
-<p>|</p>
-<p>id → 向量的查表</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>attention / Q·K·V</p>
-<p>|</p>
-<p>位置间按相关度加权汇总的机制</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>因果掩码</p>
-<p>|</p>
-<p>只允许看历史位置，不许看未来</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>GQA</p>
-<p>|</p>
-<p>多个 q 头共享 k/v 头，省 KV 显存</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>RMSNorm</p>
-<p>|</p>
-<p>均方根归一化，稳定数值尺度</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>RoPE</p>
-<p>|</p>
-<p>旋转位置编码，给 attention 注入顺序信息</p>
-<p>|</p>
-<p>0.2 / 3.4</p>
-<p>|
-|</p>
-<p>hidden_dim / head_dim</p>
-<p>|</p>
-<p>模型向量宽度 / 每个注意力头的宽度</p>
-<p>|</p>
-<p>0.2</p>
-<p>|
-|</p>
-<p>prefill / decode</p>
-<p>|</p>
-<p>处理 prompt 阶段 / 逐 token 生成阶段</p>
-<p>|</p>
-<p>0.3</p>
-<p>|
-|</p>
-<p>compute/memory-bound</p>
-<p>|</p>
-<p>算力瓶颈 / 显存带宽瓶颈</p>
-<p>|</p>
-<p>0.3</p>
-<p>|
-|</p>
-<p>算术强度</p>
-<p>|</p>
-<p>每读一字节能摊到的运算次数，决定打满算力还是干等显存</p>
-<p>|</p>
-<p>0.3</p>
-<p>|
-|</p>
-<p>KV cache</p>
-<p>|</p>
-<p>缓存历史 K/V，避免每步重算</p>
-<p>|</p>
-<p>0.4</p>
-<p>|
-|</p>
-<p>VRAM / 显存带宽</p>
-<p>|</p>
-<p>显卡内存 / 它的读写速度</p>
-<p>|</p>
-<p>0.3</p>
-<p>|
-|</p>
-<p>kernel / Triton</p>
-<p>|</p>
-<p>GPU 上的单个操作 / Python 写 kernel 的框架</p>
-<p>|</p>
-<p>0.5</p>
-<p>|
-|</p>
-<p>CUDA Graph</p>
-<p>|</p>
-<p>录制-重放一串 kernel，省 CPU 发射开销</p>
-<p>|</p>
-<p>0.5 / 2.12</p>
-<p>|
-|</p>
-<p>torch.compile</p>
-<p>|</p>
-<p>把多个操作融合编译成更少 kernel</p>
-<p>|</p>
-<p>0.5</p>
-<p>|
-|</p>
-<p>TP / NCCL / all_reduce</p>
-<p>|</p>
-<p>张量并行 / 多卡通信库 / 跨卡求和合并</p>
-<p>|</p>
-<p>0.5 / 3.2</p>
-<p>|
-|</p>
-<p>FlashAttention</p>
-<p>|</p>
-<p>高性能 attention kernel；varlen 版支持不等长序列拼成一个 batch</p>
-<p>|</p>
-<p>1.3</p>
-<p>|
-|</p>
-<p>PagedAttention</p>
-<p>|</p>
-<p>像操作系统分页一样按块管理 KV cache</p>
-<p>|</p>
-<p>1.4</p>
-<p>|
-|</p>
-<p>块（block）/ 页表（block table）</p>
-<p>|</p>
-<p>KV cache 的分配单位 / 逻辑块→物理块的映射</p>
-<p>|</p>
-<p>1.4</p>
-<p>|
-|</p>
-<p>FCFS</p>
-<p>|</p>
-<p>先来先服务的调度策略</p>
-<p>|</p>
-<p>1.5</p>
-<p>|
-|</p>
-<p>prefix caching</p>
-<p>|</p>
-<p>共享相同前缀的 KV cache，避免重算</p>
-<p>|</p>
-<p>2.5</p>
-<p>|
-|</p>
-<p>chunked prefill</p>
-<p>|</p>
-<p>把长 prompt 切成多段、跨 step 预填充</p>
-<p>|</p>
-<p>2.4</p>
-<p>|
-|</p>
-<p>抢占（preemption）</p>
-<p>|</p>
-<p>显存不够时把序列逐出 running 队列</p>
-<p>|</p>
-<p>2.6</p>
-<p>|
-|</p>
-<p>safetensors</p>
-<p>|</p>
-<p>模型权重的文件格式</p>
-<p>|</p>
-<p>2.8</p>
-<p>|
-|</p>
-<p>pickle</p>
-<p>|</p>
-<p>Python 对象序列化</p>
-<p>|</p>
-<p>2.8 / 3.6</p>
-<p>|
-|</p>
-<p>Megatron-LM</p>
-<p>|</p>
-<p>NVIDIA 的训练框架，正文 TP 切分模式的来源</p>
-<p>|</p>
-<p>3.2</p>
-<p>|
-|</p>
-<p>Gumbel 分布</p>
-<p>|</p>
-<p>一种极值分布，<code>log p + Gumbel 噪声</code> 取 argmax 等价于按 p 采样</p>
-<p>|</p>
-<p>3.5</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>名词</th>
+<th>一句话</th>
+<th>首现于</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>token / tokenizer</td>
+<td>文本切分出的最小单位及其整数 id / 做切分的工具</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>logits / softmax</td>
+<td>词表大小的分数列 / 把分数变成概率分布</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>temperature</td>
+<td>采样温度，越高越随机</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>自回归</td>
+<td>逐个生成 token、边生成边拼回输入</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>embedding</td>
+<td>id → 向量的查表</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>attention / Q·K·V</td>
+<td>位置间按相关度加权汇总的机制</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>因果掩码</td>
+<td>只允许看历史位置，不许看未来</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>GQA</td>
+<td>多个 q 头共享 k/v 头，省 KV 显存</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>RMSNorm</td>
+<td>均方根归一化，稳定数值尺度</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>RoPE</td>
+<td>旋转位置编码，给 attention 注入顺序信息</td>
+<td>0.2 / 3.4</td>
+</tr>
+<tr>
+<td>hidden_dim / head_dim</td>
+<td>模型向量宽度 / 每个注意力头的宽度</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>prefill / decode</td>
+<td>处理 prompt 阶段 / 逐 token 生成阶段</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>compute/memory-bound</td>
+<td>算力瓶颈 / 显存带宽瓶颈</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>算术强度</td>
+<td>每读一字节能摊到的运算次数，决定打满算力还是干等显存</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>KV cache</td>
+<td>缓存历史 K/V，避免每步重算</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>VRAM / 显存带宽</td>
+<td>显卡内存 / 它的读写速度</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>kernel / Triton</td>
+<td>GPU 上的单个操作 / Python 写 kernel 的框架</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>CUDA Graph</td>
+<td>录制-重放一串 kernel，省 CPU 发射开销</td>
+<td>0.5 / 2.12</td>
+</tr>
+<tr>
+<td>torch.compile</td>
+<td>把多个操作融合编译成更少 kernel</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>TP / NCCL / all_reduce</td>
+<td>张量并行 / 多卡通信库 / 跨卡求和合并</td>
+<td>0.5 / 3.2</td>
+</tr>
+<tr>
+<td>FlashAttention</td>
+<td>高性能 attention kernel；varlen 版支持不等长序列拼成一个 batch</td>
+<td>1.3</td>
+</tr>
+<tr>
+<td>PagedAttention</td>
+<td>像操作系统分页一样按块管理 KV cache</td>
+<td>1.4</td>
+</tr>
+<tr>
+<td>块（block）/ 页表（block table）</td>
+<td>KV cache 的分配单位 / 逻辑块→物理块的映射</td>
+<td>1.4</td>
+</tr>
+<tr>
+<td>FCFS</td>
+<td>先来先服务的调度策略</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>prefix caching</td>
+<td>共享相同前缀的 KV cache，避免重算</td>
+<td>2.5</td>
+</tr>
+<tr>
+<td>chunked prefill</td>
+<td>把长 prompt 切成多段、跨 step 预填充</td>
+<td>2.4</td>
+</tr>
+<tr>
+<td>抢占（preemption）</td>
+<td>显存不够时把序列逐出 running 队列</td>
+<td>2.6</td>
+</tr>
+<tr>
+<td>safetensors</td>
+<td>模型权重的文件格式</td>
+<td>2.8</td>
+</tr>
+<tr>
+<td>pickle</td>
+<td>Python 对象序列化</td>
+<td>2.8 / 3.6</td>
+</tr>
+<tr>
+<td>Megatron-LM</td>
+<td>NVIDIA 的训练框架，正文 TP 切分模式的来源</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>Gumbel 分布</td>
+<td>一种极值分布，<code>log p + Gumbel 噪声</code> 取 argmax 等价于按 p 采样</td>
+<td>3.5</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="一引擎全景">一、引擎全景</h2>
 <h3 id="11-推理引擎到底在优化什么">1.1 推理引擎到底在优化什么</h3>
@@ -1153,7 +1094,7 @@
 <span class="line"><span style="color:#E1E4E8">                    param </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.get_parameter(weight_name)</span></span>
 <span class="line"><span style="color:#E1E4E8">                    weight_loader </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> getattr</span><span style="color:#E1E4E8">(param, </span><span style="color:#9ECBFF">"weight_loader"</span><span style="color:#E1E4E8">, default_weight_loader)</span></span>
 <span class="line"><span style="color:#E1E4E8">                    weight_loader(param, f.get_tensor(weight_name))</span></span></code></pre>
-<p>注意内层是 <code>for...else</code>：权重名命中某个 packed key（如 <code>q_proj</code>）时，重映射到融合参数名（<code>qkv_proj</code>）、带着 shard_id 走该参数的 <code>weight_loader</code> 并 <code>break</code>；都不命中时走 <code>else</code> 分支的 <code>default_weight_loader</code>（直接 <code>copy_</code>）。每个融合参数的 <code>weight_loader</code> 内部再按 rank 取自己的 TP 分片（<code>loaded_weight.narrow(tp_dim, start, shard_size)</code> 或 <code>chunk(tp_size)[tp_rank]</code>）——所以**「融合 + 张量并行分片」在加载这一步一次完成**，同一份权重文件，N 个 rank 各取所需、互不重叠。</p>
+<p>注意内层是 <code>for...else</code>：权重名命中某个 packed key（如 <code>q_proj</code>）时，重映射到融合参数名（<code>qkv_proj</code>）、带着 shard_id 走该参数的 <code>weight_loader</code> 并 <code>break</code>；都不命中时走 <code>else</code> 分支的 <code>default_weight_loader</code>（直接 <code>copy_</code>）。每个融合参数的 <code>weight_loader</code> 内部再按 rank 取自己的 TP 分片（<code>loaded_weight.narrow(tp_dim, start, shard_size)</code> 或 <code>chunk(tp_size)[tp_rank]</code>）——所以<strong>「融合 + 张量并行分片」在加载这一步一次完成</strong>，同一份权重文件，N 个 rank 各取所需、互不重叠。</p>
 <h3 id="33-vocabparallelembedding-与-parallellmhead">3.3 VocabParallelEmbedding 与 ParallelLMHead</h3>
 <p>词表相关的两个层也做了并行化（<code>nanovllm/layers/embed_head.py</code>）。</p>
 <p><code>VocabParallelEmbedding</code>（<code>embed_head.py:9-42</code>）按词表维切，每 rank 持 <code>vocab/tp</code> 行。前向时落在本 rank 区间外的 token id 被 mask 掉再查表，最后 <code>all_reduce</code> 汇总——词表大到单卡放不下时也能分布存。</p>

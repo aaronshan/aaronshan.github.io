@@ -2,10 +2,10 @@
 <p>欢迎大家关注我关注公众号，第一时间收到更新推送，一步一步一起开发RAG引擎。</p>
 <ul>
 <li>
-<p>• <strong>微博:</strong> <a href="https://weibo.com/u/1801679460">https://weibo.com/u/1801679460</a></p>
+<p><strong>微博:</strong> <a href="https://weibo.com/u/1801679460">https://weibo.com/u/1801679460</a></p>
 </li>
 <li>
-<p>• <strong>Github:</strong> <a href="https://github.com/aaronshan">https://github.com/aaronshan</a></p>
+<p><strong>Github:</strong> <a href="https://github.com/aaronshan">https://github.com/aaronshan</a></p>
 </li>
 </ul>
 <h2 id="项目简介-">项目简介 📖</h2>
@@ -25,13 +25,13 @@
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <ul>
 <li>
-<p>• 定义了文档加载的核心接口</p>
+<p>定义了文档加载的核心接口</p>
 </li>
 <li>
-<p>• 支持同步和异步加载</p>
+<p>支持同步和异步加载</p>
 </li>
 <li>
-<p>• 提供文件类型支持检查</p>
+<p>提供文件类型支持检查</p>
 </li>
 </ul>
 <h4 id="abstractdocumentloader-抽象类">AbstractDocumentLoader 抽象类</h4>
@@ -52,13 +52,13 @@
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <ul>
 <li>
-<p>• 实现了异步加载的通用逻辑</p>
+<p>实现了异步加载的通用逻辑</p>
 </li>
 <li>
-<p>• 使用线程池优化并发性能</p>
+<p>使用线程池优化并发性能</p>
 </li>
 <li>
-<p>• 提供文件验证等通用功能</p>
+<p>提供文件验证等通用功能</p>
 </li>
 </ul>
 <h4 id="documentloaderfactory-工厂类">DocumentLoaderFactory 工厂类</h4>
@@ -80,53 +80,53 @@
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <ul>
 <li>
-<p>• 采用工厂模式管理不同类型的文档加载器</p>
+<p>采用工厂模式管理不同类型的文档加载器</p>
 </li>
 <li>
-<p>• 支持动态注册新的加载器</p>
+<p>支持动态注册新的加载器</p>
 </li>
 <li>
-<p>• 提供自动文档类型识别和加载器选择</p>
+<p>提供自动文档类型识别和加载器选择</p>
 </li>
 </ul>
 <h2 id="2-单元测试覆盖">2. 单元测试覆盖</h2>
 <h3 id="21-测试用例统计">2.1 测试用例统计</h3>
 <ul>
 <li>
-<p>• 总测试用例数：57个</p>
+<p>总测试用例数：57个</p>
 </li>
 <li>
-<p>• 按模块分布：</p>
+<p>按模块分布：</p>
 </li>
 <li>
-<p>• WordDocumentLoaderTest: 4个</p>
+<p>WordDocumentLoaderTest: 4个</p>
 </li>
 <li>
-<p>• MarkdownDocumentLoaderTest: 22个</p>
+<p>MarkdownDocumentLoaderTest: 22个</p>
 </li>
 <li>
-<p>• PdfDocumentLoaderTest: 16个</p>
+<p>PdfDocumentLoaderTest: 16个</p>
 </li>
 <li>
-<p>• DocumentLoaderFactoryTest: 15个</p>
+<p>DocumentLoaderFactoryTest: 15个</p>
 </li>
 </ul>
 <h3 id="22-关键测试场景">2.2 关键测试场景</h3>
 <ul>
 <li>
-<p>• 文档格式支持检测</p>
+<p>文档格式支持检测</p>
 </li>
 <li>
-<p>• 同步/异步加载功能</p>
+<p>同步/异步加载功能</p>
 </li>
 <li>
-<p>• 错误处理和边界条件</p>
+<p>错误处理和边界条件</p>
 </li>
 <li>
-<p>• 文档结构解析</p>
+<p>文档结构解析</p>
 </li>
 <li>
-<p>• 元数据提取</p>
+<p>元数据提取</p>
 </li>
 </ul>
 <h2 id="3-技术要点总结">3. 技术要点总结</h2>
@@ -139,10 +139,10 @@
 </ol>
 <ul>
 <li>
-<p>• 使用CompletableFuture实现非阻塞操作</p>
+<p>使用CompletableFuture实现非阻塞操作</p>
 </li>
 <li>
-<p>• 线程池管理提升性能</p>
+<p>线程池管理提升性能</p>
 </li>
 </ul>
 <ol start="3">
@@ -154,13 +154,13 @@
 </ol>
 <ul>
 <li>
-<p>• 工厂模式：文档加载器创建</p>
+<p>工厂模式：文档加载器创建</p>
 </li>
 <li>
-<p>• 模板方法：通用文档处理流程</p>
+<p>模板方法：通用文档处理流程</p>
 </li>
 <li>
-<p>• 策略模式：不同格式文档的处理策略</p>
+<p>策略模式：不同格式文档的处理策略</p>
 </li>
 </ul>
 <ol start="5">
@@ -172,13 +172,13 @@
 </ol>
 <ul>
 <li>
-<p>• 完整的单元测试覆盖</p>
+<p>完整的单元测试覆盖</p>
 </li>
 <li>
-<p>• 统一的异常处理机制</p>
+<p>统一的异常处理机制</p>
 </li>
 <li>
-<p>• 规范的代码注释</p>
+<p>规范的代码注释</p>
 </li>
 </ul>
 <h2 id="4-后续计划">4. 后续计划</h2>
@@ -206,13 +206,13 @@
 </ol>
 <ul>
 <li>
-<p>• 问题：部分API不支持Java 8</p>
+<p>问题：部分API不支持Java 8</p>
 </li>
 <li>
-<p>• 解决：替换现代API为兼容版本</p>
+<p>解决：替换现代API为兼容版本</p>
 </li>
 <li>
-<p>• 示例：将<code>Path.of()</code>替换为<code>Paths.get()</code></p>
+<p>示例：将<code>Path.of()</code>替换为<code>Paths.get()</code></p>
 </li>
 </ul>
 <ol start="3">
@@ -224,10 +224,10 @@
 </ol>
 <ul>
 <li>
-<p>• 问题：DOC格式支持限制</p>
+<p>问题：DOC格式支持限制</p>
 </li>
 <li>
-<p>• 解决：暂时只支持DOCX格式，后续规划DOC支持</p>
+<p>解决：暂时只支持DOCX格式，后续规划DOC支持</p>
 </li>
 </ul>
 <h2 id="6-代码提交记录">6. 代码提交记录</h2>
@@ -240,16 +240,16 @@
 <h2 id="7-备注">7. 备注</h2>
 <ul>
 <li>
-<p>• 所有测试用例均已通过</p>
+<p>所有测试用例均已通过</p>
 </li>
 <li>
-<p>• 代码已完成提交并同步到远程仓库</p>
+<p>代码已完成提交并同步到远程仓库</p>
 </li>
 <li>
-<p>• 文档加载器框架已具备良好的扩展性</p>
+<p>文档加载器框架已具备良好的扩展性</p>
 </li>
 <li>
-<p>• 后续可基于此框架扩展更多文档类型支持</p>
+<p>后续可基于此框架扩展更多文档类型支持</p>
 </li>
 </ul>
 <h4 id="明日开发重点">明日开发重点🎯</h4>

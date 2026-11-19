@@ -75,7 +75,7 @@
 <h3 id="22-为什么不会说错拒绝采样">2.2 为什么不会说错：拒绝采样</h3>
 <p>先明确一点：<strong>拒绝采样是推理时验证草稿用的，和训练草稿模型无关。</strong> 草稿模型是用普通的监督学习（交叉熵）训练出来的；拒绝采样只发生在上线后”导师批改实习生草稿”这一步。</p>
 <p>关键问题：如果实习生猜错了怎么办？会不会导致输出质量下降？</p>
-<p>答案是：<strong>不会。</strong> 验证阶段采用了一种叫**拒绝采样（Rejection Sampling）**的机制，它有一个数学保证：</p>
+<p>答案是：<strong>不会。</strong> 验证阶段采用了一种叫<strong>拒绝采样（Rejection Sampling）</strong>的机制，它有一个数学保证：</p>
 <blockquote>
 <p><strong>最终输出的 token 分布，和目标模型自己逐字生成的分布完全一致。</strong></p>
 </blockquote>
@@ -162,41 +162,37 @@
 </li>
 </ul>
 <h3 id="34-草稿模型-vs-目标模型">3.4 草稿模型 vs 目标模型</h3>
-<p>|</p>
-<p>|</p>
-<p>目标模型</p>
-<p>|</p>
-<p>草稿模型</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>参数量</p>
-<p>|</p>
-<p>大（7B–70B+）</p>
-<p>|</p>
-<p>小（通常目标模型的 1/20–1/50）</p>
-<p>|
-|</p>
-<p>速度</p>
-<p>|</p>
-<p>慢</p>
-<p>|</p>
-<p>快</p>
-<p>|
-|</p>
-<p>质量</p>
-<p>|</p>
-<p>高</p>
-<p>|</p>
-<p>较低</p>
-<p>|
-|</p>
-<p>作用</p>
-<p>|</p>
-<p>验证草稿，保证无损</p>
-<p>|</p>
-<p>快速猜测，提供候选</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>目标模型</th>
+<th>草稿模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参数量</td>
+<td>大（7B–70B+）</td>
+<td>小（通常目标模型的 1/20–1/50）</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>慢</td>
+<td>快</td>
+</tr>
+<tr>
+<td>质量</td>
+<td>高</td>
+<td>较低</td>
+</tr>
+<tr>
+<td>作用</td>
+<td>验证草稿，保证无损</td>
+<td>快速猜测，提供候选</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="四草稿模型的设计一场速度与准确率的权衡">四、草稿模型的设计：一场”速度与准确率”的权衡</h2>
 <p>草稿生成+并行验证的加速效果，很大程度上取决于草稿模型的设计。这里有一个根本性的张力：</p>
@@ -224,63 +220,52 @@
 <hr>
 <h2 id="五草稿验证-vs-其他推理加速方法">五、草稿验证 vs 其他推理加速方法</h2>
 <p>草稿验证不是唯一的推理加速方法，了解它和其他方法的区别有助于判断适用场景。</p>
-<p>|
-方法</p>
-<p>|</p>
-<p>原理</p>
-<p>|</p>
-<p>是否无损</p>
-<p>|</p>
-<p>额外内存</p>
-<p>|</p>
-<p>典型加速比</p>
-<p>|
-| --- | --- | --- | --- | --- |
-| <strong>草稿验证</strong> |</p>
-<p>草稿猜测 + 目标验证</p>
-<p>|</p>
-<p>✅ 无损</p>
-<p>|</p>
-<p>需加载草稿模型</p>
-<p>|</p>
-<p>2–6×</p>
-<p>|
-| <strong>量化</strong></p>
-<p>（INT8/INT4）</p>
-<p>|</p>
-<p>降低参数精度</p>
-<p>|</p>
-<p>❌ 有损</p>
-<p>|</p>
-<p>减少</p>
-<p>|</p>
-<p>1.5–3×</p>
-<p>|
-| <strong>知识蒸馏</strong> |</p>
-<p>训练小模型模仿大模型</p>
-<p>|</p>
-<p>❌ 有损</p>
-<p>|</p>
-<p>替换模型</p>
-<p>|</p>
-<p>2–5×</p>
-<p>|
-| <strong>结构化稀疏</strong> |</p>
-<p>跳过部分 attention 头</p>
-<p>|</p>
-<p>❌ 有损</p>
-<p>|</p>
-<p>不变</p>
-<p>|</p>
-<p>1.2–2×</p>
-<p>|
-| <strong>连续批处理</strong> |</p>
-<p>多个请求共享 GPU 计算</p>
-<p>|</p>
-<p>✅ 无损</p>
-<p>|</p>
-<p>不变</p>
-<p>|</p>
-<p>吞吐提升 2–4×</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>原理</th>
+<th>是否无损</th>
+<th>额外内存</th>
+<th>典型加速比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>草稿验证</strong></td>
+<td>草稿猜测 + 目标验证</td>
+<td>✅ 无损</td>
+<td>需加载草稿模型</td>
+<td>2–6×</td>
+</tr>
+<tr>
+<td><strong>量化</strong> （INT8/INT4）</td>
+<td>降低参数精度</td>
+<td>❌ 有损</td>
+<td>减少</td>
+<td>1.5–3×</td>
+</tr>
+<tr>
+<td><strong>知识蒸馏</strong></td>
+<td>训练小模型模仿大模型</td>
+<td>❌ 有损</td>
+<td>替换模型</td>
+<td>2–5×</td>
+</tr>
+<tr>
+<td><strong>结构化稀疏</strong></td>
+<td>跳过部分 attention 头</td>
+<td>❌ 有损</td>
+<td>不变</td>
+<td>1.2–2×</td>
+</tr>
+<tr>
+<td><strong>连续批处理</strong></td>
+<td>多个请求共享 GPU 计算</td>
+<td>✅ 无损</td>
+<td>不变</td>
+<td>吞吐提升 2–4×</td>
+</tr>
+</tbody>
+</table>
 <p>草稿验证的独特价值在于：<strong>它是为数不多的”无损”加速方法之一</strong>，而且可以和量化、连续批处理等其他方法<strong>叠加使用</strong>——比如你先量化模型到 INT8，再开启草稿验证，两者互不干扰。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/dH2T7Cp1ZSiUSI8FnW2VGw" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/27/wechat-2247483965-3/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">OpenMinis 架构分析</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/26/wechat-2247483950-4/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一chatgpt-为什么一个字一个字地往外蹦">一、ChatGPT 为什么”一个字一个字”地往外蹦</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#11-慢的根源不是算力不够而是等数据">1.1 慢的根源不是算力不够，而是”等数据”</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#12-能不能一次多算几个">1.2 能不能一次多算几个</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二草稿生成并行验证一个巧妙的作弊方法">二、草稿生成+并行验证：一个巧妙的”作弊”方法</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#21-为什么这样能加速">2.1 为什么这样能加速</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#22-为什么不会说错拒绝采样">2.2 为什么不会说错：拒绝采样</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#23-拒绝采样的极简代码">2.3 拒绝采样的极简代码</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三核心概念速查">三、核心概念速查</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#31-接受长度acceptance-lengthτ">3.1 接受长度（Acceptance Length，τ）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#32-加速比speedup">3.2 加速比（Speedup）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#33-无损lossless">3.3 无损（Lossless）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#34-草稿模型-vs-目标模型">3.4 草稿模型 vs 目标模型</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四草稿模型的设计一场速度与准确率的权衡">四、草稿模型的设计：一场”速度与准确率”的权衡</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#41-路线一自回归草稿eagle-3">4.1 路线一：自回归草稿（EAGLE-3）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#42-路线二并行草稿dflash--dflash-2">4.2 路线二：并行草稿（DFlash / DFlash 2）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#43-路线三半自回归草稿dspark">4.3 路线三：半自回归草稿（DSpark）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#44-四条路线的关系">4.4 四条路线的关系</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五草稿验证-vs-其他推理加速方法">五、草稿验证 vs 其他推理加速方法</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

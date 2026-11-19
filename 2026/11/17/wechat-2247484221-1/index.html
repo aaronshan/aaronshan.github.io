@@ -160,42 +160,37 @@
 <p>坑二：Metal JIT编译被系统拒绝。</p>
 <p>现象：跑pytest，GPU路径9个用例失败，报<code>Unable to build metal library from source ... Operation not permitted</code>。 原因：不是Xcode没装——<code>xcrun -sdk macosx metal --version</code>正常（Apple metal 32023.620），是运行环境不允许写Metal编译缓存。 正确做法：测试时把MLX默认设备切到CPU，能跑通逻辑测试（42 passed）；实时对话得换一个不被限制的环境。</p>
 <p>成功判据（看末行关键字，别只看”没报错”）：</p>
-<p>|
-步骤</p>
-<p>|</p>
-<p>成功标志</p>
-<p>|</p>
-<p>失败时第一件事</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>安装</p>
-<p>| <code>Successfully installed</code></p>
-<p>，<code>pip list</code>有<code>haru-speech-mlx</code></p>
-<p>|</p>
-<p>换PyPI源重试</p>
-<p>|
-|</p>
-<p>单测</p>
-<p>|</p>
-<p>末行<code>42 passed</code>，无<code>failed</code></p>
-<p>|</p>
-<p>确认设备是CPU</p>
-<p>|
-|</p>
-<p>冒烟</p>
-<p>|</p>
-<p>每帧<code>index</code>递增，<code>audio_peak</code>非0</p>
-<p>|</p>
-<p>查prompt是否为空</p>
-<p>|
-|</p>
-<p>服务</p>
-<p>|</p>
-<p>日志出现监听端口，握手后立刻有第0帧</p>
-<p>|</p>
-<p>查显存与模型路径</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>成功标志</th>
+<th>失败时第一件事</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>安装</td>
+<td><code>Successfully installed</code>，<code>pip list</code>有<code>haru-speech-mlx</code></td>
+<td>换PyPI源重试</td>
+</tr>
+<tr>
+<td>单测</td>
+<td>末行<code>42 passed</code>，无<code>failed</code></td>
+<td>确认设备是CPU</td>
+</tr>
+<tr>
+<td>冒烟</td>
+<td>每帧<code>index</code>递增，<code>audio_peak</code>非0</td>
+<td>查prompt是否为空</td>
+</tr>
+<tr>
+<td>服务</td>
+<td>日志出现监听端口，握手后立刻有第0帧</td>
+<td>查显存与模型路径</td>
+</tr>
+</tbody>
+</table>
 <p>最小验证流程我按这个顺序走，能少绕两圈：装完先跑单测；权重单独下完再启服务；先用<code>haru-inference</code>跑一条十秒wav确认能出音频、文本不重复；再开<code>haru-server</code>试实时；最后才加<code>--codec-backend triton</code>对比每帧耗时。</p>
 <h2 id="它不做什么官方写得很清楚">它不做什么，官方写得很清楚</h2>
 <ul>

@@ -24,7 +24,52 @@
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="html"><code><span class="line"><span style="color:#FDAEB7;font-style:italic">&#x3C;</span><span style="color:#E1E4E8">%@taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml"%></span></span></code></pre>
 <p>xml标签库基于 XPath 语言，我们可以在标签的select属性中使用XPath表达式（需要配置Xalan处理器，将xalan.jar复制到web应用程序的WEB-INF\lib目录下）。</p>
 <p>XPath引擎支持的 表达式 语法</p>
-<table border="1" cellspacing="1" cellpadding="1" style="text-align:center"><tbody><tr><td>表达式</td><td>映射</td></tr><tr><td>$foo</td><td>pageContext.findAttribute("foo")</td></tr><tr><td>$param:foo</td><td>request.getParameter("foo")</td></tr><tr><td>$header:foo</td><td>request.getHeader("foo")</td></tr><tr><td>$cookie:foo</td><td>映射cookie的值到名字foo</td></tr><tr><td>$initParam:foo</td><td>application.getInitParameter("foo")</td></tr><tr><td>$pageScope.foo</td><td>pageContext.getAttribute("foo",PageContext.PAGE_SCOPE)</td></tr><tr><td>$requestScope.foo</td><td>pageContext.getAttribute("foo",PageContext.REQUSET_SCOPE)</td></tr><tr><td>$sessionScope.foo</td><td>pageContext.getAttribute("foo",PageContext.SESSION_SCOPE)</td></tr><tr><td>$application.foo</td><td>pageContext.getAttribute("foo",PageContext.APPLICATION_SCOPE)</td></tr></tbody></table>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>映射</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$foo</td>
+<td>pageContext.findAttribute(“foo”)</td>
+</tr>
+<tr>
+<td>$param:foo</td>
+<td>request.getParameter(“foo”)</td>
+</tr>
+<tr>
+<td>$header:foo</td>
+<td>request.getHeader(“foo”)</td>
+</tr>
+<tr>
+<td>$cookie:foo</td>
+<td>映射cookie的值到名字foo</td>
+</tr>
+<tr>
+<td>$initParam:foo</td>
+<td>application.getInitParameter(“foo”)</td>
+</tr>
+<tr>
+<td>$pageScope.foo</td>
+<td>pageContext.getAttribute(“foo”,PageContext.PAGE_SCOPE)</td>
+</tr>
+<tr>
+<td>$requestScope.foo</td>
+<td>pageContext.getAttribute(“foo”,PageContext.REQUSET_SCOPE)</td>
+</tr>
+<tr>
+<td>$sessionScope.foo</td>
+<td>pageContext.getAttribute(“foo”,PageContext.SESSION_SCOPE)</td>
+</tr>
+<tr>
+<td>$application.foo</td>
+<td>pageContext.getAttribute(“foo”,PageContext.APPLICATION_SCOPE)</td>
+</tr>
+</tbody>
+</table>
 <p>通过这些映射，jsp的范围变量、请求参数、请求报头和cookies，还有上下文初始化参数都可以很容易在XPath表达式中使用。例如：/foo/bar[@x=$param:name]表示查找foo元素节点下的bar子元素节点，并且bar元素的属性x的值，等于http请求参数name的值。</p>
 <p>xml标签库中的标签按照功能可分为三类，xml核心操作，xml流程控制操作和xml转换操作。</p>
 <p>核心操作</p>

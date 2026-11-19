@@ -5,7 +5,7 @@
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> add-apt-repository</span><span style="color:#9ECBFF"> ppa:rabbitvcs/ppa</span></span></code></pre>
 <p>紧接着，执行语句sudo gedit  /etc/apt/sources.list，在文件末尾添加如下语句：</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>deb http://ppa.launchpad.net/rabbitvcs/ppa/ubuntu **DISTRIBUTION** main</span></span></code></pre>
-<p>将其中的**DISTRIBUTION**替换为某一个特定版本的名称。比如：precise，其他的可参考：<a href="http://ppa.launchpad.net/rabbitvcs/ppa/ubuntu/pool/main/r/rabbitvcs/">http://ppa.launchpad.net/rabbitvcs/ppa/ubuntu/pool/main/r/rabbitvcs/</a></p>
+<p>将其中的<strong>DISTRIBUTION</strong>替换为某一个特定版本的名称。比如：precise，其他的可参考：<a href="http://ppa.launchpad.net/rabbitvcs/ppa/ubuntu/pool/main/r/rabbitvcs/">http://ppa.launchpad.net/rabbitvcs/ppa/ubuntu/pool/main/r/rabbitvcs/</a></p>
 <p>随后执行语句更新软件源</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">sudo</span><span style="color:#9ECBFF"> apt-get</span><span style="color:#9ECBFF"> update</span></span></code></pre>
 <p>现在就可以安装了。语句如下：</p>

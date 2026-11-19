@@ -52,7 +52,7 @@
 <p><em>图 2：FreeToken 系统概览。(1) Prefill 阶段：GPU 计算第 l 层时，PCIe 在后台并行加载第 l+1 层专家，形成双缓冲流水线。(2) Decode 阶段：大多数专家命中 GPU 上的共享 LRU 缓存；未命中的部分通过 q</em> 策略在”PCIe 搬运到 GPU”和”直接在 CPU 上计算”之间智能分配。*</p>
 <h3 id="32-decodeq-策略每个时间步的最优分工">3.2 Decode：q* 策略——每个时间步的”最优分工”</h3>
 <p>Decode 阶段的挑战更微妙。假设当前 token 需要 12 个专家，其中 8 个已经在 GPU 缓存里（命中），剩下 4 个缺失。这 4 个缺失的专家怎么办？传统方案要么全部从 DRAM 搬到 GPU（PCIe 压力大），要么全部放在 CPU 上算（CPU 算力可能不够）。</p>
-<p>FreeToken 提出了一种基于实测带宽的 <em><em>q</em> 分配策略</em>*：</p>
+<p>FreeToken 提出了一种基于实测带宽的 <strong>q* 分配策略</strong>：</p>
 <ul>
 <li>
 <p><strong>m</strong> = 当前步缺失的专家数；</p>
@@ -64,7 +64,7 @@
 <p><strong>B_Host</strong> = 实测的 CPU 访问主机内存带宽。</p>
 </li>
 </ul>
-<p>系统把 <em><em>q</em> = m × B_PCIe / B_Host</em>* 个专家分配给 GPU（通过 PCIe 搬运），剩下的 <strong>m - q</strong>* 个专家直接在 CPU 上就地计算。CPU 算完后，结果通过 PCIe 回传给 GPU，与 GPU 本地计算的输出精确合并（exact merge），得到最终的层输出。</p>
+<p>系统把 <strong>q* = m × B_PCIe / B_Host</strong> 个专家分配给 GPU（通过 PCIe 搬运），剩下的 <strong>m - q*</strong> 个专家直接在 CPU 上就地计算。CPU 算完后，结果通过 PCIe 回传给 GPU，与 GPU 本地计算的输出精确合并（exact merge），得到最终的层输出。</p>
 <p>为什么这样是最优的？因为 PCIe 和 CPU 内存带宽是<strong>竞争同一根主机内存总线</strong>的。如果 PCIe 搬太多，CPU 就没带宽读内存；如果 CPU 算太多，又浪费了 GPU 的强劲算力。q* 的公式本质上是让两种资源在同一时间步内达到”带宽平衡”，从而实现该硬件拓扑下的理论最大吞吐。</p>
 <p>更重要的是，这个策略是<strong>动态</strong>的。如果用户后台突然开了个大型游戏，PCIe 可用带宽下降，FreeToken 会在后续时间步自动提高 CPU 就地计算的比例；反之亦然。这让它能稳定适应资源波动。</p>
 <hr>
@@ -79,7 +79,7 @@
 <p>这种缓存的效果非常显著。在论文的示例中，12 个目标专家里有 8 个可以直接从缓存命中，命中率接近 70%。这让 decode 过程中 PCIe 的抖动大大减少，输出速度更平稳。</p>
 <hr>
 <h2 id="五技术支柱三弹性边缘资源管理">五、技术支柱三：弹性边缘资源管理</h2>
-<p>个人电脑不是服务器，可用内存随时在变。FreeToken 在调度器的**安全点（safe points）**动态调整 GPU 专家缓存的大小：如果用户关闭了其他应用，释放出更多显存，FreeToken 就会扩大缓存以提高命中率；如果其他应用抢占了内存，FreeToken 就收缩缓存，把专家移回主机内存，而不会崩溃或需要重启引擎。</p>
+<p>个人电脑不是服务器，可用内存随时在变。FreeToken 在调度器的<strong>安全点（safe points）</strong>动态调整 GPU 专家缓存的大小：如果用户关闭了其他应用，释放出更多显存，FreeToken 就会扩大缓存以提高命中率；如果其他应用抢占了内存，FreeToken 就收缩缓存，把专家移回主机内存，而不会崩溃或需要重启引擎。</p>
 <p>此外，FreeToken 在启动时采用了一种<strong>直接加载到最终布局</strong>的策略：专家权重从磁盘读取后，直接写入主机内存中的最终排列格式，省去了传统方案中”先读到一个缓冲区，再拷贝、再 pin 内存”的多重开销。这显著降低了冷启动时间，让用户能更快开始对话。</p>
 <hr>
 <h2 id="六实验结果从笔记本到工作站的全面跨越">六、实验结果：从笔记本到工作站的全面跨越</h2>
@@ -90,45 +90,40 @@
 <p><em>图 1：(a) 展示了主流托管模型的 API 成本与 Code Arena Elo 评分关系。蓝色方块是 FreeToken 能在本地服务的模型，覆盖从 DeepSeek-V4-Flash 到 GLM-5.2 的前沿区间。(b) 展示了在三种典型硬件上，FreeToken 与基线引擎的 decode 速度对比。虚线是 Codex 生产环境的中位 decode 速度（33 tok/s）。</em></p>
 <p>从图 1(a) 可以看出，FreeToken 本地服务的模型恰好落在了<strong>成本-能力帕累托前沿</strong>上——也就是说，同等智能水平下，本地运行的成本（电费+硬件折旧）远低于持续调用云端 API；而在同等成本下，它能提供的模型质量是最高的。</p>
 <p>图 1(b) 则展示了 FreeToken 在不同硬件层级上的实战表现：</p>
-<p>|
-硬件平台</p>
-<p>|</p>
-<p>模型</p>
-<p>|</p>
-<p>FreeToken 速度</p>
-<p>|</p>
-<p>基线最佳速度</p>
-<p>|</p>
-<p>倍数</p>
-<p>|
-| --- | --- | --- | --- | --- |
-|</p>
-<p>RTX 4060 笔记本 (8GB)</p>
-<p>|</p>
-<p>Qwen3.6-35B</p>
-<p>| <strong>39.3 tok/s</strong> |</p>
-<p>~24 tok/s (llama.cpp)</p>
-<p>|</p>
-<p>1.6x</p>
-<p>|
-|</p>
-<p>RTX 5090 台式机 (32GB)</p>
-<p>|</p>
-<p>DeepSeek-V4-Flash 284B</p>
-<p>| <strong>22~25 tok/s</strong> |</p>
-<p>~14.7 tok/s</p>
-<p>|</p>
-<p>1.5x</p>
-<p>|
-|</p>
-<p>RTX PRO 6000 工作站</p>
-<p>|</p>
-<p>GLM-5.2 753B</p>
-<p>| <strong>14.9 tok/s</strong> |</p>
-<p>~7.3 tok/s</p>
-<p>|</p>
-<p>2.0x</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>硬件平台</th>
+<th>模型</th>
+<th>FreeToken 速度</th>
+<th>基线最佳速度</th>
+<th>倍数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RTX 4060 笔记本 (8GB)</td>
+<td>Qwen3.6-35B</td>
+<td><strong>39.3 tok/s</strong></td>
+<td>~24 tok/s (llama.cpp)</td>
+<td>1.6x</td>
+</tr>
+<tr>
+<td>RTX 5090 台式机 (32GB)</td>
+<td>DeepSeek-V4-Flash 284B</td>
+<td><strong>22~25 tok/s</strong></td>
+<td>~14.7 tok/s</td>
+<td>1.5x</td>
+</tr>
+<tr>
+<td>RTX PRO 6000 工作站</td>
+<td>GLM-5.2 753B</td>
+<td><strong>14.9 tok/s</strong></td>
+<td>~7.3 tok/s</td>
+<td>2.0x</td>
+</tr>
+</tbody>
+</table>
 <p>值得注意的是，RTX 4060 笔记本跑 35B 模型的 39.3 tok/s，已经超过了 Codex 在生产环境中位速度的 33 tok/s。这意味着：<strong>一个普通大学生的游戏本，本地跑开源模型的速度可以媲美顶级闭源 API 的响应体验</strong>。</p>
 <h3 id="62-端到端性能与稳定性">6.2 端到端性能与稳定性</h3>
 <p><img src="/images/wechat/wechat-2247484131-1/03.png" alt="图片 3"></p>

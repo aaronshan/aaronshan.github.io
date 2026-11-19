@@ -76,42 +76,37 @@
 <p>论文中的一个关键对比：一个多层 DFlash 生成 16 个 token 的延迟，比一个 1 层 EAGLE-3 生成 8 个 token 还低。这意味着 DFlash 不仅生成的 token 更多，模型更深，速度还更快——这就是并行性的威力。</p>
 <h3 id="33-文本扩散-vs-图像扩散的关键区别">3.3 文本扩散 vs 图像扩散的关键区别</h3>
 <p>但直接把图像扩散搬到文本上并不简单，因为文本和图像有本质区别：</p>
-<p>|
-维度</p>
-<p>|</p>
-<p>图像</p>
-<p>|</p>
-<p>文本</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>表示</p>
-<p>|</p>
-<p>连续像素值</p>
-<p>|</p>
-<p>离散 token ID</p>
-<p>|
-|</p>
-<p>去噪目标</p>
-<p>|</p>
-<p>恢复像素值</p>
-<p>|</p>
-<p>预测 token 分布</p>
-<p>|
-|</p>
-<p>条件信息</p>
-<p>|</p>
-<p>文本 prompt</p>
-<p>|</p>
-<p>已验证的上下文 token</p>
-<p>|
-|</p>
-<p>输出</p>
-<p>|</p>
-<p>一张图</p>
-<p>|</p>
-<p>一块 token</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>图像</th>
+<th>文本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表示</td>
+<td>连续像素值</td>
+<td>离散 token ID</td>
+</tr>
+<tr>
+<td>去噪目标</td>
+<td>恢复像素值</td>
+<td>预测 token 分布</td>
+</tr>
+<tr>
+<td>条件信息</td>
+<td>文本 prompt</td>
+<td>已验证的上下文 token</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>一张图</td>
+<td>一块 token</td>
+</tr>
+</tbody>
+</table>
 <p>DFlash 的处理方式是：</p>
 <ol>
 <li>
@@ -251,39 +246,42 @@
 <h2 id="六dflash-的效果">六、DFlash 的效果</h2>
 <h3 id="61-离线基准">6.1 离线基准</h3>
 <p>在 Qwen3-8B 上（贪心解码、temp=0）：</p>
-<p>|
-任务</p>
-<p>|</p>
-<p>EAGLE-3 加速</p>
-<p>|</p>
-<p>DFlash 加速</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>GSM8K（数学）</p>
-<p>|</p>
-<p>2.13×</p>
-<p>| <strong>5.20×</strong> |
-|</p>
-<p>MATH-500</p>
-<p>|</p>
-<p>2.18×</p>
-<p>| <strong>6.17×</strong> |
-|</p>
-<p>AIME24</p>
-<p>|</p>
-<p>2.25×</p>
-<p>| <strong>5.91×</strong> |
-|</p>
-<p>HumanEval（代码）</p>
-<p>|</p>
-<p>2.27×</p>
-<p>| <strong>4.75×</strong> |
-|</p>
-<p>MT-Bench（对话）</p>
-<p>|</p>
-<p>1.90×</p>
-<p>| <strong>2.92×</strong> |</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>EAGLE-3 加速</th>
+<th>DFlash 加速</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GSM8K（数学）</td>
+<td>2.13×</td>
+<td><strong>5.20×</strong></td>
+</tr>
+<tr>
+<td>MATH-500</td>
+<td>2.18×</td>
+<td><strong>6.17×</strong></td>
+</tr>
+<tr>
+<td>AIME24</td>
+<td>2.25×</td>
+<td><strong>5.91×</strong></td>
+</tr>
+<tr>
+<td>HumanEval（代码）</td>
+<td>2.27×</td>
+<td><strong>4.75×</strong></td>
+</tr>
+<tr>
+<td>MT-Bench（对话）</td>
+<td>1.90×</td>
+<td><strong>2.92×</strong></td>
+</tr>
+</tbody>
+</table>
 <p>在数学和代码这类”长思维链”任务上加速尤其夸张。采样（temp=1）和推理模式下也保持约 4.5× 的加速。</p>
 <h3 id="62-为什么数学代码任务加速更高">6.2 为什么数学/代码任务加速更高</h3>
 <p>一个值得深入分析的现象：DFlash 在 Math 和 Code 上的加速比（5–6×）远高于 Chat（2.9×）。</p>

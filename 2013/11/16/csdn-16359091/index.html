@@ -23,16 +23,25 @@
 <span class="line"><span></span></span>
 <span class="line"><span>    at org.apache.hadoop.hbase.ipc.HBaseServer$Handler.run(HBaseServer.java:1039)</span></span></code></pre>
 <p>解决方法就是，修改/etc/hosts文件，修改内容以master为例，如下所示：</p>
-<p>#127.0.0.1       localhost</p>
-<p>192.168.1.108   master</p>
-<p>192.168.1.110   node</p>
-<p>192.168.0.111   slave</p>
-<p># The following lines are desirable for IPv6 capable hosts</p>
-<p>#::1     ip6-localhost ip6-loopback</p>
-<p>#fe00::0 ip6-localnet</p>
-<p>#ff00::0 ip6-mcastprefix</p>
-<p>#ff02::1 ip6-allnodes</p>
-<p>#ff02::2 ip6-allrouters</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>#127.0.0.1       localhost</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>192.168.1.108   master</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>192.168.1.110   node</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>192.168.0.111   slave</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># The following lines are desirable for IPv6 capable hosts</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#::1     ip6-localhost ip6-loopback</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#fe00::0 ip6-localnet</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#ff00::0 ip6-mcastprefix</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#ff02::1 ip6-allnodes</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#ff02::2 ip6-allrouters</span></span></code></pre>
 <p><strong>3、HBase异常：java.io.IOException: Connection reset by peer</strong></p>
 <p>org.apache.hadoop.ipc.HBaseServer: IPC Server listener on 60000: readAndProcess threw exception java.io.IOException: Connection reset by peer. Count of bytes read: 0</p>
 <p>java.io.IOException: Connection reset by peer</p>

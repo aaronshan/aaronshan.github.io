@@ -40,49 +40,42 @@
 <p>监管侧要审计，商业侧要按模型计费、要授权合规，两边都需要同一个东西：<strong>一份能被第三方独立检查、又不暴露权重的证据</strong>。</p>
 <p>这个需求听起来简单，做起来极难——因为证据和秘密天然冲突。</p>
 <h3 id="12-五种看起来能用的方案为什么都不行">1.2 五种”看起来能用”的方案，为什么都不行</h3>
-<p>|
-方案</p>
-<p>|</p>
-<p>做法</p>
-<p>|</p>
-<p>为什么不够</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>权重哈希</p>
-<p>|</p>
-<p>公布权重的 SHA-256</p>
-<p>|</p>
-<p>只证明”文件是这份”，不证明”这次推理用了它”。换模型后重新哈希即可</p>
-<p>|
-|</p>
-<p>TEE / 机密计算</p>
-<p>|</p>
-<p>在 enclave 里推理并出 attestation</p>
-<p>|</p>
-<p>要信任 CPU/GPU 厂商与固件；有侧信道；400B 模型根本放不进 enclave</p>
-<p>|
-|</p>
-<p>水印</p>
-<p>|</p>
-<p>输出里嵌统计信号</p>
-<p>|</p>
-<p>概率性、可被改写洗掉；只能事后取证，无法逐次验证</p>
-<p>|
-|</p>
-<p>抽样重跑</p>
-<p>|</p>
-<p>审计方拿权重重算</p>
-<p>|</p>
-<p>需要权重；只能抽查；无法证明”某一次”</p>
-<p>|
-|</p>
-<p>zkML / zkLLM</p>
-<p>|</p>
-<p>为整次推理生成 zkSNARK</p>
-<p>|</p>
-<p>证明开销随参数量爆炸，公开工作多停在 10M–1B 参数；proof 虽小但生成代价无法承受 400B</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>做法</th>
+<th>为什么不够</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>权重哈希</td>
+<td>公布权重的 SHA-256</td>
+<td>只证明”文件是这份”，不证明”这次推理用了它”。换模型后重新哈希即可</td>
+</tr>
+<tr>
+<td>TEE / 机密计算</td>
+<td>在 enclave 里推理并出 attestation</td>
+<td>要信任 CPU/GPU 厂商与固件；有侧信道；400B 模型根本放不进 enclave</td>
+</tr>
+<tr>
+<td>水印</td>
+<td>输出里嵌统计信号</td>
+<td>概率性、可被改写洗掉；只能事后取证，无法逐次验证</td>
+</tr>
+<tr>
+<td>抽样重跑</td>
+<td>审计方拿权重重算</td>
+<td>需要权重；只能抽查；无法证明”某一次”</td>
+</tr>
+<tr>
+<td>zkML / zkLLM</td>
+<td>为整次推理生成 zkSNARK</td>
+<td>证明开销随参数量爆炸，公开工作多停在 10M–1B 参数；proof 虽小但生成代价无法承受 400B</td>
+</tr>
+</tbody>
+</table>
 <p>FlashProve 的路线是第五种的变体，但换了底层数学——<strong>不用椭圆曲线的 zkSNARK，改用哈希型 IOP</strong>。这一换决定了后面所有取舍：</p>
 <p><img src="/images/wechat/wechat-2247484163-1/02.png" alt="图片 2"></p>
 <p>图 2</p>
@@ -130,49 +123,42 @@
 <p>图 4</p>
 <p><strong>图 4｜信任边界</strong>。搞错这张图，后面所有密码学都白搭——验证器的可靠性只在你喂给它正确的公开文件时才有意义。</p>
 <h3 id="24-为什么它敢上-400b三个反直觉的决定">2.4 为什么它敢上 400B：三个反直觉的决定</h3>
-<p>|
-决定</p>
-<p>|</p>
-<p>直觉做法</p>
-<p>|</p>
-<p>FlashProve 的做法</p>
-<p>|</p>
-<p>换来了什么</p>
-<p>|
-| --- | --- | --- | --- |
-|</p>
-<p>算术</p>
-<p>|</p>
-<p>证明浮点前向</p>
-<p>|</p>
-<p>改成<strong>整数模型</strong>（定点激活 + 查表非线性）</p>
-<p>|</p>
-<p>可精确复现、可代数验证；代价是 top-1 差异 6.81%</p>
-<p>|
-|</p>
-<p>验证方式</p>
-<p>|</p>
-<p>全量重算</p>
-<p>| <strong>抽查</strong></p>
-<p>（只打开表中少量列）</p>
-<p>|</p>
-<p>410GB 只需打开约 10GB；代价是概率性保证</p>
-<p>|
-|</p>
-<p>权重可见性</p>
-<p>|</p>
-<p>证明时公开权重</p>
-<p>| <strong>掩码隐藏</strong></p>
-<p>（RS 码随机尾巴）</p>
-<p>|</p>
-<p>权重始终不出服务方；代价是每请求 1 bit 泄漏预算</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>决定</th>
+<th>直觉做法</th>
+<th>FlashProve 的做法</th>
+<th>换来了什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>算术</td>
+<td>证明浮点前向</td>
+<td>改成<strong>整数模型</strong>（定点激活 + 查表非线性）</td>
+<td>可精确复现、可代数验证；代价是 top-1 差异 6.81%</td>
+</tr>
+<tr>
+<td>验证方式</td>
+<td>全量重算</td>
+<td><strong>抽查</strong> （只打开表中少量列）</td>
+<td>410GB 只需打开约 10GB；代价是概率性保证</td>
+</tr>
+<tr>
+<td>权重可见性</td>
+<td>证明时公开权重</td>
+<td><strong>掩码隐藏</strong> （RS 码随机尾巴）</td>
+<td>权重始终不出服务方；代价是每请求 1 bit 泄漏预算</td>
+</tr>
+</tbody>
+</table>
 <p>这三个决定互相牵制：不改成整数模型就没法抽查；不抽查就压不到 MB 级 proof；不加掩码，抽查就等于泄露权重。</p>
 <hr>
 <h2 id="三how-微观五个核心机制">三、How 微观：五个核心机制</h2>
 <h3 id="31-机制一把浮点模型变成整数模型">3.1 机制一：把浮点模型变成整数模型</h3>
 <p>先定义两个后文反复出现的词。<strong>top-1</strong>：模型在每个位置给所有候选 token 打分，分数最高的那个就是 top-1；全文说“某个 token 是对的”，意思都是“整数模型在这个位置也选了它”。<strong>logit</strong>：softmax 归一化之前的原始分数，可以理解成“还没换算成概率的投票数”。</p>
-<p>为什么非改不可？**浮点加法不满足结合律，舍入规则还依赖硬件。**同一段代码在不同 GPU、不同编译器下可能给出不同结果，而可验证计算要求”每一步都能精确复现”。</p>
+<p>为什么非改不可？<strong>浮点加法不满足结合律，舍入规则还依赖硬件。</strong>同一段代码在不同 GPU、不同编译器下可能给出不同结果，而可验证计算要求”每一步都能精确复现”。</p>
 <p>所以 FlashProve 定义了一个<strong>整数版 Llama 4 Maverick</strong>，写在 <code>docs/model.md</code> 里，用两个程序实现（Python 参考实现 + GPU 证明器），Lean 里还有第三份。</p>
 <p>核心是三个替换：</p>
 <p><strong>① 量化权重 + 定点激活。</strong> 权重是整数（除 embedding 外落在 −4096..4095），激活用”整数 + 2 的幂尺度”表示。每次乘法之后右移若干位做舍入，舍入规则固定：</p>
@@ -223,35 +209,32 @@
 <h3 id="34-机制四权重怎么藏以及每请求-1-bit的预算">3.4 机制四：权重怎么藏，以及”每请求 1 bit”的预算</h3>
 <p>抽查会打开真实数值。如果打开的是原始权重，那证明一次就等于泄露一部分权重——多证几次权重就被拼出来了。</p>
 <p>解法是<strong>三重掩码</strong>：</p>
-<p>|
-层</p>
-<p>|</p>
-<p>做法</p>
-<p>|</p>
-<p>作用</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>编码层</p>
-<p>|</p>
-<p>RS 码后追加随机列（随机尾巴）</p>
-<p>|</p>
-<p>让码字本身不含信息</p>
-<p>|
-|</p>
-<p>承诺层</p>
-<p>|</p>
-<p>Merkle 叶子加随机盐</p>
-<p>|</p>
-<p>防止相同内容产生相同哈希</p>
-<p>|
-|</p>
-<p>计算层</p>
-<p>|</p>
-<p>每个请求用新随机性重写相关行</p>
-<p>|</p>
-<p>让不同请求的打开值不可关联</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>做法</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编码层</td>
+<td>RS 码后追加随机列（随机尾巴）</td>
+<td>让码字本身不含信息</td>
+</tr>
+<tr>
+<td>承诺层</td>
+<td>Merkle 叶子加随机盐</td>
+<td>防止相同内容产生相同哈希</td>
+</tr>
+<tr>
+<td>计算层</td>
+<td>每个请求用新随机性重写相关行</td>
+<td>让不同请求的打开值不可关联</td>
+</tr>
+</tbody>
+</table>
 <p>掩盖到什么程度？仓库给了精确答案：在 <strong>2⁶⁴ 次哈希查询、688,127 次回复</strong>的预算内，平均每个请求泄露约 <strong>1 bit</strong>，验证器所见与模拟器的统计距离小于 <strong>2⁻¹⁵⁴</strong>。</p>
 <p>用人话说：泄露存在，但被压到了”统计上不可区分”的量级。</p>
 <p><strong>这里藏着一个致命失效模式</strong>：验证器<strong>从不检查掩码是否存在</strong>。如果硬件故障或代码 bug 让未掩码的值进入了一个”验证通过”的文件，验证器无法察觉——权重就静默泄露了。这是全系统唯一一个”验证通过但仍然泄密”的路径。</p>
@@ -271,42 +254,37 @@
 <p><img src="/images/wechat/wechat-2247484163-1/08.png" alt="图片 8"></p>
 <p>图 8</p>
 <p><strong>图 8｜四条路线，按你手上的机器选</strong>。路线 1、2 只在 CPU 上验证工具链能跑，3a/3b 用合成权重跑通协议实现，只有路线 4 触及真实权重——别拿路线 1 的 <code>YES</code> 当”系统已验证”。</p>
-<p>|
-路线</p>
-<p>|</p>
-<p>需要</p>
-<p>|</p>
-<p>耗时</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>1 / 2 验证与自测</p>
-<p>|</p>
-<p>Linux + g++ 13+，&#x3C; 2GB 内存</p>
-<p>|</p>
-<p>编译 1–2 分钟，验证 &#x3C; 2 秒</p>
-<p>|
-|</p>
-<p>3a 8 层合成模型</p>
-<p>|</p>
-<p>GPU 栈，10GB 内存</p>
-<p>|</p>
-<p>编译约 29 分钟，运行 23–30 秒</p>
-<p>|
-|</p>
-<p>3b 全尺寸合成权重</p>
-<p>|</p>
-<p>GPU 栈，280GB 内存</p>
-<p>|</p>
-<p>约 42 分钟</p>
-<p>|
-|</p>
-<p>4 真 Maverick</p>
-<p>|</p>
-<p>GPU 栈 + 330GB 内存 + 245GB 磁盘</p>
-<p>|</p>
-<p>数小时</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>路线</th>
+<th>需要</th>
+<th>耗时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 / 2 验证与自测</td>
+<td>Linux + g++ 13+，&#x3C; 2GB 内存</td>
+<td>编译 1–2 分钟，验证 &#x3C; 2 秒</td>
+</tr>
+<tr>
+<td>3a 8 层合成模型</td>
+<td>GPU 栈，10GB 内存</td>
+<td>编译约 29 分钟，运行 23–30 秒</td>
+</tr>
+<tr>
+<td>3b 全尺寸合成权重</td>
+<td>GPU 栈，280GB 内存</td>
+<td>约 42 分钟</td>
+</tr>
+<tr>
+<td>4 真 Maverick</td>
+<td>GPU 栈 + 330GB 内存 + 245GB 磁盘</td>
+<td>数小时</td>
+</tr>
+</tbody>
+</table>
 <h3 id="41-路线-1两分钟验证一份证明">4.1 路线 1：两分钟验证一份证明</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 从仓库根目录，用普通用户（不要 root / sudo）</span></span>
 <span class="line"><span>verifier/build.sh</span></span>
@@ -334,42 +312,42 @@
 <p>期望看到 <code>status 0</code>、一行 <code>proof of work:</code>，最后 <code>YES</code>。进度在 <code>$WORK/cp_commit.log</code>。内存不够会在启动时就以退出码 2 结束。</p>
 <h3 id="43-客户端怎么读结果退出码比-yes-更重要">4.3 客户端怎么读结果：退出码比 <code>YES</code> 更重要</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bin/cp_verify CONFIG_DIR PUBLIC_KEY_DIR REQUEST_FILE TOKEN_FILE PROOF_FILE -id COMMITMENT_ID</span></span></code></pre>
-<p>|
-退出码</p>
-<p>|</p>
-<p>末行</p>
-<p>|</p>
-<p>含义</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>0</p>
-<p>| <code>YES</code></p>
-<p>/ <code>WITHIN LIMITS: …</code></p>
-<p>|</p>
-<p>精确匹配通过 / 阈值策略通过</p>
-<p>|
-|</p>
-<p>1</p>
-<p>| <code>NO: &#x3C;name></code> |</p>
-<p>拒绝（或本地故障）</p>
-<p>|
-|</p>
-<p>5</p>
-<p>| <code>NOT CHECKED: &#x3C;name></code> |</p>
-<p>没有结论。只有 <code>internal-stage</code> / <code>internal-exception-parFor</code> 可重试一次</p>
-<p>|
-|</p>
-<p>14</p>
-<p>| <code>NOT-A-VERIFICATION</code> |</p>
-<p>调用本身不合法，看 <code>---- the call ----</code> 之后的说明</p>
-<p>|
-|</p>
-<p>2, 3, 4, 15</p>
-<p>|</p>
-<p>|</p>
-<p>命令行或文件有问题、只跑了部分阶段（<code>-key</code> / <code>-leaf</code>）、或只是计划调用（<code>-plan</code>），均无结论</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>退出码</th>
+<th>末行</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><code>YES</code> / <code>WITHIN LIMITS: …</code></td>
+<td>精确匹配通过 / 阈值策略通过</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>NO: &#x3C;name></code></td>
+<td>拒绝（或本地故障）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>NOT CHECKED: &#x3C;name></code></td>
+<td>没有结论。只有 <code>internal-stage</code> / <code>internal-exception-parFor</code> 可重试一次</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>NOT-A-VERIFICATION</code></td>
+<td>调用本身不合法，看 <code>---- the call ----</code> 之后的说明</td>
+</tr>
+<tr>
+<td>2, 3, 4, 15</td>
+<td></td>
+<td>命令行或文件有问题、只跑了部分阶段（<code>-key</code> / <code>-leaf</code>）、或只是计划调用（<code>-plan</code>），均无结论</td>
+</tr>
+</tbody>
+</table>
 <p>两个反直觉点：</p>
 <ul>
 <li>
@@ -407,49 +385,52 @@
 </ol>
 <p><strong>这四条只关于”权重一致性”。</strong> 它们合起来说的是：这套权重确实算出了这些 token。仅此而已。</p>
 <h3 id="52-七个证不了">5.2 七个”证不了”</h3>
-<p>|
-证不了</p>
-<p>|</p>
-<p>为什么</p>
-<p>|</p>
-<p>后果</p>
-<p>|
-| --- | --- | --- |
-| <strong>这是 Maverick</strong> |</p>
-<p>provider 自己选权重、自己写配置，ID 只绑定”某套权重”</p>
-<p>|</p>
-<p>可以承诺一个小模型、蒸馏模型，甚至退化模型，然后诚实地证明它</p>
-<p>|
-| <strong>模型没被”关掉”</strong> | <code>KL.bin</code></p>
-<p>的尺度在验证器允许范围内时，可把某些层乃至全部层的贡献舍入为 0</p>
-<p>|</p>
-<p>一个”全零模型”也能出证；验证器只查数值范围，不查模型是否合理</p>
-<p>|
-| <strong>和浮点模型一致</strong> |</p>
-<p>整数模型是另一个函数</p>
-<p>|</p>
-<p>top-1 差异 6.81%</p>
-<p>|
-| <strong>回复是完整的</strong> |</p>
-<p>验证器不知道 end token、不知道 tokenizer</p>
-<p>|</p>
-<p>被截断的回复按更短的回复验证通过</p>
-<p>|
-| <strong>没有采样</strong> |</p>
-<p>request 里没有随机种子</p>
-<p>|</p>
-<p>temperature > 0、top-p、beam search 全部无法证明</p>
-<p>|
-| <strong>是这次请求的新鲜结果</strong> |</p>
-<p>proof 不含 client、不含时间戳； spool（服务端工作目录）里的 nonce 不进入 proof</p>
-<p>|</p>
-<p>同一份证明可以转发给任何人，也可被反复使用</p>
-<p>|
-| <strong>tokenizer 没被动过</strong> |</p>
-<p>token 序列到文本的映射不在证明内</p>
-<p>|</p>
-<p>同一串 token id 可以对应不同文本</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>证不了</th>
+<th>为什么</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>这是 Maverick</strong></td>
+<td>provider 自己选权重、自己写配置，ID 只绑定”某套权重”</td>
+<td>可以承诺一个小模型、蒸馏模型，甚至退化模型，然后诚实地证明它</td>
+</tr>
+<tr>
+<td><strong>模型没被”关掉”</strong></td>
+<td><code>KL.bin</code> 的尺度在验证器允许范围内时，可把某些层乃至全部层的贡献舍入为 0</td>
+<td>一个”全零模型”也能出证；验证器只查数值范围，不查模型是否合理</td>
+</tr>
+<tr>
+<td><strong>和浮点模型一致</strong></td>
+<td>整数模型是另一个函数</td>
+<td>top-1 差异 6.81%</td>
+</tr>
+<tr>
+<td><strong>回复是完整的</strong></td>
+<td>验证器不知道 end token、不知道 tokenizer</td>
+<td>被截断的回复按更短的回复验证通过</td>
+</tr>
+<tr>
+<td><strong>没有采样</strong></td>
+<td>request 里没有随机种子</td>
+<td>temperature > 0、top-p、beam search 全部无法证明</td>
+</tr>
+<tr>
+<td><strong>是这次请求的新鲜结果</strong></td>
+<td>proof 不含 client、不含时间戳； spool（服务端工作目录）里的 nonce 不进入 proof</td>
+<td>同一份证明可以转发给任何人，也可被反复使用</td>
+</tr>
+<tr>
+<td><strong>tokenizer 没被动过</strong></td>
+<td>token 序列到文本的映射不在证明内</td>
+<td>同一串 token id 可以对应不同文本</td>
+</tr>
+</tbody>
+</table>
 <p>第一条和第二条最要命。把它们放在一起看：<strong>验证器证明”这套权重算出了这些 token”，但”这套权重是什么”完全由 provider 决定。</strong></p>
 <p>所以 FlashProve 只在一种场景下有意义：<strong>你已经通过带外渠道确认了 ID 对应哪个模型</strong>。否则证明再漂亮也是自说自话。</p>
 <h3 id="53-三层落差协议lean程序">5.3 三层落差：协议、Lean、程序</h3>
@@ -476,27 +457,28 @@
 <hr>
 <h2 id="六局限与思考">六、局限与思考</h2>
 <h3 id="61-性能账93-到底意味着什么">6.1 性能账：93× 到底意味着什么</h3>
-<p>|
-指标</p>
-<p>|</p>
-<p>数值</p>
-<p>|
-| --- | --- |
-|</p>
-<p>prefill（24 请求/批）</p>
-<p>|</p>
-<p>约 110–111 tok/s，相对 vLLM 同卡 <strong>93.0×</strong></p>
-<p>|
-|</p>
-<p>512 路并发 decode</p>
-<p>|</p>
-<p>相对 vLLM <strong>20.1×</strong></p>
-<p>|
-|</p>
-<p>验证一份 proof</p>
-<p>|</p>
-<p>21 秒，3.53 GB 内存，单 CPU 线程</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prefill（24 请求/批）</td>
+<td>约 110–111 tok/s，相对 vLLM 同卡 <strong>93.0×</strong></td>
+</tr>
+<tr>
+<td>512 路并发 decode</td>
+<td>相对 vLLM <strong>20.1×</strong></td>
+</tr>
+<tr>
+<td>验证一份 proof</td>
+<td>21 秒，3.53 GB 内存，单 CPU 线程</td>
+</tr>
+</tbody>
+</table>
 <p>93× 是每 GPU 的比值。按这个比例线性外推：一台 8 卡 H100 的推理服务，要做到”每个 prompt token 都被证明”，需要约 <strong>744 张 H100 等价</strong>的证明算力（8 × 93）。</p>
 <p>这个数字决定了它现在的定位：<strong>不是在线 API 的默认路径，而是抽样审计与争议补证的工具。</strong></p>
 <p>一条现实的产品化路径是对高价值请求开启证明：合同金额大的、涉及监管的、客户申诉的。按比例抽证，争议时补证。</p>
@@ -554,35 +536,36 @@
 <p>这大概也是为什么它被定位成”研究工件”而不是产品：<strong>它证明了这条路能走通，但离”能放心依赖”还有距离。</strong></p>
 <hr>
 <h2 id="附参考资料全部一手">附：参考资料（全部一手）</h2>
-<p>|
-想核对什么</p>
-<p>|</p>
-<p>看哪里</p>
-<p>|
-| --- | --- |
-|</p>
-<p>定位与快速开始</p>
-<p>| <code>README.md</code> |
-|</p>
-<p>设计与威胁模型</p>
-<p>| <code>docs/architecture.md</code></p>
-<p>、<code>docs/service.md</code></p>
-<p>|
-|</p>
-<p>到底证了什么、没证什么</p>
-<p>| <code>guide/what-is-proved.md</code></p>
-<p>、<code>docs/what-is-not-hidden.md</code></p>
-<p>|
-|</p>
-<p>已知局限与性能数字</p>
-<p>| <code>guide/known-limits.md</code></p>
-<p>、<code>docs/limits-all-rows.tsv</code>、<code>guide/performance.md</code></p>
-<p>|
-|</p>
-<p>形式化验证与数学</p>
-<p>| <code>lean/THEOREM.md</code></p>
-<p>、<code>paper/</code>（技术报告需另行索取）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>想核对什么</th>
+<th>看哪里</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位与快速开始</td>
+<td><code>README.md</code></td>
+</tr>
+<tr>
+<td>设计与威胁模型</td>
+<td><code>docs/architecture.md</code>、<code>docs/service.md</code></td>
+</tr>
+<tr>
+<td>到底证了什么、没证什么</td>
+<td><code>guide/what-is-proved.md</code>、<code>docs/what-is-not-hidden.md</code></td>
+</tr>
+<tr>
+<td>已知局限与性能数字</td>
+<td><code>guide/known-limits.md</code>、<code>docs/limits-all-rows.tsv</code>、<code>guide/performance.md</code></td>
+</tr>
+<tr>
+<td>形式化验证与数学</td>
+<td><code>lean/THEOREM.md</code>、<code>paper/</code>（技术报告需另行索取）</td>
+</tr>
+</tbody>
+</table>
 <p><strong>关于本文数字的说明</strong>：所有性能与通过率数据均来自仓库文档的实测记录，我没有复现；Lean 定理的边界以 <code>guide/what-is-proved.md</code> 与 <code>verifier/README.md</code> 的自我声明为准。如果仓库更新（当前 Version 0.16.0），细节可能变化。</p>
 <hr>
 <blockquote>

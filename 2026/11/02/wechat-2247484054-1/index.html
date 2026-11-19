@@ -56,41 +56,37 @@
 <p><strong>两条路最后到的是同一个地方</strong>：一个 uid 2000、跑自己代码的常驻进程。</p>
 <p>差别只在谁帮你 fork。Mika 自己写 adb 客户端去敲 adbd 的门，DSH 请 Shizuku 代劳。</p>
 <p>代价也就跟着不同：</p>
-<p>|</p>
-<p>|</p>
-<p>Mika</p>
-<p>|</p>
-<p>DSH</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>要装第二个 App</p>
-<p>|</p>
-<p>不用</p>
-<p>|</p>
-<p>要装 Shizuku</p>
-<p>|
-|</p>
-<p>用户操作</p>
-<p>|</p>
-<p>输 6 位配对码</p>
-<p>|</p>
-<p>Shizuku 自己那套流程</p>
-<p>|
-|</p>
-<p>重启之后</p>
-<p>|</p>
-<p>没 Wi-Fi 就废</p>
-<p>|</p>
-<p>Shizuku 要重启服务</p>
-<p>|
-|</p>
-<p>自己写的代码</p>
-<p>|</p>
-<p>1500 行 adb 协议</p>
-<p>|</p>
-<p>一个 SDK 依赖</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Mika</th>
+<th>DSH</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要装第二个 App</td>
+<td>不用</td>
+<td>要装 Shizuku</td>
+</tr>
+<tr>
+<td>用户操作</td>
+<td>输 6 位配对码</td>
+<td>Shizuku 自己那套流程</td>
+</tr>
+<tr>
+<td>重启之后</td>
+<td>没 Wi-Fi 就废</td>
+<td>Shizuku 要重启服务</td>
+</tr>
+<tr>
+<td>自己写的代码</td>
+<td>1500 行 adb 协议</td>
+<td>一个 SDK 依赖</td>
+</tr>
+</tbody>
+</table>
 <p>这就解释了 Mika 为什么要自己啃 1500 行协议：它能省掉「再装一个 App」，代价是自己扛协议实现，以及那个致命的 Wi-Fi 依赖。</p>
 <p><img src="/images/wechat/wechat-2247484054-1/01.png" alt="图片 1"></p>
 <p>两条权限路径：Mika 自己写 adb 客户端去敲 adbd 的门，DSH 请 Shizuku fork 一个 UserService，最后到的是同一个地方</p>
@@ -99,49 +95,42 @@
 <p>它的默认路径是无障碍服务，装完开了权限就能用，Android 10 就够。</p>
 <p>无障碍能干的：读元素树（可以按 displayId 读指定屏）、点击滑动拖拽（<code>dispatchGesture</code> 也带 displayId）、截图（<code>takeScreenshot</code>）、输入文字。</p>
 <p>无障碍干不了的，恰好是 Mika 的全部卖点：</p>
-<p>|
-能力</p>
-<p>|</p>
-<p>无障碍</p>
-<p>|</p>
-<p>要 shell</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>读元素树、点击、输入</p>
-<p>|</p>
-<p>能</p>
-<p>|</p>
-<p>能</p>
-<p>|
-|</p>
-<p>建一块虚拟屏</p>
-<p>|</p>
-<p>不能</p>
-<p>|</p>
-<p>能</p>
-<p>|
-|</p>
-<p>把 App 启动到指定屏</p>
-<p>|</p>
-<p>不能</p>
-<p>|</p>
-<p>能</p>
-<p>|
-|</p>
-<p>移动任务栈</p>
-<p>|</p>
-<p>不能</p>
-<p>|</p>
-<p>能</p>
-<p>|
-|</p>
-<p>单独静音某个 App</p>
-<p>|</p>
-<p>不能</p>
-<p>|</p>
-<p>能</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>无障碍</th>
+<th>要 shell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读元素树、点击、输入</td>
+<td>能</td>
+<td>能</td>
+</tr>
+<tr>
+<td>建一块虚拟屏</td>
+<td>不能</td>
+<td>能</td>
+</tr>
+<tr>
+<td>把 App 启动到指定屏</td>
+<td>不能</td>
+<td>能</td>
+</tr>
+<tr>
+<td>移动任务栈</td>
+<td>不能</td>
+<td>能</td>
+</tr>
+<tr>
+<td>单独静音某个 App</td>
+<td>不能</td>
+<td>能</td>
+</tr>
+</tbody>
+</table>
 <p>后四件事全在 <code>IShellService</code> 里。</p>
 <p>于是两个项目的默认形态完全不一样。</p>
 <p>Mika 一上来就建屏，因为它卖的就是「不占你的屏幕」。DSH 默认在你的屏幕上操作，只有配好 Shizuku 才有「不打扰模式」，而且要求 Android 14 以上。</p>
@@ -262,76 +251,62 @@
 <p>两张图放一起看，差别就一句话：</p>
 <p><strong>Mika 的 App 进程只负责想，动手的事全交给对面那个 uid 2000 的进程；DSH 的 App 进程自己能读能点，只是造屏和搬 App 得加装 shell。</strong></p>
 <h2 id="一份对照">一份对照</h2>
-<p>|</p>
-<p>|</p>
-<p>Mika</p>
-<p>|</p>
-<p>DSH-Android</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>权限路径</p>
-<p>|</p>
-<p>自研 adb → shell 进程</p>
-<p>|</p>
-<p>无障碍，可选 Shizuku</p>
-<p>|
-|</p>
-<p>最低版本</p>
-<p>|</p>
-<p>Android 13</p>
-<p>|</p>
-<p>Android 10；不打扰模式要 14</p>
-<p>|
-|</p>
-<p>装完直接用</p>
-<p>|</p>
-<p>配对后可以</p>
-<p>|</p>
-<p>无障碍可以，虚拟屏要 Shizuku</p>
-<p>|
-|</p>
-<p>锁屏之后</p>
-<p>|</p>
-<p>照常跑</p>
-<p>|</p>
-<p>不能操作别的 App</p>
-<p>|
-|</p>
-<p>断网</p>
-<p>|</p>
-<p>冷启动会废</p>
-<p>|</p>
-<p>不影响本地能力</p>
-<p>|
-|</p>
-<p>安装包</p>
-<p>|</p>
-<p>88 MB（arm64 单独打包 75.8 MB）</p>
-<p>|</p>
-<p>110 MB</p>
-<p>|
-|</p>
-<p>引擎</p>
-<p>|</p>
-<p>自研 Kotlin，约 13 万行</p>
-<p>|</p>
-<p>dsh + Node 24，Kotlin 34k 行 + JS 16k 行</p>
-<p>|
-|</p>
-<p>仓库</p>
-<p>|</p>
-<p>github.com/wangzan101/Mika</p>
-<p>|</p>
-<p>github.com/jackwener/DSH-Android</p>
-<p>|
-|</p>
-<p>star / fork</p>
-<p>|</p>
-<p>4325 / 826</p>
-<p>|</p>
-<p>721 / 78</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Mika</th>
+<th>DSH-Android</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>权限路径</td>
+<td>自研 adb → shell 进程</td>
+<td>无障碍，可选 Shizuku</td>
+</tr>
+<tr>
+<td>最低版本</td>
+<td>Android 13</td>
+<td>Android 10；不打扰模式要 14</td>
+</tr>
+<tr>
+<td>装完直接用</td>
+<td>配对后可以</td>
+<td>无障碍可以，虚拟屏要 Shizuku</td>
+</tr>
+<tr>
+<td>锁屏之后</td>
+<td>照常跑</td>
+<td>不能操作别的 App</td>
+</tr>
+<tr>
+<td>断网</td>
+<td>冷启动会废</td>
+<td>不影响本地能力</td>
+</tr>
+<tr>
+<td>安装包</td>
+<td>88 MB（arm64 单独打包 75.8 MB）</td>
+<td>110 MB</td>
+</tr>
+<tr>
+<td>引擎</td>
+<td>自研 Kotlin，约 13 万行</td>
+<td>dsh + Node 24，Kotlin 34k 行 + JS 16k 行</td>
+</tr>
+<tr>
+<td>仓库</td>
+<td>github.com/wangzan101/Mika</td>
+<td>github.com/jackwener/DSH-Android</td>
+</tr>
+<tr>
+<td>star / fork</td>
+<td>4325 / 826</td>
+<td>721 / 78</td>
+</tr>
+</tbody>
+</table>
 <p>star 差 6 倍，但这两件事不是同一个难度的。</p>
 <p>Mika 的卖点一句话说完：你看不见的那块屏上，AI 替你干活。GIF 一放，不需要解释。</p>
 <p>DSH 的卖点要解释很多：完整的 dsh、文件系统、系统设置、定时触发、SSH 连电脑。它的能力面宽得多，但第一眼看不出来。</p>

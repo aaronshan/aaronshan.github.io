@@ -96,8 +96,7 @@
 <p>2）修改yarn-site.xml</p>
 <p>注意：yarn.nodemanager.aux-services的值是“mapreduce_shuffle”（在hadoop-2.1-beta中的值是“mapreduce.shuffle”）</p>
 <p>3）修改mapred-site.xml</p>
-<p>4）修改hdfs-site.xml   配置好Hadoop的相关东西之后，使用如下命令将hadoop-2.2.0整个文件夹分别拷贝到node和slave主机上去 **（注：设置都不需要改！）</p>
-<p>**</p>
+<p>4）修改hdfs-site.xml   配置好Hadoop的相关东西之后，使用如下命令将hadoop-2.2.0整个文件夹分别拷贝到node和slave主机上去 <strong>（注：设置都不需要改！）</strong></p>
 <h2 id="九关掉masternode和slave的防火墙">九、关掉master、node和slave的防火墙</h2>
 <p>为了防止在hadoop启动时遇到java.net.NoRouteToHostException异常，请关掉防火墙。</p>
 <p>（1）对于ubuntu关闭防火墙</p>

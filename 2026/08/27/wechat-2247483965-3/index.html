@@ -70,42 +70,40 @@
 <hr>
 <h3 id="1-项目概览">1. 项目概览</h3>
 <p><strong>OpenMinis</strong> 是一款<strong>完全运行在设备端（on-device）的开源 AI Agent 应用</strong>，覆盖 iOS 与 Android 双平台。它把主流大模型（Claude / GPT / Gemini / xAI / Kimi / OpenRouter 等）接入原生移动体验，并给模型配上一台”真正的电脑”来干活——一个跑在 App 进程内的完整 Linux 沙箱、浏览器自动化、可扩展的 Skills、跨会话持久记忆，以及深度的系统集成。</p>
-<p>|
-维度</p>
-<p>|</p>
-<p>说明</p>
-<p>|
-| --- | --- |
-|</p>
-<p>定位</p>
-<p>|</p>
-<p>私有、端侧的 AI Agent——数据不出设备（除非主动调用云上模型 API）</p>
-<p>|
-|</p>
-<p>平台</p>
-<p>|</p>
-<p>iOS（Swift / SwiftUI，iOS 26.2，Swift 6.0）/ Android（Kotlin / Compose，minSdk 26，arm64-v8a）</p>
-<p>|
-|</p>
-<p>许可证</p>
-<p>|</p>
-<p>GPLv3（因链接 iSH GPLv3 与 PRoot GPLv2，组合工作以 GPLv3 分发）</p>
-<p>|
-|</p>
-<p>模型接入</p>
-<p>|</p>
-<p>自带 API Key 或账号 OAuth 登录；支持自定义 Base URL（OpenAI 兼容端点，可接 DeepSeek 等中转）</p>
-<p>|
-|</p>
-<p>核心能力</p>
-<p>|</p>
-<p>Linux Shell、浏览器自动化、设备集成（Health/Calendar/Contacts/HomeKit/…）、Skills、Memory、Workspaces、原生卸载</p>
-<p>|
-|</p>
-<p>沙箱内核</p>
-<p>|</p>
-<p>iOS 用 iSH（ARM64 用户态 Linux 模拟）；Android 用 PRoot（ptrace 系统调用拦截 + bind mount）；均启动 Alpine Linux aarch64</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>私有、端侧的 AI Agent——数据不出设备（除非主动调用云上模型 API）</td>
+</tr>
+<tr>
+<td>平台</td>
+<td>iOS（Swift / SwiftUI，iOS 26.2，Swift 6.0）/ Android（Kotlin / Compose，minSdk 26，arm64-v8a）</td>
+</tr>
+<tr>
+<td>许可证</td>
+<td>GPLv3（因链接 iSH GPLv3 与 PRoot GPLv2，组合工作以 GPLv3 分发）</td>
+</tr>
+<tr>
+<td>模型接入</td>
+<td>自带 API Key 或账号 OAuth 登录；支持自定义 Base URL（OpenAI 兼容端点，可接 DeepSeek 等中转）</td>
+</tr>
+<tr>
+<td>核心能力</td>
+<td>Linux Shell、浏览器自动化、设备集成（Health/Calendar/Contacts/HomeKit/…）、Skills、Memory、Workspaces、原生卸载</td>
+</tr>
+<tr>
+<td>沙箱内核</td>
+<td>iOS 用 iSH（ARM64 用户态 Linux 模拟）；Android 用 PRoot（ptrace 系统调用拦截 + bind mount）；均启动 Alpine Linux aarch64</td>
+</tr>
+</tbody>
+</table>
 <p><strong>产品哲学</strong>（README）：“在 AI 时代，技术设计与代码不再是产品的优势所在。最好的 Agent 源于与使用者的紧密反馈闭环——他们的期望与反馈共同收敛于产品。” 因此主仓库<strong>不接受 PR</strong>（是私有开发树的镜像），通过 Issues、AwesomeMinis（用例集）与 MinisSkills（Skill 集）接收社区贡献。</p>
 <h4 id="典型用法">典型用法</h4>
 <ul>
@@ -162,249 +160,282 @@
 <span class="line"><span>├── BUILDING.md          首次构建指南</span></span>
 <span class="line"><span>└── README.md</span></span></code></pre>
 <h4 id="文件规模按类型">文件规模（按类型）</h4>
-<p>|
-类型</p>
-<p>|</p>
-<p>数量</p>
-<p>|</p>
-<p>所属</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>Kotlin</p>
-<p>|</p>
-<p>454</p>
-<p>|</p>
-<p>Android</p>
-<p>|
-|</p>
-<p>Swift</p>
-<p>|</p>
-<p>363</p>
-<p>|</p>
-<p>iOS</p>
-<p>|
-|</p>
-<p>C/C++/H</p>
-<p>|</p>
-<p>61</p>
-<p>|</p>
-<p>原生桥接（iSH、JNI、崩溃处理、jieba）</p>
-<p>|
-|</p>
-<p>Python</p>
-<p>|</p>
-<p>18</p>
-<p>|</p>
-<p>脚本与工具</p>
-<p>|
-|</p>
-<p>Shell</p>
-<p>|</p>
-<p>多个</p>
-<p>|</p>
-<p>deps/ 与 scripts/</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>数量</th>
+<th>所属</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kotlin</td>
+<td>454</td>
+<td>Android</td>
+</tr>
+<tr>
+<td>Swift</td>
+<td>363</td>
+<td>iOS</td>
+</tr>
+<tr>
+<td>C/C++/H</td>
+<td>61</td>
+<td>原生桥接（iSH、JNI、崩溃处理、jieba）</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>18</td>
+<td>脚本与工具</td>
+</tr>
+<tr>
+<td>Shell</td>
+<td>多个</td>
+<td>deps/ 与 scripts/</td>
+</tr>
+</tbody>
+</table>
 <h4 id="ios-关键目录">iOS 关键目录</h4>
-<p>|
-目录</p>
-<p>|</p>
-<p>职责</p>
-<p>|
-| --- | --- |
-| <code>Agent/Chat/</code> |</p>
-<p>Agent 运行时核心：<code>AIChatViewModel</code>、Agent 循环、工具调度、SSE 流处理、SQLite 会话存储</p>
-<p>|
-| <code>Agent/Session/</code> |</p>
-<p>会话级状态：<code>SkillStore</code>、<code>MCPStore</code>、<code>SoulStore</code>（人格文件）、<code>SessionLockStore</code>、<code>SessionForkManager</code></p>
-<p>|
-| <code>Agent/ISH/</code> |</p>
-<p>iSH 命令执行协调：<code>ISHExecutionCoordinator</code>、<code>MinisFsRouter</code>（fakefs 路由）、命令环形缓冲</p>
-<p>|
-| <code>Agent/Shell/</code> |</p>
-<p>Shell 工具：<code>OnDemandBash</code>（按需装 bash）、<code>BashismDetector</code>、<code>BashismReminder</code></p>
-<p>|
-| <code>Agent/Offload/</code> |</p>
-<p>卸载权限管理：<code>OffloadPermissionManager</code>（敏感命令三级权限）</p>
-<p>|
-| <code>Agent/Markdown/</code> |</p>
-<p>Markdown 渲染、KaTeX、<code>minis://</code> URL 内联渲染、<code>MinisImageProvider</code></p>
-<p>|
-| <code>Agent/BrowserUse/</code> |</p>
-<p>浏览器自动化：<code>BrowserTabPool</code>、WKWebView、<code>get_readable</code>、截图</p>
-<p>|
-| <code>Agent/Speech/</code> |</p>
-<p>语音：STT / TTS / VAD</p>
-<p>|
-| <code>Agent/Sync/</code></p>
-<p>, <code>Agent/Sync/V2/</code></p>
-<p>|</p>
-<p>iCloud 同步</p>
-<p>|
-| <code>Agent/Intents/</code> |</p>
-<p>Apple Shortcuts / AppIntents（<code>SendPromptIntent</code> 等）</p>
-<p>|
-| <code>iSH/</code> |</p>
-<p>iSH 内核桥接：<code>ISHKernel</code>（Obj-C 单例）、<code>RootfsManager</code>、<code>ISHShellExecutor</code></p>
-<p>|
-| <code>Providers/</code> |</p>
-<p>LLM Provider 系统（8 个后端）+ 模型管理（<code>ProviderConfigStore</code>、<code>ModelEntry</code>、<code>ModelGroup</code>）</p>
-<p>|
-| <code>NativeOffloads/</code> |</p>
-<p>22 个 <code>apple-*</code> 原生卸载处理器（Obj-C + Swift bridge）</p>
-<p>|
-| <code>Shared/</code> |</p>
-<p>跨子系统基础设施：<code>TextSegmenter</code>、<code>BPETokenizer</code>、<code>EnvVarStore</code>、<code>AppLogger</code>、Config 体系、DeepLink 路由</p>
-<p>|
-| <code>ShareExtension/</code> |</p>
-<p>iOS Share Sheet 扩展</p>
-<p>|
-| <code>AgentWidget/</code> |</p>
-<p>桌面小组件 / Live Activity</p>
-<p>|
-| <code>FileProvider/</code> |</p>
-<p>文件 provider 扩展（vault 挂载）</p>
-<p>|
-| <code>WebApp/</code> |</p>
-<p>PWA / “添加到主屏幕” 元数据</p>
-<p>|
-| <code>Diagnostics/</code> |</p>
-<p>崩溃报告、浏览器资源监控</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Agent/Chat/</code></td>
+<td>Agent 运行时核心：<code>AIChatViewModel</code>、Agent 循环、工具调度、SSE 流处理、SQLite 会话存储</td>
+</tr>
+<tr>
+<td><code>Agent/Session/</code></td>
+<td>会话级状态：<code>SkillStore</code>、<code>MCPStore</code>、<code>SoulStore</code>（人格文件）、<code>SessionLockStore</code>、<code>SessionForkManager</code></td>
+</tr>
+<tr>
+<td><code>Agent/ISH/</code></td>
+<td>iSH 命令执行协调：<code>ISHExecutionCoordinator</code>、<code>MinisFsRouter</code>（fakefs 路由）、命令环形缓冲</td>
+</tr>
+<tr>
+<td><code>Agent/Shell/</code></td>
+<td>Shell 工具：<code>OnDemandBash</code>（按需装 bash）、<code>BashismDetector</code>、<code>BashismReminder</code></td>
+</tr>
+<tr>
+<td><code>Agent/Offload/</code></td>
+<td>卸载权限管理：<code>OffloadPermissionManager</code>（敏感命令三级权限）</td>
+</tr>
+<tr>
+<td><code>Agent/Markdown/</code></td>
+<td>Markdown 渲染、KaTeX、<code>minis://</code> URL 内联渲染、<code>MinisImageProvider</code></td>
+</tr>
+<tr>
+<td><code>Agent/BrowserUse/</code></td>
+<td>浏览器自动化：<code>BrowserTabPool</code>、WKWebView、<code>get_readable</code>、截图</td>
+</tr>
+<tr>
+<td><code>Agent/Speech/</code></td>
+<td>语音：STT / TTS / VAD</td>
+</tr>
+<tr>
+<td><code>Agent/Sync/</code> , <code>Agent/Sync/V2/</code></td>
+<td>iCloud 同步</td>
+</tr>
+<tr>
+<td><code>Agent/Intents/</code></td>
+<td>Apple Shortcuts / AppIntents（<code>SendPromptIntent</code> 等）</td>
+</tr>
+<tr>
+<td><code>iSH/</code></td>
+<td>iSH 内核桥接：<code>ISHKernel</code>（Obj-C 单例）、<code>RootfsManager</code>、<code>ISHShellExecutor</code></td>
+</tr>
+<tr>
+<td><code>Providers/</code></td>
+<td>LLM Provider 系统（8 个后端）+ 模型管理（<code>ProviderConfigStore</code>、<code>ModelEntry</code>、<code>ModelGroup</code>）</td>
+</tr>
+<tr>
+<td><code>NativeOffloads/</code></td>
+<td>22 个 <code>apple-*</code> 原生卸载处理器（Obj-C + Swift bridge）</td>
+</tr>
+<tr>
+<td><code>Shared/</code></td>
+<td>跨子系统基础设施：<code>TextSegmenter</code>、<code>BPETokenizer</code>、<code>EnvVarStore</code>、<code>AppLogger</code>、Config 体系、DeepLink 路由</td>
+</tr>
+<tr>
+<td><code>ShareExtension/</code></td>
+<td>iOS Share Sheet 扩展</td>
+</tr>
+<tr>
+<td><code>AgentWidget/</code></td>
+<td>桌面小组件 / Live Activity</td>
+</tr>
+<tr>
+<td><code>FileProvider/</code></td>
+<td>文件 provider 扩展（vault 挂载）</td>
+</tr>
+<tr>
+<td><code>WebApp/</code></td>
+<td>PWA / “添加到主屏幕” 元数据</td>
+</tr>
+<tr>
+<td><code>Diagnostics/</code></td>
+<td>崩溃报告、浏览器资源监控</td>
+</tr>
+</tbody>
+</table>
 <h4 id="android-关键包comopenminisapp">Android 关键包（<code>com.openminis.app.*</code>）</h4>
-<p>|
-包</p>
-<p>|</p>
-<p>职责</p>
-<p>|
-| --- | --- |
-| <code>ui.chat</code> | <code>ChatViewModel</code></p>
-<p>（Agent 循环核心，约 9000 行）、<code>ChatScreen</code>、Markdown、流式 UI</p>
-<p>|
-| <code>provider</code></p>
-<ul>
-<li>子包</li>
-</ul>
-<p>| <code>LLMProvider</code></p>
-<p>接口、<code>ProviderFactory</code>、<code>anthropic/openai/gemini</code> 实现</p>
-<p>|
-| <code>sandbox</code></p>
-<ul>
-<li><code>sandbox.offload</code></li>
-</ul>
-<p>| <code>PRootKernel</code></p>
-<p>、<code>ExecutionCoordinator</code>、<code>PersistentShell</code>、<code>NativeOffloadServer</code>、<code>PtyBridge</code>、20+ <code>android-*</code> handler</p>
-<p>|
-| <code>tools</code> | <code>AgentTools</code></p>
-<p>注册表、<code>FileRead/Write/EditTool</code>、<code>ReadImageTool</code>、<code>BrowserUseTool</code>、<code>MemoryTools</code></p>
-<p>|
-| <code>agent</code> | <code>ToolLoopDetector</code></p>
-<p>、<code>SoulStore</code>、<code>shell/BashismDetector</code>、<code>shell/OnDemandBash</code></p>
-<p>|
-| <code>offload</code> | <code>ShizukuManager</code></p>
-<p>/<code>ShizukuBackend</code>、<code>OffloadPermissionManager</code>、设备管理器</p>
-<p>|
-| <code>browser</code> | <code>BrowserUseManager</code></p>
-<p>、<code>BrowserTabPool</code>、<code>BrowserAction</code></p>
-<p>|
-| <code>data</code></p>
-<ul>
-<li><code>data.db</code></li>
-</ul>
-<p>|</p>
-<p>Room DB（<code>AppDatabase</code>）、各 Repository</p>
-<p>|
-| <code>auth</code> |</p>
-<p>各 Provider OAuth 管理器</p>
-<p>|
-| <code>config</code> | <code>ConfigRegistry</code></p>
-<p>、<code>minis-config</code> CLI 层</p>
-<p>|
-| <code>service</code> | <code>AgentForegroundService</code></p>
-<p>、<code>SessionActivityTracker</code>、<code>ToolOverlayController</code></p>
-<p>|
-| <code>accessibility</code> | <code>MinisAccessibilityService</code></p>
-<p>（UI 自动化后端）</p>
-<p>|
-| <code>crash</code> | <code>NativeCrashHandler</code></p>
-<p>、<code>CrashFrequencyDetector</code>（安全模式）</p>
-<p>|
-| <code>mcp</code> |</p>
-<p>MCP OAuth 集成</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ui.chat</code></td>
+<td><code>ChatViewModel</code> （Agent 循环核心，约 9000 行）、<code>ChatScreen</code>、Markdown、流式 UI</td>
+</tr>
+<tr>
+<td><code>provider</code> + 子包</td>
+<td><code>LLMProvider</code> 接口、<code>ProviderFactory</code>、<code>anthropic/openai/gemini</code> 实现</td>
+</tr>
+<tr>
+<td><code>sandbox</code> + <code>sandbox.offload</code></td>
+<td><code>PRootKernel</code>、<code>ExecutionCoordinator</code>、<code>PersistentShell</code>、<code>NativeOffloadServer</code>、<code>PtyBridge</code>、20+ <code>android-*</code> handler</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td><code>AgentTools</code> 注册表、<code>FileRead/Write/EditTool</code>、<code>ReadImageTool</code>、<code>BrowserUseTool</code>、<code>MemoryTools</code></td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td><code>ToolLoopDetector</code>、<code>SoulStore</code>、<code>shell/BashismDetector</code>、<code>shell/OnDemandBash</code></td>
+</tr>
+<tr>
+<td><code>offload</code></td>
+<td><code>ShizukuManager</code> /<code>ShizukuBackend</code>、<code>OffloadPermissionManager</code>、设备管理器</td>
+</tr>
+<tr>
+<td><code>browser</code></td>
+<td><code>BrowserUseManager</code>、<code>BrowserTabPool</code>、<code>BrowserAction</code></td>
+</tr>
+<tr>
+<td><code>data</code> + <code>data.db</code></td>
+<td>Room DB（<code>AppDatabase</code>）、各 Repository</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td>各 Provider OAuth 管理器</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td><code>ConfigRegistry</code>、<code>minis-config</code> CLI 层</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td><code>AgentForegroundService</code>、<code>SessionActivityTracker</code>、<code>ToolOverlayController</code></td>
+</tr>
+<tr>
+<td><code>accessibility</code></td>
+<td><code>MinisAccessibilityService</code> （UI 自动化后端）</td>
+</tr>
+<tr>
+<td><code>crash</code></td>
+<td><code>NativeCrashHandler</code>、<code>CrashFrequencyDetector</code>（安全模式）</td>
+</tr>
+<tr>
+<td><code>mcp</code></td>
+<td>MCP OAuth 集成</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h3 id="4-核心子系统详解">4. 核心子系统详解</h3>
 <h4 id="41-agent-运行时">4.1 Agent 运行时</h4>
 <p>Agent 运行时是 OpenMinis 的核心：把用户 prompt 驱动为一个<strong>多轮 Agent 循环</strong>——调用 LLM 生成文本与工具调用、并发执行工具（shell 命令、文件操作、浏览器操作、记忆读写）、把工具结果回传 LLM、最终产出完整回复。</p>
 <h5 id="411-关键文件与类型ios">4.1.1 关键文件与类型（iOS）</h5>
-<p>|
-文件</p>
-<p>|</p>
-<p>主要类型</p>
-<p>|</p>
-<p>职责</p>
-<p>|
-| --- | --- | --- |
-| <code>Agent/Chat/AIChatViewModel.swift</code> | <code>AIChatViewModel</code></p>
-<p>（@MainActor ObservableObject）</p>
-<p>|</p>
-<p>核心视图模型；持有 messages/agentHistory/isProcessing；<code>send()</code> 入口、<code>runAgentLoop()</code> 主循环、<code>baseSystemPrompt</code> 系统提示组装</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+ToolDefinitions.swift</code> | <code>AgentToolDefinition</code></p>
-<p>/ <code>AgentToolParam</code></p>
-<p>|</p>
-<p>工具 schema 定义，由 <code>makeAgentTools()</code> 返回</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+ConcurrentTools.swift</code> | <code>BatchImageBudget</code></p>
-<p>(actor)、<code>executeSingleToolUse()</code></p>
-<p>|</p>
-<p>并发工具调度：TaskGroup 最多 10 个工具并发，按原始 tool_use 顺序拼接结果</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+SSEStream.swift</code> | <code>processStreamEvents()</code> |</p>
-<p>SSE 流式解析（后台线程），分发批量 UI 更新到 MainActor</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+ISHCommand.swift</code> | <code>executeCommand()</code> |</p>
-<p>shell 命令桥接：检测 bashism、按需装 bash、委托 <code>ISHExecutionCoordinator</code></p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+FileTools.swift</code> | <code>executeFileRead/Write/Edit()</code> |</p>
-<p>文件工具：直接经 FileManager 操作 iSH fakefs</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+MemoryTools.swift</code> | <code>loadGlobalMemoryFragment()</code></p>
-<p>等</p>
-<p>|</p>
-<p>记忆注入：GLOBAL.md + 最近 3 天日志注入系统提示</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+Compaction.swift</code> | <code>compactBefore()</code></p>
-<p>、<code>effectiveAgentHistory()</code></p>
-<p>|</p>
-<p>上下文压缩：旧消息摘要化，推理时合成有效历史</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+Offloading.swift</code> | <code>offloadContextIfNeeded()</code></p>
-<p>、<code>offloadToolOutput()</code></p>
-<p>|</p>
-<p>大输出卸载：超过阈值的工具结果写入 <code>/var/minis/offloads/</code> 并替换为截断摘要</p>
-<p>|
-| <code>Agent/Chat/AIChatViewModel+Fallback.swift</code> | <code>streamWithGroupFallback()</code></p>
-<p>、<code>streamWithAutoRetry()</code></p>
-<p>|</p>
-<p>模型降级：自动重试 + 模型组内 fallback</p>
-<p>|
-| <code>Agent/Chat/ChatStore.swift</code> | <code>ChatStore</code></p>
-<p>(actor)、<code>ChatSession</code>、<code>RawMessage</code></p>
-<p>|</p>
-<p>SQLite 持久化层（WAL 模式）</p>
-<p>|
-| <code>Agent/Chat/ContextPolicy.swift</code> | <code>ContextPolicy</code> |</p>
-<p>按模型上下文窗口分 4 层决定 offload/compact/exhausted 阈值</p>
-<p>|
-| <code>Agent/ISH/ISHExecutionCoordinator.swift</code> | <code>ISHExecutionCoordinator</code></p>
-<p>(actor)</p>
-<p>|</p>
-<p>iSH 命令协调器：fork <code>/bin/sh</code>、per-session in-flight PID、完全并发</p>
-<p>|
-| <code>Agent/ToolLoopDetector.swift</code> | <code>ToolLoopDetector</code> |</p>
-<p>工具循环检测，防止 Agent 陷入无进展的重复调用</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>主要类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel.swift</code></td>
+<td><code>AIChatViewModel</code> （@MainActor ObservableObject）</td>
+<td>核心视图模型；持有 messages/agentHistory/isProcessing；<code>send()</code> 入口、<code>runAgentLoop()</code> 主循环、<code>baseSystemPrompt</code> 系统提示组装</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+ToolDefinitions.swift</code></td>
+<td><code>AgentToolDefinition</code> / <code>AgentToolParam</code></td>
+<td>工具 schema 定义，由 <code>makeAgentTools()</code> 返回</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+ConcurrentTools.swift</code></td>
+<td><code>BatchImageBudget</code> (actor)、<code>executeSingleToolUse()</code></td>
+<td>并发工具调度：TaskGroup 最多 10 个工具并发，按原始 tool_use 顺序拼接结果</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+SSEStream.swift</code></td>
+<td><code>processStreamEvents()</code></td>
+<td>SSE 流式解析（后台线程），分发批量 UI 更新到 MainActor</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+ISHCommand.swift</code></td>
+<td><code>executeCommand()</code></td>
+<td>shell 命令桥接：检测 bashism、按需装 bash、委托 <code>ISHExecutionCoordinator</code></td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+FileTools.swift</code></td>
+<td><code>executeFileRead/Write/Edit()</code></td>
+<td>文件工具：直接经 FileManager 操作 iSH fakefs</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+MemoryTools.swift</code></td>
+<td><code>loadGlobalMemoryFragment()</code> 等</td>
+<td>记忆注入：GLOBAL.md + 最近 3 天日志注入系统提示</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+Compaction.swift</code></td>
+<td><code>compactBefore()</code>、<code>effectiveAgentHistory()</code></td>
+<td>上下文压缩：旧消息摘要化，推理时合成有效历史</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+Offloading.swift</code></td>
+<td><code>offloadContextIfNeeded()</code>、<code>offloadToolOutput()</code></td>
+<td>大输出卸载：超过阈值的工具结果写入 <code>/var/minis/offloads/</code> 并替换为截断摘要</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/AIChatViewModel+Fallback.swift</code></td>
+<td><code>streamWithGroupFallback()</code>、<code>streamWithAutoRetry()</code></td>
+<td>模型降级：自动重试 + 模型组内 fallback</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/ChatStore.swift</code></td>
+<td><code>ChatStore</code> (actor)、<code>ChatSession</code>、<code>RawMessage</code></td>
+<td>SQLite 持久化层（WAL 模式）</td>
+</tr>
+<tr>
+<td><code>Agent/Chat/ContextPolicy.swift</code></td>
+<td><code>ContextPolicy</code></td>
+<td>按模型上下文窗口分 4 层决定 offload/compact/exhausted 阈值</td>
+</tr>
+<tr>
+<td><code>Agent/ISH/ISHExecutionCoordinator.swift</code></td>
+<td><code>ISHExecutionCoordinator</code> (actor)</td>
+<td>iSH 命令协调器：fork <code>/bin/sh</code>、per-session in-flight PID、完全并发</td>
+</tr>
+<tr>
+<td><code>Agent/ToolLoopDetector.swift</code></td>
+<td><code>ToolLoopDetector</code></td>
+<td>工具循环检测，防止 Agent 陷入无进展的重复调用</td>
+</tr>
+</tbody>
+</table>
 <p>Android 对应为 <code>ui/chat/ChatViewModel.kt</code>（约 9000 行），方法链一致：<code>sendMessage()</code> → <code>runAgentLoop()</code> → <code>executeTool()</code> → <code>executeShellCommand()</code>。</p>
 <h5 id="412-agent-循环流程">4.1.2 Agent 循环流程</h5>
 <p><img src="/images/wechat/wechat-2247483965-3/02.png" alt="图片 2"></p>
@@ -427,54 +458,57 @@
 </li>
 </ul>
 <h5 id="413-工具清单">4.1.3 工具清单</h5>
-<p>|
-工具</p>
-<p>|</p>
-<p>实现位置</p>
-<p>|</p>
-<p>说明</p>
-<p>|
-| --- | --- | --- |
-| <code>shell_execute</code> | <code>+ISHCommand.swift</code></p>
-<p>/ Android <code>executeShellCommand</code></p>
-<p>|</p>
-<p>在沙箱中执行 shell，支持 timeout/delay</p>
-<p>|
-| <code>file_read</code> | <code>+FileTools.swift</code></p>
-<p>/ <code>FileReadTool</code></p>
-<p>|</p>
-<p>直读 fakefs 文件，支持 offset/lines/direction</p>
-<p>|
-| <code>file_write</code> | <code>+FileTools.swift</code></p>
-<p>/ <code>FileWriteTool</code></p>
-<p>|</p>
-<p>写文件，支持 append/create_dirs；路径在 <code>/var/minis/</code> 下时附 <code>minis_url</code></p>
-<p>|
-| <code>file_edit</code> | <code>+FileTools.swift</code></p>
-<p>/ <code>FileEditTool</code></p>
-<p>|</p>
-<p>精确字符串替换，支持 replace_all</p>
-<p>|
-| <code>browser_use</code> | <code>+ConcurrentTools.swift</code></p>
-<p>/ <code>BrowserUseTool</code></p>
-<p>|</p>
-<p>控制 WebKit/WebView（≤3 tab）：navigate/screenshot/click/type/scroll/execute_js/fetch 等</p>
-<p>|
-| <code>memory_write</code> | <code>+MemoryTools.swift</code></p>
-<p>/ <code>MemoryTools</code></p>
-<p>|</p>
-<p>写今日日志（YYYY-MM-DD.md）</p>
-<p>|
-| <code>memory_get</code> | <code>+MemoryTools.swift</code></p>
-<p>/ <code>MemoryTools</code></p>
-<p>|</p>
-<p>关键词模糊搜索记忆</p>
-<p>|
-| <code>read_image</code> | <code>+ConcurrentTools.swift</code></p>
-<p>/ <code>ReadImageTool</code></p>
-<p>|</p>
-<p>读图片给模型做视觉分析（仅 imageInput 模型注册）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>实现位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shell_execute</code></td>
+<td><code>+ISHCommand.swift</code> / Android <code>executeShellCommand</code></td>
+<td>在沙箱中执行 shell，支持 timeout/delay</td>
+</tr>
+<tr>
+<td><code>file_read</code></td>
+<td><code>+FileTools.swift</code> / <code>FileReadTool</code></td>
+<td>直读 fakefs 文件，支持 offset/lines/direction</td>
+</tr>
+<tr>
+<td><code>file_write</code></td>
+<td><code>+FileTools.swift</code> / <code>FileWriteTool</code></td>
+<td>写文件，支持 append/create_dirs；路径在 <code>/var/minis/</code> 下时附 <code>minis_url</code></td>
+</tr>
+<tr>
+<td><code>file_edit</code></td>
+<td><code>+FileTools.swift</code> / <code>FileEditTool</code></td>
+<td>精确字符串替换，支持 replace_all</td>
+</tr>
+<tr>
+<td><code>browser_use</code></td>
+<td><code>+ConcurrentTools.swift</code> / <code>BrowserUseTool</code></td>
+<td>控制 WebKit/WebView（≤3 tab）：navigate/screenshot/click/type/scroll/execute_js/fetch 等</td>
+</tr>
+<tr>
+<td><code>memory_write</code></td>
+<td><code>+MemoryTools.swift</code> / <code>MemoryTools</code></td>
+<td>写今日日志（YYYY-MM-DD.md）</td>
+</tr>
+<tr>
+<td><code>memory_get</code></td>
+<td><code>+MemoryTools.swift</code> / <code>MemoryTools</code></td>
+<td>关键词模糊搜索记忆</td>
+</tr>
+<tr>
+<td><code>read_image</code></td>
+<td><code>+ConcurrentTools.swift</code> / <code>ReadImageTool</code></td>
+<td>读图片给模型做视觉分析（仅 imageInput 模型注册）</td>
+</tr>
+</tbody>
+</table>
 <p>系统提示还向 LLM 暴露大量 <strong>CLI 工具</strong>（经 <code>shell_execute</code> 调用）：<code>apple-*</code>/<code>android-*</code> 设备集成、<code>minis-open</code>（预览资源）、<code>minis-sessions-cli</code>（管会话）、<code>minis-model-use</code>（调其他模型）、<code>minis-browser-use</code>（CLI 版浏览器）、<code>minis-config</code>（读写配置）。</p>
 <h5 id="414-会话与持久化">4.1.4 会话与持久化</h5>
 <ul>
@@ -498,56 +532,47 @@
 <h4 id="42-linux-沙箱ish--proot--alpine">4.2 Linux 沙箱（iSH / PRoot + Alpine）</h4>
 <p>沙箱是产品的心脏：在 App 进程内跑一个完整的 Alpine Linux，让模型获得 <code>apk/pip/node</code> 等真实工具链。iOS 与 Android 用不同的用户态技术实现同一语义。</p>
 <h5 id="421-双平台沙箱对比">4.2.1 双平台沙箱对比</h5>
-<p>|
-维度</p>
-<p>|</p>
-<p>iOS（iSH）</p>
-<p>|</p>
-<p>Android（PRoot）</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>技术</p>
-<p>|</p>
-<p>用户态 Linux 内核模拟（Asbestos JIT 翻译 ARM64）</p>
-<p>|</p>
-<p>PRoot（<code>ptrace</code> 系统调用拦截 + bind mount）</p>
-<p>|
-|</p>
-<p>Guest</p>
-<p>|</p>
-<p>Alpine Linux aarch64</p>
-<p>|</p>
-<p>Alpine Linux aarch64</p>
-<p>|
-|</p>
-<p>持久内核</p>
-<p>|</p>
-<p>是（<code>ISHKernel</code> 持续运行于独立 pthread）</p>
-<p>|</p>
-<p>否（PRoot 进程级，每会话一个持久 <code>/bin/sh</code>）</p>
-<p>|
-|</p>
-<p>文件系统</p>
-<p>|</p>
-<p>fakefs（SQLite 元数据 <code>meta.db</code> + <code>data/</code> 目录）</p>
-<p>|</p>
-<p>直接 bind mount 到 host 目录</p>
-<p>|
-|</p>
-<p>设备集成</p>
-<p>| <code>apple-*</code></p>
-<p>offload（execve 拦截 → Obj-C handler）</p>
-<p>| <code>android-*</code></p>
-<p>offload（<code>--native-offload</code> 扩展 → Unix socket）</p>
-<p>|
-|</p>
-<p>交叉编译</p>
-<p>|</p>
-<p>Meson 交叉编译 iOS arm64</p>
-<p>|</p>
-<p>NDK r28+ 交叉编译</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>iOS（iSH）</th>
+<th>Android（PRoot）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>技术</td>
+<td>用户态 Linux 内核模拟（Asbestos JIT 翻译 ARM64）</td>
+<td>PRoot（<code>ptrace</code> 系统调用拦截 + bind mount）</td>
+</tr>
+<tr>
+<td>Guest</td>
+<td>Alpine Linux aarch64</td>
+<td>Alpine Linux aarch64</td>
+</tr>
+<tr>
+<td>持久内核</td>
+<td>是（<code>ISHKernel</code> 持续运行于独立 pthread）</td>
+<td>否（PRoot 进程级，每会话一个持久 <code>/bin/sh</code>）</td>
+</tr>
+<tr>
+<td>文件系统</td>
+<td>fakefs（SQLite 元数据 <code>meta.db</code> + <code>data/</code> 目录）</td>
+<td>直接 bind mount 到 host 目录</td>
+</tr>
+<tr>
+<td>设备集成</td>
+<td><code>apple-*</code> offload（execve 拦截 → Obj-C handler）</td>
+<td><code>android-*</code> offload（<code>--native-offload</code> 扩展 → Unix socket）</td>
+</tr>
+<tr>
+<td>交叉编译</td>
+<td>Meson 交叉编译 iOS arm64</td>
+<td>NDK r28+ 交叉编译</td>
+</tr>
+</tbody>
+</table>
 <h5 id="422-ios-ish-集成层">4.2.2 iOS iSH 集成层</h5>
 <p><img src="/images/wechat/wechat-2247483965-3/03.png" alt="图片 3"></p>
 <ul>
@@ -567,36 +592,47 @@
 <p><strong>内核能力</strong>：100+ Linux 系统调用（mmap/brk/poll/epoll/pipes/eventfd/inotify）、AF_INET/AF_INET6/AF_LOCAL 全栈网络、TTY/PTY 设备、SIGSEGV/SIGBUS JIT 崩溃恢复。</p>
 <h5 id="423-挂载系统与-per-session-隔离fs_context-路径翻译">4.2.3 挂载系统与 per-session 隔离（fs_context 路径翻译）</h5>
 <p>agent 与 shell 永远只看到 <code>/var/minis/</code>，URL 与路径中<strong>不含 session ID</strong>。但”同一时刻只有一个 session 可见”是早期 spec 的说法——<strong>实现实际支持跨会话并发</strong>，隔离靠 <code>MinisFsRouter</code> 的 <strong>fs_context 路径翻译</strong>，而非 per-session 换挂载：</p>
-<p>|
-Guest 路径</p>
-<p>|</p>
-<p>Host 路径</p>
-<p>|</p>
-<p>路由方式</p>
-<p>|
-| --- | --- | --- |
-| <code>/var/minis/attachments/</code> | <code>minis/&#x3C;sessionId>/attachments/</code> |</p>
-<p>fs_context 翻译（per-session）</p>
-<p>|
-| <code>/var/minis/offloads/</code> | <code>minis/&#x3C;sessionId>/offloads/</code> |</p>
-<p>fs_context 翻译（per-session）</p>
-<p>|
-| <code>/var/minis/workspace/</code> | <code>minis/&#x3C;sessionId>/workspace/</code> |</p>
-<p>fs_context 翻译（per-session）</p>
-<p>|
-| <code>/var/minis/browser/</code> | <code>minis/&#x3C;sessionId>/browser/</code> |</p>
-<p>fs_context 翻译（per-session）</p>
-<p>|
-| <code>/var/minis/memory/</code> | <code>minis/memory/</code></p>
-<p>（全局）</p>
-<p>|</p>
-<p>静态 bind mount（首次启动注册 meta.db）</p>
-<p>|
-| <code>/var/minis/skills/</code> | <code>minis/skills/</code></p>
-<p>（全局）</p>
-<p>|</p>
-<p>静态 bind mount</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>Guest 路径</th>
+<th>Host 路径</th>
+<th>路由方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/var/minis/attachments/</code></td>
+<td><code>minis/&#x3C;sessionId>/attachments/</code></td>
+<td>fs_context 翻译（per-session）</td>
+</tr>
+<tr>
+<td><code>/var/minis/offloads/</code></td>
+<td><code>minis/&#x3C;sessionId>/offloads/</code></td>
+<td>fs_context 翻译（per-session）</td>
+</tr>
+<tr>
+<td><code>/var/minis/workspace/</code></td>
+<td><code>minis/&#x3C;sessionId>/workspace/</code></td>
+<td>fs_context 翻译（per-session）</td>
+</tr>
+<tr>
+<td><code>/var/minis/browser/</code></td>
+<td><code>minis/&#x3C;sessionId>/browser/</code></td>
+<td>fs_context 翻译（per-session）</td>
+</tr>
+<tr>
+<td><code>/var/minis/memory/</code></td>
+<td><code>minis/memory/</code> （全局）</td>
+<td>静态 bind mount（首次启动注册 meta.db）</td>
+</tr>
+<tr>
+<td><code>/var/minis/skills/</code></td>
+<td><code>minis/skills/</code> （全局）</td>
+<td>静态 bind mount</td>
+</tr>
+</tbody>
+</table>
 <p><strong>机制</strong>（<code>MinisFsRouter.swift</code> + <code>ISHExecutionCoordinator.swift</code>）：</p>
 <ol>
 <li>
@@ -674,220 +710,199 @@ Guest 路径</p>
 </li>
 </ul>
 <h5 id="432-ios-原生卸载处理器22-个srciosnativeoffloads">4.3.2 iOS 原生卸载处理器（22 个，<code>src/ios/NativeOffloads/</code>）</h5>
-<p>|
-类别</p>
-<p>|</p>
-<p>Handler（guest 命令）</p>
-<p>|</p>
-<p>iOS Framework</p>
-<p>|</p>
-<p>能力</p>
-<p>|
-| --- | --- | --- | --- |
-|</p>
-<p>媒体与音频</p>
-<p>| <code>ffmpeg</code></p>
-<p>（FFmpegOffload）</p>
-<p>|</p>
-<p>FFmpeg.framework</p>
-<p>|</p>
-<p>音视频编码/转码/网络流</p>
-<p>|
-|</p>
-<p>| <code>apple-media</code></p>
-<p>（MediaOffload）</p>
-<p>|</p>
-<p>AVFoundation</p>
-<p>|</p>
-<p>录音/播放</p>
-<p>|
-|</p>
-<p>| <code>apple-speak</code></p>
-<p>（SpeakOffload）</p>
-<p>|</p>
-<p>AVSpeechSynthesizer</p>
-<p>|</p>
-<p>TTS</p>
-<p>|
-|</p>
-<p>| <code>apple-speech</code></p>
-<p>（SpeechOffload）</p>
-<p>|</p>
-<p>SFSpeechRecognizer</p>
-<p>|</p>
-<p>STT</p>
-<p>|
-|</p>
-<p>| <code>apple-player</code></p>
-<p>（PlayerOffload）</p>
-<p>|</p>
-<p>AVFoundation</p>
-<p>|</p>
-<p>高级媒体播放</p>
-<p>|
-|</p>
-<p>Apple 服务</p>
-<p>| <code>apple-calendar</code> |</p>
-<p>EventKit</p>
-<p>|</p>
-<p>日历读写</p>
-<p>|
-|</p>
-<p>| <code>apple-contacts</code> |</p>
-<p>Contacts</p>
-<p>|</p>
-<p>联系人</p>
-<p>|
-|</p>
-<p>| <code>apple-maps</code> |</p>
-<p>MapKit</p>
-<p>|</p>
-<p>地图/导航/定位搜索</p>
-<p>|
-|</p>
-<p>| <code>apple-photos</code> |</p>
-<p>Photos</p>
-<p>|</p>
-<p>相册访问</p>
-<p>|
-|</p>
-<p>| <code>apple-health</code> |</p>
-<p>HealthKit</p>
-<p>|</p>
-<p>健康数据读写</p>
-<p>|
-|</p>
-<p>| <code>apple-home</code> |</p>
-<p>HomeKit</p>
-<p>|</p>
-<p>智能家居</p>
-<p>|
-|</p>
-<p>系统访问</p>
-<p>| <code>apple-location</code> |</p>
-<p>CoreLocation</p>
-<p>|</p>
-<p>GPS</p>
-<p>|
-|</p>
-<p>| <code>apple-device</code> |</p>
-<p>UIKit 等</p>
-<p>|</p>
-<p>电量/型号/系统信息</p>
-<p>|
-|</p>
-<p>| <code>apple-clipboard</code> |</p>
-<p>UIPasteboard</p>
-<p>|</p>
-<p>复制粘贴</p>
-<p>|
-|</p>
-<p>| <code>apple-weather</code> |</p>
-<p>WeatherKit</p>
-<p>|</p>
-<p>天气</p>
-<p>|
-|</p>
-<p>| <code>apple-notification</code> |</p>
-<p>UserNotifications</p>
-<p>|</p>
-<p>本地通知</p>
-<p>|
-|</p>
-<p>| <code>apple-alarm</code> |</p>
-<p>EventKit(Reminders)</p>
-<p>|</p>
-<p>闹钟/提醒</p>
-<p>|
-|</p>
-<p>智能</p>
-<p>| <code>apple-vision</code> |</p>
-<p>Vision</p>
-<p>|</p>
-<p>图像识别/OCR</p>
-<p>|
-|</p>
-<p>| <code>apple-nlp</code> |</p>
-<p>NaturalLanguage</p>
-<p>|</p>
-<p>语言检测/情感/分词</p>
-<p>|
-|</p>
-<p>工具</p>
-<p>| <code>apple-open</code> |</p>
-<p>UIApplication</p>
-<p>|</p>
-<p>打开 URL/App</p>
-<p>|
-|</p>
-<p>其他</p>
-<p>| <code>apple-bluetooth</code></p>
-<p>、<code>apple-nfc</code>、<code>apple-config</code>(minis-config)、<code>apple-model-use</code>、<code>apple-browser-use</code></p>
-<p>|</p>
-<p>各框架</p>
-<p>|</p>
-<p>蓝牙/NFC/配置/模型调用/浏览器</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>Handler（guest 命令）</th>
+<th>iOS Framework</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>媒体与音频</td>
+<td><code>ffmpeg</code> （FFmpegOffload）</td>
+<td>FFmpeg.framework</td>
+<td>音视频编码/转码/网络流</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-media</code> （MediaOffload）</td>
+<td>AVFoundation</td>
+<td>录音/播放</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-speak</code> （SpeakOffload）</td>
+<td>AVSpeechSynthesizer</td>
+<td>TTS</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-speech</code> （SpeechOffload）</td>
+<td>SFSpeechRecognizer</td>
+<td>STT</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-player</code> （PlayerOffload）</td>
+<td>AVFoundation</td>
+<td>高级媒体播放</td>
+</tr>
+<tr>
+<td>Apple 服务</td>
+<td><code>apple-calendar</code></td>
+<td>EventKit</td>
+<td>日历读写</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-contacts</code></td>
+<td>Contacts</td>
+<td>联系人</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-maps</code></td>
+<td>MapKit</td>
+<td>地图/导航/定位搜索</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-photos</code></td>
+<td>Photos</td>
+<td>相册访问</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-health</code></td>
+<td>HealthKit</td>
+<td>健康数据读写</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-home</code></td>
+<td>HomeKit</td>
+<td>智能家居</td>
+</tr>
+<tr>
+<td>系统访问</td>
+<td><code>apple-location</code></td>
+<td>CoreLocation</td>
+<td>GPS</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-device</code></td>
+<td>UIKit 等</td>
+<td>电量/型号/系统信息</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-clipboard</code></td>
+<td>UIPasteboard</td>
+<td>复制粘贴</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-weather</code></td>
+<td>WeatherKit</td>
+<td>天气</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-notification</code></td>
+<td>UserNotifications</td>
+<td>本地通知</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-alarm</code></td>
+<td>EventKit(Reminders)</td>
+<td>闹钟/提醒</td>
+</tr>
+<tr>
+<td>智能</td>
+<td><code>apple-vision</code></td>
+<td>Vision</td>
+<td>图像识别/OCR</td>
+</tr>
+<tr>
+<td></td>
+<td><code>apple-nlp</code></td>
+<td>NaturalLanguage</td>
+<td>语言检测/情感/分词</td>
+</tr>
+<tr>
+<td>工具</td>
+<td><code>apple-open</code></td>
+<td>UIApplication</td>
+<td>打开 URL/App</td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>apple-bluetooth</code>、<code>apple-nfc</code>、<code>apple-config</code>(minis-config)、<code>apple-model-use</code>、<code>apple-browser-use</code></td>
+<td>各框架</td>
+<td>蓝牙/NFC/配置/模型调用/浏览器</td>
+</tr>
+</tbody>
+</table>
 <p><strong>共享工具 <code>NativeOffloadUtils</code></strong>：参数解析（命名/位置/flag）、日期解析（ISO 8601/相对/<code>--today</code>）、JSON envelope 构造、异步派发主线程、guest stub 创建、host 路径解析（<code>/var/minis/...</code> → host）、stdin 读取。</p>
 <p><strong>权限管控</strong>：<code>OffloadPermissionManager</code> 对敏感命令（apple-health/apple-photos 等）做三级权限——<code>bypass</code> / <code>askOnce</code> / <code>notAllowed</code>，避免 Agent 未授权读取隐私数据。</p>
 <h5 id="433-android-原生卸载与-shizukusandboxoffload--offload">4.3.3 Android 原生卸载与 Shizuku（<code>sandbox.offload</code> + <code>offload/</code>）</h5>
 <p>Android 等价物是经 <code>NativeOffloadServer</code> 注册的 20+ <code>android-*</code> CLI handler（在 <code>MinisApp.onCreate</code> 注册）：</p>
-<p>|
-Handler</p>
-<p>|</p>
-<p>实现类</p>
-<p>|</p>
-<p>能力</p>
-<p>|
-| --- | --- | --- |
-| <code>android-alarm</code> |</p>
-<p>AlarmOffloadHandler</p>
-<p>|</p>
-<p>闹钟/计时器（AlarmClock API）</p>
-<p>|
-| <code>android-calendar</code></p>
-<p>/ <code>android-contacts</code> / <code>android-clipboard</code> / <code>android-photos</code></p>
-<p>|</p>
-<p>各 handler</p>
-<p>|</p>
-<p>日历/联系人/剪贴板/相册</p>
-<p>|
-| <code>android-device</code></p>
-<p>/ <code>android-location</code> / <code>android-weather</code></p>
-<p>|</p>
-<p>各 handler</p>
-<p>|</p>
-<p>设备信息/定位/天气</p>
-<p>|
-| <code>android-notification</code> |</p>
-<p>NotificationOffloadHandler</p>
-<p>|</p>
-<p>通知发送/读取（NotificationListenerService）</p>
-<p>|
-| <code>android-open</code></p>
-<p>/ <code>android-player</code> / <code>android-speak</code> / <code>android-speech</code></p>
-<p>|</p>
-<p>各 handler</p>
-<p>|</p>
-<p>打开/播放/TTS/STT</p>
-<p>|
-| <code>android-a11y-cli</code> |</p>
-<p>AccessibilityOffloadHandler</p>
-<p>|</p>
-<p>无障碍服务 UI 自动化</p>
-<p>|
-| <code>android-shizuku-cli</code> |</p>
-<p>ShizukuOffloadHandler</p>
-<p>|</p>
-<p>特权系统 API（见下）</p>
-<p>|
-| <code>minis-model-use</code></p>
-<p>/ <code>minis-config</code> / <code>minis-browser-use</code> / <code>minis-sessions-cli</code> / <code>minis-scheduled</code> / <code>minis-debug</code></p>
-<p>|</p>
-<p>各 handler</p>
-<p>|</p>
-<p>模型调用/配置/浏览器/会话/定时/调试</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>实现类</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>android-alarm</code></td>
+<td>AlarmOffloadHandler</td>
+<td>闹钟/计时器（AlarmClock API）</td>
+</tr>
+<tr>
+<td><code>android-calendar</code> / <code>android-contacts</code> / <code>android-clipboard</code> / <code>android-photos</code></td>
+<td>各 handler</td>
+<td>日历/联系人/剪贴板/相册</td>
+</tr>
+<tr>
+<td><code>android-device</code> / <code>android-location</code> / <code>android-weather</code></td>
+<td>各 handler</td>
+<td>设备信息/定位/天气</td>
+</tr>
+<tr>
+<td><code>android-notification</code></td>
+<td>NotificationOffloadHandler</td>
+<td>通知发送/读取（NotificationListenerService）</td>
+</tr>
+<tr>
+<td><code>android-open</code> / <code>android-player</code> / <code>android-speak</code> / <code>android-speech</code></td>
+<td>各 handler</td>
+<td>打开/播放/TTS/STT</td>
+</tr>
+<tr>
+<td><code>android-a11y-cli</code></td>
+<td>AccessibilityOffloadHandler</td>
+<td>无障碍服务 UI 自动化</td>
+</tr>
+<tr>
+<td><code>android-shizuku-cli</code></td>
+<td>ShizukuOffloadHandler</td>
+<td>特权系统 API（见下）</td>
+</tr>
+<tr>
+<td><code>minis-model-use</code> / <code>minis-config</code> / <code>minis-browser-use</code> / <code>minis-sessions-cli</code> / <code>minis-scheduled</code> / <code>minis-debug</code></td>
+<td>各 handler</td>
+<td>模型调用/配置/浏览器/会话/定时/调试</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Shizuku 特权后端</strong>（<code>offload/ShizukuManager.kt</code> + <code>ShizukuBackend.kt</code>）：Shizuku 是跑在 adb shell（uid=2000）或 root 的用户态服务，经 binder 暴露特权 API。<code>ShizukuBackend</code> 同时支持官方 Shizuku 与 AXManager/Axeron（同一协议，共享 binder slot）。状态机 <code>NOT_INSTALLED → NOT_RUNNING → NEED_PERMISSION → READY</code>；<code>runProcess()</code> 反射调用 <code>Shizuku.newProcess()</code> 执行特权命令（<code>pm</code>/<code>am</code>/<code>cmd</code>/<code>settings</code>/<code>dumpsys</code>/<code>input</code>/<code>wm</code>/<code>appops</code>），等同 adb shell。<code>ShizukuOffloadHandler</code> 暴露 12 个子命令组，经 <code>OffloadGate</code> 三态权限管控。此外还通过 <code>MinisAccessibilityService</code>（Android AccessibilityService）实现 UI 自动化。</p>
 <hr>
 <h4 id="44-llm-provider-系统">4.4 LLM Provider 系统</h4>
@@ -909,54 +924,57 @@ Handler</p>
 </li>
 </ul>
 <h5 id="442-各-provider-实现">4.4.2 各 Provider 实现</h5>
-<p>|
-Provider</p>
-<p>|</p>
-<p>关键文件</p>
-<p>|</p>
-<p>特性</p>
-<p>|
-| --- | --- | --- |
-| <strong>Anthropic</strong> | <code>Anthropic/AnthropicProvider.swift</code></p>
-<p>、<code>AnthropicAgentProvider.swift</code>、<code>AnthropicModelsAPI.swift</code>、<code>OAuth/ClaudeOAuthManager.swift</code></p>
-<p>| <code>SwiftAnthropic</code></p>
-<p>SDK；API Key + Claude Code OAuth（PKCE，<code>console.anthropic.com</code>）；Claude 4.6+ adaptive thinking；<code>isOfficialAnthropicEndpoint</code> 区分代理与官方端点</p>
-<p>|
-| <strong>OpenAI</strong> | <code>OpenAI/OpenAIProvider.swift</code></p>
-<p>、<code>OpenAIAgentProvider.swift</code>、<code>OpenAIModelsAPI.swift</code>、<code>OAuth/CodexOAuthManager.swift</code></p>
-<p>|</p>
-<p>双模式：API Key→Chat Completions，OAuth→Responses API（codex）；Azure 模式；Mistral 兼容；<code>ReasoningEcho</code> 跨轮加密推理回放</p>
-<p>|
-| <strong>Gemini</strong> | <code>Gemini/GeminiProvider.swift</code></p>
-<p>、<code>GeminiAgentProvider.swift</code>、<code>GeminiModelsAPI.swift</code>、<code>GeminiWireFormat.swift</code>、<code>OAuth/GeminiOAuthManager.swift</code></p>
-<p>|</p>
-<p>直接 REST（无 SDK）；API Key→<code>generativelanguage.googleapis.com</code>，OAuth→Cloud Code Assist；<code>GeminiWireFormat</code> 处理 content parts 与 thought signatures</p>
-<p>|
-| <strong>xAI (Grok)</strong> | <code>xAI/OAuth/XAIOAuthManager.swift</code></p>
-<p>、<code>xAIModelsAPI.swift</code></p>
-<p>|</p>
-<p>OpenAI 兼容（<code>api.x.ai/v1</code>），复用 <code>OpenAIProvider</code>；OIDC discovery；内置 12 个 Grok 模型</p>
-<p>|
-| <strong>Kimi Code</strong> | <code>Kimi/OAuth/KimiOAuthManager.swift</code></p>
-<p>、<code>KimiDeviceFlow.swift</code>、<code>KimiOAuthRefreshCoordinator.swift</code></p>
-<p>|</p>
-<p>RFC 8628 Device Authorization Grant（无浏览器重定向）；OpenAI 兼容上游；复用 <code>OpenAIProvider</code>；compare-before-delete 单航次去重</p>
-<p>|
-| <strong>OpenRouter</strong> | <code>OpenRouter/OpenRouterModelsAPI.swift</code></p>
-<p>、<code>OpenRouterOAuthManager.swift</code></p>
-<p>|</p>
-<p>OAuth 产出永久 API Key（存 Keychain）；复用 <code>OpenAIProvider</code>；<code>useOpenRouterCompat</code>（用 <code>max_tokens</code> 而非 <code>max_completion_tokens</code>）；发 <code>HTTP-Referer</code>/<code>X-Title</code> 归属头</p>
-<p>|
-| <strong>Antigravity</strong> | <code>Antigravity/AntigravityProvider.swift</code></p>
-<p>、<code>AntigravityAgentProvider.swift</code>、<code>AntigravityModelsAPI.swift</code></p>
-<p>|</p>
-<p>Google Cloud Code 代理；envelope 包裹 Gemini 兼容请求；仅 OAuth</p>
-<p>|
-| <strong>Voice</strong> | <code>Voice/VoiceProvider.swift</code></p>
-<p>、<code>VoiceProvider+System.swift</code>、<code>VoiceProvider+Vendors.swift</code>、<code>VoiceProviderFactory.swift</code></p>
-<p>|</p>
-<p>独立 ASR/TTS 子系统；系统语音 + 第三方 Provider（DashScope/MiMo）；模板化种子模型</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>关键文件</th>
+<th>特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Anthropic</strong></td>
+<td><code>Anthropic/AnthropicProvider.swift</code>、<code>AnthropicAgentProvider.swift</code>、<code>AnthropicModelsAPI.swift</code>、<code>OAuth/ClaudeOAuthManager.swift</code></td>
+<td><code>SwiftAnthropic</code> SDK；API Key + Claude Code OAuth（PKCE，<code>console.anthropic.com</code>）；Claude 4.6+ adaptive thinking；<code>isOfficialAnthropicEndpoint</code> 区分代理与官方端点</td>
+</tr>
+<tr>
+<td><strong>OpenAI</strong></td>
+<td><code>OpenAI/OpenAIProvider.swift</code>、<code>OpenAIAgentProvider.swift</code>、<code>OpenAIModelsAPI.swift</code>、<code>OAuth/CodexOAuthManager.swift</code></td>
+<td>双模式：API Key→Chat Completions，OAuth→Responses API（codex）；Azure 模式；Mistral 兼容；<code>ReasoningEcho</code> 跨轮加密推理回放</td>
+</tr>
+<tr>
+<td><strong>Gemini</strong></td>
+<td><code>Gemini/GeminiProvider.swift</code>、<code>GeminiAgentProvider.swift</code>、<code>GeminiModelsAPI.swift</code>、<code>GeminiWireFormat.swift</code>、<code>OAuth/GeminiOAuthManager.swift</code></td>
+<td>直接 REST（无 SDK）；API Key→<code>generativelanguage.googleapis.com</code>，OAuth→Cloud Code Assist；<code>GeminiWireFormat</code> 处理 content parts 与 thought signatures</td>
+</tr>
+<tr>
+<td><strong>xAI (Grok)</strong></td>
+<td><code>xAI/OAuth/XAIOAuthManager.swift</code>、<code>xAIModelsAPI.swift</code></td>
+<td>OpenAI 兼容（<code>api.x.ai/v1</code>），复用 <code>OpenAIProvider</code>；OIDC discovery；内置 12 个 Grok 模型</td>
+</tr>
+<tr>
+<td><strong>Kimi Code</strong></td>
+<td><code>Kimi/OAuth/KimiOAuthManager.swift</code>、<code>KimiDeviceFlow.swift</code>、<code>KimiOAuthRefreshCoordinator.swift</code></td>
+<td>RFC 8628 Device Authorization Grant（无浏览器重定向）；OpenAI 兼容上游；复用 <code>OpenAIProvider</code>；compare-before-delete 单航次去重</td>
+</tr>
+<tr>
+<td><strong>OpenRouter</strong></td>
+<td><code>OpenRouter/OpenRouterModelsAPI.swift</code>、<code>OpenRouterOAuthManager.swift</code></td>
+<td>OAuth 产出永久 API Key（存 Keychain）；复用 <code>OpenAIProvider</code>；<code>useOpenRouterCompat</code>（用 <code>max_tokens</code> 而非 <code>max_completion_tokens</code>）；发 <code>HTTP-Referer</code>/<code>X-Title</code> 归属头</td>
+</tr>
+<tr>
+<td><strong>Antigravity</strong></td>
+<td><code>Antigravity/AntigravityProvider.swift</code>、<code>AntigravityAgentProvider.swift</code>、<code>AntigravityModelsAPI.swift</code></td>
+<td>Google Cloud Code 代理；envelope 包裹 Gemini 兼容请求；仅 OAuth</td>
+</tr>
+<tr>
+<td><strong>Voice</strong></td>
+<td><code>Voice/VoiceProvider.swift</code>、<code>VoiceProvider+System.swift</code>、<code>VoiceProvider+Vendors.swift</code>、<code>VoiceProviderFactory.swift</code></td>
+<td>独立 ASR/TTS 子系统；系统语音 + 第三方 Provider（DashScope/MiMo）；模板化种子模型</td>
+</tr>
+</tbody>
+</table>
 <p><strong>关键复用模式</strong>：xAI、Kimi、OpenRouter 均<strong>复用 <code>OpenAIProvider</code></strong>，仅靠自定义 Base URL + OAuth bearer/API key 区分，几乎零重复代码。</p>
 <h5 id="443-凭证与认证">4.4.3 凭证与认证</h5>
 <ul>
@@ -998,35 +1016,32 @@ Provider</p>
 <p><strong>双层存储</strong>：元数据在 SQLite（<code>skills.db</code>：<code>skills</code> 表 + <code>session_skill_overrides</code> 表），<code>SKILL.md</code> 文件在磁盘 <code>skillId/SKILL.md</code> 子目录。<code>parse(skillMD:)</code> 解析 YAML frontmatter（支持标准 fence + headless + block scalars）。</p>
 <p><strong>导入流程</strong> <code>importSkill()</code>：解析→slugify→写盘（仅内容变化时）→存 DB（<code>ON CONFLICT</code> 保留 <code>use_count</code>）→同步 rootfs→标记 iCloud 脏。内置 <code>skill-creator</code>（v2.1.0）。Bundle 文件（scripts/references/assets）经 <code>collectRelativePaths</code> 收集，一次性迁移标记脏。</p>
 <h5 id="452-三级渐进加载">4.5.2 三级渐进加载</h5>
-<p>|
-层级</p>
-<p>|</p>
-<p>何时加载</p>
-<p>|</p>
-<p>体量</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>metadata（描述）</p>
-<p>|</p>
-<p>始终在 prompt</p>
-<p>|</p>
-<p>~100 字</p>
-<p>|
-|</p>
-<p>SKILL.md body</p>
-<p>|</p>
-<p>触发后加载</p>
-<p>|</p>
-<p>&#x3C;5k 字</p>
-<p>|
-|</p>
-<p>bundled resources（脚本/引用/资产）</p>
-<p>|</p>
-<p>按需加载</p>
-<p>|</p>
-<p>按需</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>何时加载</th>
+<th>体量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>metadata（描述）</td>
+<td>始终在 prompt</td>
+<td>~100 字</td>
+</tr>
+<tr>
+<td>SKILL.md body</td>
+<td>触发后加载</td>
+<td>&#x3C;5k 字</td>
+</tr>
+<tr>
+<td>bundled resources（脚本/引用/资产）</td>
+<td>按需加载</td>
+<td>按需</td>
+</tr>
+</tbody>
+</table>
 <p><strong>触发机制</strong>：<code>description</code> 字段是主要触发器——Agent（LLM）看到所有启用 Skill 的元数据后自行判断是否需要加载完整 body。<code>SkillStore.shared.skillPromptFragment(for: sid)</code> 注入已启用 Skill 元数据到系统提示。<code>file_write</code>/<code>file_edit</code> 写入 <code>SKILL.md</code> 后自动触发 <code>skillRepository.reloadFromDisk()</code>（Android）。</p>
 <h5 id="453-android-对应">4.5.3 Android 对应</h5>
 <p><code>data/repository/SkillRepository.kt</code> — 管理 <code>skills.db</code> 元数据 + <code>SKILL.md</code> 文件（<code>minis-global/skills/&#x3C;id>/SKILL.md</code>）。支持 URL 导入、文件导入、bundled 技能、session 级覆盖。Skill prompt fragment 注入系统提示（Top-N + 描述截断）。</p>
@@ -1151,36 +1166,42 @@ Provider</p>
 </ol>
 <h5 id="492-url-格式与命名空间">4.9.2 URL 格式与命名空间</h5>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>minis://&#x3C;namespace>/&#x3C;path></span></span></code></pre>
-<p>|
-命名空间</p>
-<p>|</p>
-<p>Linux 路径</p>
-<p>|</p>
-<p>用途</p>
-<p>|</p>
-<p>内联渲染</p>
-<p>|
-| --- | --- | --- | --- |
-| <code>attachments</code> | <code>/var/minis/attachments/&#x3C;path></code> |</p>
-<p>图片/音频/视频等媒体</p>
-<p>|</p>
-<p>是（图片 .png/.jpg/.gif/.webp、音频 .mp3/.m4a/.wav、视频 .mp4/.mov/.m4v）</p>
-<p>|
-| <code>workspace</code> | <code>/var/minis/workspace/&#x3C;path></code> |</p>
-<p>脚本/数据/配置/项目文件</p>
-<p>|</p>
-<p>否（文本链接）</p>
-<p>|
-| <code>offloads</code> | <code>/var/minis/offloads/&#x3C;filename></code> |</p>
-<p>超 <code>kMaxToolResultChars</code>（15000 字符，硬编码 <code>AIChatViewModel.swift:18</code>）自动保存的截断输出</p>
-<p>|</p>
-<p>否</p>
-<p>|
-| <code>browser</code> | <code>/var/minis/browser/&#x3C;filename></code> | <code>browser_use</code></p>
-<p>截图与可读文本抽取</p>
-<p>|</p>
-<p>是（图片）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>命名空间</th>
+<th>Linux 路径</th>
+<th>用途</th>
+<th>内联渲染</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>attachments</code></td>
+<td><code>/var/minis/attachments/&#x3C;path></code></td>
+<td>图片/音频/视频等媒体</td>
+<td>是（图片 .png/.jpg/.gif/.webp、音频 .mp3/.m4a/.wav、视频 .mp4/.mov/.m4v）</td>
+</tr>
+<tr>
+<td><code>workspace</code></td>
+<td><code>/var/minis/workspace/&#x3C;path></code></td>
+<td>脚本/数据/配置/项目文件</td>
+<td>否（文本链接）</td>
+</tr>
+<tr>
+<td><code>offloads</code></td>
+<td><code>/var/minis/offloads/&#x3C;filename></code></td>
+<td>超 <code>kMaxToolResultChars</code>（15000 字符，硬编码 <code>AIChatViewModel.swift:18</code>）自动保存的截断输出</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>browser</code></td>
+<td><code>/var/minis/browser/&#x3C;filename></code></td>
+<td><code>browser_use</code> 截图与可读文本抽取</td>
+<td>是（图片）</td>
+</tr>
+</tbody>
+</table>
 <h5 id="493-路径解析与工具结果契约">4.9.3 路径解析与工具结果契约</h5>
 <ul>
 <li>
@@ -1213,142 +1234,107 @@ Provider</p>
 <hr>
 <h3 id="5-平台实现对比">5. 平台实现对比</h3>
 <p>OpenMinis 双平台共享同一套 Agent 工具协议、系统提示词与 bashism 规则（<code>assets/bashism/bashism_rules.json</code> 单一真相源），但沙箱实现、UI 框架、持久化、特权后端各异。</p>
-<p>|
-维度</p>
-<p>|</p>
-<p>iOS</p>
-<p>|</p>
-<p>Android</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>语言/UI</p>
-<p>|</p>
-<p>Swift / SwiftUI（iOS 26.2, Swift 6.0）</p>
-<p>|</p>
-<p>Kotlin / Jetpack Compose（minSdk 26, compileSdk 36）</p>
-<p>|
-|</p>
-<p>沙箱</p>
-<p>|</p>
-<p>iSH（ARM64 用户态内核模拟）+ fakefs（SQLite 元数据）</p>
-<p>|</p>
-<p>PRoot（ptrace 拦截 + bind mount）</p>
-<p>|
-|</p>
-<p>rootfs</p>
-<p>|</p>
-<p>Alpine aarch64，fakefs 格式</p>
-<p>|</p>
-<p>Alpine aarch64 minirootfs tar.gz</p>
-<p>|
-|</p>
-<p>持久内核</p>
-<p>|</p>
-<p>是（ISHKernel 独立 pthread 常驻）</p>
-<p>|</p>
-<p>否（PRoot 进程级，每会话持久 shell）</p>
-<p>|
-|</p>
-<p>命令执行</p>
-<p>| <code>ISHExecutionCoordinator</code></p>
-<p>（actor，per-session 并发）</p>
-<p>| <code>ExecutionCoordinator</code></p>
-<ul>
-<li><code>PersistentShell</code>（per-session Mutex 串行）</li>
-</ul>
-<p>|
-|</p>
-<p>原生卸载</p>
-<p>|</p>
-<p>iSH 内核 execve 拦截 → Obj-C handler（22 个 <code>apple-*</code>）</p>
-<p>|</p>
-<p>PRoot <code>--native-offload</code> 扩展 → Unix socket → <code>NativeOffloadServer</code>（20+ <code>android-*</code>）</p>
-<p>|
-|</p>
-<p>特权后端</p>
-<p>|</p>
-<p>（iOS 沙箱即够）</p>
-<p>|</p>
-<p>Shizuku（adb shell/root binder）+ AccessibilityService</p>
-<p>|
-|</p>
-<p>TTY</p>
-<p>|</p>
-<p>iSH 内置 TTY 驱动</p>
-<p>| <code>PtyBridge</code></p>
-<p>JNI（bionic forkpty）</p>
-<p>|
-|</p>
-<p>持久化</p>
-<p>|</p>
-<p>SQLite3 C API（WAL，<code>minis.db</code>）</p>
-<p>|</p>
-<p>Room（<code>AppDatabase</code>）</p>
-<p>|
-|</p>
-<p>同步</p>
-<p>|</p>
-<p>iCloud（CloudKit CKSyncEngine，V2 SyncCore）</p>
-<p>|</p>
-<p>（暂无跨设备同步）</p>
-<p>|
-|</p>
-<p>凭证</p>
-<p>|</p>
-<p>Keychain（iCloud Keychain 同步）</p>
-<p>|</p>
-<p>EncryptedSharedPreferences</p>
-<p>|
-|</p>
-<p>浏览器</p>
-<p>|</p>
-<p>WKWebView（共享 process pool）</p>
-<p>|</p>
-<p>Android WebView</p>
-<p>|
-|</p>
-<p>后台保活</p>
-<p>| <code>BackgroundKeepAliveManager</code></p>
-<p>（位置/音频保活腿）+ <code>CacheKeepAliveManager</code>（prompt cache 预热）</p>
-<p>| <code>AgentForegroundService</code></p>
-<p>（mediaPlayback 类型绕过 6h 上限）+ WAKE_LOCK</p>
-<p>|
-|</p>
-<p>动态展示</p>
-<p>|</p>
-<p>Live Activity / Dynamic Island（<code>AgentLiveActivityManager</code>）</p>
-<p>|</p>
-<p>Dynamic Island（Android 16 Live Updates）+ Tool Overlay 浮动胶囊</p>
-<p>|
-|</p>
-<p>崩溃</p>
-<p>| <code>CrashReporter</code> | <code>NativeCrashHandler</code></p>
-<ul>
-<li><code>CrashFrequencyDetector</code>（安全模式）</li>
-</ul>
-<p>|
-|</p>
-<p>分词</p>
-<p>| <code>TextSegmenter</code></p>
-<p>（CppJieba + NLTokenizer）+ <code>BPETokenizer</code>（cl100k_base）</p>
-<p>|</p>
-<p>CppJieba JNI（<code>jieba_jni</code>）</p>
-<p>|
-|</p>
-<p>架构目标</p>
-<p>|</p>
-<p>arm64（device）</p>
-<p>|</p>
-<p>arm64-v8a only</p>
-<p>|
-|</p>
-<p>扩展</p>
-<p>|</p>
-<p>ShareExtension / AgentWidget / FileProvider</p>
-<p>|</p>
-<p>Share activity / Widget /（无独立 FileProvider）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>iOS</th>
+<th>Android</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>语言/UI</td>
+<td>Swift / SwiftUI（iOS 26.2, Swift 6.0）</td>
+<td>Kotlin / Jetpack Compose（minSdk 26, compileSdk 36）</td>
+</tr>
+<tr>
+<td>沙箱</td>
+<td>iSH（ARM64 用户态内核模拟）+ fakefs（SQLite 元数据）</td>
+<td>PRoot（ptrace 拦截 + bind mount）</td>
+</tr>
+<tr>
+<td>rootfs</td>
+<td>Alpine aarch64，fakefs 格式</td>
+<td>Alpine aarch64 minirootfs tar.gz</td>
+</tr>
+<tr>
+<td>持久内核</td>
+<td>是（ISHKernel 独立 pthread 常驻）</td>
+<td>否（PRoot 进程级，每会话持久 shell）</td>
+</tr>
+<tr>
+<td>命令执行</td>
+<td><code>ISHExecutionCoordinator</code> （actor，per-session 并发）</td>
+<td><code>ExecutionCoordinator</code> + <code>PersistentShell</code>（per-session Mutex 串行）</td>
+</tr>
+<tr>
+<td>原生卸载</td>
+<td>iSH 内核 execve 拦截 → Obj-C handler（22 个 <code>apple-*</code>）</td>
+<td>PRoot <code>--native-offload</code> 扩展 → Unix socket → <code>NativeOffloadServer</code>（20+ <code>android-*</code>）</td>
+</tr>
+<tr>
+<td>特权后端</td>
+<td>（iOS 沙箱即够）</td>
+<td>Shizuku（adb shell/root binder）+ AccessibilityService</td>
+</tr>
+<tr>
+<td>TTY</td>
+<td>iSH 内置 TTY 驱动</td>
+<td><code>PtyBridge</code> JNI（bionic forkpty）</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>SQLite3 C API（WAL，<code>minis.db</code>）</td>
+<td>Room（<code>AppDatabase</code>）</td>
+</tr>
+<tr>
+<td>同步</td>
+<td>iCloud（CloudKit CKSyncEngine，V2 SyncCore）</td>
+<td>（暂无跨设备同步）</td>
+</tr>
+<tr>
+<td>凭证</td>
+<td>Keychain（iCloud Keychain 同步）</td>
+<td>EncryptedSharedPreferences</td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>WKWebView（共享 process pool）</td>
+<td>Android WebView</td>
+</tr>
+<tr>
+<td>后台保活</td>
+<td><code>BackgroundKeepAliveManager</code> （位置/音频保活腿）+ <code>CacheKeepAliveManager</code>（prompt cache 预热）</td>
+<td><code>AgentForegroundService</code> （mediaPlayback 类型绕过 6h 上限）+ WAKE_LOCK</td>
+</tr>
+<tr>
+<td>动态展示</td>
+<td>Live Activity / Dynamic Island（<code>AgentLiveActivityManager</code>）</td>
+<td>Dynamic Island（Android 16 Live Updates）+ Tool Overlay 浮动胶囊</td>
+</tr>
+<tr>
+<td>崩溃</td>
+<td><code>CrashReporter</code></td>
+<td><code>NativeCrashHandler</code> + <code>CrashFrequencyDetector</code>（安全模式）</td>
+</tr>
+<tr>
+<td>分词</td>
+<td><code>TextSegmenter</code> （CppJieba + NLTokenizer）+ <code>BPETokenizer</code>（cl100k_base）</td>
+<td>CppJieba JNI（<code>jieba_jni</code>）</td>
+</tr>
+<tr>
+<td>架构目标</td>
+<td>arm64（device）</td>
+<td>arm64-v8a only</td>
+</tr>
+<tr>
+<td>扩展</td>
+<td>ShareExtension / AgentWidget / FileProvider</td>
+<td>Share activity / Widget /（无独立 FileProvider）</td>
+</tr>
+</tbody>
+</table>
 <p><strong>关键差异解读</strong>：</p>
 <ul>
 <li>
@@ -1364,77 +1350,60 @@ Provider</p>
 <hr>
 <h3 id="6-设备集成与扩展">6. 设备集成与扩展</h3>
 <h4 id="61-入口扩展">6.1 入口扩展</h4>
-<p>|
-扩展</p>
-<p>|</p>
-<p>平台</p>
-<p>|</p>
-<p>文件</p>
-<p>|</p>
-<p>作用</p>
-<p>|
-| --- | --- | --- | --- |
-|</p>
-<p>Share Sheet</p>
-<p>|</p>
-<p>iOS</p>
-<p>| <code>ShareExtension/ShareViewController.swift</code></p>
-<p>、<code>ShareViewModel.swift</code></p>
-<p>|</p>
-<p>从任意 App 分享页面/消息/文件给 Minis，自动创建会话或日历事件</p>
-<p>|
-|</p>
-<p>Widget / Live Activity</p>
-<p>|</p>
-<p>iOS</p>
-<p>| <code>AgentWidget/AgentLiveActivityWidget.swift</code></p>
-<p>、<code>AgentWidgetBundle.swift</code></p>
-<p>|</p>
-<p>桌面小组件 + Lock Screen/Dynamic Island 实时显示 Agent 进度</p>
-<p>|
-|</p>
-<p>File Provider</p>
-<p>|</p>
-<p>iOS</p>
-<p>| <code>FileProvider/FileProviderExtension.swift</code></p>
-<p>、<code>FileProviderEnumerator.swift</code>、<code>FileProviderItem.swift</code></p>
-<p>|</p>
-<p>把 workspace 作为可挂载的文件 provider，其他 App 可直接读写</p>
-<p>|
-|</p>
-<p>PWA / Add to Home</p>
-<p>|</p>
-<p>iOS</p>
-<p>| <code>WebApp/WebAppWebViewController.swift</code></p>
-<p>、<code>WebAppPathResolver.swift</code>、<code>WebAppIconCache.swift</code></p>
-<p>|</p>
-<p>“添加到主屏幕”的 PWA 元数据抓取与管理</p>
-<p>|
-|</p>
-<p>Shortcuts / AppIntents</p>
-<p>|</p>
-<p>iOS</p>
-<p>| <code>Agent/Intents/MinisShortcutsProvider.swift</code></p>
-<p>、<code>SendPromptIntent.swift</code> 等</p>
-<p>| <code>SendPromptIntent</code></p>
-<p>/<code>RetryRunIntent</code>/<code>GetSessionStatusIntent</code>/<code>ListSessionsIntent</code>/<code>FollowUpSessionIntent</code>，支持后台执行与等结果</p>
-<p>|
-|</p>
-<p>Deep Link</p>
-<p>|</p>
-<p>双平台</p>
-<p>|</p>
-<p>iOS <code>Shared/DeepLinkCoordinator.swift</code>、<code>DeepLinkRouter.swift</code>；Android <code>deeplink/</code></p>
-<p>| <code>minis://</code></p>
-<p>scheme 路由到会话/工作区</p>
-<p>|
-|</p>
-<p>Share activity</p>
-<p>|</p>
-<p>Android</p>
-<p>| <code>share/</code> |</p>
-<p>接收其他 App 的分享</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>扩展</th>
+<th>平台</th>
+<th>文件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Share Sheet</td>
+<td>iOS</td>
+<td><code>ShareExtension/ShareViewController.swift</code>、<code>ShareViewModel.swift</code></td>
+<td>从任意 App 分享页面/消息/文件给 Minis，自动创建会话或日历事件</td>
+</tr>
+<tr>
+<td>Widget / Live Activity</td>
+<td>iOS</td>
+<td><code>AgentWidget/AgentLiveActivityWidget.swift</code>、<code>AgentWidgetBundle.swift</code></td>
+<td>桌面小组件 + Lock Screen/Dynamic Island 实时显示 Agent 进度</td>
+</tr>
+<tr>
+<td>File Provider</td>
+<td>iOS</td>
+<td><code>FileProvider/FileProviderExtension.swift</code>、<code>FileProviderEnumerator.swift</code>、<code>FileProviderItem.swift</code></td>
+<td>把 workspace 作为可挂载的文件 provider，其他 App 可直接读写</td>
+</tr>
+<tr>
+<td>PWA / Add to Home</td>
+<td>iOS</td>
+<td><code>WebApp/WebAppWebViewController.swift</code>、<code>WebAppPathResolver.swift</code>、<code>WebAppIconCache.swift</code></td>
+<td>“添加到主屏幕”的 PWA 元数据抓取与管理</td>
+</tr>
+<tr>
+<td>Shortcuts / AppIntents</td>
+<td>iOS</td>
+<td><code>Agent/Intents/MinisShortcutsProvider.swift</code>、<code>SendPromptIntent.swift</code> 等</td>
+<td><code>SendPromptIntent</code> /<code>RetryRunIntent</code>/<code>GetSessionStatusIntent</code>/<code>ListSessionsIntent</code>/<code>FollowUpSessionIntent</code>，支持后台执行与等结果</td>
+</tr>
+<tr>
+<td>Deep Link</td>
+<td>双平台</td>
+<td>iOS <code>Shared/DeepLinkCoordinator.swift</code>、<code>DeepLinkRouter.swift</code>；Android <code>deeplink/</code></td>
+<td><code>minis://</code> scheme 路由到会话/工作区</td>
+</tr>
+<tr>
+<td>Share activity</td>
+<td>Android</td>
+<td><code>share/</code></td>
+<td>接收其他 App 的分享</td>
+</tr>
+</tbody>
+</table>
 <h4 id="62-设备集成范围">6.2 设备集成范围</h4>
 <p>通过原生卸载暴露给 Agent 的系统能力（双平台合并）：</p>
 <ul>
@@ -1481,44 +1450,47 @@ Provider</p>
 <p>Minis 在 App 内内置 Linux 沙箱，原生依赖（iSH/PRoot/FFmpeg/LAME）与 Alpine rootfs <strong>由源码构建</strong>而非提交二进制。首次构建约 30–60 分钟，之后缓存。</p>
 <h4 id="71-依赖与产物">7.1 依赖与产物</h4>
 <p><img src="/images/wechat/wechat-2247483965-3/07.png" alt="图片 7"></p>
-<p>|
-脚本</p>
-<p>|</p>
-<p>平台</p>
-<p>|</p>
-<p>产物</p>
-<p>|
-| --- | --- | --- |
-| <code>deps/build_lame.sh</code> |</p>
-<p>iOS</p>
-<p>|</p>
-<p>LAME 3.100 静态库 <code>libmp3lame.a</code>（FFmpeg MP3 编码依赖）</p>
-<p>|
-| <code>deps/build_ffmpeg.sh</code> |</p>
-<p>iOS</p>
-<p>|</p>
-<p>FFmpeg 6.1.2 per-library <code>.framework</code> + umbrella（<strong>LGPL 配置</strong>，禁加 <code>--enable-gpl/nonfree</code>）</p>
-<p>|
-| <code>deps/build_ish.sh</code> |</p>
-<p>iOS</p>
-<p>| <code>libish</code></p>
-<p>/<code>libish_emu</code>/<code>libfakefs</code> + headers + VDSO（Meson 交叉编译 iOS arm64）</p>
-<p>|
-| <code>deps/prepare_alpine_rootfs.sh</code> |</p>
-<p>iOS</p>
-<p>|</p>
-<p>Alpine aarch64 minirootfs → iSH fakefs 格式</p>
-<p>|
-| <code>deps/build_proot.sh</code> |</p>
-<p>Android</p>
-<p>|</p>
-<p>静态 <code>libtalloc</code> + <code>proot</code> → <code>assets/proot-aarch64</code> + <code>jniLibs/arm64-v8a/*.so</code></p>
-<p>|
-| <code>scripts/prepare_android_sandbox.sh</code> |</p>
-<p>Android</p>
-<p>|</p>
-<p>Alpine 3.21.3 aarch64 minirootfs → <code>assets/alpine-minirootfs.tar.gz</code></p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>脚本</th>
+<th>平台</th>
+<th>产物</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deps/build_lame.sh</code></td>
+<td>iOS</td>
+<td>LAME 3.100 静态库 <code>libmp3lame.a</code>（FFmpeg MP3 编码依赖）</td>
+</tr>
+<tr>
+<td><code>deps/build_ffmpeg.sh</code></td>
+<td>iOS</td>
+<td>FFmpeg 6.1.2 per-library <code>.framework</code> + umbrella（<strong>LGPL 配置</strong>，禁加 <code>--enable-gpl/nonfree</code>）</td>
+</tr>
+<tr>
+<td><code>deps/build_ish.sh</code></td>
+<td>iOS</td>
+<td><code>libish</code> /<code>libish_emu</code>/<code>libfakefs</code> + headers + VDSO（Meson 交叉编译 iOS arm64）</td>
+</tr>
+<tr>
+<td><code>deps/prepare_alpine_rootfs.sh</code></td>
+<td>iOS</td>
+<td>Alpine aarch64 minirootfs → iSH fakefs 格式</td>
+</tr>
+<tr>
+<td><code>deps/build_proot.sh</code></td>
+<td>Android</td>
+<td>静态 <code>libtalloc</code> + <code>proot</code> → <code>assets/proot-aarch64</code> + <code>jniLibs/arm64-v8a/*.so</code></td>
+</tr>
+<tr>
+<td><code>scripts/prepare_android_sandbox.sh</code></td>
+<td>Android</td>
+<td>Alpine 3.21.3 aarch64 minirootfs → <code>assets/alpine-minirootfs.tar.gz</code></td>
+</tr>
+</tbody>
+</table>
 <p>子模块：<code>deps/ish</code>（OpenMinis/ish-arm64）、<code>deps/proot</code>（OpenMinis/proot），须 <code>git clone --recurse-submodules</code>。</p>
 <h4 id="72-构建命令">7.2 构建命令</h4>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># iOS（顺序敏感：FFmpeg 链接 LAME）</span></span>
@@ -1540,49 +1512,42 @@ Provider</p>
 </li>
 </ul>
 <h4 id="74-关键配置">7.4 关键配置</h4>
-<p>|
-项</p>
-<p>|</p>
-<p>iOS</p>
-<p>|</p>
-<p>Android</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>目标</p>
-<p>|</p>
-<p>iOS 26.2 / Swift 6.0</p>
-<p>|</p>
-<p>compileSdk 36 / targetSdk 35 / minSdk 26 / JDK 17</p>
-<p>|
-|</p>
-<p>架构</p>
-<p>|</p>
-<p>arm64（device）</p>
-<p>|</p>
-<p>arm64-v8a only</p>
-<p>|
-|</p>
-<p>原生构建</p>
-<p>|</p>
-<p>Meson + Ninja</p>
-<p>|</p>
-<p>NDK r28+ + CMake 3.22.1</p>
-<p>|
-|</p>
-<p>原生库</p>
-<p>|</p>
-<p>libish/libish_emu/libfakefs</p>
-<p>| <code>pty_bridge</code></p>
-<p>(C)、<code>minis_crash_handler</code>(C)、<code>jieba_jni</code>(C)</p>
-<p>|
-|</p>
-<p>Targets</p>
-<p>|</p>
-<p>Minis、MinisShare、AgentWidgetExtension、MinisFileProvider、MinisTests/UITests</p>
-<p>|</p>
-<p>:app（release 用 debug 签名，免 keystore）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>iOS</th>
+<th>Android</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标</td>
+<td>iOS 26.2 / Swift 6.0</td>
+<td>compileSdk 36 / targetSdk 35 / minSdk 26 / JDK 17</td>
+</tr>
+<tr>
+<td>架构</td>
+<td>arm64（device）</td>
+<td>arm64-v8a only</td>
+</tr>
+<tr>
+<td>原生构建</td>
+<td>Meson + Ninja</td>
+<td>NDK r28+ + CMake 3.22.1</td>
+</tr>
+<tr>
+<td>原生库</td>
+<td>libish/libish_emu/libfakefs</td>
+<td><code>pty_bridge</code> (C)、<code>minis_crash_handler</code>(C)、<code>jieba_jni</code>(C)</td>
+</tr>
+<tr>
+<td>Targets</td>
+<td>Minis、MinisShare、AgentWidgetExtension、MinisFileProvider、MinisTests/UITests</td>
+<td>:app（release 用 debug 签名，免 keystore）</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h3 id="8-关键交互流程">8. 关键交互流程</h3>
 <p>本节给出跨越多个子系统的端到端流程图，作为前文细节的串联。</p>
@@ -1601,81 +1566,72 @@ Provider</p>
 <h3 id="9-调试与可观测性">9. 调试与可观测性</h3>
 <h4 id="91-json-rpc-调试服务器debug-构建">9.1 JSON-RPC 调试服务器（DEBUG 构建）</h4>
 <p>内置 JSON-RPC 2.0 server，监听 <code>http://localhost:8321</code>，仅接受 POST <code>application/json</code>。涵盖视图检查、文件系统、LLM 请求、浏览器、日志、Provider/模型管理、聊天自动化。</p>
-<p>|
-方法组</p>
-<p>|</p>
-<p>方法</p>
-<p>|</p>
-<p>用途</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>视图检查</p>
-<p>| <code>debug.viewTree</code></p>
-<p>/<code>search</code>/<code>inspect</code>/<code>highlight</code></p>
-<p>|</p>
-<p>UIKit 视图树导出/搜索/检视/高亮</p>
-<p>|
-|</p>
-<p>Agent 调试</p>
-<p>| <code>debug.agentTrace</code> |</p>
-<p>获取 Agent 请求 trace</p>
-<p>|
-|</p>
-<p>文件系统</p>
-<p>| <code>debug.ls</code></p>
-<p>/<code>readFile</code>/<code>appInfo</code></p>
-<p>|</p>
-<p>列目录/读文件/路径与磁盘用量</p>
-<p>|
-|</p>
-<p>截图</p>
-<p>| <code>debug.screenshot</code> |</p>
-<p>整屏 PNG</p>
-<p>|
-|</p>
-<p>LLM 请求</p>
-<p>| <code>debug.llmRequests</code> |</p>
-<p>近期 LLM 请求/响应（URLProtocol 层捕获，排除 Authorization 头）</p>
-<p>|
-|</p>
-<p>浏览器调试</p>
-<p>| <code>debug.browser.listTabs</code></p>
-<p>/<code>pageInfo</code>/<code>executeJS</code>/<code>getReadable</code>/<code>getText</code>/<code>screenshot</code></p>
-<p>|</p>
-<p>远程检查与操作浏览器 tab</p>
-<p>|
-|</p>
-<p>日志</p>
-<p>| <code>debug.logs.list</code></p>
-<p>/<code>read</code>/<code>setEnabled</code></p>
-<p>|</p>
-<p>日志文件列表/读取/开关</p>
-<p>|
-|</p>
-<p>Provider 管理</p>
-<p>| <code>provider.types</code></p>
-<p>/<code>instances.{list,create,update,delete,test}</code></p>
-<p>|</p>
-<p>Provider 实例 CRUD + 凭证测试（凭证 write-only）</p>
-<p>|
-|</p>
-<p>模型管理</p>
-<p>| <code>provider.models.{list,add,update,delete,refresh,setAgentLoop}</code> |</p>
-<p>模型条目 CRUD + 刷新 + Agent loop 可见性</p>
-<p>|
-|</p>
-<p>模型组</p>
-<p>| <code>provider.groups.{list,create,update,delete,setDefault,setAgentLoop}</code> |</p>
-<p>模型组 CRUD + 默认组 + 路由策略</p>
-<p>|
-|</p>
-<p>聊天自动化</p>
-<p>| <code>chat.sessions.{list,get,usage}</code></p>
-<p>/<code>messages.list</code>/<code>models.list</code>/<code>prompt</code>/<code>retry</code>/<code>session.{status,cancel,delete}</code></p>
-<p>|</p>
-<p>远程驱动聊天（与 Shortcuts intents 同底层）</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>方法组</th>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>视图检查</td>
+<td><code>debug.viewTree</code> /<code>search</code>/<code>inspect</code>/<code>highlight</code></td>
+<td>UIKit 视图树导出/搜索/检视/高亮</td>
+</tr>
+<tr>
+<td>Agent 调试</td>
+<td><code>debug.agentTrace</code></td>
+<td>获取 Agent 请求 trace</td>
+</tr>
+<tr>
+<td>文件系统</td>
+<td><code>debug.ls</code> /<code>readFile</code>/<code>appInfo</code></td>
+<td>列目录/读文件/路径与磁盘用量</td>
+</tr>
+<tr>
+<td>截图</td>
+<td><code>debug.screenshot</code></td>
+<td>整屏 PNG</td>
+</tr>
+<tr>
+<td>LLM 请求</td>
+<td><code>debug.llmRequests</code></td>
+<td>近期 LLM 请求/响应（URLProtocol 层捕获，排除 Authorization 头）</td>
+</tr>
+<tr>
+<td>浏览器调试</td>
+<td><code>debug.browser.listTabs</code> /<code>pageInfo</code>/<code>executeJS</code>/<code>getReadable</code>/<code>getText</code>/<code>screenshot</code></td>
+<td>远程检查与操作浏览器 tab</td>
+</tr>
+<tr>
+<td>日志</td>
+<td><code>debug.logs.list</code> /<code>read</code>/<code>setEnabled</code></td>
+<td>日志文件列表/读取/开关</td>
+</tr>
+<tr>
+<td>Provider 管理</td>
+<td><code>provider.types</code> /<code>instances.{list,create,update,delete,test}</code></td>
+<td>Provider 实例 CRUD + 凭证测试（凭证 write-only）</td>
+</tr>
+<tr>
+<td>模型管理</td>
+<td><code>provider.models.{list,add,update,delete,refresh,setAgentLoop}</code></td>
+<td>模型条目 CRUD + 刷新 + Agent loop 可见性</td>
+</tr>
+<tr>
+<td>模型组</td>
+<td><code>provider.groups.{list,create,update,delete,setDefault,setAgentLoop}</code></td>
+<td>模型组 CRUD + 默认组 + 路由策略</td>
+</tr>
+<tr>
+<td>聊天自动化</td>
+<td><code>chat.sessions.{list,get,usage}</code> /<code>messages.list</code>/<code>models.list</code>/<code>prompt</code>/<code>retry</code>/<code>session.{status,cancel,delete}</code></td>
+<td>远程驱动聊天（与 Shortcuts intents 同底层）</td>
+</tr>
+</tbody>
+</table>
 <p>错误码：<code>-32700</code> parse / <code>-32600</code> invalid request / <code>-32601</code> method not found / <code>-32602</code> invalid params / <code>-32000</code> internal。</p>
 <h4 id="92-日志与崩溃">9.2 日志与崩溃</h4>
 <ul>
@@ -1695,102 +1651,75 @@ Provider</p>
 <hr>
 <h3 id="10-已知限制与优化建议">10. 已知限制与优化建议</h3>
 <p>下表按影响排序，均经源码核验（括注 file:line）。结构性代价（双沙箱）与设计亮点单列于后。</p>
-<p>|
-优先级</p>
-<p>|</p>
-<p>问题</p>
-<p>|</p>
-<p>证据</p>
-<p>|</p>
-<p>风险/代价</p>
-<p>|</p>
-<p>建议</p>
-<p>|
-| --- | --- | --- | --- | --- |
-|</p>
-<p>🔴 高</p>
-<p>|</p>
-<p>offloads/workspace 文件永不清理，会话删除后仍残留</p>
-<p>| <code>ChatStore.swift:2491-2499</code></p>
-<p><code>deleteSessionMedia</code> 只删 <code>["browser","attachments","images"]</code></p>
-<p>|</p>
-<p>存储单调增长；删会话≠清数据</p>
-<p>|</p>
-<p>加入删除清单；加会话级配额或 TTL</p>
-<p>|
-|</p>
-<p>🔴 高</p>
-<p>|</p>
-<p>GLOBAL.md 全量注入 system prompt，无大小上限</p>
-<p>| <code>AIChatViewModel+MemoryTools.swift:10-16</code></p>
-<p>整文件直拼</p>
-<p>|</p>
-<p>token 成本 + 上下文污染，随 GLOBAL 增长线性放大</p>
-<p>|</p>
-<p>注入前按 token/行截断或分段摘要</p>
-<p>|
-|</p>
-<p>🟡 中</p>
-<p>|</p>
-<p>调度器(≤10 并发)与 BrowserTabPool(3 tab)无背压协调</p>
-<p>| <code>+ConcurrentTools.swift:25</code></p>
-<p>(cap=10) + <code>BrowserTabPool.swift:193</code>(maxTabs=3)/<code>:258</code>(serialWaitTimeout=60s)</p>
-<p>|</p>
-<p>10 个并发 browser_use 仅 3 个拿到 tab，其余等 60s 后报错；不 deadlock 但 UX 报错</p>
-<p>|</p>
-<p>调度器感知资源池，超额 browser 任务入队而非超时报错</p>
-<p>|
-|</p>
-<p>🟡 中</p>
-<p>|</p>
-<p>meta.db 无 WAL + 每次注册新建连接 + 内核/Swift 双层并发</p>
-<p>| <code>RootfsManager.swift:299</code></p>
-<p>(per-call <code>sqlite3_open_v2</code>)；无 <code>PRAGMA journal_mode</code></p>
-<p>|</p>
-<p>默认 rollback journal→写锁阻塞所有读；批量注册期间 iSH FS 操作卡顿</p>
-<p>|</p>
-<p>开 WAL；复用持久连接；批量注册分片释放锁</p>
-<p>|
-|</p>
-<p>🟡 中</p>
-<p>|</p>
-<p>ModelGroup fallback 无真正熔断（无失败计数/冷却/健康探针）</p>
-<p>| <code>AIChatViewModel+Fallback.swift:172-222</code></p>
-<p>fallbackable 错误立即切下一个</p>
-<p>|</p>
-<p>sticky binding(<code>:148-155</code>)缓解跨轮但无持久健康状态；手动重选会立即重试已知失败 provider</p>
-<p>|</p>
-<p>加失败计数 + 冷却窗口</p>
-<p>|
-|</p>
-<p>🟢 低</p>
-<p>|</p>
-<p>minis:// 解析无命名空间白名单</p>
-<p>| <code>resolveMinisURL</code></p>
-<p><code>+RequestBudget.swift:293-337</code> 把 host 直接当目录名</p>
-<p>|</p>
-<p>不能逃逸沙箱（单段路径）但无显式拒绝</p>
-<p>|</p>
-<p>加白名单校验，纵深防御</p>
-<p>|
-|</p>
-<p>🟢 低</p>
-<p>|</p>
-<p>Android Offload 每命令新建 socket + tmpfile+cat 回写</p>
-<p>| <code>NativeOffload.kt:136-217</code> |</p>
-<p>每命令一次连接 + 文件系统开销</p>
-<p>|</p>
-<p>持久连接 + 直写 stdout</p>
-<p>|
-|</p>
-<p>🟢 低</p>
-<p>| <code>kMaxToolResultChars=15000</code></p>
-<p>硬编码</p>
-<p>| <code>AIChatViewModel.swift:18</code> |</p>
-<p>不可运行时调</p>
-<p>|</p>
-<p>进 <code>ConfigRegistry</code></p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>问题</th>
+<th>证据</th>
+<th>风险/代价</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔴 高</td>
+<td>offloads/workspace 文件永不清理，会话删除后仍残留</td>
+<td><code>ChatStore.swift:2491-2499</code> <code>deleteSessionMedia</code> 只删 <code>["browser","attachments","images"]</code></td>
+<td>存储单调增长；删会话≠清数据</td>
+<td>加入删除清单；加会话级配额或 TTL</td>
+</tr>
+<tr>
+<td>🔴 高</td>
+<td>GLOBAL.md 全量注入 system prompt，无大小上限</td>
+<td><code>AIChatViewModel+MemoryTools.swift:10-16</code> 整文件直拼</td>
+<td>token 成本 + 上下文污染，随 GLOBAL 增长线性放大</td>
+<td>注入前按 token/行截断或分段摘要</td>
+</tr>
+<tr>
+<td>🟡 中</td>
+<td>调度器(≤10 并发)与 BrowserTabPool(3 tab)无背压协调</td>
+<td><code>+ConcurrentTools.swift:25</code> (cap=10) + <code>BrowserTabPool.swift:193</code>(maxTabs=3)/<code>:258</code>(serialWaitTimeout=60s)</td>
+<td>10 个并发 browser_use 仅 3 个拿到 tab，其余等 60s 后报错；不 deadlock 但 UX 报错</td>
+<td>调度器感知资源池，超额 browser 任务入队而非超时报错</td>
+</tr>
+<tr>
+<td>🟡 中</td>
+<td>meta.db 无 WAL + 每次注册新建连接 + 内核/Swift 双层并发</td>
+<td><code>RootfsManager.swift:299</code> (per-call <code>sqlite3_open_v2</code>)；无 <code>PRAGMA journal_mode</code></td>
+<td>默认 rollback journal→写锁阻塞所有读；批量注册期间 iSH FS 操作卡顿</td>
+<td>开 WAL；复用持久连接；批量注册分片释放锁</td>
+</tr>
+<tr>
+<td>🟡 中</td>
+<td>ModelGroup fallback 无真正熔断（无失败计数/冷却/健康探针）</td>
+<td><code>AIChatViewModel+Fallback.swift:172-222</code> fallbackable 错误立即切下一个</td>
+<td>sticky binding(<code>:148-155</code>)缓解跨轮但无持久健康状态；手动重选会立即重试已知失败 provider</td>
+<td>加失败计数 + 冷却窗口</td>
+</tr>
+<tr>
+<td>🟢 低</td>
+<td>minis:// 解析无命名空间白名单</td>
+<td><code>resolveMinisURL</code> <code>+RequestBudget.swift:293-337</code> 把 host 直接当目录名</td>
+<td>不能逃逸沙箱（单段路径）但无显式拒绝</td>
+<td>加白名单校验，纵深防御</td>
+</tr>
+<tr>
+<td>🟢 低</td>
+<td>Android Offload 每命令新建 socket + tmpfile+cat 回写</td>
+<td><code>NativeOffload.kt:136-217</code></td>
+<td>每命令一次连接 + 文件系统开销</td>
+<td>持久连接 + 直写 stdout</td>
+</tr>
+<tr>
+<td>🟢 低</td>
+<td><code>kMaxToolResultChars=15000</code> 硬编码</td>
+<td><code>AIChatViewModel.swift:18</code></td>
+<td>不可运行时调</td>
+<td>进 <code>ConfigRegistry</code></td>
+</tr>
+</tbody>
+</table>
 <h4 id="101-结构性代价非缺陷">10.1 结构性代价（非缺陷）</h4>
 <p><strong>双沙箱：iOS iSH（用户态 ARM64 内核模拟 + fakefs）/ Android PRoot（ptrace 拦截 + bind mount）</strong>——两套完全不同的虚拟化栈，语义不同，连原生卸载传输都分两套（进程内钩子 vs socket+tmpfile）。平台强制：iOS 禁 ptrace 用不了 PRoot，Android 上 iSH 全模拟太重。无法消除，是本项目最大的长期维护负担，新增功能常需双平台各写一遍。</p>
 <h4 id="102-设计亮点实测后确认优于预期">10.2 设计亮点（实测后确认优于预期）</h4>
@@ -1813,70 +1742,57 @@ Provider</p>
 </ul>
 <hr>
 <h3 id="附录关键设计取舍小结">附录：关键设计取舍小结</h3>
-<p>|
-取舍</p>
-<p>|</p>
-<p>选择</p>
-<p>|</p>
-<p>理由</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>沙箱技术</p>
-<p>|</p>
-<p>iOS iSH / Android PRoot（用户态）</p>
-<p>|</p>
-<p>无需越狱/root，可上架/侧载；App 进程内即可跑完整 Linux</p>
-<p>|
-|</p>
-<p>模型接入</p>
-<p>|</p>
-<p>统一协议 + 工厂，OpenAI 兼容端点复用</p>
-<p>|</p>
-<p>Provider 可互换，新增 OpenAI 兼容厂商几乎零代码</p>
-<p>|
-|</p>
-<p>资源寻址</p>
-<p>|</p>
-<p>会话作用域 <code>minis://</code>（无 session ID）</p>
-<p>|</p>
-<p>简洁 + 强制隔离——Agent 无跨 session 概念，无法越权</p>
-<p>|
-|</p>
-<p>设备集成</p>
-<p>|</p>
-<p>原生卸载（execve 拦截）</p>
-<p>|</p>
-<p>guest 命令行即可调原生框架，无需为每个能力写专用工具</p>
-<p>|
-|</p>
-<p>持久化</p>
-<p>|</p>
-<p>SQLite（WAL/Room）+ 文件 + Keychain</p>
-<p>|</p>
-<p>会话/消息结构化、媒体走文件、凭证进安全存储</p>
-<p>|
-|</p>
-<p>同步</p>
-<p>|</p>
-<p>CloudKit V2 声明式 + 3 zone</p>
-<p>|</p>
-<p>含密钥的 secret zone 与普通数据隔离；声明式字段降低同步类型维护成本</p>
-<p>|
-|</p>
-<p>后台</p>
-<p>|</p>
-<p>iOS 位置/音频保活腿；Android mediaPlayback FGS</p>
-<p>|</p>
-<p>绕过移动 OS 后台限制，保证长任务不被杀</p>
-<p>|
-|</p>
-<p>构建</p>
-<p>|</p>
-<p>原生依赖源码构建</p>
-<p>|</p>
-<p>合规（GPL/LGPL 配置）+ 体积可控 + 可审计</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>取舍</th>
+<th>选择</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>沙箱技术</td>
+<td>iOS iSH / Android PRoot（用户态）</td>
+<td>无需越狱/root，可上架/侧载；App 进程内即可跑完整 Linux</td>
+</tr>
+<tr>
+<td>模型接入</td>
+<td>统一协议 + 工厂，OpenAI 兼容端点复用</td>
+<td>Provider 可互换，新增 OpenAI 兼容厂商几乎零代码</td>
+</tr>
+<tr>
+<td>资源寻址</td>
+<td>会话作用域 <code>minis://</code>（无 session ID）</td>
+<td>简洁 + 强制隔离——Agent 无跨 session 概念，无法越权</td>
+</tr>
+<tr>
+<td>设备集成</td>
+<td>原生卸载（execve 拦截）</td>
+<td>guest 命令行即可调原生框架，无需为每个能力写专用工具</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>SQLite（WAL/Room）+ 文件 + Keychain</td>
+<td>会话/消息结构化、媒体走文件、凭证进安全存储</td>
+</tr>
+<tr>
+<td>同步</td>
+<td>CloudKit V2 声明式 + 3 zone</td>
+<td>含密钥的 secret zone 与普通数据隔离；声明式字段降低同步类型维护成本</td>
+</tr>
+<tr>
+<td>后台</td>
+<td>iOS 位置/音频保活腿；Android mediaPlayback FGS</td>
+<td>绕过移动 OS 后台限制，保证长任务不被杀</td>
+</tr>
+<tr>
+<td>构建</td>
+<td>原生依赖源码构建</td>
+<td>合规（GPL/LGPL 配置）+ 体积可控 + 可审计</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>本文档基于仓库源码（iOS 363 Swift + Android 454 Kotlin 文件）、<code>docs/specs/</code> 规范与 <code>BUILDING.md</code> 整理，并经第二轮源码实证核验（沙箱会话切换 / Native Offload 传输 / Provider 复用 / 同步冲突 / 资源回收等接缝）。文中文件路径相对仓库根目录。凡与早期 spec 不一致处以源码为准（见 §4.2.3、§8.2、§10）。</p>
 </blockquote></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/aSNePuwf8nPcs5tU4ezLrQ" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/27/wechat-2247483965-2/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/26/wechat-2247483950-2/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">大模型推理加速进化论（零）：推理加速到底在加速什么</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#openminis-架构分析">OpenMinis 架构分析</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#目录">目录</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#1-项目概览">1. 项目概览</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#2-顶层架构">2. 顶层架构</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#3-仓库布局">3. 仓库布局</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#4-核心子系统详解">4. 核心子系统详解</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#5-平台实现对比">5. 平台实现对比</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#6-设备集成与扩展">6. 设备集成与扩展</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#7-构建系统">7. 构建系统</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#8-关键交互流程">8. 关键交互流程</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#9-调试与可观测性">9. 调试与可观测性</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#10-已知限制与优化建议">10. 已知限制与优化建议</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#附录关键设计取舍小结">附录：关键设计取舍小结</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

@@ -25,7 +25,9 @@
 <p>1）灰度化（将图像看做一个x,y,z（灰度）的三维图像）；</p>
 <p>2）采用Gamma校正法对输入图像进行颜色空间的标准化（归一化）；目的是调节图像的对比度，降低图像局部的阴影和光照变化所造成的影响，同时可以抑制噪音的干扰；</p>
 <p>有关Gamma校正可以参考 <a href="http://wenku.baidu.com/view/7295feda50e2524de5187e8e.html">http://wenku.baidu.com/view/7295feda50e2524de5187e8e.html</a></p>
-<table border="1" cellspacing="1" cellpadding="1"><tbody><tr><td><div style="font-family:微软雅黑; font-size:14px; background-color:inherit">注： <span style="background-color:inherit">许多特征检测的第一步都是要进行图像的预处理，如归一化颜色值和gamma值，但如Dalal和Triggs指出的那样，HOG描述子可以省略这个步骤，因为它其中的描述子归一化处理能达到同样的效果。图像预处理对最终效果的贡献微薄。所以第一步就是计算梯度值。最通常用的方法就是简单的应用一个一维的离散的梯度模版分别应用在水平和垂直方向上去。可以使用如下的卷积核进行卷积：</span></div><div style="font-family:微软雅黑; font-size:14px; background-color:inherit">[-1, 0, 1]{ and }[-1, 0, 1]^T</div><div style="font-family:微软雅黑; font-size:14px; background-color:inherit">Dalal和Triggs也测试了其他更加复杂的卷积核，例如3x3的Sobel卷积核(Sobel算子)和斜角卷积核，但是这些卷积核在行人检测的实验中表现的都很差。他们还用高斯模糊进行预处理，但是在实际运用中没有模糊反而会更好。</div></td></tr></tbody></table>
+<p>注： 许多特征检测的第一步都是要进行图像的预处理，如归一化颜色值和gamma值，但如Dalal和Triggs指出的那样，HOG描述子可以省略这个步骤，因为它其中的描述子归一化处理能达到同样的效果。图像预处理对最终效果的贡献微薄。所以第一步就是计算梯度值。最通常用的方法就是简单的应用一个一维的离散的梯度模版分别应用在水平和垂直方向上去。可以使用如下的卷积核进行卷积：</p>
+<p>[-1, 0, 1]{ and }[-1, 0, 1]^T</p>
+<p>Dalal和Triggs也测试了其他更加复杂的卷积核，例如3x3的Sobel卷积核(Sobel算子)和斜角卷积核，但是这些卷积核在行人检测的实验中表现的都很差。他们还用高斯模糊进行预处理，但是在实际运用中没有模糊反而会更好。</p>
 <p>3）计算图像每个像素的梯度（包括大小和方向）；主要是为了捕获轮廓信息，同时进一步弱化光照的干扰。</p>
 <p><img src="/images/csdn/csdn-18144575/02.jpg" alt="图片 2"></p>
 <p>首先用[-1,0,1]梯度算子对原图像做卷积运算，得到x方向（水平方向，以向右为正方向）的梯度分量gradscalx，然后用[1,0,-1]T梯度算子对原图像做卷积运算，得到y方向（竖直方向，以向上为正方向）的梯度分量gradscaly。然后再用以上公式计算该像素点的梯度大小和方向。</p>

@@ -35,24 +35,28 @@
 <p>总之，尽量保持核心小而美，剩下的功能就编译成为模块。</p>
 <p>7、开始编译内核。</p>
 <p>1）ubuntu的工具是make-kpkg,和其他的发行版相比，步骤相对简单。执行命令:</p>
-<p>#make-kpkg clean</p>
-<p>#make-kpkg —initrd —append-to-version=-用户kernel-image kernel-headers</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#make-kpkg clean</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#make-kpkg --initrd --append-to-version=-用户kernel-image kernel-headers</span></span></code></pre>
 <p>编译完成后，将会再当前目录的上级目录下生成两个deb文件，linux-image—XXX.deb,linux-headers-XXX.deb文件，这就是我们需要的内核包。 在 ” —append-to-version= “之后，你可以写任何有助于标志内核的字符串，但前提是必须以-符号作为开头，中间不能有空白字符。</p>
 <p>2）当然，也可以使用一般的编译方法。即运行make命令。执行之前可以先运行make clean 清空生成的内核文件，或者编译中间有问题了，想重新编译，可以用这个命令先清空已经生成的内核文件。</p>
 <p>这个make相当于，手工执行了一下两步：</p>
-<h1 id="make-bzimage">make bzImage</h1>
-<h1 id="make-modules-编译可加载模块">make modules （编译可加载模块）</h1>
-<p>其中make bzImage 将在 /usr/src/ linux-3.2.32-srf/arch/i386/boot 目录下生成一个名字为bzImage的内核 镜像 文件。运行make zImage 命令其实也可以生成内核镜像，bzImage 的区别就是它是压缩的。运行make modules 命令则是生成大量的 *.ko 内核文件，就是模块化的内核驱动等，不编译进bzImage里面去的都会另外单独生成的一个ko文件，以后需要的时候再由内核加载这个ko模块。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># make bzImage</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># make modules （编译可加载模块）</span></span></code></pre>
+<p>其中make bzImage 将在 /usr/src/ linux-3.2.32-aaron/arch/i386/boot 目录下生成一个名字为bzImage的内核 镜像 文件。运行make zImage 命令其实也可以生成内核镜像，bzImage 的区别就是它是压缩的。运行make modules 命令则是生成大量的 *.ko 内核文件，就是模块化的内核驱动等，不编译进bzImage里面去的都会另外单独生成的一个ko文件，以后需要的时候再由内核加载这个ko模块。</p>
 <p>8、安装编译好的内核包。</p>
 <p>1）如果在编译内核的时候使用的是方法1），则 进入当前 内核源码 目录的上级目录，进行安装。执行指令：</p>
-<p>#cd ..</p>
-<p>#dpkg -i  linux-image-（按tab键）</p>
-<p>#dpkg -i  linux-headers-(按tab键)</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#cd ..</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#dpkg -i  linux-image-（按tab键）</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#dpkg -i  linux-headers-(按tab键)</span></span></code></pre>
 <p>2）如果在编译内核的时候使用的是方法2），则执行一下步骤：</p>
-<p>1>执行make install命令。运行这一步之后，ls -l看一下/boot目录，发现已经把vmlinuz 文件链接到 vmlinuz-3.2.32srf 文件 System.map文件链接到   System.map-3.2.32srf 文件，config 文件链接到 config-3.2.32srf文件。</p>
-<p>2>没有看到模块的配置信息输出，所以我又执行了一下 make modules_install 命令，这个是安装模块的。这个会安装很多 ko文件，最后输出DEPMOD 3.2.32srf。不懂这个流程是什么样子的。不过在/lib/modules/目录下面生成了一个 3.2.32srf的目录，下面 目录就是上面make modules生成的那些ko内核模块文件。</p>
-<p>3>上面的编译过程会生成initrd镜像文件，/boot/目录里面的initrd.img-2.6.25.7srf文件，大小2.2MB。如果发现未生成，可以ubuntu系统下可使用 mkinittramfs 命令来生成。运行一下 “mkinitramfs -o initrd.img-3.2.32srf  3.2.32srf” ,将在当前目录下生成一个名字为 initrd.img-3.2.32srf的initrd 镜像文件。将它移到 /boot/ 目录里面去即可。</p>
-<p>注:最后的参数“3.2.32srf ”是指定内核版本，就是/lib/modules/ 目录下相应的文件夹名字。这个一定要指定，不然他默认使用的是正在运行的系统的版本，最后系统就不能引导成功。</p>
+<p>1>执行make install命令。运行这一步之后，ls -l看一下/boot目录，发现已经把vmlinuz 文件链接到 vmlinuz-3.2.32aaron 文件 System.map文件链接到   System.map-3.2.32aaron 文件，config 文件链接到 config-3.2.32aaron文件。</p>
+<p>2>没有看到模块的配置信息输出，所以我又执行了一下 make modules_install 命令，这个是安装模块的。这个会安装很多 ko文件，最后输出DEPMOD 3.2.32aaron。不懂这个流程是什么样子的。不过在/lib/modules/目录下面生成了一个 3.2.32aaron的目录，下面 目录就是上面make modules生成的那些ko内核模块文件。</p>
+<p>3>上面的编译过程会生成initrd镜像文件，/boot/目录里面的initrd.img-2.6.25.7aaron文件，大小2.2MB。如果发现未生成，可以ubuntu系统下可使用 mkinittramfs 命令来生成。运行一下 “mkinitramfs -o initrd.img-3.2.32aaron  3.2.32aaron” ,将在当前目录下生成一个名字为 initrd.img-3.2.32aaron的initrd 镜像文件。将它移到 /boot/ 目录里面去即可。</p>
+<p>注:最后的参数“3.2.32aaron ”是指定内核版本，就是/lib/modules/ 目录下相应的文件夹名字。这个一定要指定，不然他默认使用的是正在运行的系统的版本，最后系统就不能引导成功。</p>
 <p>做完上面步骤之后，重启系统，等到系统提示按 ESC 键的时候，可以选择和进入GRUB的菜单。可以看到自己的内核版本已经显示出来了。</p>
 <p>选择进入之后，一切正常。使用uname -r 命令查看，可以看到当前内核已经被更新了。</p>
 <p><img src="/images/csdn/csdn-8168193/02.png" alt="图片 2"></p>

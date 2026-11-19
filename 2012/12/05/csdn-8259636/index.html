@@ -59,7 +59,47 @@
 <span class="line"><span style="color:#E1E4E8">	}</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <p>为了帮助进行错误处理的servlet分析问题，以及生成详细的响应，servlet容器在将请求转发给错误页面之前，会在请求中设置某些有用的属性，如表1所示：</p>
-<table border="1" cellspacing="1" cellpadding="1" style="text-align:center"><tbody><tr><td>属性的名字</td><td>属性的类型</td><td>属性说明</td></tr><tr><td>javax.servlet.error.status_code</td><td>java.lang.Integer</td><td>HTTP协议的状态代码</td></tr><tr><td>javax.servlet.error.exception_type</td><td>java.lang.Class</td><td>未捕获异常的Class类的对象</td></tr><tr><td>javax.servlet.error.message</td><td>java.lang.String</td><td>传递给sendError()方法的消息，或者是在未捕获异常中的消息</td></tr><tr><td>javax.servlet.error.exception</td><td>java.lang.Throwable</td><td>调用错误页面的未捕获异常</td></tr><tr><td>javax.servlet.error.request_uri</td><td>java.lang.String</td><td>当前请求的URI</td></tr><tr><td>javax.servlet.error.servlet_name</td><td>java.lang.String</td><td>导致错误页面被调用的servlet的名字</td></tr></tbody></table>
+<table>
+<thead>
+<tr>
+<th>属性的名字</th>
+<th>属性的类型</th>
+<th>属性说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>javax.servlet.error.status_code</td>
+<td>java.lang.Integer</td>
+<td>HTTP协议的状态代码</td>
+</tr>
+<tr>
+<td>javax.servlet.error.exception_type</td>
+<td>java.lang.Class</td>
+<td>未捕获异常的Class类的对象</td>
+</tr>
+<tr>
+<td>javax.servlet.error.message</td>
+<td>java.lang.String</td>
+<td>传递给sendError()方法的消息，或者是在未捕获异常中的消息</td>
+</tr>
+<tr>
+<td>javax.servlet.error.exception</td>
+<td>java.lang.Throwable</td>
+<td>调用错误页面的未捕获异常</td>
+</tr>
+<tr>
+<td>javax.servlet.error.request_uri</td>
+<td>java.lang.String</td>
+<td>当前请求的URI</td>
+</tr>
+<tr>
+<td>javax.servlet.error.servlet_name</td>
+<td>java.lang.String</td>
+<td>导致错误页面被调用的servlet的名字</td>
+</tr>
+</tbody>
+</table>
 <p>表1 servlet容器在请求对象中设置的属性</p>
 <p>针对上面错误处理类的完整web.xml配置如下所示：</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="html"><code><span class="line"><span style="color:#E1E4E8">&#x3C;?</span><span style="color:#85E89D">xml</span><span style="color:#B392F0"> version</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">'1.0'</span><span style="color:#B392F0"> encoding</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">'utf-8'</span><span style="color:#E1E4E8">?></span></span>

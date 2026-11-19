@@ -29,28 +29,32 @@
 <p>关键在于它由谁启动。这行命令经 adb 送进设备，所以 <code>app_process</code> 继承的是 shell 身份，uid 2000。</p>
 <p>uid 2000 能干什么：<code>INJECT_EVENTS</code>（注入触摸）、<code>CREATE_VIRTUAL_DISPLAY</code>（建虚拟屏）、<code>MANAGE_ACTIVITY_TASKS</code>（管任务栈）。这些权限普通 App 申请不到，系统不给。</p>
 <p>四个细节值得单独看：</p>
-<p>|
-片段</p>
-<p>|</p>
-<p>作用</p>
-<p>|
-| --- | --- |
-| <code>setsid</code> |</p>
-<p>脱离 adbd 会话，adb 断连不会把助手一起杀掉</p>
-<p>|
-| <code>read n</code></p>
-<ul>
-<li>管道</li>
-</ul>
-<p>|</p>
-<p>nonce 从 stdin 传，不落在命令行。否则 <code>/proc/pid/cmdline</code> 全世界可读</p>
-<p>|
-| <code>--nice-name</code> |</p>
-<p>进程名写成 <code>&#x3C;包名>:helper</code>，方便之后按 cmdline 精确清理旧实例</p>
-<p>|
-| <code>&#x3C;certPin></code> |</p>
-<p>助手启动时核对”跑我的 APK 那个包”的签名指纹，不一致就退出</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>片段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setsid</code></td>
+<td>脱离 adbd 会话，adb 断连不会把助手一起杀掉</td>
+</tr>
+<tr>
+<td><code>read n</code> + 管道</td>
+<td>nonce 从 stdin 传，不落在命令行。否则 <code>/proc/pid/cmdline</code> 全世界可读</td>
+</tr>
+<tr>
+<td><code>--nice-name</code></td>
+<td>进程名写成 <code>&#x3C;包名>:helper</code>，方便之后按 cmdline 精确清理旧实例</td>
+</tr>
+<tr>
+<td><code>&#x3C;certPin></code></td>
+<td>助手启动时核对”跑我的 APK 那个包”的签名指纹，不一致就退出</td>
+</tr>
+</tbody>
+</table>
 <p>这套机制的核心，是用一次 adb 换一个常驻的特权进程。</p>
 <p>问题接着来了：adb 从哪来？手机又没连电脑。</p>
 <h2 id="它把-adb-协议自己写了一遍">它把 ADB 协议自己写了一遍</h2>
@@ -110,36 +114,48 @@
 <span class="line"><span>val id = shell.createDisplay(reader.surface, w, h, dpi)</span></span></code></pre>
 <p>渲染结果全部写进这块 Surface，只有 Mika 能读。物理屏上什么都不显示。</p>
 <p>建屏用的 flags，是整段代码里最能看出”踩过坑”的地方：</p>
-<p>|
-Flag</p>
-<p>|</p>
-<p>缺了会怎样</p>
-<p>|
-| --- | --- |
-| <code>PUBLIC</code> |</p>
-<p>App 无法在上面显示</p>
-<p>|
-| <code>TRUSTED</code> |</p>
-<p>Android 12+ 拒绝在上面启动 Activity</p>
-<p>|
-| <code>SUPPORTS_TOUCH</code> |</p>
-<p>触摸事件被丢弃</p>
-<p>|
-| <code>OWN_DISPLAY_GROUP</code> |</p>
-<p>和主屏共用任务栈，挪任务失效</p>
-<p>|
-| <code>ALWAYS_UNLOCKED</code> |</p>
-<p>用户锁屏后 App 被暂停</p>
-<p>|
-| <code>TOUCH_FEEDBACK_DISABLED</code> |</p>
-<p>画面上出现白色圆点，污染 OCR</p>
-<p>|
-| <code>OWN_FOCUS</code> |</p>
-<p>焦点永远在主屏，输入事件进不去</p>
-<p>|
-| <code>STEAL_TOP_FOCUS_DISABLED</code> |</p>
-<p>用户打字时输入法突然消失</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>缺了会怎样</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUBLIC</code></td>
+<td>App 无法在上面显示</td>
+</tr>
+<tr>
+<td><code>TRUSTED</code></td>
+<td>Android 12+ 拒绝在上面启动 Activity</td>
+</tr>
+<tr>
+<td><code>SUPPORTS_TOUCH</code></td>
+<td>触摸事件被丢弃</td>
+</tr>
+<tr>
+<td><code>OWN_DISPLAY_GROUP</code></td>
+<td>和主屏共用任务栈，挪任务失效</td>
+</tr>
+<tr>
+<td><code>ALWAYS_UNLOCKED</code></td>
+<td>用户锁屏后 App 被暂停</td>
+</tr>
+<tr>
+<td><code>TOUCH_FEEDBACK_DISABLED</code></td>
+<td>画面上出现白色圆点，污染 OCR</td>
+</tr>
+<tr>
+<td><code>OWN_FOCUS</code></td>
+<td>焦点永远在主屏，输入事件进不去</td>
+</tr>
+<tr>
+<td><code>STEAL_TOP_FOCUS_DISABLED</code></td>
+<td>用户打字时输入法突然消失</td>
+</tr>
+</tbody>
+</table>
 <p>最后一条最隐蔽。虚拟屏有了自己的焦点后会去抢主屏的 top focus，用户正在微信里打字，键盘会莫名收起。</p>
 <p>还有一个 <code>IME_POLICY = LOCAL</code>，通过反射设 <code>setDisplayImePolicy</code>。不设的话，输入法会弹到用户的主屏上——你在用手机，突然跳出一个键盘。</p>
 <p>这些 flag 没有文档可查，只能一个版本一个版本试。也正因为如此，它对 Android 版本的依赖是硬的。</p>
@@ -148,34 +164,37 @@ Flag</p>
 <p>必须用 shell 身份调 <code>startActivityAsUser</code>，带 12 个参数，其中一个 <code>ActivityOptions.setLaunchDisplayId(displayId)</code>。</p>
 <p>Mika 用反射调，失败退回 <code>am start --display</code>。</p>
 <p>它没把返回码简化成成功或失败，而是分了八种：</p>
-<p>|
-码</p>
-<p>|</p>
-<p>含义</p>
-<p>|</p>
-<p>上层怎么办</p>
-<p>|
-| --- | --- | --- |
-| <code>START_OK</code> |</p>
-<p>成功</p>
-<p>|</p>
-<p>继续</p>
-<p>|
-| <code>IN_USE_ON_MAIN</code> |</p>
-<p>用户正在主屏用这个 App</p>
-<p>|</p>
-<p>不启动</p>
-<p>|
-| <code>IN_USE_BY_OTHER</code> |</p>
-<p>另一个任务在 Mika 屏上用它</p>
-<p>|</p>
-<p>排队</p>
-<p>|
-| <code>OK_COLD_IGNORED</code> |</p>
-<p>要求冷启动但任务在自己屏上</p>
-<p>|</p>
-<p>忽略冷启动，不杀用户进程</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>码</th>
+<th>含义</th>
+<th>上层怎么办</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>START_OK</code></td>
+<td>成功</td>
+<td>继续</td>
+</tr>
+<tr>
+<td><code>IN_USE_ON_MAIN</code></td>
+<td>用户正在主屏用这个 App</td>
+<td>不启动</td>
+</tr>
+<tr>
+<td><code>IN_USE_BY_OTHER</code></td>
+<td>另一个任务在 Mika 屏上用它</td>
+<td>排队</td>
+</tr>
+<tr>
+<td><code>OK_COLD_IGNORED</code></td>
+<td>要求冷启动但任务在自己屏上</td>
+<td>忽略冷启动，不杀用户进程</td>
+</tr>
+</tbody>
+</table>
 <p><code>IN_USE_ON_MAIN</code> 这条是产品级的克制。技术上有能力抢，但选择了不抢。</p>
 <p><img src="/images/wechat/wechat-2247484045-1/05.png" alt="图片 5"></p>
 <p>虚拟屏与App搬迁</p>
@@ -232,33 +251,32 @@ Flag</p>
 <p>点击顺序是：可点祖先的 <code>ACTION_CLICK</code> → 无障碍手势 <code>dispatchGesture(setDisplayId)</code> → shell 注入 <code>InputEvent</code>。</p>
 <p>第三种必须 <code>setDisplayId</code>，不设的话事件进的是主屏。这是 <code>@hide</code> API，只有 shell 身份能用。</p>
 <p>输入更麻烦，三条完全不同的路：</p>
-<p>|
-路</p>
-<p>|</p>
-<p>什么时候用</p>
-<p>|</p>
-<p>怎么做</p>
-<p>|
-| --- | --- | --- |
-| <code>ACTION_SET_TEXT</code> |</p>
-<p>普通输入框</p>
-<p>|</p>
-<p>直接写，再全选</p>
-<p>|
-|</p>
-<p>剪贴板粘贴</p>
-<p>|</p>
-<p>WebView、密码框</p>
-<p>|</p>
-<p>全选 → <code>ACTION_PASTE</code></p>
-<p>|
-|</p>
-<p>坐标打字</p>
-<p>|</p>
-<p>自绘界面，树里看不到输入框</p>
-<p>|</p>
-<p>点坐标 → <code>Ctrl+A</code> → <code>Ctrl+V</code></p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>路</th>
+<th>什么时候用</th>
+<th>怎么做</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACTION_SET_TEXT</code></td>
+<td>普通输入框</td>
+<td>直接写，再全选</td>
+</tr>
+<tr>
+<td>剪贴板粘贴</td>
+<td>WebView、密码框</td>
+<td>全选 → <code>ACTION_PASTE</code></td>
+</tr>
+<tr>
+<td>坐标打字</td>
+<td>自绘界面，树里看不到输入框</td>
+<td>点坐标 → <code>Ctrl+A</code> → <code>Ctrl+V</code></td>
+</tr>
+</tbody>
+</table>
 <p>WebView 里 <code>ACTION_SET_TEXT</code> 打不进去，因为那是 Chromium 自己渲染的输入框，页面 JS 收不到 <code>input</code> 事件。</p>
 <p>第三路最糙：没有控件树，无法知道字有没有进去，只能比对前后两帧的像素，一点没变就报 <code>point_not_typed</code>。</p>
 <p>剪贴板这块写得很克制：读不到原来的剪贴板就放弃粘贴，免得弄丢用户复制的验证码；粘贴时给内容打敏感标记；抑制系统的”已复制”浮层；操作完立刻还原。</p>

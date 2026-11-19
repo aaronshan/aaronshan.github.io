@@ -3,7 +3,28 @@
 <p>我应该何时使用IO，何时使用NIO呢？在本文中，我会尽量清晰地解析Java NIO和IO的差异、它们的使用场景，以及它们如何影响您的代码设计。</p>
 <h2 id="java-nio和io的主要区别">Java NIO和IO的主要区别</h2>
 <p>下表总结了Java NIO和IO之间的主要差别，我会更详细地描述表中每部分的差异。</p>
-<table border="1" width="200" cellspacing="1" cellpadding="1"><tbody><tr><td>IO</td><td>NIO</td></tr><tr><td>面向流</td><td>面向缓冲</td></tr><tr><td>阻塞IO</td><td>非阻塞IO</td></tr><tr><td>无 </td><td>选择器</td></tr></tbody></table>
+<table>
+<thead>
+<tr>
+<th>IO</th>
+<th>NIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>面向流</td>
+<td>面向缓冲</td>
+</tr>
+<tr>
+<td>阻塞IO</td>
+<td>非阻塞IO</td>
+</tr>
+<tr>
+<td>无</td>
+<td>选择器</td>
+</tr>
+</tbody>
+</table>
 <h2 id="面向流与面向缓冲">面向流与面向缓冲</h2>
 <p>Java NIO和IO之间第一个最大的区别是，IO是面向流的，NIO是面向缓冲区的。 Java IO面向流意味着每次从流中读一个或多个字节，直至读取所有字节，它们没有被缓存在任何地方。此外，它不能前后移动流中的数据。如果需要前后移动从流中读取的数据，需要先将它缓存到一个缓冲区。 Java NIO的缓冲导向方法略有不同。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动。这就增加了处理过程中的灵活性。但是，还需要检查是否该缓冲区中包含所有您需要处理的数据。而且，需确保当更多的数据读入缓冲区时，不要覆盖缓冲区里尚未处理的数据。</p>
 <h2 id="阻塞与非阻塞io">阻塞与非阻塞IO</h2>

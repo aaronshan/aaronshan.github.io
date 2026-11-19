@@ -14,8 +14,8 @@
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install protobuf boost</span></span></code></pre>
 <p>由于更新了OS X10.9+和CUDA 7.0的缘故，现在它们都支持libc++的编译方式了，所以以前资料中为此做的各种工作（修改brew edit的内容）都没有必要，直接装就好了。</p>
 <h2 id="3-下载-caffe-并修改配置">3. 下载 Caffe 并修改配置</h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> clone</span><span style="color:#9ECBFF"> https://github.com/BVLC/caffe.git</span><span style="color:#E1E4E8">  </span></span>
-<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> caffe</span><span style="color:#E1E4E8">  </span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> clone</span><span style="color:#9ECBFF"> https://github.com/BVLC/caffe.git</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> caffe</span></span>
 <span class="line"><span style="color:#B392F0">cp</span><span style="color:#9ECBFF"> Makefile.config.example</span><span style="color:#9ECBFF"> Makefile.config</span></span></code></pre>
 <p>在Makefile.config中：</p>
 <p>1）如果使用默认的atlas，则将BLAS_INCLUDE和BLAS_LIB指定为如下路径：</p>
@@ -25,13 +25,13 @@
 <p>2）如果使用openblas，则使用brew安装，并将BLAS_INCLUDE和BLAS_LIB指定为如下路径：</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install openblas</span></span></code></pre>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>BLAS := open</span></span>
-<span class="line"><span>BLAS_INCLUDE := $(shell brew --prefix openblas)/include      </span></span>
+<span class="line"><span>BLAS_INCLUDE := $(shell brew --prefix openblas)/include</span></span>
 <span class="line"><span>BLAS_LIB := $(shell brew --prefix openblas)/lib</span></span></code></pre>
 <p>3）其他设置</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>CPU_ONLY :＝ 1</span></span>
 <span class="line"><span>PYTHON_INCLUDE := /usr/local/Cellar/python/2.7.12_2/Frameworks/Python.framework/Versions/2.7/include/python2.7 \</span></span>
 <span class="line"><span>       /usr/local/Cellar/numpy/1.11.2/lib/python2.7/site-packages/numpy/core/include</span></span>
-<span class="line"><span>WITH_PYTHON_LAYER := 1      </span></span></code></pre>
+<span class="line"><span>WITH_PYTHON_LAYER := 1</span></span></code></pre>
 <p>如果你需要使用pycaffe，则需要指定WITH_PYTHON_LAYER。另外此处python的include路径使用的是brew安装的python，如果你使用默认python，将来会因为osx的系统保护机制而报错。</p>
 <h2 id="4-安装">4. 安装</h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>make clean</span></span>
@@ -47,7 +47,7 @@
 <span class="line"><span style="color:#B392F0">install_name_tool</span><span style="color:#79B8FF"> -change</span><span style="color:#9ECBFF"> @rpath/libcaffe.so.1.0.0-rc3</span><span style="color:#9ECBFF"> ~/Library/Python/2.7/lib/python/site-packages/caffe/libcaffe.so.1.0.0-rc3</span><span style="color:#9ECBFF"> ~/Library/Python/2.7/lib/python/site-packages/caffe/_caffe.so</span></span></code></pre>
 <h2 id="5-常见问题">5. 常见问题</h2>
 <h3 id="1-image-not-found">1) image not found</h3>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>make runtest                                                                                                                            </span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>make runtest</span></span>
 <span class="line"><span>.build_release/tools/caffe</span></span>
 <span class="line"><span>dyld: Library not loaded: libcaffe.so.1.0.0-rc3</span></span>
 <span class="line"><span>  Referenced from: /Users/aaron/Downloads/caffe-rc3/.build_release/tools/caffe</span></span>

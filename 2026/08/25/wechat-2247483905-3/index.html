@@ -223,63 +223,52 @@
 <hr>
 <h2 id="六方法论层面的反思">六、方法论层面的反思</h2>
 <p>DSpark 和 DFlash 2 代表了推理加速的两条不同路线。理解它们的分野，对工程决策很有价值。</p>
-<p>|
-维度</p>
-<p>|</p>
-<p>DFlash 2</p>
-<p>|</p>
-<p>DSpark</p>
-<p>|
-| --- | --- | --- |
-|</p>
-<p>核心哲学</p>
-<p>|</p>
-<p>并行是优势，不要动它，做轻量后处理</p>
-<p>|</p>
-<p>并行的结构性缺陷光靠后处理不够，必须引入顺序性</p>
-<p>|
-|</p>
-<p>草稿生成</p>
-<p>|</p>
-<p>纯并行（块扩散）</p>
-<p>|</p>
-<p>半自回归（并行骨架 + 顺序头）</p>
-<p>|
-|</p>
-<p>依赖建模</p>
-<p>|</p>
-<p>路径选择器（宏观候选选择）+ 动态卷积（微观局部平滑）</p>
-<p>|</p>
-<p>顺序头（链式条件依赖）</p>
-<p>|
-|</p>
-<p>验证端</p>
-<p>|</p>
-<p>固定长度验证</p>
-<p>|</p>
-<p>置信度调度动态截断</p>
-<p>|
-|</p>
-<p>系统级优化</p>
-<p>|</p>
-<p>较少涉及</p>
-<p>|</p>
-<p>Confidence Head + Hardware-Aware Scheduler</p>
-<p>|
-|</p>
-<p>延迟开销</p>
-<p>|</p>
-<p>约 +1%</p>
-<p>|</p>
-<p>轻微串行开销 + 调度器开销</p>
-<p>|
-|</p>
-<p>生产部署</p>
-<p>|</p>
-<p>快速扩展中（SGLang/vLLM/llama.cpp/Ollama/oMLX）</p>
-<p>|</p>
-<p>DeepSeek-V4 线上已验证</p>
-<p>|</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>DFlash 2</th>
+<th>DSpark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心哲学</td>
+<td>并行是优势，不要动它，做轻量后处理</td>
+<td>并行的结构性缺陷光靠后处理不够，必须引入顺序性</td>
+</tr>
+<tr>
+<td>草稿生成</td>
+<td>纯并行（块扩散）</td>
+<td>半自回归（并行骨架 + 顺序头）</td>
+</tr>
+<tr>
+<td>依赖建模</td>
+<td>路径选择器（宏观候选选择）+ 动态卷积（微观局部平滑）</td>
+<td>顺序头（链式条件依赖）</td>
+</tr>
+<tr>
+<td>验证端</td>
+<td>固定长度验证</td>
+<td>置信度调度动态截断</td>
+</tr>
+<tr>
+<td>系统级优化</td>
+<td>较少涉及</td>
+<td>Confidence Head + Hardware-Aware Scheduler</td>
+</tr>
+<tr>
+<td>延迟开销</td>
+<td>约 +1%</td>
+<td>轻微串行开销 + 调度器开销</td>
+</tr>
+<tr>
+<td>生产部署</td>
+<td>快速扩展中（SGLang/vLLM/llama.cpp/Ollama/oMLX）</td>
+<td>DeepSeek-V4 线上已验证</td>
+</tr>
+</tbody>
+</table>
 <p>两种路线没有谁好谁坏，而是<strong>面向不同场景的最优解</strong>：</p>
 <ul>
 <li>

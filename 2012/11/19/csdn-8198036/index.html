@@ -11,9 +11,9 @@
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> JRE_HOME</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">/usr/lib/jvm/java/jdk1.6.0_37/jre</span></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> CLASSPATH</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH</span></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> PATH</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$JAVA_HOME/bin:$JRE_HOME/bin:$PATH</span></span></code></pre>
-<p>（**注：**注意一定不要错误，否则有可能重启后无法进入系统，如果由于输入错误，导致开机之后只有空白的界面，按ctrl+Alt+F1进入tty1命令行界面，输入命令：sudo vim /etc/profile 检查刚刚的配置是否有错误的地方，改正后重启即可。<strong>注意export命令=两边没有空格。</strong>）</p>
+<p>（<strong>注：</strong>注意一定不要错误，否则有可能重启后无法进入系统，如果由于输入错误，导致开机之后只有空白的界面，按ctrl+Alt+F1进入tty1命令行界面，输入命令：sudo vim /etc/profile 检查刚刚的配置是否有错误的地方，改正后重启即可。<strong>注意export命令=两边没有空格。</strong>）</p>
 <p>7、<strong>保存后重新启动计算机。</strong></p>
-<p>（**注：**网上有资料说可以使用source更新一下。在终端输入命令：source /etc/profile。经本人测试，这种方法会导致只在一个终端中有效，如果打开新的终端会java配置会失效，除非再次使用source命令更新。）</p>
+<p>（<strong>注：</strong>网上有资料说可以使用source更新一下。在终端输入命令：source /etc/profile。经本人测试，这种方法会导致只在一个终端中有效，如果打开新的终端会java配置会失效，除非再次使用source命令更新。）</p>
 <p>8、使用env命令查看各环境变量的值。如果各项变量内容都与之前配置的相同，则说明配置成功。也可使用java -version命令察看。如果能输出java version “1.6.0_37”则表明配置正确。</p>
 <h2 id="二创建hadoop组和hadoop用户">二、创建Hadoop组和Hadoop用户。</h2>
 <p>1、创建 hadoop 用户组：sudo addgroup hadoop</p>
