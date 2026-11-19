@@ -1,0 +1,665 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>大模型的Embedding层，为什么不能直接拿来做检索？ | 中龄程序猿</title><meta name="description" content="大模型的Embedding层，为什么不能直接拿来做检索？同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/03/wechat-2247484080-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="大模型的Embedding层，为什么不能直接拿来做检索？ | 中龄程序猿"><meta property="og:description" content="大模型的Embedding层，为什么不能直接拿来做检索？同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/03/wechat-2247484080-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484080-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="大模型的Embedding层，为什么不能直接拿来做检索？ | 中龄程序猿"><meta name="twitter:description" content="大模型的Embedding层，为什么不能直接拿来做检索？同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484080-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"大模型的Embedding层，为什么不能直接拿来做检索？","description":"大模型的Embedding层，为什么不能直接拿来做检索？同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。","datePublished":"2026-11-03T03:55:00.000Z","dateModified":"2026-11-03T03:55:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/03/wechat-2247484080-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484080-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>大模型的Embedding层，为什么不能直接拿来做检索？</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">大模型的Embedding层，为什么不能直接拿来做检索？</h1><p class="article-desc">大模型的Embedding层，为什么不能直接拿来做检索？同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-03T03:55:00.000Z">2026-11-03</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>23 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484080-1/cover.jpg" alt="大模型的Embedding层，为什么不能直接拿来做检索？"></figure><div class="article-grid"><div class="article-content"><div class="prose"><blockquote>
+<p>同一个名字，三种东西：一张查表、一串隐状态、一个被训练来比较的函数。</p>
+</blockquote>
+<p>先看一个很容易出现的 RAG 故障。</p>
+<p>团队不想再维护一个 Embedding 服务：70B 模型已经在线上跑生成了，直接拿它的第 0 层做向量，不就能省一套模型？于是他们把 70B 的第 0 层截出来，把一段文本的 token 向量平均一下，写进向量库。</p>
+<p>结果用户搜「苹果手机怎么重启」，召回一堆「红富士苹果的种植技术」。</p>
+<p>团队很困惑：70B、8192 维，怎么会输给几百兆的小模型？</p>
+<p>这不是模型不够大，而是把三个同名不同物的东西，混成了一个。</p>
+<p>这篇文章只回答一件事：<strong>大模型的 Embedding 层、LLM 的隐状态、独立的 Embedding 模型，到底差在哪；工程上又该怎么选。</strong></p>
+<hr>
+<h2 id="01-三个都叫-embedding-的东西">01 三个都叫 Embedding 的东西</h2>
+<p>先把它们摆到桌面上。</p>
+<p><img src="/images/wechat/wechat-2247484080-1/01.png" alt="图片 1"></p>
+<p>三个都叫 Embedding 的东西</p>
+<p><em>图 1：同名，不同物。一个是查表，一个是中间状态，一个是产品。</em></p>
+<h3 id="第一个w_e第-0-层的查表">第一个：<code>W_E</code>，第 0 层的查表</h3>
+<p>大模型的第一层，通常是一个 <code>V × d</code> 的矩阵（严格说，这里只讨论 token embedding 的查表，不含位置编码）：词表有 <code>V</code> 个 token，每个 token 对应 <code>d</code> 维向量。</p>
+<p>输入不是一个词，而是一个整数 id。模型拿这个 id 去矩阵里取第几行：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>e_t = W_E[token_id]</span></span></code></pre>
+<p>所以它本质上是一张查表。<code>token_id = 1024</code> 取第 1024 行，<code>token_id = 1025</code> 取第 1025 行。</p>
+<p>它没有上下文。「苹果手机」里的「苹果」和「红富士苹果」里的「苹果」，如果 tokenizer 切出来是同一个 id，查到的就是同一行。</p>
+<p>你可能会问：word2vec 不也是一张词向量表吗？</p>
+<p>不一样。word2vec 是单独训练出来、可以导出、可以拷贝的静态表；<code>W_E</code> 是大模型的一部分，它和后面的几十层一起初始化、一起反向传播。它的每一行之所以长成那样，是为了让后面的注意力层和 MLP 更好地预测下一个 token，不是为了让你算「苹果」和「香蕉」的余弦。</p>
+<p>它是一块「工作内存」，不是一本「语义词典」。</p>
+<h3 id="第二个h_tllm-的隐状态">第二个：<code>h_t</code>，LLM 的隐状态</h3>
+<p>把 token 序列喂进模型，每经过一层，每个位置都会输出一个 <code>d</code> 维向量。第 <code>t</code> 个位置的向量，记作 <code>h_t</code>。</p>
+<p>注意单位：<strong>T 个 token，还是 T 个向量。</strong></p>
+<p>它和 <code>W_E</code> 的区别是：<code>h_t</code> 有上下文。比如第 2 个位置的「手机」，经过几层注意力，已经看到了前面的「苹果」；它的向量会同时带着「苹果」的信息。但它仍然是「每个位置一个向量」，不是「整段文本一个向量」。</p>
+<p>而且，LLM 是因果的：第 <code>t</code> 个位置只能看 <code>1…t</code>，不能看后面。第 1 个位置的「苹果」只知道自己；最后一个位置才看全句。</p>
+<p>这带来一个很关键的后果，后面会展开：<strong>同一句话里，不同位置的向量，信息量是不一样的。</strong></p>
+<h3 id="第三个ex独立的-embedding-模型">第三个：<code>E(x)</code>，独立的 Embedding 模型</h3>
+<p>独立模型对外承诺的事情很简单：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>输入：一段任意长度的文本</span></span>
+<span class="line"><span>输出：一个 d 维向量</span></span></code></pre>
+<p>你给它一句 query，它给你一个向量；你给它一篇文档，它给你一个向量。然后你拿两个向量算余弦，判断它们像不像。</p>
+<p>它内部可能是一个 BERT，也可能是一个 7B 的 decoder；可能有 12 层，也可能有 28 层。这些都不重要。重要的是它被训练来完成「文本 → 一个可比较的向量」这件事。</p>
+<p>为了做到这一点，它通常要做三件事：</p>
+<ol>
+<li>
+<p>把 tokenizer 包进来，直接吃文本，而不是让你传 token id；</p>
+</li>
+<li>
+<p>把 T 个 token 向量压成一个文本向量，也就是 pooling；</p>
+</li>
+<li>
+<p>用对比学习训练，让相似的正样本靠近，不相似的负样本推远。</p>
+</li>
+</ol>
+<p>这三件事，正好对应三张契约。很多模型还会去掉因果掩码，让每个 token 看到整句；但这不是定义，后面会讲。</p>
+<h3 id="为什么都叫-embedding">为什么都叫 Embedding？</h3>
+<p>因为这个词在过去十年里，外延变了三次。</p>
+<ul>
+<li>
+<p><strong>word2vec 时代</strong>：embedding 是一张词向量表，一个可以导出的文件；</p>
+</li>
+<li>
+<p><strong>BERT 之后</strong>：embedding 是「跑一遍模型得到的上下文向量」，同一句话换一个上下文就变；</p>
+</li>
+<li>
+<p><strong>SBERT / RAG 之后</strong>：embedding 是「一段文本对应一个向量」的产品，是向量库里的那条记录。</p>
+</li>
+</ul>
+<p>名字没变，东西变了三次。所以当有人说「大模型的 embedding 更好」时，你首先要问：<strong>你说的是第 0 层、最后一层，还是某个独立模型输出的那个向量？</strong></p>
+<p>这三个东西，输入、输出、监督都不一样。</p>
+<hr>
+<h2 id="02-第一张契约进去的是-token-id不是文字">02 第一张契约：进去的是 token id，不是文字</h2>
+<p><img src="/images/wechat/wechat-2247484080-1/02.png" alt="图片 2"></p>
+<p>三张契约</p>
+<p><em>图 2：一条 query 要过三张契约；任何一张不对，检索都会坏。</em></p>
+<p><code>W_E</code> 的输入不是「苹果」这两个汉字，而是 tokenizer 切出来的整数 id。</p>
+<p>同一句话，不同的 tokenizer 会切出不同的 token 序列。比如「苹果手机怎么重启」，有的 tokenizer 会切成「苹果 / 手机 / 怎么 / 重启」，有的会切成「苹果 / 手 / 机 / 怎么 / 重 / 启」，还有的会把常见词合并成一个 token。</p>
+<p>切法不同，id 就不同；id 不同，查出来的行就不同。</p>
+<p>你可以把 <code>W_E</code> 想成一家酒店的房号表：1024 号房住的是谁，取决于这家酒店的前台怎么登记。换一家酒店，1024 号房可能住着完全另一个人。</p>
+<p>所以：</p>
+<ul>
+<li>
+<p><code>W_E</code> 和 tokenizer 是绑定的。换 tokenizer 不换表，等于把行号全部打乱；</p>
+</li>
+<li>
+<p>不能把 A 模型的 <code>W_E</code> 拼到 B 模型上。就算形状碰巧一样，id 的语义也对不上；</p>
+</li>
+<li>
+<p>扩词表不是「加几行」就完事。新加的行要和旧行处在同一个坐标系里，必须继续预训练，让新向量去迁就旧空间。</p>
+</li>
+</ul>
+<p>独立模型不一样。它对外承诺的是「任意文本」，tokenizer 是它的内部实现。你不需要知道它怎么切词，也不需要把 id 传给它。</p>
+<p>这就是第一张契约的差别：<strong>一个是模型内部零件，只认自己家的 id；一个是面向用户的产品，直接吃文本。</strong></p>
+<hr>
+<h2 id="03-第二张契约出来的是-t-个向量还是-1-个">03 第二张契约：出来的是 T 个向量，还是 1 个</h2>
+<p><code>W_E</code> 输出 T 个向量，LLM 每一层也输出 T 个向量，独立模型对外输出 1 个。这里说的是单向量模型；ColBERT 这类多向量模型是另一条路线，输出的是 T 个向量。</p>
+<p>中间那一步叫 <strong>pooling</strong>，中文常叫「池化」。它不是免费的，也不是随便选一个就行。</p>
+<p>|
+池化方式</p>
+<p>|</p>
+<p>怎么做</p>
+<p>|</p>
+<p>优点</p>
+<p>|</p>
+<p>坑</p>
+<p>|
+| --- | --- | --- | --- |
+|</p>
+<p>last token</p>
+<p>|</p>
+<p>取最后一个位置</p>
+<p>|</p>
+<p>简单；最后一位看到了全句</p>
+<p>|</p>
+<p>它是「下一个 token 的查询」，不是「全句摘要」</p>
+<p>|
+|</p>
+<p>mean</p>
+<p>|</p>
+<p>所有位置平均</p>
+<p>|</p>
+<p>稳定、无参数</p>
+<p>|</p>
+<p>因果模型里，早期位置看得少，等权平均有偏</p>
+<p>|
+|</p>
+<p>CLS</p>
+<p>|</p>
+<p>取专门的分类位</p>
+<p>|</p>
+<p>BERT 系常用</p>
+<p>|</p>
+<p>需要预训练时就有这个位；decoder 模型没有</p>
+<p>|
+|</p>
+<p>EOS</p>
+<p>|</p>
+<p>取结束符位置</p>
+<p>|</p>
+<p>E5-Mistral、Qwen3 等常用</p>
+<p>|</p>
+<p>依赖模板和结束符</p>
+<p>|
+|</p>
+<p>latent attention</p>
+<p>|</p>
+<p>学一组 query 做加权</p>
+<p>|</p>
+<p>NV-Embed 报告优于 mean / EOS</p>
+<p>|</p>
+<p>多一组参数，训练要配套</p>
+<p>|</p>
+<h3 id="因果注意力同一个词在不同位置信息量不同">因果注意力：同一个词，在不同位置信息量不同</h3>
+<p><img src="/images/wechat/wechat-2247484080-1/03.png" alt="图片 3"></p>
+<p>因果与双向注意力</p>
+<p><em>图 3：因果模型里，第 1 个「苹果」只看见自己；双向模型里，它第一层就看见了「手机」。</em></p>
+<p>在 GPT / Llama 这类因果模型里，第 <code>t</code> 个位置只能看 <code>1…t</code>。</p>
+<p>所以第 1 个位置的「苹果」，只带着这个 token 的静态含义，永远看不见后面的「手机」；到了第 2 个位置，「手机」才看见前面的「苹果」，表示开始往数码方向偏。</p>
+<p>最后一个位置确实看到了全句。但它的训练任务是「拿这个位置的向量，预测下一个 token」。所以它是「下一个 token 的查询」，不是「整段文本的摘要」。</p>
+<p>这句话很重要：<strong>最后一个位置的表示不是摘要，它是「接下来要说什么」的查询。</strong></p>
+<p>也正因如此，同一个前缀，最后一个位置的向量在推理时是固定的：它不知道你实际会接「。」还是「然而」；模型拿它算出的，是下一个词的概率分布。它编码的是「到此为止的上下文」，不是「后面实际发生了什么」。但它的几何，是被「预测下一个词」塑形的，不是被「两句话是否相似」塑形的。</p>
+<h3 id="mean-pooling-为什么会偏">mean pooling 为什么会偏？</h3>
+<p>把 <code>h_1</code> 到 <code>h_T</code> 等权平均，等于把「半句话的表示」和「整句话的表示」混在一起。</p>
+<p>短句影响小；长文档影响大。文档越长，早期位置和末位的「信息量差距」越大，mean pooling 的偏差越明显。</p>
+<p>这就是为什么在保持因果注意力的前提下，decoder-based embedder 更常用 last / EOS / latent pooling，而不是无脑 mean。</p>
+<h3 id="双向不是教条">双向不是教条</h3>
+<p>很多独立模型确实用双向注意力：BERT、BGE、LLM2Vec 都是这个路子。每个 token 从第一层就能看到整句，「苹果」在第一层就知道后面是「手机」，表示会更准。</p>
+<p>但双向不是定义。Qwen3-Embedding 这类 decoder 底座模型也可以很强；它靠指令、对比学习和合适的池化把差距补回来。</p>
+<p>所以别把「必须双向」当成教条。<strong>双向只是常见做法，真正决定句向量质量的，是池化 + 监督 + 领域匹配。</strong></p>
+<hr>
+<h2 id="04-第三张契约训练目标是续写还是比较">04 第三张契约：训练目标是续写，还是比较</h2>
+<p>这是三张契约里最核心、也最容易被口号化的一张。</p>
+<h3 id="next-token目标里没有相似度">next-token：目标里没有「相似度」</h3>
+<p>大模型的预训练目标很单一：给定前 <code>t</code> 个 token，预测第 <code>t+1</code> 个 token。</p>
+<p>它的损失函数只关心「下一个词的概率」，不关心「两句话的余弦是否可比」。</p>
+<p>这个目标会逼模型学语法、事实、推理，也会逼它把高频词的基准分维持住；但它从来没有要求「任意两句话的向量要能比较」。</p>
+<p>所以，你从 LLM 里抽出来的向量，可能包含很多信息，但它的「坐标系」不是为相似度校准的。</p>
+<p>顺带说一句 <code>W_U</code>：它是输出侧的反嵌入矩阵，把隐状态变回词表上的打分。<code>W_E</code> 是输入侧查表（<code>V × d</code>），<code>W_U</code> 是输出侧反嵌入（<code>d × V</code>），两者形状互为转置，但作用相反。</p>
+<p>有些模型让 <code>W_U = W_E</code> 的转置（权重绑定），有些让它们各自独立。绑不绑是配置问题，不影响「它的列是下一个词的原型」这个事实。</p>
+<h3 id="对比学习把像写进损失">对比学习：把「像」写进损失</h3>
+<p>独立模型换了一张损失，最常用的是对比学习。</p>
+<p>它一次看一批数据：一个 query、一个正样本、一堆负样本。</p>
+<ul>
+<li>
+<p>正样本：和 query 语义相同或相关的文本；</p>
+</li>
+<li>
+<p>负样本：batch 里其他不相关的文本；</p>
+</li>
+<li>
+<p>目标：让 query 和正样本的向量靠近，和负样本的向量推远。</p>
+</li>
+</ul>
+<p>用一句话概括：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>正样本拉近，负样本推远。</span></span></code></pre>
+<p>如果没有负样本，模型有一个最省力的解：把所有文本都映射到同一个点，loss 直接归零。这就是「表示坍缩」。负样本是那个「不许塌」的约束。</p>
+<p>用公式写，大概是：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>loss = -log( exp(sim(q, k+) / τ) / ( exp(sim(q, k+) / τ) + Σ exp(sim(q, k-) / τ) ) )</span></span></code></pre>
+<p>分母里既有正样本，也有所有负样本。其中 <code>sim</code> 是余弦相似度，<code>τ</code> 是温度。温度小，梯度更集中在最难的负样本上；温度大，梯度更平滑。</p>
+<p>但工程上真正决定效果的，往往不是这个公式，而是数据：</p>
+<ul>
+<li>
+<p>batch 够不够大，负样本够不够多；</p>
+</li>
+<li>
+<p>有没有难负例（表面相关、语义不同）；</p>
+</li>
+<li>
+<p>query 和文档的长度、分布是否对称；</p>
+</li>
+<li>
+<p>有没有指令前缀，把任务信息告诉模型。</p>
+</li>
+</ul>
+<h3 id="独立不是架构是契约">「独立」不是架构，是契约</h3>
+<p>独立 Embedding 模型可以基于 BERT，也可以基于 LLM。</p>
+<p>BGE 用 BERT 编码器 + 对比学习；LLM2Vec 去掉 Llama 的因果掩码，加 MNTP 和 SimCSE；NV-Embed 用 latent attention pooling；E5-Mistral 和 Qwen3-Embedding 用任务指令 + 对比学习。</p>
+<p>它们改的都是三张契约里的某几张，而不是从零发明一种网络。</p>
+<p>所以「独立」不是一个架构名词，而是一个产品承诺：<strong>输入文本、输出一个向量、用相似度监督训练过。</strong></p>
+<hr>
+<h2 id="05-70b-的第-0-层为什么打不过-300m-的-bge">05 70B 的第 0 层，为什么打不过 300M 的 BGE？</h2>
+<p>把三件事分开看，答案很清楚。</p>
+<p>|</p>
+<p>|</p>
+<p>70B 第 0 层</p>
+<p>|</p>
+<p>300M BGE</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>参数量</p>
+<p>|</p>
+<p>700 亿（整模）</p>
+<p>|</p>
+<p>3 亿</p>
+<p>|
+|</p>
+<p>这一层看到什么</p>
+<p>|</p>
+<p>一个 token id</p>
+<p>|</p>
+<p>整段文本</p>
+<p>|
+|</p>
+<p>上下文</p>
+<p>|</p>
+<p>无</p>
+<p>|</p>
+<p>双向</p>
+<p>|
+|</p>
+<p>输出</p>
+<p>|</p>
+<p>T 个向量</p>
+<p>|</p>
+<p>1 个向量</p>
+<p>|
+|</p>
+<p>监督</p>
+<p>|</p>
+<p>next-token</p>
+<p>|</p>
+<p>对比学习</p>
+<p>|
+|</p>
+<p>文本级召回</p>
+<p>|</p>
+<p>词级、静态</p>
+<p>|</p>
+<p>为相似度训练</p>
+<p>|</p>
+<p>第 0 层只有「词身份」，没有上下文。它的参数量可能并不小（词表 × 维度），但仍然只是一张查表；70B 的理解力在中间层和最后一层，不在第 0 层。</p>
+<p>就算你取最后一层，它仍然缺 pooling 和相似度监督。</p>
+<p>打个比方：</p>
+<ul>
+<li>
+<p>70B 的第 0 层像一本巨大的字典，每个字都有一个坐标，但它不会读句子；</p>
+</li>
+<li>
+<p>300M 的 BGE 像一个专门训练过的编辑，读完一段话，写一句摘要，而且知道哪些摘要应该放在一起。</p>
+</li>
+</ul>
+<p><strong>参数是容量，契约是对齐。容量再大，方向不对也白搭。</strong></p>
+<p>但也不要反过来说「大模型没用」。</p>
+<p>如果你把 70B 的最后一层拿出来，加池化、做对比微调，它可能很强。LLM2Vec、NV-Embed 就是干这个的：它们把 LLM 改造成 Embedding 模型，而不是简单抽一层。</p>
+<p><img src="/images/wechat/wechat-2247484080-1/04.png" alt="图片 4"></p>
+<p>把 LLM 变成 Embedding 模型</p>
+<p><em>图 4：不是「抽一层」，是「补齐缺失的契约」。</em></p>
+<p>成本账也同样不站在 70B 这边：</p>
+<ul>
+<li>
+<p>7B 模型半精度加载就要 14GB 显存；</p>
+</li>
+<li>
+<p>70B 更是另一个数量级；</p>
+</li>
+<li>
+<p>8192 维向量写进索引，存储和检索成本都远高于 1024 维；</p>
+</li>
+<li>
+<p>换模型还要全量重建索引。</p>
+</li>
+</ul>
+<p>这也解释了为什么工业界常见的做法不是「直接上 70B」，而是「7B 当老师蒸馏 0.5B」或者「MRL 截断 + 量化」。</p>
+<hr>
+<h2 id="06-那为什么有人说llm-向量很好用">06 那为什么有人说「LLM 向量很好用」？</h2>
+<p>因为大家说的不是同一个东西。</p>
+<p>有人说「最后一层平均池化效果不错」，也有人说「一塌糊涂」。两个人都可能没说谎，只是条件不同：</p>
+<ul>
+<li>
+<p>用的是第 0 层，还是最后一层？</p>
+</li>
+<li>
+<p>用的是 last、mean、CLS，还是 EOS？</p>
+</li>
+<li>
+<p>有没有做白化、减均值？</p>
+</li>
+<li>
+<p>在通用数据上评，还是在垂直领域评？</p>
+</li>
+<li>
+<p>有没有 rerank 兜底？</p>
+</li>
+<li>
+<p>用的是原始 LLM，还是已经做过对比微调的 LLM2Vec / NV-Embed？</p>
+</li>
+</ul>
+<p>所以「LLM 向量能不能用」不是一个是非题，而是一个条件题。</p>
+<p>如果你手上只有 LLM，想判断它的向量能不能用，可以按这个顺序试：</p>
+<ol>
+<li>
+<p><strong>先对比 last-token 和 mean</strong>：看 Recall@10 差多少；差距大，说明池化是主要矛盾；</p>
+</li>
+<li>
+<p><strong>再试减均值 / 白化</strong>：判断是不是公共分量或流氓维度；</p>
+</li>
+<li>
+<p><strong>在你的领域数据上评</strong>：不要只看通用榜单；</p>
+</li>
+<li>
+<p><strong>还不够，再做对比微调</strong>：LoRA + 正负样本，成本通常比换底座低；</p>
+</li>
+<li>
+<p><strong>最后才换独立模型</strong>：因为换模型意味着重建索引。</p>
+</li>
+</ol>
+<p>这个顺序能帮你分清：到底是模型不行，还是池化不对，还是根本没做相似度训练。</p>
+<hr>
+<h2 id="07-各向异性圆锥是真的但它不是主凶">07 各向异性：圆锥是真的，但它不是主凶</h2>
+<p>聊完池化和监督，再拆一个最常见的背锅侠：各向异性。</p>
+<p>你可能听过一个很流行的说法：</p>
+<blockquote>
+<p>大模型训出来的向量，全都挤在一个狭窄的圆锥里，余弦都在 0.9 以上，所以 ANN 检索瞎了。</p>
+</blockquote>
+<p>这句话对了一半：现象是真的，机制是错的，处方也跟着错。</p>
+<h3 id="高维余弦本来就该接近-0">高维余弦，本来就该接近 0</h3>
+<p>先把「随机向量」拿出来看。</p>
+<p>在 <code>d</code> 维单位球面上均匀撒点，两两算余弦，均值为 0，标准差约为：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1 / √d</span></span></code></pre>
+<p><code>d = 8192</code> 时，标准差只有 0.011。</p>
+<p>也就是说，<strong>随机向量的余弦本来就该接近 0，而不是 0.9。</strong></p>
+<p>反过来说，如果你观察到 0.9，通常意味着两件事之一：有一个非随机的共同分量，或者样本本身高度同质。前者就是「各向异性」这个词的来源。</p>
+<h3 id="圆锥余弦被抬高但排序没坏">圆锥：余弦被抬高，但排序没坏</h3>
+<p>假设每个向量都由两部分组成：</p>
+<ul>
+<li>
+<p>一个语义部分 <code>x_i</code>；</p>
+</li>
+<li>
+<p>一个所有样本共享的方向 <code>u</code>。</p>
+</li>
+</ul>
+<p>把它们加起来再归一化，就得到一个圆锥：所有向量都朝同一个方向偏。</p>
+<p>数学上可以证明：<strong>如果公共分量和语义子空间正交，且各样本的语义部分范数一致，那么公共分量只是把余弦整体抬高，是一个单调重参数化；按余弦排序和按语义部分排序，结果一样。</strong></p>
+<p>我们用 128 维、40 个主题、3000 条样本做了个实验，逐步加大共享偏置。</p>
+<p><img src="/images/wechat/wechat-2247484080-1/05.png" alt="图片 5"></p>
+<p>公共分量与干扰维度</p>
+<p><em>图 5：左图，公共分量把平均余弦从 0.02 抬到 0.99，但 Top-1 / Recall@10 一点没动；右图，真正的凶手是少数干扰维度。</em></p>
+<p>平均余弦从 0.02 涨到 0.99，Top-1 和 Recall@10 仍然是 1.000。这个实验的语义簇分得很开，检索本来是满分；要看的是排序有没有被改变。</p>
+<p>这就是「现象是真的，机制是错的」：在这个受控实验里，圆锥确实存在，但它没有改变排序。它真正的危害在后面：把名次之间的间隔压小，让精度和量化开始决定结果。</p>
+<h3 id="真凶一少数流氓维度">真凶一：少数「流氓维度」</h3>
+<p>在一些真实模型里，少数几个维度会主导余弦，可能只有 1~3 个。它们和语义无关，但方差特别大，会把其他维度的差异压过去。</p>
+<p>我们做了个隔离实验：让语义住在第 0<del>31 维，在第 40</del>43 维放与主题无关、幅度为 <code>β</code> 的随机噪声。</p>
+<p>结果：</p>
+<ul>
+<li>
+<p><code>β = 1</code>，Top-1 掉到 0.63；</p>
+</li>
+<li>
+<p><code>β = 8</code>，Top-1 掉到 0.008，基本归零；</p>
+</li>
+<li>
+<p><code>β = 16</code> 时，原始向量只剩 0.0025，减均值也只修到 0.005，几乎没用；</p>
+</li>
+<li>
+<p>同一组 <code>β = 16</code> 的数据，白化修到 0.993。</p>
+</li>
+</ul>
+<p>为什么减均值没用？因为伤害不在均值里，而在协方差里。白化把协方差矩阵变成单位阵，把方差特别大的方向按比例压回去，所以有效。</p>
+<p>但白化也有边界：它假设「方差大 = 不重要」。真实模型里不一定成立，而且估协方差需要足够多的样本。</p>
+<h3 id="真凶二存储精度">真凶二：存储精度</h3>
+<p>还有一个更工程化的凶手：精度。</p>
+<p>同一批向量、同一套排序逻辑，只把存储精度从 fp32 换成 fp16 和 int8：</p>
+<p><img src="/images/wechat/wechat-2247484080-1/06.png" alt="图片 6"></p>
+<p>精度实验</p>
+<p><em>图 6：<code>α = 16</code> 时，int8 的 Top-1 还有 98.5%，但 Top-10 的重合度已经掉到 0.563。</em></p>
+<ul>
+<li>
+<p><code>α = 16</code> 时，fp16 的 Top-10 重合度还有 0.930；</p>
+</li>
+<li>
+<p>int8 只剩 0.563；</p>
+</li>
+<li>
+<p>但 int8 的 Top-1 还有 0.985。</p>
+</li>
+</ul>
+<p>为什么 Top-1 看起来还稳，Top-10 已经乱了？</p>
+<p>因为名次之间的真实差距，比浮点分辨率还小：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Top-1 与 Top-2 的余弦差（中位数）：约 5.3 × 10^-5</span></span>
+<span class="line"><span>fp16 的有效分辨率（半间隔）：约 4.9 × 10^-4</span></span>
+<span class="line"><span>int8 的量化步长：约 7.9 × 10^-3</span></span></code></pre>
+<p>圆锥本身不改变排序，但在实验里，它把名次之间的间隔压到了浮点分辨率以下。于是「用什么精度存」开始决定「谁排第一」。</p>
+<h3 id="处方先分清是哪一种病">处方：先分清是哪一种病</h3>
+<ul>
+<li>
+<p><strong>公共分量</strong>：减均值、白化；几乎免费，但只治这一种；</p>
+</li>
+<li>
+<p><strong>流氓维度</strong>：白化（样本要够）、或重训；白化不是万能；</p>
+</li>
+<li>
+<p><strong>精度</strong>：fp32 存、分组量化 / 残差量化，或先降维再量化；</p>
+</li>
+<li>
+<p><strong>域漂移 / 池化</strong>：换池化、领域微调、混合检索、加 rerank。</p>
+</li>
+</ul>
+<p>顺序很重要：<strong>先分清病，再开药。</strong> 不要把所有问题都叫「各向异性」。</p>
+<h3 id="流形视角一个解释框架">流形视角：一个解释框架</h3>
+<p>还有一个更上层的视角：真实文本不在 <code>d</code> 维空间里均匀填充，而是集中在一个内在维度低得多的曲面上。</p>
+<p>三维空间里一张揉皱的纸是最好的类比：纸是二维的，但它在三维里被折叠；要描述纸上两点的「真实距离」，得沿着纸面走。</p>
+<p>这个「沿着纸面走」的距离叫测地距离。我们常用的余弦相似度看的是夹角，归一化后的欧氏距离看的是弦长；在单位球上，两者是同一件事的两种刻度。它们和测地距离，只在局部近似。</p>
+<p>这解释了三个工程动作的必要性：</p>
+<ul>
+<li>
+<p><strong>分块</strong>：把文档切成语义内聚的块，让局部平坦假设更接近成立；</p>
+</li>
+<li>
+<p><strong>混合检索</strong>：BM25 和元数据过滤提供「绝对坐标」，不依赖方向；</p>
+</li>
+<li>
+<p><strong>重排</strong>：cross-encoder 把 query 和文档拼在一起过一遍注意力，绕开「各自压成一个点再算距离」的有损步骤。</p>
+</li>
+</ul>
+<p>但要说清楚边界：流形视角是一个解释框架，不是可优化的目标函数。很难把「测地距离」直接写进损失里去训，在线计算它的成本也很高。</p>
+<hr>
+<h2 id="08-生成就是检索这句话对吗">08 「生成就是检索」，这句话对吗？</h2>
+<p>形式上对，契约上不对。</p>
+<p>生成下一个 token 时，模型会算：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>p(下一个词) = softmax(h · W_U / τ)</span></span></code></pre>
+<p>把 <code>h</code> 当成 query，把 <code>W_U</code> 的每一列当成 key，这确实是一次「软化的原型匹配」：打分是内积，输出是 softmax 后的排名。只有把两边都归一化，它才更接近余弦最近邻。</p>
+<p>这个类比很漂亮，也能解释幻觉：模型从 <code>W_U</code> 里检索到了一个语法通顺但事实错误的词。</p>
+<p>但它不是「检索模型」，原因有三条：</p>
+<ol>
+<li>
+<p><strong><code>W_U</code> 的列是输出原型，不是文档库。</strong> 它们代表「下一个词长什么样」，不是「一篇文档的语义」。词表是封闭的、离散的；文档库是开放的、连续的。</p>
+</li>
+<li>
+<p><strong>内积不是余弦。</strong><code>W_U</code> 的列范数没有被归一化，范数大的词天然占便宜；这种偏置和词频相关，不是语义相似度。</p>
+</li>
+<li>
+<p><strong>没有对称性和校准。</strong> 检索通常希望 <code>s(q, d) ≈ s(d, q)</code>，至少要求不同 query 之间的分数可比；next-token 目标不要求这两件事。</p>
+</li>
+</ol>
+<p>真正的「生成式检索」是另一套：DSI 这类方法把文档 id 当成 token 来生成；RETRO 这类方法先用检索器取文档，再拼进上下文。它们都不是「拿 <code>h</code> 去 <code>W_U</code> 里查文档」。</p>
+<p>所以，「生成就是检索」是一句好的直觉，不是一条好的工程结论。</p>
+<hr>
+<h2 id="09-embedding--n-层是不是广义的-embedding-模型">09 Embedding + N 层，是不是广义的 Embedding 模型？</h2>
+<p>这是理解两者关系时最有意思的一个追问。</p>
+<p>答案是：<strong>形式上可以这么切，契约上还没完成。</strong></p>
+<p>把模型在第 <code>k</code> 层切成两半：</p>
+<ul>
+<li>
+<p>左半边：tokenizer + <code>W_E</code> + 前 <code>k</code> 层，输入文本，输出 <code>T × d</code> 的隐状态；</p>
+</li>
+<li>
+<p>右半边：后 <code>L-k</code> 层 + <code>W_U</code>，输入隐状态，输出下一个 token 的概率。</p>
+</li>
+</ul>
+<p>左半边确实是一个「编码器」：它把文本变成向量序列。</p>
+<p><code>k = 0</code> 时，它就是 <code>W_E</code>；<code>k = L</code> 时，它就是最后一层隐状态。任意 <code>k</code> 都能切。</p>
+<p>但要把它变成「Embedding 模型」，还差两步：</p>
+<ol>
+<li>
+<p><strong>pooling</strong>：把 <code>T × d</code> 压成 <code>d</code>，否则你输出的是「每个 token 一个向量」，不是「一段文本一个向量」；</p>
+</li>
+<li>
+<p><strong>监督</strong>：加对比学习（或至少加一个为相似度设计的头），否则这个向量只是「能算」，不是「能比」。</p>
+</li>
+</ol>
+<p>而且，只要不改注意力掩码，切点就不会改变「因果」这件事：左半边的每个 <code>h_t</code> 仍然只看见 <code>1…t</code>。所以它是<strong>因果编码器</strong>，不是双向编码器。</p>
+<p>一句话总结：</p>
+<blockquote>
+<p>LLM 是一个「可以切出编码器的生成模型」；Embedding 模型是一个「三张契约都对齐的编码器产品」。</p>
+</blockquote>
+<p>两者交集非空，但不等价。</p>
+<hr>
+<h2 id="10-工程选型先问契约再问成本">10 工程选型：先问契约，再问成本</h2>
+<p>如果你只记一张表，记这张。</p>
+<p>|
+场景</p>
+<p>|</p>
+<p>建议</p>
+<p>|</p>
+<p>原因</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>RAG 召回 / 语义检索</p>
+<p>|</p>
+<p>独立 Embedding 模型 + rerank</p>
+<p>|</p>
+<p>监督和输出契约对口</p>
+<p>|
+|</p>
+<p>聚类 / 去重</p>
+<p>|</p>
+<p>独立模型 + 白化</p>
+<p>|</p>
+<p>对阈值敏感，先看分布</p>
+<p>|
+|</p>
+<p>分类 / 回归</p>
+<p>|</p>
+<p>独立模型 + 线性头</p>
+<p>|</p>
+<p>训练成本低，部署简单</p>
+<p>|
+|</p>
+<p>离线探索 / 可解释性</p>
+<p>|</p>
+<p>LLM 隐状态 + 池化 + 白化</p>
+<p>|</p>
+<p>没有线上延迟约束，可以省事</p>
+<p>|
+|</p>
+<p>词级相似 / 静态词表</p>
+<p>| <code>W_E</code> |</p>
+<p>词级、静态，够用就好</p>
+<p>|
+|</p>
+<p>生产 RAG 直接用第 0 层</p>
+<p>|</p>
+<p>不建议</p>
+<p>|</p>
+<p>输入要自己接 tokenizer；输出、监督两张契约不匹配</p>
+<p>|</p>
+<h3 id="成本账">成本账</h3>
+<ul>
+<li>
+<p>1000 万条 × 4096 维 × fp16，约 82GB；</p>
+</li>
+<li>
+<p>1024 维，约 20GB；</p>
+</li>
+<li>
+<p>int8 再除以 2；</p>
+</li>
+<li>
+<p>7B 模型半精度加载就要 14GB 显存；</p>
+</li>
+<li>
+<p>300M 的 BGE，一张 A10 通常就够用。</p>
+</li>
+</ul>
+<p>常见折中：</p>
+<ul>
+<li>
+<p><strong>蒸馏</strong>：7B 当老师，训 0.5B 双向模型；</p>
+</li>
+<li>
+<p><strong>MRL 截断</strong>：前 128 / 256 / 512 维独立可用；</p>
+</li>
+<li>
+<p><strong>量化</strong>：int8 + 重排补精度。</p>
+</li>
+</ul>
+<p>顺序通常是：<strong>先降维，再量化；先蒸馏，再谈上大模型。</strong></p>
+<h3 id="迁移成本">迁移成本</h3>
+<p>还有一笔很容易被低估的账：<strong>离线建库和在线编码必须用同一个模型、同一个版本、同一套预处理。</strong></p>
+<p>换模型 = 全量重建索引 + 双写灰度。</p>
+<p>索引小的时候几乎感觉不到；到亿级时，这就是新模型上线的最大障碍。</p>
+<p>所以「随手拿个 LLM 的第 0 层来用」的真实代价，往往不在第一天的效果，而在后面每一次模型迭代时的迁移成本。</p>
+<h3 id="30-秒自检">30 秒自检</h3>
+<p>下次要选型，先问五个问题：</p>
+<ol>
+<li>
+<p>你的输入是 token id，还是任意文本？</p>
+</li>
+<li>
+<p>你的输出是一个向量吗？这个池化方式训练过吗？</p>
+</li>
+<li>
+<p>你的监督目标里有「相似度」和负样本吗？</p>
+</li>
+<li>
+<p>换模型要重建索引吗？预算够吗？</p>
+</li>
+<li>
+<p>有没有 rerank、混合检索兜底？</p>
+</li>
+</ol>
+<p>如果五个问题里有三个答不上来，先别换更大的模型。</p>
+<hr>
+<h2 id="最后三句话带走">最后，三句话带走</h2>
+<ol>
+<li>
+<p><code>W_E</code> 是模型内部的一张查表，<code>h_t</code> 是模型读到某个位置的笔记，<code>E(x)</code> 是专门训练来比较文本的函数。</p>
+</li>
+<li>
+<p>它们的区别不在「层 vs 模型」，而在<strong>输入契约、输出契约、监督契约</strong>是否匹配你的任务。</p>
+</li>
+<li>
+<p><strong>参数是容量，契约是对齐。</strong> 不是大模型不行，是它没被要求做这件事。</p>
+</li>
+</ol>
+<p>下次有人再说「大模型的 Embedding 更强」，你可以先问一句：</p>
+<blockquote>
+<p>你说的是哪一层？用什么池化？拿什么目标训的？</p>
+</blockquote>
+<p>这三个问题，比「多少 B」更能决定它能不能用。</p>
+<hr>
+<h3 id="延伸阅读">延伸阅读</h3>
+<ul>
+<li>
+<p>Reimers &#x26; Gurevych, <em>Sentence-BERT</em>, 2019.</p>
+</li>
+<li>
+<p>Gao et al., <em>SimCSE: Simple Contrastive Learning of Sentence Embeddings</em>, 2021.</p>
+</li>
+<li>
+<p>BehnamGhader et al., <em>LLM2Vec: Large Language Models Are Secretly Powerful Text Encoders</em>, 2024.</p>
+</li>
+<li>
+<p>Lee et al., <em>NV-Embed: Improved Techniques for Training LLMs as Generalist Embedding Models</em>, 2024.</p>
+</li>
+<li>
+<p>Wang et al., <em>Improving Text Embeddings with Large Language Models</em>, 2024.</p>
+</li>
+<li>
+<p>Zhang et al., <em>Qwen3 Embedding</em>, 2025.</p>
+</li>
+<li>
+<p>Timkey &#x26; van Schijndel, <em>All Bark and No Bite: Rogue Dimensions in Transformer Language Models</em>, 2021.</p>
+</li>
+<li>
+<p>Ethayarajh, <em>How Contextual are Contextualized Word Representations?</em>, 2019.</p>
+</li>
+<li>
+<p>Kusupati et al., <em>Matryoshka Representation Learning</em>, 2022.</p>
+</li>
+<li>
+<p>Press &#x26; Wolf, <em>Using the Output Embedding to Improve Language Models</em>, 2016.</p>
+</li>
+</ul>
+<p><em>注：图 5、图 6 是合成数据上的机制隔离实验，用来观察因果关系，不是 MTEB 榜单分数；真实模型的数字会受底座、数据、池化和领域影响。</em></p>
+<hr>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。</p>
+<p>关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/mbVE7xk3zv7fEr2e6ja72Q" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/04/wechat-2247484111-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">5.4万star的AI家教，最值得抄的不是教学功能</span></a><a class="article-nav__item article-nav__item--next" href="/2026/11/02/wechat-2247484054-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#01-三个都叫-embedding-的东西">01 三个都叫 Embedding 的东西</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第一个w_e第-0-层的查表">第一个：W_E，第 0 层的查表</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第二个h_tllm-的隐状态">第二个：h_t，LLM 的隐状态</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第三个ex独立的-embedding-模型">第三个：E(x)，独立的 Embedding 模型</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#为什么都叫-embedding">为什么都叫 Embedding？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#02-第一张契约进去的是-token-id不是文字">02 第一张契约：进去的是 token id，不是文字</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#03-第二张契约出来的是-t-个向量还是-1-个">03 第二张契约：出来的是 T 个向量，还是 1 个</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#因果注意力同一个词在不同位置信息量不同">因果注意力：同一个词，在不同位置信息量不同</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#mean-pooling-为什么会偏">mean pooling 为什么会偏？</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#双向不是教条">双向不是教条</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#04-第三张契约训练目标是续写还是比较">04 第三张契约：训练目标是续写，还是比较</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#next-token目标里没有相似度">next-token：目标里没有「相似度」</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#对比学习把像写进损失">对比学习：把「像」写进损失</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#独立不是架构是契约">「独立」不是架构，是契约</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#05-70b-的第-0-层为什么打不过-300m-的-bge">05 70B 的第 0 层，为什么打不过 300M 的 BGE？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#06-那为什么有人说llm-向量很好用">06 那为什么有人说「LLM 向量很好用」？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#07-各向异性圆锥是真的但它不是主凶">07 各向异性：圆锥是真的，但它不是主凶</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#高维余弦本来就该接近-0">高维余弦，本来就该接近 0</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#圆锥余弦被抬高但排序没坏">圆锥：余弦被抬高，但排序没坏</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#真凶一少数流氓维度">真凶一：少数「流氓维度」</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#真凶二存储精度">真凶二：存储精度</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#处方先分清是哪一种病">处方：先分清是哪一种病</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#流形视角一个解释框架">流形视角：一个解释框架</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#08-生成就是检索这句话对吗">08 「生成就是检索」，这句话对吗？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#09-embedding--n-层是不是广义的-embedding-模型">09 Embedding + N 层，是不是广义的 Embedding 模型？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#10-工程选型先问契约再问成本">10 工程选型：先问契约，再问成本</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#成本账">成本账</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#迁移成本">迁移成本</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#30-秒自检">30 秒自检</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#最后三句话带走">最后，三句话带走</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#延伸阅读">延伸阅读</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

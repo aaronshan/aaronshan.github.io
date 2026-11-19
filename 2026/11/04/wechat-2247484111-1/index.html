@@ -1,0 +1,269 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>5.4万star的AI家教，最值得抄的不是教学功能 | 中龄程序猿</title><meta name="description" content="5.4万star的DeepTutor，最值得抄的不是教学功能。港大团队把一次对话做成可恢复的数据库事务，把教学法写成 581 行不调模型的纯函数。本文拆解三处设计，附六个可平移的工程模式。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/04/wechat-2247484111-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="5.4万star的AI家教，最值得抄的不是教学功能 | 中龄程序猿"><meta property="og:description" content="5.4万star的DeepTutor，最值得抄的不是教学功能。港大团队把一次对话做成可恢复的数据库事务，把教学法写成 581 行不调模型的纯函数。本文拆解三处设计，附六个可平移的工程模式。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/04/wechat-2247484111-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484111-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="5.4万star的AI家教，最值得抄的不是教学功能 | 中龄程序猿"><meta name="twitter:description" content="5.4万star的DeepTutor，最值得抄的不是教学功能。港大团队把一次对话做成可恢复的数据库事务，把教学法写成 581 行不调模型的纯函数。本文拆解三处设计，附六个可平移的工程模式。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484111-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"5.4万star的AI家教，最值得抄的不是教学功能","description":"5.4万star的DeepTutor，最值得抄的不是教学功能。港大团队把一次对话做成可恢复的数据库事务，把教学法写成 581 行不调模型的纯函数。本文拆解三处设计，附六个可平移的工程模式。","datePublished":"2026-11-04T00:14:58.000Z","dateModified":"2026-11-04T00:14:58.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/04/wechat-2247484111-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484111-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>5.4万star的AI家教，最值得抄的不是教学功能</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">5.4万star的AI家教，最值得抄的不是教学功能</h1><p class="article-desc">5.4万star的DeepTutor，最值得抄的不是教学功能。港大团队把一次对话做成可恢复的数据库事务，把教学法写成 581 行不调模型的纯函数。本文拆解三处设计，附六个可平移的工程模式。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-04T00:14:58.000Z">2026-11-04</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484111-1/cover.jpg" alt="5.4万star的AI家教，最值得抄的不是教学功能"></figure><div class="article-grid"><div class="article-content"><div class="prose"><blockquote>
+<p>港大 HKUDS 出品。它把「一次对话」做成了可恢复的数据库事务，把「教学法」写成了不带一行提示词的纯函数。</p>
+</blockquote>
+<hr>
+<p>先说一个我自己的困惑。</p>
+<p>过去两年我们见了不少「AI 家教」「AI 陪练」，演示效果都很好：讲得清楚、有耐心、还会追问。但只要真用上一周，问题就出来了——</p>
+<p>它讲得很好，但它记不住你。</p>
+<p>上次你学到哪、哪里卡住、哪道题错过、为什么错，全都没有。你换一个会话，它又从头开始热情地自我介绍。你刷新一下页面，正在生成的那段回答直接消失。</p>
+<p>这不是模型能力问题。这是<strong>产品没有状态</strong>。</p>
+<p>所以当我翻到 DeepTutor 这个项目，看到它的目录结构里有一整个 <code>learning/</code> 模块、近两万行只干一件事——<strong>判断「你到底学会没有」</strong>——我意识到它解决的问题和大多数 AI 产品不在一个层面上。</p>
+<p>它 2025 年 12 月 28 日建仓，到今天（2026 年 11 月）不到 11 个月，<strong>54,504 star、6,664 fork</strong>，Apache-2.0，背后是港大数据智能实验室（HKUDS）。论文挂在 arXiv（2604.26962），自建了一个叫 TutorBench 的评测集，声称个性化指标平均提升 <strong>10.8%</strong>，在 5 个基座模型上的通用 agentic 推理提升 <strong>29.4%</strong>。</p>
+<p>但读完代码，我认为这个项目真正的价值，<strong>不在那些教学功能上</strong>。</p>
+<hr>
+<h2 id="一先把它放对位置它不在-harness-那一层">一、先把它放对位置：它不在 Harness 那一层</h2>
+<p>讨论 AI 产品时最常见的混乱，是把不同层级的东西放在一起比。</p>
+<p>2026 年大家都在聊 Harness——Claude Code、Codex、DeepSeek Harness。它们解决的是同一类问题：<strong>怎么让模型能安全地调用工具、管理上下文、在真实环境里干活。</strong></p>
+<p>DeepTutor 不在这一层。</p>
+<p><img src="/images/wechat/wechat-2247484111-1/01.png" alt="图片 1"></p>
+<p>DeepTutor 的层级定位</p>
+<p>它站在 Harness 之上。你可以用 Claude Code 当底座，也可以换 Codex，它自己不关心。它关心的是另一个问题：<strong>什么叫做「学会了」。</strong></p>
+<p>这个判断有个很硬的证据。DeepTutor 内置了一个工具叫 <code>consult_subagent</code>，可以直接把 Claude Code、Codex 当子代理调起来干活。</p>
+<p>一个项目把另一个项目当工具用，说明它们根本不在同一层竞争。就像餐厅不会和菜市场比谁的菜更好——它去菜市场买菜。</p>
+<p><strong>这个定位区分很重要</strong>，因为它决定了你该怎么读这个项目：不要去看它「有哪 10 个功能」，要看它<strong>怎么把「教育」这件事拆成代码</strong>。</p>
+<hr>
+<h2 id="二第一个反常识一次对话被当成一笔分布式事务">二、第一个反常识：一次对话，被当成一笔分布式事务</h2>
+<p>普通 AI 应用处理一次请求是这样的：</p>
+<blockquote>
+<p>收到消息 → 调模型 → 流式吐字 → 结束</p>
+</blockquote>
+<p>出错了怎么办？重来。断了怎么办？重发。这就是「喊一嗓子」的做法。</p>
+<p>DeepTutor 的做法更像<strong>下一笔外卖订单</strong>：下单有单号（防重复下单）、有骑手接单（防两个骑手送同一单）、有订单状态流转、送丢了能查、系统挂了重启还能接着送。</p>
+<p><img src="/images/wechat/wechat-2247484111-1/02.png" alt="图片 2"></p>
+<p>一次回合的完整生命周期</p>
+<p>具体做了五件事：</p>
+<p><strong>① 幂等键。</strong> 客户端提交时带一个 <code>client_submission_id</code>。网络抖动重发、用户手抖点两次，服务端只认第一次。这不是什么新招，但<strong>很少有 AI 应用真的做</strong>。</p>
+<p><strong>② 栅栏令牌（fencing token）。</strong> 这个稍微冷门，但很关键。想象一个回合因为超时被判失败，其实它还在后台跑，几秒后它想写状态——如果没防护，它就会覆盖掉新一轮的结果。栅栏令牌的作用是：<strong>旧回合带的令牌已经过期，写入直接被拒</strong>。</p>
+<p><strong>③ 每个事件先落库，再推给前端。</strong> 推给浏览器的每一段文字、每一次工具调用、每一个思考片段，都是先写进事件表再有编号地发出去。而且序号唯一性靠数据库约束 <code>UNIQUE(turn_id, seq)</code> 保证，不是靠代码自觉。</p>
+<p><strong>④ 断线重放。</strong> 用户网络断了再回来，客户端带上「我收到第几条了」，服务端从事件表里补发后面的。一个不丢，一个不重。</p>
+<p><strong>⑤ 崩溃恢复。</strong> 服务重启后，恢复程序不是简单把状态改成「失败」，而是<strong>先把漏写的事件补齐，再转终态</strong>。这个顺序很重要——先补账，再结账。</p>
+<h3 id="这件事为什么值得抄">这件事为什么值得抄</h3>
+<p>因为它把一堆「体验问题」变成了「数据问题」。</p>
+<p>「刷新页面丢回复」「换设备接不上」「服务重启任务全丢」——这些在需求评审里通常被归为「体验优化，下个版本再说」。但它们的根因是<strong>架构里没有真相源</strong>。</p>
+<p>DeepTutor 的答案很朴素：<strong>把状态机的真相放进数据库，而不是放在某个进程的内存里。</strong></p>
+<p>代价是每轮多几次写库。收益是上面那些故障模式一次性消失。</p>
+<hr>
+<h2 id="三第二个反常识教学法被写成了纯函数">三、第二个反常识：教学法被写成了纯函数</h2>
+<p>这是我读完最有触动的一段。</p>
+<p>大模型产品做「业务规则」，主流做法是写提示词：</p>
+<blockquote>
+<p>你是耐心的导师，请判断学生是否已经掌握……达到 90% 才算通过……</p>
+</blockquote>
+<p>这套写法的问题是：<strong>不可测试、不可解释、还会漂移。</strong> 同一份提示词，今天判对明天判错；换个模型，阈值全变；用户投诉「为什么说我没学会」，你拿不出任何证据。</p>
+<p>DeepTutor 把这套规则搬到了 <code>policy.py</code>——<strong>581 行，零 IO，零模型调用，全是纯函数</strong>。</p>
+<p>它的模块注释第一句就写着：<strong>没有 LLM 调用，没有 IO。</strong></p>
+<p><img src="/images/wechat/wechat-2247484111-1/03.png" alt="图片 3"></p>
+<p>领域建模的五层结构</p>
+<p>这套代码分五层，每层都能独立验证：</p>
+<p><strong>第一层，概念模型。</strong> 学习目标拆成「模块 → 知识点」。关键设计是：<strong>知识点不是章节，是一条能力断言</strong>。而且分四种类型——记忆、步骤、概念、设计。前两种可以定量判分（门槛 0.9），后两种只能定性判断（学习者用自己的话解释，导师判过/没过）。</p>
+<p>为什么必须分？因为「理解」没有唯一答案。硬要定量化，只会逼模型把「理解」降级成「复述定义」。</p>
+<p><strong>第二层，不变量。</strong> 比如「一条学习路径同时只能有一道未作答的题」、「组题必须是 2 到 4 道」、「组题的父级不许携带答案」。这些全写成了模型校验里的 <code>ValueError</code>——违反就直接抛错，不给「大概对」的空间。</p>
+<p><strong>第三层，持久化。</strong> 整个学习状态存成一列 JSON，一次事务写完；另外 10 张关系表只做查询投影；写入用版本号乐观锁。这块后面讲代价。</p>
+<p><strong>第四层，决策策略。</strong> 这一层最关键。</p>
+<p><strong>第五层，与模型的契约。</strong> 16 个工具，每个对应一个不可再分的教学动作。</p>
+<h3 id="一个句子点破了整套设计">一个句子点破了整套设计</h3>
+<p><code>policy.py</code> 里有一句话，我认为是整个项目最值钱的一句：</p>
+<blockquote>
+<p>推进是从「已经掌握了什么」算出来的，<strong>从不靠一个阶段计数器来跟踪</strong>。</p>
+</blockquote>
+<p>这句话在反对什么？反对绝大多数课程产品的做法：维护一个游标，「当前第 3 章第 2 节」。</p>
+<p>为什么要反对？因为真实学习不长这样。有人跳着学，有人前面就会、直接测过，有人学到后面发现前面有洞、要回头补。每一种都在挑战游标模型，你得为每种情况写一套状态迁移逻辑，还容易出 bug。</p>
+<p>DeepTutor 的做法是：<strong>每次重新算。</strong> 「下一个学什么」= 先批改待答的题、处理到期的复习，再遍历所有知识点，跳过已掌握的，取第一个没掌握的。</p>
+<p>于是跳学、测过、回头补，全都不需要额外代码——因为压根没有状态要迁移。</p>
+<p>代价是每次决策都要遍历一遍全部知识点。但一个学习路径通常就 20 到 60 个知识点，这个成本可以忽略。</p>
+<h3 id="掌握度是怎么算的">掌握度是怎么算的</h3>
+<p>不是让模型「感觉一下」，而是一个 50 行的纯函数模块：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>最近 5 次作答，权重从旧到新：(0.5, 0.7, 0.85, 0.95, 1.0)</span></span>
+<span class="line"><span>加权平均后再封顶：只答过 1 次最多 0.5 分，2 次最多 0.8 分</span></span></code></pre>
+<p>这个「封顶」设计得很巧。它不是乘以系数，而是 <code>min(分数, 上限)</code>——只限制「证据不足时能宣称的最高水平」，不扭曲已有的加权结果。</p>
+<p>而且它顺带解释了一件产品上的事：<strong>门槛是 0.9，所以至少要答 3 次才可能通过。</strong> 所以他们的提示词里专门有一条：禁止导师说「再最后一题」——除非系统已经返回「已掌握」。因为你根本不知道要几题。</p>
+<hr>
+<h2 id="四第三个反常识出完题这一轮就该结束">四、第三个反常识：出完题，这一轮就该结束</h2>
+<p>这是全项目最反直觉、也最值得学的一处设计。</p>
+<p><strong>旧的做法</strong>（DeepTutor 自己早期也这么干）：导师出完题，这一轮<strong>挂在那里</strong>，状态转成「等待输入」，等学习者作答。</p>
+<p>听起来很自然，对吧？但它带来一连串麻烦：</p>
+<ul>
+<li>
+<p>学习者多久回来，这个回合就挂多久——可能永远不回来；</p>
+</li>
+<li>
+<p>这条学习路径的写锁一直被这个回合占着，别人动不了；</p>
+</li>
+<li>
+<p>学习者不答题，而是问了个别的 → 得当成「对挂起回合的打断」来处理；</p>
+</li>
+<li>
+<p>学习者明天再来 → 也是打断；</p>
+</li>
+<li>
+<p>学习者刷新页面 → 还是打断；</p>
+</li>
+<li>
+<p>前端输入框该显示什么？没有诚实的状态可显示。</p>
+</li>
+</ul>
+<p><strong>新的做法</strong>：出题就是这一轮的终点。</p>
+<p><img src="/images/wechat/wechat-2247484111-1/04.png" alt="图片 4"></p>
+<p>改造前后的对比</p>
+<p>卡片是本回合的产物。学习者作答，就是<strong>下一条消息</strong>——和普通发消息没有任何区别。</p>
+<p>于是上面那几条麻烦，全部消失了。不是「处理得更好」，是<strong>不存在了</strong>。</p>
+<p>代码里的注释写得很直白：</p>
+<blockquote>
+<p>一个提出的问题过去会把回合停在 <code>pause_for_user</code>……只要学习者不答，一个活跃回合和这条路径的锁就被占着，可能是永远。 在这里结束，把关系反转了。卡片是本回合的产物；回答它就是下一条消息，和你打一行字完全一样。</p>
+</blockquote>
+<h3 id="这个思路的普适性">这个思路的普适性</h3>
+<p>任何「需要用户输入才能继续」的流程，都值得用这个视角重看一遍：</p>
+<p><strong>挂起等待 vs 结束回合 + 下一条消息。</strong></p>
+<p>后者的好处不只是释放资源，更是让<strong>每一个用户动作都变成一次干净的、幂等的、可恢复的提交</strong>。前端不需要维护复杂的挂起状态，后端不需要处理「挂起期间发生的一切」。</p>
+<p>代价也有：模型每一轮都必须重新读服务端状态，不能依赖上下文里那份可能已经过期的快照。这是笔要认的账。</p>
+<hr>
+<h2 id="五两个容易被忽略但很见功力的细节">五、两个容易被忽略但很见功力的细节</h2>
+<h3 id="细节一答案永不经过模型">细节一：答案永不经过模型</h3>
+<p>出题的时候，正确答案存哪儿？</p>
+<p>绝大多数实现是：让模型把答案一起写进对话，判分时再让模型对比。这套做法的漏洞是——<strong>只要答案进过模型上下文，泄漏就只是概率问题</strong>。用户套话、模型解释时不小心引用、提示词注入，随便哪一种都能拿到答案。</p>
+<p>DeepTutor 的做法是：答案存在服务器数据库里，模型只拿到一个题目 ID。</p>
+<p>有个专门函数负责这件事，注释只有一句：<strong>「投影已持久化的待答状态，但不暴露 <code>expected_answer</code>。」</strong></p>
+<p>被排除在外的字段还有：解析、难度、来源证据、是否使用过辅助。全部服务端持有。</p>
+<p>甚至选项顺序也会在服务端<strong>重新打乱</strong>。他们在提示词里明确要求：你给的字母不是学习者看到的字母，所以解释里不要引用「选 A」——按内容说答案，不要按位置说。</p>
+<p>这挡住了一类很隐蔽的作弊：如果正确答案总在 A，那么「选 A」本身就是捷径。</p>
+<h3 id="细节二不确定的时候允许不判分">细节二：不确定的时候，允许不判分</h3>
+<p>判分有三条通道：</p>
+<p>|
+题型</p>
+<p>|</p>
+<p>判据</p>
+<p>|</p>
+<p>阈值</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>选择</p>
+<p>|</p>
+<p>归一化后全等</p>
+<p>|</p>
+<p>精确</p>
+<p>|
+|</p>
+<p>简答</p>
+<p>|</p>
+<p>编辑相似度</p>
+<p>|</p>
+<p>≥ 0.85，且答案不超过 30 字</p>
+<p>|
+|</p>
+<p>开放</p>
+<p>|</p>
+<p>关键词覆盖率</p>
+<p>|</p>
+<p>≥ 0.6</p>
+<p>|</p>
+<p>三条都搞不定的，交给大模型做语义判分。但这里有个门槛：<strong>模型给出的置信度低于 0.8，一律降级为「未评分」。</strong></p>
+<p>「未评分」不是「答错」。它意味着<strong>这次判定不构成证据</strong>——不进掌握度计算，不影响分数，也不记为错题。</p>
+<p>为什么必须这样？因为在掌握式学习里，误判的代价是<strong>不对称的</strong>：</p>
+<ul>
+<li>
+<p>把对的判错 → 学习者被迫重做已会的内容，体验崩；</p>
+</li>
+<li>
+<p>把错的判对 → 掌握度虚高，学习效果崩。</p>
+</li>
+</ul>
+<p>两者的公共解不是「把准确率调到 99%」（做不到），而是<strong>在不确定时拒绝判定</strong>。</p>
+<p>这个「逃生舱」的思路，我觉得比判分算法本身更值得抄。</p>
+<hr>
+<h2 id="六它不能做什么">六、它不能做什么</h2>
+<p>诚实标出边界，比罗列功能有用。</p>
+<p><img src="/images/wechat/wechat-2247484111-1/05.png" alt="图片 5"></p>
+<p>语音与画笔的能力边界</p>
+<p><strong>语音：是一等公民。</strong> 说话转文字（后端 7 个服务商适配）、消息逐条朗读、自动连播、音频概览、视频旁白，都是齐的。</p>
+<p><strong>但它不支持实时语音对话。</strong> 代码里有一条硬检查，配置成 realtime 模型直接抛错。所以它是「语音输入 + 语音输出」，不是那种能打断、能抢话的全双工对话。</p>
+<p><strong>画笔：完全没有。</strong> 前端没有任何绘图库，数据结构里没有笔迹（stroke / path），作答只有单选和文本框。</p>
+<p>最接近的三件事也不等于画笔：</p>
+<ul>
+<li>
+<p><strong>阅读标注</strong>：支持高亮、下划线、批注、引用。但它的数据模型是「一段引文 + 可选矩形框」，注释里明说<strong>引文才是可移植的真相，几何只是可选</strong>。这是「划重点」的模型，不是「在纸上画一条线」的模型。</p>
+</li>
+<li>
+<p><strong>模型生成的图表</strong>：用户看，不能画。</p>
+</li>
+<li>
+<p><strong>后端能接收图片答案</strong>：有个接口支持上传带手写公式、草图的答案图片，但<strong>前端没接线</strong>——全代码库除了它自己，没有任何地方调用。</p>
+</li>
+</ul>
+<p>如果你要做数学、物理这类需要手写作答的场景，这块得自己补。</p>
+<hr>
+<h2 id="七借鉴意义六条可以直接搬走的做法">七、借鉴意义：六条可以直接搬走的做法</h2>
+<p>前面讲的都是「它做了什么」。这一节讲「你能拿走什么」。</p>
+<h3 id="第一条业务规则出提示词进纯函数">第一条：业务规则出提示词，进纯函数</h3>
+<p><strong>判据</strong>：如果一条规则你能为它写单元测试，它就不该待在提示词里。</p>
+<p>DeepTutor 把「算不算掌握」「下一个学什么」全放进 <code>policy.py</code>——无 IO、无模型调用、输入输出确定。</p>
+<p><strong>收益</strong>：规则可测、可解释、可审计。用户问「为什么说我没学会」，你能量出 0.82 和门槛 0.9 给他看。</p>
+<p><strong>适用</strong>：任何有「达标 / 不达标」判定的产品——风控、认证、健康计划、客服质检。</p>
+<h3 id="第二条推进靠计算不靠游标">第二条：推进靠计算，不靠游标</h3>
+<p>不要维护「当前第几步」。每次从「哪些已完成」重新推导「下一个是什么」。</p>
+<p><strong>收益</strong>：跳学、提前测过、回头补漏、中途插入新目标，全都不需要状态迁移。用户走任何非常规路径都是对的。</p>
+<p><strong>前提</strong>：目标数量在百级以内。上千个目标时，需要在纯函数前加一层索引。</p>
+<h3 id="第三条不可变证据--可重算状态">第三条：不可变证据 + 可重算状态</h3>
+<p>只追加「发生了什么」，把「现在什么水平」当作可以随时重算的缓存。</p>
+<p>DeepTutor 里，<code>mastery_levels</code>（掌握度）是算出来的，<code>learning_evidence</code>（学习证据）才是事实。</p>
+<p><strong>收益有三个</strong>：</p>
+<ul>
+<li>
+<p>换算法不用数据迁移，重算就行；</p>
+</li>
+<li>
+<p>误判可修复——把那条证据标为「作废」，重新算；</p>
+</li>
+<li>
+<p>投影表坏了能从证据重建。</p>
+</li>
+</ul>
+<p><strong>注意</strong>：证据会无限增长，需要归档策略。DeepTutor 这块还没做，是个已知的债。</p>
+<h3 id="第四条答案留在服务端">第四条：答案留在服务端</h3>
+<p>凡是「模型不该看到」的数据——答案、评分标准、别人的记录——都存服务端，只把 ID 投影给模型。</p>
+<p><strong>收益</strong>：泄漏面从「概率问题」变成「结构上不可能」。</p>
+<p><strong>配套</strong>：投影函数要显式写，别靠「模型传参时记得别带上」这种约定。</p>
+<h3 id="第五条给违规行为留合法出口">第五条：给违规行为留合法出口</h3>
+<p>这条最容易被忽略，但很实用。</p>
+<p>模型想作弊（或者说「想让用户满意」）时，如果你不给它正规动作，它就开始编——「你其实已经掌握了」「这道题算你对」。</p>
+<p>DeepTutor 留了四个出口：跳过这题（不给分）、作废这次判定、推迟这个知识点（不算掌握）、记录「讲过了」（不授予掌握）。</p>
+<p><strong>关键点：这些工具都不改变认证状态。</strong> 它们给的是「体面地继续」，不是「绕过门槛」。</p>
+<p><strong>收益</strong>：模型卡住时有路可走，不会陷入编造或死循环。这比在提示词里写十遍「不要谎报」有效得多。</p>
+<h3 id="第六条阶段边界用代码强制别用提示词请求">第六条：阶段边界用代码强制，别用提示词请求</h3>
+<p>「出完题就结束」这件事，DeepTutor 是<strong>代码保证</strong>的：出题工具一返回，运行时直接以空正文结束本轮。</p>
+<p>为什么不能只靠提示词？因为这类失败模式的后果是「用户看到混乱输出」——模型先写「我们来做这道题：」，调完工具又写「请选择 A/B/C/D」，重复两遍。</p>
+<p><strong>判据</strong>：如果某个失败模式会让用户困惑，就值得用代码兜底；提示词只负责让模型理解规则、减少触发。</p>
+<p>顺带说一个很聪明的做法：他们给模型定了一条<strong>能被自动检查</strong>的规则——「如果你这一轮的话以冒号结尾，那么这一轮必须出题」。冒号意味着「下面就是那道题」。这条规则不需要模型理解语义，写个正则就能验。</p>
+<p><strong>给模型一条它能自己验证的规则，比给它一段抽象要求有效得多。</strong></p>
+<hr>
+<h2 id="八别照抄的地方">八、别照抄的地方</h2>
+<p>最后说说这套方案的成本，不然容易读成软文。</p>
+<p><strong>① 写放大。</strong> 每次保存都重写整个状态 JSON。一个 60 知识点、积累几百条证据的路径，序列化成本会随历史线性增长。当前没有证据归档机制。</p>
+<p><strong>② 双写不一致。</strong> 状态 JSON 和证据投影表在同一事务里写（这点对），但题目交互表的状态流转是独立写入的。极端情况下可能出现「交互记录显示已批改，但主状态里没这条证据」。恢复机制能兜住大部分，但不是数据库级保证。</p>
+<p><strong>③ <code>extra="ignore"</code> 的静默丢字段。</strong> 模型全部配了这个选项，好处是向前兼容，坏处是字段名拼错不报错，数据悄悄消失。</p>
+<p><strong>④ 两套间隔重复并存。</strong> 学习路径用的是自研的 FSRS 式调度，练习题库用的是 SM-2 式。两套各自维护到期时间，<strong>队列不汇合</strong>。这是演进的痕迹，不是设计。</p>
+<p><strong>⑤ 门槛的刚性问题。</strong> 0.9 的定量门槛意味着至少答 3 次才可能过。对记忆类知识点合理，但对某些学习者可能造成挫败。他们给了两个出口（自称已掌握、推迟），但「自称掌握」不产生证据——UI 必须读「来源」字段才能正确区分，任何漏读的地方都会把两者混为一谈。</p>
+<hr>
+<h2 id="九最后">九、最后</h2>
+<p>我想用一句话总结这个项目给我的启发。</p>
+<p><strong>它示范了一种把「领域知识」装进 Agent 的方法：不是写更长的提示词，而是把领域里的判断写成可测试的函数，然后让模型去做它真正擅长的事——把结论讲成人话。</strong></p>
+<p>在这套结构里，模型负责措辞、举例、追问的角度；代码负责学什么、算不算过、记住什么。</p>
+<p>这个分工听着朴素，但它解决了一个很现实的问题：<strong>当你需要在生产环境里对一个判断负责时，你不能把判断权交给一个概率模型。</strong></p>
+<p>DeepTutor 的教学功能你可以不用，Claude Code、Codex 也照样能用。但它在这两万行里展示的那套工程手法——持久化回合、纯函数策略、不可变证据、服务端持有答案、给违规留出口——<strong>几乎可以平移到任何一个需要「有状态 + 可审计」的 Agent 产品上。</strong></p>
+<p>这可能才是它 5.4 万 star 里，最该被看见的部分。</p>
+<p>如果你还想了解它内部更多的实现细节，可以留言。</p>
+<p><strong>参考</strong></p>
+<ul>
+<li>
+<p>项目：HKUDS/DeepTutor（v1.7.0，Apache-2.0）</p>
+</li>
+<li>
+<p>论文：DeepTutor: Towards Agentic Personalized Tutoring，arXiv:2604.26962</p>
+</li>
+<li>
+<p>本文所有代码引用基于 v1.7.0 源码，涉及 <code>deeptutor/learning/</code>（13,065 行）与 <code>deeptutor/capabilities/mastery/</code>（6,072 行）</p>
+</li>
+</ul>
+<hr>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。</p>
+<p>关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/9hKtKOCXrPRBHGjZX2RSMQ" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/05/wechat-2247484131-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">FreeToken深度解读：让你的游戏PC也能跑753B前沿MoE大模型</span></a><a class="article-nav__item article-nav__item--next" href="/2026/11/03/wechat-2247484080-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">大模型的Embedding层，为什么不能直接拿来做检索？</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一先把它放对位置它不在-harness-那一层">一、先把它放对位置：它不在 Harness 那一层</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二第一个反常识一次对话被当成一笔分布式事务">二、第一个反常识：一次对话，被当成一笔分布式事务</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#这件事为什么值得抄">这件事为什么值得抄</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三第二个反常识教学法被写成了纯函数">三、第二个反常识：教学法被写成了纯函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一个句子点破了整套设计">一个句子点破了整套设计</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#掌握度是怎么算的">掌握度是怎么算的</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四第三个反常识出完题这一轮就该结束">四、第三个反常识：出完题，这一轮就该结束</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#这个思路的普适性">这个思路的普适性</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五两个容易被忽略但很见功力的细节">五、两个容易被忽略但很见功力的细节</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#细节一答案永不经过模型">细节一：答案永不经过模型</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#细节二不确定的时候允许不判分">细节二：不确定的时候，允许不判分</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#六它不能做什么">六、它不能做什么</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#七借鉴意义六条可以直接搬走的做法">七、借鉴意义：六条可以直接搬走的做法</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第一条业务规则出提示词进纯函数">第一条：业务规则出提示词，进纯函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第二条推进靠计算不靠游标">第二条：推进靠计算，不靠游标</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第三条不可变证据--可重算状态">第三条：不可变证据 + 可重算状态</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第四条答案留在服务端">第四条：答案留在服务端</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第五条给违规行为留合法出口">第五条：给违规行为留合法出口</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#第六条阶段边界用代码强制别用提示词请求">第六条：阶段边界用代码强制，别用提示词请求</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#八别照抄的地方">八、别照抄的地方</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#九最后">九、最后</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

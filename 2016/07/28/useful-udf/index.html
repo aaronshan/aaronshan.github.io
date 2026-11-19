@@ -1,686 +1,476 @@
-<!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>hive和presto一些好用的自定义udf函数 - 中龄程序猿</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看hive-third-functions和presto-third-functions）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。">
-<meta name="keywords" content="presto,hive">
-<meta property="og:type" content="article">
-<meta property="og:title" content="hive和presto一些好用的自定义udf函数">
-<meta property="og:url" content="www.shanruifeng.win/2016/07/28/useful-udf/index.html">
-<meta property="og:site_name" content="中龄程序猿">
-<meta property="og:description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看hive-third-functions和presto-third-functions）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-26T07:28:18.782Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hive和presto一些好用的自定义udf函数">
-<meta name="twitter:description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看hive-third-functions和presto-third-functions）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。">
-  
-  
-    <link rel="icon" href="/favicon.ico">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-          <a class="main-nav-link" href="/love">爱情</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-useful-udf" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      hive和presto一些好用的自定义udf函数
-      <small class="article-detail-date-index">&nbsp; 2016-07-28</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/2016/07/28/useful-udf/" class="article-date">
-  <time datetime="2016-07-28T14:37:27.000Z" itemprop="datePublished">2016-07-28</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/大数据/">大数据</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看<a href="https://github.com/aaronshan/hive-third-functions" target="_blank" rel="noopener">hive-third-functions</a>和<a href="https://github.com/aaronshan/presto-third-functions" target="_blank" rel="noopener">presto-third-functions</a>）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。</p>
-<a id="more"></a>
-<h2 id="一、hive-third-functions中包含的函数"><a href="#一、hive-third-functions中包含的函数" class="headerlink" title="一、hive-third-functions中包含的函数"></a>一、<a href="https://github.com/aaronshan/hive-third-functions" target="_blank" rel="noopener">hive-third-functions</a>中包含的函数</h2><blockquote>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>hive和presto一些好用的自定义udf函数 | 中龄程序猿</title><meta name="description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看[hivethirdfunctions](https://github.com/aaronshan/hivethirdfunctions)和[prestothirdfunctions](http"><link rel="canonical" href="https://www.shanruifeng.win/2016/07/28/useful-udf/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="hive和presto一些好用的自定义udf函数 | 中龄程序猿"><meta property="og:description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看[hivethirdfunctions](https://github.com/aaronshan/hivethirdfunctions)和[prestothirdfunctions](http"><meta property="og:url" content="https://www.shanruifeng.win/2016/07/28/useful-udf/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="hive和presto一些好用的自定义udf函数 | 中龄程序猿"><meta name="twitter:description" content="自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看[hivethirdfunctions](https://github.com/aaronshan/hivethirdfunctions)和[prestothirdfunctions](http"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"hive和presto一些好用的自定义udf函数","description":"自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看[hivethirdfunctions](https://github.com/aaronshan/hivethirdfunctions)和[prestothirdfunctions](http","datePublished":"2016-07-28T14:37:27.000Z","dateModified":"2016-07-28T14:37:27.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2016/07/28/useful-udf/","articleSection":"大数据","keywords":"presto,hive"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span>/</span><span>hive和presto一些好用的自定义udf函数</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><h1 class="article-title">hive和presto一些好用的自定义udf函数</h1><p class="article-desc">自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看[hivethirdfunctions](https://github.com/aaronshan/hivethirdfunctions)和[prestothirdfunctions](http</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2016-07-28T14:37:27.000Z">2016-07-28</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>presto · hive</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><p>自己编写了一些hive和presto的udf函数，最近在github上开源了（可以查看<a href="https://github.com/aaronshan/hive-third-functions">hive-third-functions</a>和<a href="https://github.com/aaronshan/presto-third-functions">presto-third-functions</a>）。有需要的人可以直接下来用，项目README中有详细的用法说明。如果有好的建议或发现了bug，可以在issue提问题。也欢迎加入自己的udf，完善这个第三方函数库。</p>
+<!-- more -->
+<h2 id="一hive-third-functions中包含的函数">一、<a href="https://github.com/aaronshan/hive-third-functions">hive-third-functions</a>中包含的函数</h2>
+<blockquote>
 <p>可以参考项目说明中的示例来理解这些函数。</p>
 </blockquote>
-<h3 id="1-字符串函数"><a href="#1-字符串函数" class="headerlink" title="1. 字符串函数"></a>1. 字符串函数</h3><table>
+<h3 id="1-字符串函数">1. 字符串函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">pinyin(string) -&gt; string</td>
-<td style="text-align:left">将汉字转换为拼音</td>
+<td align="left">pinyin(string) -> string</td>
+<td align="left">将汉字转换为拼音</td>
 </tr>
 <tr>
-<td style="text-align:left">md5(string) -&gt; string</td>
-<td style="text-align:left">md5 哈西函数</td>
+<td align="left">md5(string) -> string</td>
+<td align="left">md5 哈西函数</td>
 </tr>
 <tr>
-<td style="text-align:left">sha256(string) -&gt; string</td>
-<td style="text-align:left">sha256 哈西函数</td>
+<td align="left">sha256(string) -> string</td>
+<td align="left">sha256 哈西函数</td>
 </tr>
 </tbody>
 </table>
-<h3 id="2-数组函数"><a href="#2-数组函数" class="headerlink" title="2. 数组函数"></a>2. 数组函数</h3><table>
+<h3 id="2-数组函数">2. 数组函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">array_contains(array&lt;E&gt;, E) -&gt; boolean</td>
-<td style="text-align:left">判断元素是否在array中.</td>
+<td align="left">array_contains(array&#x3C;E>, E) -> boolean</td>
+<td align="left">判断元素是否在array中.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_intersect(array, array) -&gt; array</td>
-<td style="text-align:left">返回两个array的交集.</td>
+<td align="left">array_intersect(array, array) -> array</td>
+<td align="left">返回两个array的交集.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_max(array&lt;E&gt;) -&gt; E</td>
-<td style="text-align:left">返回array中的元素最大值.</td>
+<td align="left">array_max(array&#x3C;E>) -> E</td>
+<td align="left">返回array中的元素最大值.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_min(array&lt;E&gt;) -&gt; E</td>
-<td style="text-align:left">返回array中的元素最小值.</td>
+<td align="left">array_min(array&#x3C;E>) -> E</td>
+<td align="left">返回array中的元素最小值.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_join(array, delimiter, null_replacement) -&gt; string</td>
-<td style="text-align:left">使用delimiter指定的值来连接array中的元素，null_replacement是可选项，用来替代null，返回string.</td>
+<td align="left">array_join(array, delimiter, null_replacement) -> string</td>
+<td align="left">使用delimiter指定的值来连接array中的元素，null_replacement是可选项，用来替代null，返回string.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_distinct(array) -&gt; array</td>
-<td style="text-align:left">移除array中的重复元素</td>
+<td align="left">array_distinct(array) -> array</td>
+<td align="left">移除array中的重复元素</td>
 </tr>
 <tr>
-<td style="text-align:left">array_position(array&lt;E&gt;, E) -&gt; long</td>
-<td style="text-align:left">返回array中指定值第一次出现的位置，初始值为1，如果没找到返回0.</td>
+<td align="left">array_position(array&#x3C;E>, E) -> long</td>
+<td align="left">返回array中指定值第一次出现的位置，初始值为1，如果没找到返回0.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_remove(array&lt;E&gt;, E) -&gt; array</td>
-<td style="text-align:left">移除array中所有指定的值.</td>
+<td align="left">array_remove(array&#x3C;E>, E) -> array</td>
+<td align="left">移除array中所有指定的值.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_reverse(array) -&gt; array</td>
-<td style="text-align:left">翻转array的元素.</td>
+<td align="left">array_reverse(array) -> array</td>
+<td align="left">翻转array的元素.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_sort(array) -&gt; array</td>
-<td style="text-align:left">对array中的元素进行排序，array中的元素必须是可排序的.</td>
+<td align="left">array_sort(array) -> array</td>
+<td align="left">对array中的元素进行排序，array中的元素必须是可排序的.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_concat(array, array) -&gt; array</td>
-<td style="text-align:left">连接两个array.</td>
+<td align="left">array_concat(array, array) -> array</td>
+<td align="left">连接两个array.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_value_count(array&lt;E&gt;, E) -&gt; long</td>
-<td style="text-align:left">统计array中指定元素出现的次数.</td>
+<td align="left">array_value_count(array&#x3C;E>, E) -> long</td>
+<td align="left">统计array中指定元素出现的次数.</td>
 </tr>
 <tr>
-<td style="text-align:left">array_slice(array, start, length) -&gt; array</td>
-<td style="text-align:left">求array的子数组。从start开始，截取length个。如果start为负值，则从元素末尾开始。如－1表示从最后一个元素开始。</td>
+<td align="left">array_slice(array, start, length) -> array</td>
+<td align="left">求array的子数组。从start开始，截取length个。如果start为负值，则从元素末尾开始。如－1表示从最后一个元素开始。</td>
 </tr>
 <tr>
-<td style="text-align:left">array_element_at(array&lt;E&gt;, index) -&gt; E</td>
-<td style="text-align:left">返回array中第index个位置的元素，如果index为负值，则从数组最后开始。例如－1表示最后一个元素.</td>
+<td align="left">array_element_at(array&#x3C;E>, index) -> E</td>
+<td align="left">返回array中第index个位置的元素，如果index为负值，则从数组最后开始。例如－1表示最后一个元素.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3-map函数"><a href="#3-map函数" class="headerlink" title="3. map函数"></a>3. map函数</h3><table>
+<h3 id="3-map函数">3. map函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">map_build(x&lt;K&gt;, y&lt;V&gt;) -&gt; map&lt;K, V&gt;</td>
-<td style="text-align:left">根据指定的key/value数组来创建map.</td>
+<td align="left">map_build(x&#x3C;K>, y&#x3C;V>) -> map&#x3C;K, V></td>
+<td align="left">根据指定的key/value数组来创建map.</td>
 </tr>
 <tr>
-<td style="text-align:left">map_concat(x&lt;K, V&gt;, y&lt;K, V&gt;) -&gt; map&lt;K,V></td>
-<td style="text-align:left">连接两个map，如果一个key在 <code>x</code> 和 <code>y</code> 中都出现了，那合并后的map中该key的值是其在<code>y</code> 中的值.</td>
+<td align="left">map_concat(x&#x3C;K, V>, y&#x3C;K, V>) -> map&#x3C;K,V></td>
+<td align="left">连接两个map，如果一个key在 <code>x</code> 和 <code>y</code> 中都出现了，那合并后的map中该key的值是其在<code>y</code> 中的值.</td>
 </tr>
 <tr>
-<td style="text-align:left">map_element_at(map&lt;K, V&gt;, key) -&gt; V</td>
-<td style="text-align:left">返回给定<code>key</code> 的值，如果不存在，返回<code>NULL</code>.</td>
+<td align="left">map_element_at(map&#x3C;K, V>, key) -> V</td>
+<td align="left">返回给定<code>key</code> 的值，如果不存在，返回<code>NULL</code>.</td>
 </tr>
 <tr>
-<td style="text-align:left">map_equals(x&lt;K, V&gt;, y&lt;K, V&gt;) -&gt; boolean</td>
-<td style="text-align:left">判断两个map是否相等.</td>
+<td align="left">map_equals(x&#x3C;K, V>, y&#x3C;K, V>) -> boolean</td>
+<td align="left">判断两个map是否相等.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="4-日期函数"><a href="#4-日期函数" class="headerlink" title="4. 日期函数"></a>4. 日期函数</h3><table>
+<h3 id="4-日期函数">4. 日期函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">day_of_week(date_string &#124; date) -&gt; int</td>
-<td style="text-align:left">一周的第几天，星期一返回1，星期二返回2，依此类推。</td>
+<td align="left">day_of_week(date_string | date) -> int</td>
+<td align="left">一周的第几天，星期一返回1，星期二返回2，依此类推。</td>
 </tr>
 <tr>
-<td style="text-align:left">day_of_year(date_string &#124; date) -&gt; int</td>
-<td style="text-align:left">一年的第几天.</td>
+<td align="left">day_of_year(date_string | date) -> int</td>
+<td align="left">一年的第几天.</td>
 </tr>
 <tr>
-<td style="text-align:left">zodiac_en(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">将日期转换为星座英文</td>
+<td align="left">zodiac_en(date_string | date) -> string</td>
+<td align="left">将日期转换为星座英文</td>
 </tr>
 <tr>
-<td style="text-align:left">zodiac_cn(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">将日期转换为星座中文</td>
+<td align="left">zodiac_cn(date_string | date) -> string</td>
+<td align="left">将日期转换为星座中文</td>
 </tr>
 <tr>
-<td style="text-align:left">type_of_day(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">获取日期的类型(1: 法定节假日, 2: 正常周末, 3: 正常工作日 4:攒假的工作日),错误返回-1.</td>
+<td align="left">type_of_day(date_string | date) -> string</td>
+<td align="left">获取日期的类型(1: 法定节假日, 2: 正常周末, 3: 正常工作日 4:攒假的工作日),错误返回-1.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="5-json函数"><a href="#5-json函数" class="headerlink" title="5. json函数"></a>5. json函数</h3><table>
+<h3 id="5-json函数">5. json函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">json_array_get(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">returns the element at the specified index into the <code>json_array</code>. The index is zero-based.</td>
+<td align="left">json_array_get(json, jsonPath) -> array(varchar)</td>
+<td align="left">returns the element at the specified index into the <code>json_array</code>. The index is zero-based.</td>
 </tr>
 <tr>
-<td style="text-align:left">json_array_length(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">returns the array length of <code>json</code> (a string containing a JSON array).</td>
+<td align="left">json_array_length(json, jsonPath) -> array(varchar)</td>
+<td align="left">returns the array length of <code>json</code> (a string containing a JSON array).</td>
 </tr>
 <tr>
-<td style="text-align:left">json_array_extract(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">extract json array by given jsonPath.</td>
+<td align="left">json_array_extract(json, jsonPath) -> array(varchar)</td>
+<td align="left">extract json array by given jsonPath.</td>
 </tr>
 <tr>
-<td style="text-align:left">json_array_extract_scalar(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">like <code>json_array_extract</code>, but returns the result value as a string (as opposed to being encoded as JSON).</td>
+<td align="left">json_array_extract_scalar(json, jsonPath) -> array(varchar)</td>
+<td align="left">like <code>json_array_extract</code>, but returns the result value as a string (as opposed to being encoded as JSON).</td>
 </tr>
 <tr>
-<td style="text-align:left">json_extract(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">extract json by given jsonPath.</td>
+<td align="left">json_extract(json, jsonPath) -> array(varchar)</td>
+<td align="left">extract json by given jsonPath.</td>
 </tr>
 <tr>
-<td style="text-align:left">json_extract_scalar(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">like <code>json_extract</code>, but returns the result value as a string (as opposed to being encoded as JSON).</td>
+<td align="left">json_extract_scalar(json, jsonPath) -> array(varchar)</td>
+<td align="left">like <code>json_extract</code>, but returns the result value as a string (as opposed to being encoded as JSON).</td>
 </tr>
 <tr>
-<td style="text-align:left">json_size(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">like <code>json_extract</code>, but returns the size of the value. For objects or arrays, the size is the number of members, and the size of a scalar value is zero.</td>
+<td align="left">json_size(json, jsonPath) -> array(varchar)</td>
+<td align="left">like <code>json_extract</code>, but returns the size of the value. For objects or arrays, the size is the number of members, and the size of a scalar value is zero.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="6-bitwise函数"><a href="#6-bitwise函数" class="headerlink" title="6. bitwise函数"></a>6. bitwise函数</h3><table>
+<h3 id="6-bitwise函数">6. bitwise函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">bit_count(x, bits) -&gt; bigint</td>
-<td style="text-align:left">count the number of bits set in <code>x</code> (treated as bits-bit signed integer) in 2’s complement representation</td>
+<td align="left">bit_count(x, bits) -> bigint</td>
+<td align="left">count the number of bits set in <code>x</code> (treated as bits-bit signed integer) in 2’s complement representation</td>
 </tr>
 <tr>
-<td style="text-align:left">bitwise_and(x, y) -&gt; bigint</td>
-<td style="text-align:left">returns the bitwise AND of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
+<td align="left">bitwise_and(x, y) -> bigint</td>
+<td align="left">returns the bitwise AND of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
 </tr>
 <tr>
-<td style="text-align:left">bitwise_not(x) -&gt; bigint</td>
-<td style="text-align:left">returns the bitwise NOT of <code>x</code> in 2’s complement arithmetic.</td>
+<td align="left">bitwise_not(x) -> bigint</td>
+<td align="left">returns the bitwise NOT of <code>x</code> in 2’s complement arithmetic.</td>
 </tr>
 <tr>
-<td style="text-align:left">bitwise_or(x, y) -&gt; bigint</td>
-<td style="text-align:left">returns the bitwise OR of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
+<td align="left">bitwise_or(x, y) -> bigint</td>
+<td align="left">returns the bitwise OR of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
 </tr>
 <tr>
-<td style="text-align:left">bitwise_xor(x, y) -&gt; bigint</td>
-<td style="text-align:left">returns the bitwise XOR of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
+<td align="left">bitwise_xor(x, y) -> bigint</td>
+<td align="left">returns the bitwise XOR of <code>x</code> and <code>y</code> in 2’s complement arithmetic.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="7-身份证函数"><a href="#7-身份证函数" class="headerlink" title="7. 身份证函数"></a>7. 身份证函数</h3><table>
+<h3 id="7-身份证函数">7. 身份证函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">描述</th>
+<th align="left">函数</th>
+<th align="left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">id_card_province(string) -&gt; string</td>
-<td style="text-align:left">获取省份</td>
+<td align="left">id_card_province(string) -> string</td>
+<td align="left">获取省份</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_city(string) -&gt; string</td>
-<td style="text-align:left">获取城市</td>
+<td align="left">id_card_city(string) -> string</td>
+<td align="left">获取城市</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_area(string) -&gt; string</td>
-<td style="text-align:left">获取区或县</td>
+<td align="left">id_card_area(string) -> string</td>
+<td align="left">获取区或县</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_birthday(string) -&gt; string</td>
-<td style="text-align:left">获取出生日期</td>
+<td align="left">id_card_birthday(string) -> string</td>
+<td align="left">获取出生日期</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_gender(string) -&gt; string</td>
-<td style="text-align:left">获取性别</td>
+<td align="left">id_card_gender(string) -> string</td>
+<td align="left">获取性别</td>
 </tr>
 <tr>
-<td style="text-align:left">is_valid_id_card(string) -&gt; boolean</td>
-<td style="text-align:left">鉴定是否是有效的身份证号码.</td>
+<td align="left">is_valid_id_card(string) -> boolean</td>
+<td align="left">鉴定是否是有效的身份证号码.</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_info(string) -&gt; json</td>
-<td style="text-align:left">获取上述所有信息，结果为json.</td>
+<td align="left">id_card_info(string) -> json</td>
+<td align="left">获取上述所有信息，结果为json.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="8-坐标相关函数"><a href="#8-坐标相关函数" class="headerlink" title="8. 坐标相关函数"></a>8. 坐标相关函数</h3><table>
+<h3 id="8-坐标相关函数">8. 坐标相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">wgs_distance(double lat1, double lng1, double lat2, double lng2) -&gt; double</td>
-<td style="text-align:left">计算WGS84坐标系下的坐标距离,单位为米</td>
+<td align="left">wgs_distance(double lat1, double lng1, double lat2, double lng2) -> double</td>
+<td align="left">计算WGS84坐标系下的坐标距离,单位为米</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_to_bd(double,double) -&gt; json</td>
-<td style="text-align:left">火星坐标系(GCJ-02)转百度坐标系(BD-09),谷歌、高德——&gt;百度</td>
+<td align="left">gcj_to_bd(double,double) -> json</td>
+<td align="left">火星坐标系(GCJ-02)转百度坐标系(BD-09),谷歌、高德——>百度</td>
 </tr>
 <tr>
-<td style="text-align:left">bd_to_gcj(double,double) -&gt; json</td>
-<td style="text-align:left">百度坐标系(BD-09)转火星坐标系(GCJ-02),百度——&gt;谷歌、高德</td>
+<td align="left">bd_to_gcj(double,double) -> json</td>
+<td align="left">百度坐标系(BD-09)转火星坐标系(GCJ-02),百度——>谷歌、高德</td>
 </tr>
 <tr>
-<td style="text-align:left">wgs_to_gcj(double,double) -&gt; json</td>
-<td style="text-align:left">WGS84转GCJ02(火星坐标系)</td>
+<td align="left">wgs_to_gcj(double,double) -> json</td>
+<td align="left">WGS84转GCJ02(火星坐标系)</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_to_wgs(double,double) -&gt; json</td>
-<td style="text-align:left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为1米到2米之间。</td>
+<td align="left">gcj_to_wgs(double,double) -> json</td>
+<td align="left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为1米到2米之间。</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_extract_wgs(double,double) -&gt; json</td>
-<td style="text-align:left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为0.5米内。但是计算速度慢于gcj_to_wgs</td>
+<td align="left">gcj_extract_wgs(double,double) -> json</td>
+<td align="left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为0.5米内。但是计算速度慢于gcj_to_wgs</td>
 </tr>
 </tbody>
 </table>
-<h2 id="二、presto-third-functions中包含的函数"><a href="#二、presto-third-functions中包含的函数" class="headerlink" title="二、presto-third-functions中包含的函数"></a>二、<a href="https://github.com/aaronshan/presto-third-functions" target="_blank" rel="noopener">presto-third-functions</a>中包含的函数</h2><h3 id="1-字符串相关函数"><a href="#1-字符串相关函数" class="headerlink" title="1. 字符串相关函数"></a>1. 字符串相关函数</h3><table>
+<h2 id="二presto-third-functions中包含的函数">二、<a href="https://github.com/aaronshan/presto-third-functions">presto-third-functions</a>中包含的函数</h2>
+<h3 id="1-字符串相关函数">1. 字符串相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">pinyin(string) -&gt; string</td>
-<td style="text-align:left">将汉字转为拼音</td>
+<td align="left">pinyin(string) -> string</td>
+<td align="left">将汉字转为拼音</td>
 </tr>
 <tr>
-<td style="text-align:left">md5(string) -&gt; string</td>
-<td style="text-align:left">对字符串求md5值</td>
+<td align="left">md5(string) -> string</td>
+<td align="left">对字符串求md5值</td>
 </tr>
 <tr>
-<td style="text-align:left">sha256(string) -&gt; string</td>
-<td style="text-align:left">对字符串求sha256值</td>
+<td align="left">sha256(string) -> string</td>
+<td align="left">对字符串求sha256值</td>
 </tr>
 </tbody>
 </table>
-<h3 id="2-日期相关函数"><a href="#2-日期相关函数" class="headerlink" title="2. 日期相关函数"></a>2. 日期相关函数</h3><table>
+<h3 id="2-日期相关函数">2. 日期相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">dayofweek(date_string &#124; date) -&gt; int</td>
-<td style="text-align:left">计算给定日期是每周7天内的第几天,其中周一返回1,周天返回7,错误返回-1.</td>
+<td align="left">dayofweek(date_string | date) -> int</td>
+<td align="left">计算给定日期是每周7天内的第几天,其中周一返回1,周天返回7,错误返回-1.</td>
 </tr>
 <tr>
-<td style="text-align:left">zodiac(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">将日期转换为星座英文</td>
+<td align="left">zodiac(date_string | date) -> string</td>
+<td align="left">将日期转换为星座英文</td>
 </tr>
 <tr>
-<td style="text-align:left">zodiac_cn(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">将日期转换为星座中文</td>
+<td align="left">zodiac_cn(date_string | date) -> string</td>
+<td align="left">将日期转换为星座中文</td>
 </tr>
 <tr>
-<td style="text-align:left">typeofdate(date_string &#124; date) -&gt; string</td>
-<td style="text-align:left">获取日期的类型(1: 法定节假日, 2: 正常周末, 3: 正常工作日 4:攒假的工作日),错误返回-1.</td>
+<td align="left">typeofdate(date_string | date) -> string</td>
+<td align="left">获取日期的类型(1: 法定节假日, 2: 正常周末, 3: 正常工作日 4:攒假的工作日),错误返回-1.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="3-数组相关函数"><a href="#3-数组相关函数" class="headerlink" title="3. 数组相关函数"></a>3. 数组相关函数</h3><table>
+<h3 id="3-数组相关函数">3. 数组相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">array_union(array, array) -&gt; array</td>
-<td style="text-align:left">求两个array的并集</td>
+<td align="left">array_union(array, array) -> array</td>
+<td align="left">求两个array的并集</td>
 </tr>
 <tr>
-<td style="text-align:left">value_count(array(T), T value) -&gt; int</td>
-<td style="text-align:left">统计在数组中值为给定值的元素个数</td>
+<td align="left">value_count(array(T), T value) -> int</td>
+<td align="left">统计在数组中值为给定值的元素个数</td>
 </tr>
 </tbody>
 </table>
-<h3 id="4-JSON相关函数"><a href="#4-JSON相关函数" class="headerlink" title="4. JSON相关函数"></a>4. JSON相关函数</h3><table>
+<h3 id="4-json相关函数">4. JSON相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">json_array_extract(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">提取json数组中对应路径的值</td>
+<td align="left">json_array_extract(json, jsonPath) -> array(varchar)</td>
+<td align="left">提取json数组中对应路径的值</td>
 </tr>
 <tr>
-<td style="text-align:left">json_array_extract_scalar(json, jsonPath) -&gt; array(varchar)</td>
-<td style="text-align:left">和<code>json_array_extract</code>类似,但是返回结果是string(不是json格式)</td>
+<td align="left">json_array_extract_scalar(json, jsonPath) -> array(varchar)</td>
+<td align="left">和<code>json_array_extract</code>类似,但是返回结果是string(不是json格式)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="5-MAP相关函数"><a href="#5-MAP相关函数" class="headerlink" title="5. MAP相关函数"></a>5. MAP相关函数</h3><table>
+<h3 id="5-map相关函数">5. MAP相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">value_count(MAP(K,V), V value) -&gt; int</td>
-<td style="text-align:left">统计中MAP中值为给定值的元素的个数</td>
+<td align="left">value_count(MAP(K,V), V value) -> int</td>
+<td align="left">统计中MAP中值为给定值的元素的个数</td>
 </tr>
 </tbody>
 </table>
-<h3 id="6-身份证相关函数"><a href="#6-身份证相关函数" class="headerlink" title="6. 身份证相关函数"></a>6. 身份证相关函数</h3><table>
+<h3 id="6-身份证相关函数">6. 身份证相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">id_card_province(string) -&gt; string</td>
-<td style="text-align:left">由身份证号获取省份</td>
+<td align="left">id_card_province(string) -> string</td>
+<td align="left">由身份证号获取省份</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_city(string) -&gt; string</td>
-<td style="text-align:left">由身份证号获取城市</td>
+<td align="left">id_card_city(string) -> string</td>
+<td align="left">由身份证号获取城市</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_area(string) -&gt; string</td>
-<td style="text-align:left">由身份证号获取区或县</td>
+<td align="left">id_card_area(string) -> string</td>
+<td align="left">由身份证号获取区或县</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_birthday(string) -&gt; string</td>
-<td style="text-align:left">由身份证号获取出生日期</td>
+<td align="left">id_card_birthday(string) -> string</td>
+<td align="left">由身份证号获取出生日期</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_gender(string) -&gt; string</td>
-<td style="text-align:left">由身份证号获取性别</td>
+<td align="left">id_card_gender(string) -> string</td>
+<td align="left">由身份证号获取性别</td>
 </tr>
 <tr>
-<td style="text-align:left">is_valid_id_card(string) -&gt; boolean</td>
-<td style="text-align:left">鉴别是否是有效的身份证号</td>
+<td align="left">is_valid_id_card(string) -> boolean</td>
+<td align="left">鉴别是否是有效的身份证号</td>
 </tr>
 <tr>
-<td style="text-align:left">id_card_info(string) -&gt; json</td>
-<td style="text-align:left">获取身份证号对应的信息,包括省份,城市,区县,性别及是否有效</td>
+<td align="left">id_card_info(string) -> json</td>
+<td align="left">获取身份证号对应的信息,包括省份,城市,区县,性别及是否有效</td>
 </tr>
 </tbody>
 </table>
-<h3 id="7-坐标相关函数"><a href="#7-坐标相关函数" class="headerlink" title="7. 坐标相关函数"></a>7. 坐标相关函数</h3><table>
+<h3 id="7-坐标相关函数">7. 坐标相关函数</h3>
+<table>
 <thead>
 <tr>
-<th style="text-align:left">函数</th>
-<th style="text-align:left">说明</th>
+<th align="left">函数</th>
+<th align="left">说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">wgs_distance(double lat1, double lng1, double lat2, double lng2) -&gt; double</td>
-<td style="text-align:left">计算WGS84坐标系下的坐标距离,单位为米</td>
+<td align="left">wgs_distance(double lat1, double lng1, double lat2, double lng2) -> double</td>
+<td align="left">计算WGS84坐标系下的坐标距离,单位为米</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_to_bd(double,double) -&gt; json</td>
-<td style="text-align:left">火星坐标系(GCJ-02)转百度坐标系(BD-09),谷歌、高德——&gt;百度</td>
+<td align="left">gcj_to_bd(double,double) -> json</td>
+<td align="left">火星坐标系(GCJ-02)转百度坐标系(BD-09),谷歌、高德——>百度</td>
 </tr>
 <tr>
-<td style="text-align:left">bd_to_gcj(double,double) -&gt; json</td>
-<td style="text-align:left">百度坐标系(BD-09)转火星坐标系(GCJ-02),百度——&gt;谷歌、高德</td>
+<td align="left">bd_to_gcj(double,double) -> json</td>
+<td align="left">百度坐标系(BD-09)转火星坐标系(GCJ-02),百度——>谷歌、高德</td>
 </tr>
 <tr>
-<td style="text-align:left">wgs_to_gcj(double,double) -&gt; json</td>
-<td style="text-align:left">WGS84转GCJ02(火星坐标系)</td>
+<td align="left">wgs_to_gcj(double,double) -> json</td>
+<td align="left">WGS84转GCJ02(火星坐标系)</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_to_wgs(double,double) -&gt; json</td>
-<td style="text-align:left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为1米到2米之间。</td>
+<td align="left">gcj_to_wgs(double,double) -> json</td>
+<td align="left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为1米到2米之间。</td>
 </tr>
 <tr>
-<td style="text-align:left">gcj_extract_wgs(double,double) -&gt; json</td>
-<td style="text-align:left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为0.5米内。但是计算速度慢于gcj_to_wgs</td>
+<td align="left">gcj_extract_wgs(double,double) -> json</td>
+<td align="left">GCJ02(火星坐标系)转GPS84,输出的WGS-84坐标精度为0.5米内。但是计算速度慢于gcj_to_wgs</td>
 </tr>
 </tbody>
-</table>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-<!--
-<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
-<div>
-<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
-</div>
--->
-</div>
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
-  <a href="/about">aaronshan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、hive-third-functions中包含的函数"><span class="toc-number">1.</span> <span class="toc-text">一、hive-third-functions中包含的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-字符串函数"><span class="toc-number">1.1.</span> <span class="toc-text">1. 字符串函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-数组函数"><span class="toc-number">1.2.</span> <span class="toc-text">2. 数组函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-map函数"><span class="toc-number">1.3.</span> <span class="toc-text">3. map函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-日期函数"><span class="toc-number">1.4.</span> <span class="toc-text">4. 日期函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-json函数"><span class="toc-number">1.5.</span> <span class="toc-text">5. json函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-bitwise函数"><span class="toc-number">1.6.</span> <span class="toc-text">6. bitwise函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-身份证函数"><span class="toc-number">1.7.</span> <span class="toc-text">7. 身份证函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-坐标相关函数"><span class="toc-number">1.8.</span> <span class="toc-text">8. 坐标相关函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、presto-third-functions中包含的函数"><span class="toc-number">2.</span> <span class="toc-text">二、presto-third-functions中包含的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-字符串相关函数"><span class="toc-number">2.1.</span> <span class="toc-text">1. 字符串相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-日期相关函数"><span class="toc-number">2.2.</span> <span class="toc-text">2. 日期相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-数组相关函数"><span class="toc-number">2.3.</span> <span class="toc-text">3. 数组相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-JSON相关函数"><span class="toc-number">2.4.</span> <span class="toc-text">4. JSON相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-MAP相关函数"><span class="toc-number">2.5.</span> <span class="toc-text">5. MAP相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-身份证相关函数"><span class="toc-number">2.6.</span> <span class="toc-text">6. 身份证相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-坐标相关函数"><span class="toc-number">2.7.</span> <span class="toc-text">7. 坐标相关函数</span></a></li></ol></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/大数据/">大数据</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/hive/">hive</a><span></span><a class="article-tag-link" href="/tags/presto/">presto</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/10/25/mac-install-caffe/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          mac安装caffe
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/07/19/mac-install-mysql/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">mac-osx安装mysql&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 aaronshan&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
-</html>
+</table></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/presto/">presto</a><a class="tag" href="/tags/hive/">hive</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2016/08/30/csdn-52373002/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">PredictionIO安装使用</span></a><a class="article-nav__item article-nav__item--next" href="/2016/07/19/mac-install-mysql/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">mac-osx安装mysql</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一hive-third-functions中包含的函数">一、hive-third-functions中包含的函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#1-字符串函数">1. 字符串函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#2-数组函数">2. 数组函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#3-map函数">3. map函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#4-日期函数">4. 日期函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#5-json函数">5. json函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#6-bitwise函数">6. bitwise函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#7-身份证函数">7. 身份证函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#8-坐标相关函数">8. 坐标相关函数</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二presto-third-functions中包含的函数">二、presto-third-functions中包含的函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#1-字符串相关函数">1. 字符串相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#2-日期相关函数">2. 日期相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#3-数组相关函数">3. 数组相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#4-json相关函数">4. JSON相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#5-map相关函数">5. MAP相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#6-身份证相关函数">6. 身份证相关函数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#7-坐标相关函数">7. 坐标相关函数</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2014/07/29/csdn-38261339/">HBase系列文章汇总</a></h3><p class="post-card__desc">文章浏览阅读3.8k次，点赞3次，收藏8次。本文全面整理了从入门到深入的HBase学习资源，包括安装、学习笔记、性能测试</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-07-29</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

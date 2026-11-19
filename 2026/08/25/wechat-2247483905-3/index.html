@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线 | 中龄程序猿</title><meta name="description" content="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线自我。核心目标是在不改变模型输出分布的前提下，把大语言模型（LLM）的推理速度提上去，同时解决之前方法在生产环境（尤其是高并发服务）中的两个关键瓶颈。"><link rel="canonical" href="https://www.shanruifeng.win/2026/08/25/wechat-2247483905-3/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线 | 中龄程序猿"><meta property="og:description" content="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线自我。核心目标是在不改变模型输出分布的前提下，把大语言模型（LLM）的推理速度提上去，同时解决之前方法在生产环境（尤其是高并发服务）中的两个关键瓶颈。"><meta property="og:url" content="https://www.shanruifeng.win/2026/08/25/wechat-2247483905-3/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483905-3/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线 | 中龄程序猿"><meta name="twitter:description" content="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线自我。核心目标是在不改变模型输出分布的前提下，把大语言模型（LLM）的推理速度提上去，同时解决之前方法在生产环境（尤其是高并发服务）中的两个关键瓶颈。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483905-3/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线","description":"大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线自我。核心目标是在不改变模型输出分布的前提下，把大语言模型（LLM）的推理速度提上去，同时解决之前方法在生产环境（尤其是高并发服务）中的两个关键瓶颈。","datePublished":"2026-08-25T02:01:08.000Z","dateModified":"2026-08-25T02:01:08.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/08/25/wechat-2247483905-3/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483905-3/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线</h1><p class="article-desc">大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线自我。核心目标是在不改变模型输出分布的前提下，把大语言模型（LLM）的推理速度提上去，同时解决之前方法在生产环境（尤其是高并发服务）中的两个关键瓶颈。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-08-25T02:01:08.000Z">2026-08-25</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483905-3/cover.jpg" alt="大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="一dspark-的出场背景">一、DSpark 的出场背景</h2>
+<p>2026 年 7 月，DeepSeek 团队发布了 DSpark（<em>Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation</em>，arXiv:2607.05147）。这不是一篇只讲方法的论文——它附带了一个关键信息：<strong>DSpark 已经部署在 DeepSeek-V4 的真实线上流量中</strong>（Flash 和 Pro 两个版本）。</p>
+<p>在推理加速这个领域，“发论文”和”上生产”之间的距离往往很远。很多方法在实验室基准上很漂亮，一到真实的高并发服务环境就出问题：batch capacity 被浪费、延迟抖动、吞吐量悬崖式下跌。DSpark 的特殊之处在于，它是<strong>第一个在生产级线上服务中大规模验证推理加速效果的工作</strong>——DeepSeek-V4 的数亿级用户流量数据，比任何实验室 benchmark 都更有说服力。</p>
+<p>但 DSpark 的技术价值不止于”能上线”。它提出了两个紧密耦合的创新：<strong>半自回归草稿生成</strong>和<strong>置信度调度验证</strong>，分别解决推理加速的”草稿端”和”验证端”两大瓶颈。这一篇我们就深入拆解这两个机制的设计动机、数学形式和工程细节。</p>
+<hr>
+<h2 id="二dspark-要解决的两个瓶颈">二、DSpark 要解决的两个瓶颈</h2>
+<p>在理解 DSpark 的方案之前，必须先理解它瞄准的问题——这两个问题不是”准确率不够高”这种笼统描述，而是有精确的数学和系统层面的定义。</p>
+<h3 id="21-瓶颈一并行草稿的结构性不连贯">2.1 瓶颈一：并行草稿的”结构性不连贯”</h3>
+<p>DFlash（包括 DFlash 2）用并行扩散模型做草稿，所有位置同时去噪。这种并行性的代价是：<strong>块内 token 之间没有条件依赖</strong>。</p>
+<p>具体来说，对于块内第 i 个位置，它的输入包括：</p>
+<ul>
+<li>
+<p>已验证上下文（通过目标模型 KV 注入）</p>
+</li>
+<li>
+<p>位置 i 自身的噪声/掩码输入</p>
+</li>
+<li>
+<p>（如果是双向 attention）块内其他位置的噪声/掩码输入</p>
+</li>
+</ul>
+<p>注意最后一点：第 i 个位置能看到其他位置的<strong>噪声输入</strong>，但<strong>看不到它们的最终输出</strong>。它不知道位置 1 最终选了”Paris”还是”London”，它只看到位置 1 是一个被掩码的 token。</p>
+<p>这导致了一个微妙的后果：即使 DFlash 2 的路径选择器从 top-k 里挑出了连贯的组合，这个”连贯性”也是基于<strong>独立产出的候选</strong>做的后验选择。选择器本身没有看到”如果位置 1 选了 Paris，位置 2 的条件分布会如何变化”——它只是在已有的独立候选里挑搭配。</p>
+<p>从概率图模型的角度看，DFlash 系列建模的是<strong>边缘分布的乘积</strong> <code>∏ P(x_i | context)</code>，而不是<strong>链式条件分布</strong> <code>P(x_1 | context) × P(x_2 | context, x_1) × P(x_3 | context, x_1, x_2) × ...</code>。前者快但弱，后者慢但强。</p>
+<p>DSpark 的洞察是：<strong>如果我们能以一种极轻量的方式引入链式条件依赖，也许可以在”足够快”和”足够准”之间找到新的平衡点。</strong></p>
+<h3 id="22-瓶颈二验证端的盲目验证">2.2 瓶颈二：验证端的”盲目验证”</h3>
+<p>传统推理加速方法有一个隐含假设：草稿生成多少个 token，验证就过多少个。比如草稿模型生成了 16 个 token，目标模型就把这 16 个全部验证一遍。</p>
+<p>这个假设在高并发服务中代价很大，原因在于<strong>推理加速的截断规则</strong>：</p>
+<blockquote>
+<p>从第一个被拒绝的 token 开始，后面所有 token 都不需要再看——它们被”连带作废”。</p>
+</blockquote>
+<p>假设目标模型验证 16 个 token，发现第 5 个 token 被拒绝。那么第 6–16 个 token 的验证计算完全是白算的。更严重的是，在高并发场景下，这些”白算”占用了宝贵的 batch slot，导致其他请求无法被及时处理，整体吞吐量暴跌。</p>
+<p>理想情况下，系统应该根据每个 token 的<strong>存活概率</strong>（即”该位置及之前所有位置都被接受的概率”）来决定验证多长。如果存活概率曲线在第 7 个位置就跌到 20%，那验证到第 6 个位置就截断，后面的不验证——这样既省了算力，又不影响正确性（因为本来也通不过）。</p>
+<p>DSpark 的置信度调度就是做这个决策的。</p>
+<hr>
+<h2 id="三核心创新一半自回归架构">三、核心创新一：半自回归架构</h2>
+<p>DSpark 的草稿模型不走纯并行也不走纯串行，而是<strong>两者结合</strong>。论文把这种架构称为 Semi-Autoregressive Generation（半自回归生成）。</p>
+<h3 id="31-架构设计并行骨架--轻量顺序头">3.1 架构设计：并行骨架 + 轻量顺序头</h3>
+<p>下面这张图来自 DSpark 论文，清晰展示了整个推理流程：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/01.png" alt="图片 1"></p>
+<p>DSpark 方法总览：从目标模型特征提取到半自回归草稿生成，再到硬件感知调度验证</p>
+<p>流程分为三步（对应图中编号）：</p>
+<ol>
+<li>
+<p><strong>Step 1 — 目标模型提取上下文特征</strong>：Target Model 对已验证的 token（A, B, C）做前向传播，提取深层特征 D 作为草稿的条件输入。</p>
+</li>
+<li>
+<p><strong>Step 2 — 半自回归草稿生成</strong>：</p>
+</li>
+</ol>
+<ul>
+<li>
+<p><strong>Parallel Block</strong>（并行块）：以 D 为条件，一次性并行生成所有 mask 位置的基础 logits。</p>
+</li>
+<li>
+<p><strong>Sequential Block</strong>（顺序块）：用 Markov Head 或 RNN Head 逐位置精修，把前一个位置的输出作为当前位置的额外输入（图中的虚线箭头），注入 token-to-token 依赖。</p>
+</li>
+<li>
+<p><strong>Confidence Head</strong>：输出每个位置的存活概率 C₁, C₂, C₃, C₄。</p>
+</li>
+<li>
+<p><strong>Hardware-Aware Prefix Scheduler</strong>：根据置信度和系统负载决定验证多长——Keep(E, F, G)、Drop(H)。</p>
+</li>
+</ul>
+<ol start="4">
+<li><strong>Step 3 — 目标模型验证</strong>：Target Model 并行验证 D, E, F, G，E 和 F 通过（✓），G 被拒绝（✗），下一轮从 G* 开始。</li>
+</ol>
+<p>DSpark 的草稿模型核心在于两层：</p>
+<p><strong>第一层：Parallel Backbone（并行骨架）</strong></p>
+<p>这是一个标准的 Transformer 网络，接收目标模型的多层特征作为条件输入，一次性并行生成块内所有位置的基础 logits。这一步和 DFlash 的并行 Backbone 类似，速度极快。</p>
+<p><strong>第二层：Sequential Refinement Head（顺序精修头）</strong></p>
+<p>在并行骨架的输出上，接一个轻量的顺序输出头。论文提到了两种实现：</p>
+<ul>
+<li>
+<p><strong>Markov Head</strong>：基于马尔可夫假设，只考虑前一个位置的输出对当前位置的影响</p>
+</li>
+<li>
+<p><strong>RNN Head</strong>：用一个轻量 RNN 顺序处理并行骨架的输出，捕获更长的依赖</p>
+</li>
+</ul>
+<p>顺序头做的事情很简单：对于位置 i，它接收并行骨架输出的 logits_i 和<strong>前一个位置的最终输出 token</strong>，然后输出一个修正后的分布。</p>
+<p>用公式表示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// Parallel Backbone（一次前向，并行产出）</span></span>
+<span class="line"><span>base_logits[1:N] = ParallelBackbone(target_features, masked_tokens)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// Sequential Head（逐位置串行修正）</span></span>
+<span class="line"><span>for i = 1 to N:</span></span>
+<span class="line"><span>    refined_logits[i] = SequentialHead(base_logits[i], token[i-1])</span></span>
+<span class="line"><span>    token[i] = argmax(refined_logits[i])  // 或采样</span></span></code></pre>
+<h3 id="32-为什么是半自回归">3.2 为什么是”半”自回归</h3>
+<p>注意这里的关键：<strong>并行骨架只做一次前向传播</strong>，顺序头只是在一个极小的输出空间（每个位置的 logits）上做轻量修正。这和 EAGLE-3 那种”每个位置都要过一次完整 Transformer”的纯自回归完全不同。</p>
+<p>从计算量的角度：</p>
+<ul>
+<li>
+<p>EAGLE-3：生成 N 个 token 需要 N 次完整的 Transformer 前向传播（虽然模型只有 1 层，但每次都要算 attention + MLP）</p>
+</li>
+<li>
+<p>DFlash：生成 N 个 token 需要 1 次前向传播（并行）</p>
+</li>
+<li>
+<p>DSpark：生成 N 个 token 需要 1 次完整前向传播 + N 次顺序头的轻量计算</p>
+</li>
+</ul>
+<p>顺序头的计算量远小于完整 Transformer 层——论文说它只增加”轻微的串行延迟”，整体延迟仍在可接受范围内。</p>
+<h3 id="33-接受率曲线的缝合效果">3.3 接受率曲线的”缝合”效果</h3>
+<p>论文用一张非常直观的图展示了三种方法的逐位置接受率对比：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/02.png" alt="图片 2"></p>
+<p>逐位置条件接受率：DFlash vs EAGLE-3 vs DSpark</p>
+<p>这张图告诉我们三个故事：</p>
+<p><strong>Math 任务（左图）</strong>：</p>
+<ul>
+<li>
+<p>DFlash（蓝三角）：第 1 位置约 0.89，快速衰减到第 7 位置的约 0.82。“块尾衰减”清晰可见。</p>
+</li>
+<li>
+<p>EAGLE-3（黄方块）：第 1 位置约 0.81（低于 DFlash），但尾部稳定在约 0.84。自回归的”起步慢但后劲足”。</p>
+</li>
+<li>
+<p>DSpark（绿圆圈）：在<strong>每个位置都最高</strong>——第 1 位置约 0.91，第 7 位置约 0.88。成功”缝合”了两者的优点。</p>
+</li>
+</ul>
+<p><strong>Code 任务（中图）</strong>：类似的 pattern，DSpark 全程领先。</p>
+<p><strong>Chat 任务（右图）</strong>：这里最有意思。DFlash 和 EAGLE-3 在前期交叉——DFlash 起步高但掉得快，EAGLE-3 起步低但追上来。DSpark 在后期（位置 5-7）超越两者，说明在闲聊这种”上下文依赖强、重复 token 多”的场景，顺序头的价值最大。</p>
+<h3 id="34-不同-draft-length-的扩展性">3.4 不同 Draft Length 的扩展性</h3>
+<p>论文还测试了不同 draft length（4/8/12/16）下的表现：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/03.png" alt="图片 3"></p>
+<p>不同 Draft Length 下的接受长度与延迟</p>
+<p>关键发现：</p>
+<ol>
+<li>
+<p><strong>DSpark 的接受长度随 draft length 持续增长</strong>：在 Math 上从 draft length 4 的约 3.5 增长到 16 的约 7.5。而 DFlash 在 12 之后就平台化了（约 5.5）。这说明半自回归架构<strong>没有遇到并行模型的块大小天花板</strong>——因为顺序头给每个位置补上了依赖信息，块可以做得更长而不衰减。</p>
+</li>
+<li>
+<p><strong>延迟增加极小</strong>：draft length 从 4 增加到 16，DFlash 延迟仅增 0.9%，DSpark(rnn) 仅增 1.3%。顺序头的开销确实非常轻量。</p>
+</li>
+<li>
+<p><strong>DSpark 在三种任务上都领先 DFlash 15–30%</strong>。</p>
+</li>
+</ol>
+<hr>
+<h2 id="四核心创新二置信度调度验证">四、核心创新二：置信度调度验证</h2>
+<p>如果说半自回归解决的是”草稿生成端”的问题，那置信度调度解决的就是”验证端”的问题。</p>
+<h3 id="41-问题建模验证的边际收益">4.1 问题建模：验证的边际收益</h3>
+<p>传统推理加速方法中，验证长度 N 是固定的。但最优的 N 应该取决于两个因素：</p>
+<ol>
+<li>
+<p><strong>草稿质量</strong>：如果草稿质量高（接受率高），验证长一点划算；如果质量低，验证长了白算</p>
+</li>
+<li>
+<p><strong>系统负载</strong>：如果系统高并发（batch 满了），每个请求应该少验证几个 token，把 capacity 释放出来给其他请求；如果系统空闲，可以多验证几个</p>
+</li>
+</ol>
+<p>DSpark 把这个问题建模为一个<strong>优化问题</strong>：给定草稿的存活概率曲线和当前系统状态，选择验证长度 N 使得”单位验证成本的预期收益”最大化。</p>
+<h3 id="42-confidence-head预测存活概率">4.2 Confidence Head：预测存活概率</h3>
+<p>DSpark 在草稿模型上接了一个轻量的 <strong>Confidence Head</strong>，它的输出不是 token 分布，而是每个位置的<strong>存活概率</strong>——即”该位置及之前所有位置都被目标模型接受的概率”。</p>
+<p>用数学语言：对于草稿位置 i，Confidence Head 输出 <code>p_i = P(accept_1 ∧ accept_2 ∧ ... ∧ accept_i)</code>。</p>
+<p>注意这里预测的是<strong>前缀联合概率</strong>，不是单个位置的条件概率。这是因为推理加速的截断规则：如果位置 i 被拒绝了，位置 i+1 根本不需要验证。所以”位置 i 的验证是否值得”取决于”位置 1 到 i 都被接受的概率”。</p>
+<h3 id="43-校准让预测可信">4.3 校准：让预测可信</h3>
+<p>Confidence Head 的输出必须经过<strong>校准（calibration）</strong>，确保预测的存活概率和实际观察到的接受率一致。论文用可靠性图（reliability diagram）展示了校准效果：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/04.png" alt="图片 4"></p>
+<p>Confidence Head 校准效果</p>
+<ul>
+<li>
+<p><strong>橙色（校准前）</strong>：预测的存活概率系统性偏高。比如预测 0.5 的存活概率，实际只有约 0.35 被接受。ECE（Expected Calibration Error）在 Position 3 高达 8.2%。</p>
+</li>
+<li>
+<p><strong>绿色（校准后）</strong>：预测曲线紧贴完美校准线（虚线）。ECE 降到 0.4–2.0%。</p>
+</li>
+<li>
+<p>AUC 也随位置增加而提升（0.818 → 0.907），说明 Confidence Head 对靠前位置的区分能力较弱（因为前面几个 token 的存活概率都很高，难分高下），但对靠后位置的区分能力越来越强——而这正是调度器最需要的（决定是否截断的关键位置）。</p>
+</li>
+</ul>
+<h3 id="44-hardware-aware-scheduler动态截断">4.4 Hardware-Aware Scheduler：动态截断</h3>
+<p>Scheduler 的核心逻辑是：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>给定：</span></span>
+<span class="line"><span>  - 存活概率曲线 [p_1, p_2, ..., p_N]</span></span>
+<span class="line"><span>  - 当前系统负载（batch utilization）</span></span>
+<span class="line"><span>  - 目标模型验证一个 token 的成本 c_verify</span></span>
+<span class="line"><span>  - 草稿模型生成一个 token 的成本 c_draft</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>目标：选择截断点 k，使得</span></span>
+<span class="line"><span>  E[加速比 | k] = (accepted_tokens) / (draft_cost + verify_cost)</span></span>
+<span class="line"><span>最大化</span></span></code></pre>
+<p>Scheduler 的关键设计是<strong>异步执行</strong>：它不阻塞 GPU 流水线来做调度决策，而是利用前两步的历史预测和系统统计信息来快速估算当前的最优截断点。这兼容 DeepSeek 的零开销调度（ZOS）和连续 CUDA 图回放。</p>
+<h3 id="45-置信度调度的实际效果">4.5 置信度调度的实际效果</h3>
+<p>论文用一张图展示了不同置信度阈值下的效果：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/05.png" alt="图片 5"></p>
+<p>置信度阈值调度效果</p>
+<p>横轴是 Confidence Threshold（阈值），从左到右越来越严格。纵轴左是每步平均 token 数（绿色=被接受的，灰色=被拒绝的），纵轴右是接受率（蓝线）。</p>
+<p>三个任务呈现不同的 pattern：</p>
+<ul>
+<li>
+<p><strong>Math（左图）</strong>：阈值 0 时平均接受 5.2 个 token，接受率 76.9%。阈值提到 0.9 时只接受约 4.5 个 token，但接受率飙升到 <strong>92.5%</strong>。这意味着丢弃高风险尾部 token，换来了更高的”命中率”。</p>
+</li>
+<li>
+<p><strong>Code（中图）</strong>：类似，最终接受率 92.0%。</p>
+</li>
+<li>
+<p><strong>Chat（右图）</strong>：效果最显著。阈值 0 时接受率仅 45.7%（接近抛硬币），阈值提到 0.9 时接受率达到 <strong>95.7%</strong>。这说明闲聊场景的草稿尾部质量极不稳定——聊天中话题跳转、语气变化大，靠后的草稿 token 很容易偏离目标模型的分布。置信度调度在这里的价值最大。</p>
+</li>
+</ul>
+<p><strong>核心洞察</strong>：不同任务类型的”最优验证策略”差异巨大。固定验证长度的方法（如传统推理加速方法、DFlash）对所有任务一视同仁，而 DSpark 的调度器能根据任务类型和实时负载动态调整——这是它能在生产环境中表现出色的关键原因。</p>
+<hr>
+<h2 id="五线上部署效果">五、线上部署效果</h2>
+<p>DSpark 已部署在 DeepSeek-V4 的服务系统中。论文提供了线上真实流量的 Pareto 前沿图：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/06.png" alt="图片 6"></p>
+<p>DeepSeek-V4 线上 Pareto 前沿</p>
+<p>横轴是单用户 TPS（token/s/user），纵轴是总吞吐（tokens/s/gpu）。<strong>越靠近右上角越好</strong>（高单用户速度 + 高总吞吐）。</p>
+<ul>
+<li>
+<p><strong>DeepSeek-V4-Flash（左图）</strong>：在匹配 TPS 的条件下，DSpark 的吞吐比 MTP 基线提升 <strong>51% 到 661%</strong>；在匹配吞吐的条件下，单用户速度提升 <strong>60% 到 85%</strong>。</p>
+</li>
+<li>
+<p><strong>DeepSeek-V4-Pro（右图）</strong>：吞吐提升 <strong>52% 到 406%</strong>，单用户速度提升 <strong>57% 到 78%</strong>。</p>
+</li>
+</ul>
+<p>更关键的是”性能悬崖”的突破。在 MTP 基线中，当单用户 TPS 达到某个阈值后，总吞吐会急剧恶化（曲线急剧下降）。而 DSpark 的曲线更平缓，在严格 SLA 区域（Flash 约 120 TPS，Pro 约 50 TPS）仍能保持稳健表现。</p>
+<p>论文还展示了 Verification Budget 随并发请求数的变化：</p>
+<p><img src="/images/wechat/wechat-2247483905-3/07.png" alt="图片 7"></p>
+<p>吞吐量与验证预算随并发变化</p>
+<p>上图：吞吐量随并发增加。DSpark（绿）始终高于 MTP（蓝），高并发下差距更大。 下图：Verification Budget（每个请求验证多少个 token）。MTP 是固定的水平线（约 2 个），而 DSpark 随负载动态调整——低负载时预算约 5，高负载时降到约 3.5。</p>
+<p>这就是”好钢用在刀刃上”的工程体现：负载轻时多验证几个 token（batch capacity 充足），负载重时减少验证（把 capacity 留给更多请求）。</p>
+<hr>
+<h2 id="六方法论层面的反思">六、方法论层面的反思</h2>
+<p>DSpark 和 DFlash 2 代表了推理加速的两条不同路线。理解它们的分野，对工程决策很有价值。</p>
+<p>|
+维度</p>
+<p>|</p>
+<p>DFlash 2</p>
+<p>|</p>
+<p>DSpark</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>核心哲学</p>
+<p>|</p>
+<p>并行是优势，不要动它，做轻量后处理</p>
+<p>|</p>
+<p>并行的结构性缺陷光靠后处理不够，必须引入顺序性</p>
+<p>|
+|</p>
+<p>草稿生成</p>
+<p>|</p>
+<p>纯并行（块扩散）</p>
+<p>|</p>
+<p>半自回归（并行骨架 + 顺序头）</p>
+<p>|
+|</p>
+<p>依赖建模</p>
+<p>|</p>
+<p>路径选择器（宏观候选选择）+ 动态卷积（微观局部平滑）</p>
+<p>|</p>
+<p>顺序头（链式条件依赖）</p>
+<p>|
+|</p>
+<p>验证端</p>
+<p>|</p>
+<p>固定长度验证</p>
+<p>|</p>
+<p>置信度调度动态截断</p>
+<p>|
+|</p>
+<p>系统级优化</p>
+<p>|</p>
+<p>较少涉及</p>
+<p>|</p>
+<p>Confidence Head + Hardware-Aware Scheduler</p>
+<p>|
+|</p>
+<p>延迟开销</p>
+<p>|</p>
+<p>约 +1%</p>
+<p>|</p>
+<p>轻微串行开销 + 调度器开销</p>
+<p>|
+|</p>
+<p>生产部署</p>
+<p>|</p>
+<p>快速扩展中（SGLang/vLLM/llama.cpp/Ollama/oMLX）</p>
+<p>|</p>
+<p>DeepSeek-V4 线上已验证</p>
+<p>|</p>
+<p>两种路线没有谁好谁坏，而是<strong>面向不同场景的最优解</strong>：</p>
+<ul>
+<li>
+<p><strong>DFlash 2</strong> 更适合”延迟敏感、单次请求”的场景（如本地 Mac 开发、边缘推理），因为它的并行框架延迟极低，且没有串行模块带来的额外开销。</p>
+</li>
+<li>
+<p><strong>DSpark</strong> 更适合”高并发、吞吐优先”的服务场景（如 DeepSeek-V4 的线上 API），因为它的置信度调度能在系统层面做全局优化，把有限的 batch capacity 用在刀刃上。</p>
+</li>
+</ul>
+<p>有趣的是，mlx-dspark（社区项目）在 Apple Silicon 上的实测显示，对于 Qwen3.8-27B 这个具体模型，DFlash 2 的加速比（4.06×）高于社区 DSpark drafter（2.92×）。但这个对比需要谨慎解读：mlx-dspark 用的是社区发布的 DSpark drafter，不是 DeepSeek 官方 V4 的 drafter，且目标模型不同（消费级 Qwen vs 大规模 MoE V4）。所以这并不是一个公平的 head-to-head，但它提示了一个重要信息：<strong>drafter 的质量和目标模型的匹配度，可能比方法本身的优劣更能决定实际效果。</strong></p>
+<hr>
+<h2 id="七系列导读">七、系列导读</h2>
+<p>DSpark 用半自回归 + 置信度调度，在草稿端和验证端同时做了创新，并成功部署在生产环境中。但它不是凭空出现的——它的”并行骨架”思路直接继承自 DFlash，而”顺序头”则是对 EAGLE-3 自回归路线的借鉴。</p>
+<p><strong>上一篇</strong>：<a href="https://mp.weixin.qq.com/s?__biz=MzU5ODExNDg2Nw==&#x26;mid=2247483898&#x26;idx=1&#x26;sn=874abad2c12d19758357bb70f9113900&#x26;scene=21#wechat_redirect">DFlash 2：并行草稿的精准化之路</a></p>
+<p><strong>下一篇</strong>：DFlash：用扩散模型给大模型推理”开涡轮增压”</p>
+<p>DFlash 是 DFlash 2 和 DSpark 的共同前身。它第一次证明了：用块扩散模型替代自回归草稿，可以让草稿模型做深（5+ 层）而不过度增加延迟。它的核心创新是”KV 注入”——不是把目标模型特征作为输入 embedding，而是作为 KV cache 的前缀直接注入每一层。这一设计使得 DFlash 可以安全地做深，而 EAGLE-3 只能做 1 层。</p>
+<p><strong>再往后</strong>：EAGLE-3：从特征预测到 Token 预测，解锁 Scaling Law</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/X5G9Ly2yR5juHMSHua9JXA" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/25/wechat-2247483905-2/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">大模型推理加速进化论（三）：DFlash——扩散模型如何打破自回归瓶颈，让推理快3倍</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/25/wechat-2247483905-4/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一dspark-的出场背景">一、DSpark 的出场背景</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二dspark-要解决的两个瓶颈">二、DSpark 要解决的两个瓶颈</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#21-瓶颈一并行草稿的结构性不连贯">2.1 瓶颈一：并行草稿的”结构性不连贯”</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#22-瓶颈二验证端的盲目验证">2.2 瓶颈二：验证端的”盲目验证”</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三核心创新一半自回归架构">三、核心创新一：半自回归架构</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#31-架构设计并行骨架--轻量顺序头">3.1 架构设计：并行骨架 + 轻量顺序头</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#32-为什么是半自回归">3.2 为什么是”半”自回归</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#33-接受率曲线的缝合效果">3.3 接受率曲线的”缝合”效果</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#34-不同-draft-length-的扩展性">3.4 不同 Draft Length 的扩展性</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四核心创新二置信度调度验证">四、核心创新二：置信度调度验证</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#41-问题建模验证的边际收益">4.1 问题建模：验证的边际收益</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#42-confidence-head预测存活概率">4.2 Confidence Head：预测存活概率</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#43-校准让预测可信">4.3 校准：让预测可信</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#44-hardware-aware-scheduler动态截断">4.4 Hardware-Aware Scheduler：动态截断</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#45-置信度调度的实际效果">4.5 置信度调度的实际效果</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五线上部署效果">五、线上部署效果</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#六方法论层面的反思">六、方法论层面的反思</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#七系列导读">七、系列导读</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

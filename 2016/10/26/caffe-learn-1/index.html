@@ -1,122 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>caffe学习-模型定义 - 中龄程序猿</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
-<meta name="keywords" content="caffe">
-<meta property="og:type" content="article">
-<meta property="og:title" content="caffe学习-模型定义">
-<meta property="og:url" content="www.shanruifeng.win/2016/10/26/caffe-learn-1/index.html">
-<meta property="og:site_name" content="中龄程序猿">
-<meta property="og:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.imgur.com/30XJEsL.png">
-<meta property="og:image" content="https://i.imgur.com/lirD0lH.png">
-<meta property="og:updated_time" content="2019-02-26T07:28:18.787Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="caffe学习-模型定义">
-<meta name="twitter:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。">
-<meta name="twitter:image" content="https://i.imgur.com/30XJEsL.png">
-  
-  
-    <link rel="icon" href="/favicon.ico">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-          <a class="main-nav-link" href="/love">爱情</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-caffe-learn-1" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      caffe学习-模型定义
-      <small class="article-detail-date-index">&nbsp; 2016-10-26</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/2016/10/26/caffe-learn-1/" class="article-date">
-  <time datetime="2016-10-26T11:30:25.000Z" itemprop="datePublished">2016-10-26</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。</p>
-<a id="more"></a>
-<h3 id="1、数据层"><a href="#1、数据层" class="headerlink" title="1、数据层"></a>1、数据层</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">  type:</span> DATA</span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"data"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"label"</span></span><br><span class="line">  <span class="class">include </span>&#123;</span><br><span class="line"><span class="symbol">    phase:</span> TRAIN</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class">transform_param </span>&#123;</span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">0.00390625</span></span><br><span class="line"><span class="symbol">    mean_file:</span> <span class="string">"examples/mnist/mean.binaryproto"</span></span><br><span class="line"><span class="symbol">    mirror:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">    crop_size:</span> <span class="number">227</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class">data_param </span>&#123;</span><br><span class="line"><span class="symbol">    source:</span> <span class="string">"examples/mnist/mnist_train_lmdb"</span></span><br><span class="line"><span class="symbol">    backend:</span> LMDB</span><br><span class="line"><span class="symbol">    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">0.00390625</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>caffe学习-模型定义 | 中龄程序猿</title><meta name="description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。"><link rel="canonical" href="https://www.shanruifeng.win/2016/10/26/caffe-learn-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="caffe学习-模型定义 | 中龄程序猿"><meta property="og:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。"><meta property="og:url" content="https://www.shanruifeng.win/2016/10/26/caffe-learn-1/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="caffe学习-模型定义 | 中龄程序猿"><meta name="twitter:description" content="本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"caffe学习-模型定义","description":"本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。","datePublished":"2016-10-26T11:30:25.000Z","dateModified":"2016-10-26T11:30:25.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2016/10/26/caffe-learn-1/","articleSection":"机器学习","keywords":"caffe"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span>/</span><span>caffe学习-模型定义</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><h1 class="article-title">caffe学习-模型定义</h1><p class="article-desc">本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2016-10-26T11:30:25.000Z">2016-10-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>10 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>caffe</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><p>本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。</p>
+<!-- more -->
+<h3 id="1数据层">1、数据层</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "mnist"</span></span>
+<span class="line"><span>  type: DATA</span></span>
+<span class="line"><span>  top: "data"</span></span>
+<span class="line"><span>  top: "label"</span></span>
+<span class="line"><span>  include {</span></span>
+<span class="line"><span>    phase: TRAIN</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>  transform_param {</span></span>
+<span class="line"><span>    scale: 0.00390625</span></span>
+<span class="line"><span>    mean_file: "examples/mnist/mean.binaryproto"</span></span>
+<span class="line"><span>    mirror: 1</span></span>
+<span class="line"><span>    crop_size: 227</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>  data_param {</span></span>
+<span class="line"><span>    source: "examples/mnist/mnist_train_lmdb"</span></span>
+<span class="line"><span>    backend: LMDB</span></span>
+<span class="line"><span>    batch_size: 64</span></span>
+<span class="line"><span>    scale: 0.00390625</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>这是第一个层。以下是参数定义：</p>
 <ul>
 <li>name指定当前层的名称。名字可以随便取，不重复即可。</li>
 <li>type指定当前层的类型，这里就是输入层，所以指定为DATA。</li>
 <li>top或bottom: 每一层用bottom来输入数据，用top来输出数据。如果只有top没有bottom，则此层只有输出，没有输入。反之亦然。如果有多个 top或多个bottom，表示有多个blobs数据的输入和输出。上例中的第一个top是指定往后传递data，第二个是指定往后传递label.</li>
 <li>include: 一般训练和测试的时候，模型的层是不一样的。include来用指定该层（layer）是属于训练阶段的层，还是属于测试阶段的层。如果没有include参数，则表示该层既在训练模型中，又在测试模型中。</li>
-<li>transform_param中的参数用来对数据进行预处理。<ul>
+<li>transform_param中的参数用来对数据进行预处理。
+<ul>
 <li>scale是将数据进行尺寸变换，比如这里设置的0.00390625，就是1/255，用来将输入数据由0-255归一化到0-1之间。</li>
 <li>mean_file用来指定配置文件进行均值操作</li>
 <li>mirror值为1表示开启镜像，值为0表示关闭，也可用ture和false来表示</li>
 <li>crop_size表示裁剪的大小。上例中的227表示剪裁一个227*227的图块，在训练阶段随机剪裁，在测试阶段从中间裁剪。</li>
 </ul>
 </li>
-<li>data_param指定当前层输入数据相关的参数，其中:<ul>
+<li>data_param指定当前层输入数据相关的参数，其中:
+<ul>
 <li>source就是输入数据的路径（可以写绝对路径）</li>
 <li>backend就是数据类型</li>
 <li>batch_size是指定运行时的batch大小</li>
@@ -124,32 +45,107 @@
 </li>
 </ul>
 <p>根据data_param指定的输入数据来源不同，可以分为以下几种。</p>
-<h4 id="1-1-数据来自于数据库-如LevelDB和LMDB"><a href="#1-1-数据来自于数据库-如LevelDB和LMDB" class="headerlink" title="1.1 数据来自于数据库(如LevelDB和LMDB)"></a>1.1 数据来自于数据库(如LevelDB和LMDB)</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"Data"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/mnist/mnist_train_lmdb"</span></span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">	    backend:</span> LMDB</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="11-数据来自于数据库如leveldb和lmdb">1.1 数据来自于数据库(如LevelDB和LMDB)</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>	name: "mnist"</span></span>
+<span class="line"><span>	type: "Data"</span></span>
+<span class="line"><span>	...</span></span>
+<span class="line"><span>	data_param {</span></span>
+<span class="line"><span>	    source: "examples/mnist/mnist_train_lmdb"</span></span>
+<span class="line"><span>	    batch_size: 64</span></span>
+<span class="line"><span>	    backend: LMDB</span></span>
+<span class="line"><span>	}</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>可以看到，type必须指定为Data，而data_param中中指定LevelDB和LMDB的文件路径，并指定backend为LevelDB或LMDB。</p>
-<h4 id="1-2-数据来自于内存"><a href="#1-2-数据来自于内存" class="headerlink" title="1.2 数据来自于内存"></a>1.2 数据来自于内存</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"MemoryData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">memory_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">64</span></span><br><span class="line"><span class="symbol">	    height:</span> <span class="number">100</span></span><br><span class="line"><span class="symbol">    	width:</span> <span class="number">100</span></span><br><span class="line"><span class="symbol">    	channels:</span> <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="12-数据来自于内存">1.2 数据来自于内存</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>	name: "mnist"</span></span>
+<span class="line"><span>	type: "MemoryData"</span></span>
+<span class="line"><span>	...</span></span>
+<span class="line"><span>	memory_data_param {</span></span>
+<span class="line"><span>	    batch_size: 64</span></span>
+<span class="line"><span>	    height: 100</span></span>
+<span class="line"><span>    	width: 100</span></span>
+<span class="line"><span>    	channels: 1</span></span>
+<span class="line"><span>	}</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>可以看到，type必须指定为MemoryData。memory_data_param：</p>
 <ul>
 <li>channels表示通道数</li>
 <li>height表示高度</li>
 <li>width表示宽度</li>
 </ul>
-<h4 id="1-3-数据来自于HDF5"><a href="#1-3-数据来自于HDF5" class="headerlink" title="1.3 数据来自于HDF5"></a>1.3 数据来自于HDF5</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"HDF5Data"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">hdf5_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/hdf5_classification/data/train.txt"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="13-数据来自于hdf5">1.3 数据来自于HDF5</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>	name: "mnist"</span></span>
+<span class="line"><span>	type: "HDF5Data"</span></span>
+<span class="line"><span>	...</span></span>
+<span class="line"><span>	hdf5_data_param {</span></span>
+<span class="line"><span>	    batch_size: 10</span></span>
+<span class="line"><span>	    source: "examples/hdf5_classification/data/train.txt"</span></span>
+<span class="line"><span>	}</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>可以看到，type必须指定为HDF5Data。</p>
-<h4 id="1-4-数据来自于图片"><a href="#1-4-数据来自于图片" class="headerlink" title="1.4 数据来自于图片"></a>1.4 数据来自于图片</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"ImageData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">image_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/_temp/file_list.txt"</span></span><br><span class="line"><span class="symbol">	    new_height:</span> <span class="number">256</span></span><br><span class="line"><span class="symbol">    	new_width:</span> <span class="number">256</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="14-数据来自于图片">1.4 数据来自于图片</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>	name: "mnist"</span></span>
+<span class="line"><span>	type: "ImageData"</span></span>
+<span class="line"><span>	...</span></span>
+<span class="line"><span>	image_data_param {</span></span>
+<span class="line"><span>	    batch_size: 10</span></span>
+<span class="line"><span>	    source: "examples/_temp/file_list.txt"</span></span>
+<span class="line"><span>	    new_height: 256</span></span>
+<span class="line"><span>    	new_width: 256</span></span>
+<span class="line"><span>	}</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>可以看到，type必须指定为ImageData。此外，image_data_param有一些可选参数：</p>
 <ul>
 <li>rand_skip: 在开始的时候，路过某个数据的输入。通常对异步的SGD很有用。</li>
 <li>shuffle: 随机打乱顺序，默认值为false</li>
 <li>new_height,new_width: 如果设置，则将图片进行resize</li>
 </ul>
-<h4 id="1-5-数据来源于Windows"><a href="#1-5-数据来源于Windows" class="headerlink" title="1.5 数据来源于Windows"></a>1.5 数据来源于Windows</h4><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">	name:</span> <span class="string">"mnist"</span></span><br><span class="line"><span class="symbol">	type:</span> <span class="string">"WindowData"</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class">window_data_param </span>&#123;</span><br><span class="line"><span class="symbol">	    source:</span> <span class="string">"examples/finetune_pascal_detection/window_file_2007_trainval.txt"</span></span><br><span class="line"><span class="symbol">	    batch_size:</span> <span class="number">128</span></span><br><span class="line"><span class="symbol">	    fg_threshold:</span> <span class="number">0.5</span></span><br><span class="line"><span class="symbol">	    bg_threshold:</span> <span class="number">0.5</span></span><br><span class="line"><span class="symbol">	    fg_fraction:</span> <span class="number">0.25</span></span><br><span class="line"><span class="symbol">	    context_pad:</span> <span class="number">16</span></span><br><span class="line"><span class="symbol">	    crop_mode:</span> <span class="string">"warp"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="15-数据来源于windows">1.5 数据来源于Windows</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>	name: "mnist"</span></span>
+<span class="line"><span>	type: "WindowData"</span></span>
+<span class="line"><span>	...</span></span>
+<span class="line"><span>	window_data_param {</span></span>
+<span class="line"><span>	    source: "examples/finetune_pascal_detection/window_file_2007_trainval.txt"</span></span>
+<span class="line"><span>	    batch_size: 128</span></span>
+<span class="line"><span>	    fg_threshold: 0.5</span></span>
+<span class="line"><span>	    bg_threshold: 0.5</span></span>
+<span class="line"><span>	    fg_fraction: 0.25</span></span>
+<span class="line"><span>	    context_pad: 16</span></span>
+<span class="line"><span>	    crop_mode: "warp"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>可以看到，type必须指定为WindowData。</p>
-<h3 id="2、卷积层"><a href="#2、卷积层" class="headerlink" title="2、卷积层"></a>2、卷积层</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"conv1"</span></span><br><span class="line"><span class="symbol">  type:</span> CONVOLUTION</span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">1.</span></span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">2.</span></span><br><span class="line">  <span class="class">convolution_param </span>&#123;</span><br><span class="line"><span class="symbol">    num_output:</span> <span class="number">20</span></span><br><span class="line"><span class="symbol">    kernel_size:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">    stride:</span> <span class="number">1</span></span><br><span class="line">    <span class="class">weight_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"xavier"</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class">bias_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"constant"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"data"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"conv1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2卷积层">2、卷积层</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "conv1"</span></span>
+<span class="line"><span>  type: CONVOLUTION</span></span>
+<span class="line"><span>  blobs_lr: 1.</span></span>
+<span class="line"><span>  blobs_lr: 2.</span></span>
+<span class="line"><span>  convolution_param {</span></span>
+<span class="line"><span>    num_output: 20</span></span>
+<span class="line"><span>    kernel_size: 5</span></span>
+<span class="line"><span>    stride: 1</span></span>
+<span class="line"><span>    weight_filler {</span></span>
+<span class="line"><span>      type: "xavier"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    bias_filler {</span></span>
+<span class="line"><span>      type: "constant"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>  bottom: "data"</span></span>
+<span class="line"><span>  top: "conv1"</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>这里的type就是CONVOLUTION了。</p>
 <ul>
 <li>blobs_lr: 1. 就是指定weight的学习率的倍数，这里就是1.0了</li>
 <li>blobs_lr: 2. 就是指定bias学习率的倍数。</li>
-<li>convolution_param的参数含义如下：<ul>
+<li>convolution_param的参数含义如下：
+<ul>
 <li>num_output指定输出数据个数</li>
 <li>kernelsize是指定卷积模板的大小，也就卷积核的矩阵大小。</li>
 <li>stride就是指定卷积的步长，默认为1。也可以用stride_h和stride_w来设置。</li>
@@ -162,10 +158,26 @@
 </li>
 <li>bottom就是指定这一层的输入数据，显然就是数据层传来的那个data，top就是输出数据。</li>
 </ul>
-<p>在卷积层中：<br>输入：n*c0*w0*h0<br>输出：n*c1*w1*h1<br>其中，c1就是参数中的num_output，即生成的特征图个数<br>$$w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;$$</p>
-<p>$$h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>在卷积层中：
+输入：n*c0*w0*h0
+输出：n*c1*w1*h1
+其中，c1就是参数中的num_output，即生成的特征图个数
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mn>1</mn><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>w</mi><mn>0</mn><mo>+</mo><mn>2</mn><mo>∗</mo><mi>p</mi><mi>a</mi><mi>d</mi><mo>−</mo><mi>k</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>e</mi><mi>l</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></mfrac><mo>+</mo><mn>1</mn><mo separator="true">;</mo></mrow><annotation encoding="application/x-tex">w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord mathnormal" style="margin-right:0.0269em;">w</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.355em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">r</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">e</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.0269em;">w</span><span class="mord mtight">0</span><span class="mbin mtight">+</span><span class="mord mtight">2</span><span class="mbin mtight">∗</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">d</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.0315em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">er</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.0197em;">l</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">;</span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mn>1</mn><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>h</mi><mn>0</mn><mo>+</mo><mn>2</mn><mo>∗</mo><mi>p</mi><mi>a</mi><mi>d</mi><mo>−</mo><mi>k</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>e</mi><mi>l</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></mfrac><mo>+</mo><mn>1</mn><mo separator="true">;</mo></mrow><annotation encoding="application/x-tex">h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.355em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">r</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">e</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">h</span><span class="mord mtight">0</span><span class="mbin mtight">+</span><span class="mord mtight">2</span><span class="mbin mtight">∗</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">d</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.0315em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">er</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.0197em;">l</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">;</span></span></span></span></p>
 <p>如果设置stride为1，前后两次卷积部分存在重叠。如果设置pad=(kernel_size-1)/2,则运算后，宽度和高度不变。</p>
-<h3 id="3、pooling层"><a href="#3、pooling层" class="headerlink" title="3、pooling层"></a>3、pooling层</h3><p>也叫池化层，为了减少运算量和数据维度而设置的一种层。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"pool1"</span></span><br><span class="line"><span class="symbol">  type:</span> POOLING</span><br><span class="line">  <span class="class">pooling_param </span>&#123;</span><br><span class="line"><span class="symbol">    kernel_size:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    stride:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    pool:</span> MAX</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"conv1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"pool1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3pooling层">3、pooling层</h3>
+<p>也叫池化层，为了减少运算量和数据维度而设置的一种层。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "pool1"</span></span>
+<span class="line"><span>  type: POOLING</span></span>
+<span class="line"><span>  pooling_param {</span></span>
+<span class="line"><span>    kernel_size: 2</span></span>
+<span class="line"><span>    stride: 2</span></span>
+<span class="line"><span>    pool: MAX</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>  bottom: "conv1"</span></span>
+<span class="line"><span>  top: "pool1"</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>必须设置的参数：</p>
 <ul>
 <li>kernel_size: 池化的核大小。也可以用kernel_h和kernel_w分别设定。</li>
@@ -177,10 +189,26 @@
 <li>stride: 池化的步长，默认为1。一般我们设置为2，即不重叠。也可以用stride_h和stride_w来设置。</li>
 </ul>
 <p>pooling_param就是设置这个pooling层的参数，pool的方式就是max pooling。值得一提的是这里的kernel_size和stride的设置，这里恰好就相等，所以所有的pooling都不会出现重叠，一般来说，kernel_size的尺寸不小于stride的。</p>
-<p>pooling层的运算方法基本是和卷积层是一样的。<br>输入：n*c*w0*h0<br>输出：n*c*w1*h1<br>和卷积层的区别就是其中的c保持不变<br>$$w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;$$</p>
-<p>$$h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;$$</p>
+<p>pooling层的运算方法基本是和卷积层是一样的。
+输入：n*c*w0*h0
+输出：n*c*w1*h1
+和卷积层的区别就是其中的c保持不变
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mn>1</mn><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>w</mi><mn>0</mn><mo>+</mo><mn>2</mn><mo>∗</mo><mi>p</mi><mi>a</mi><mi>d</mi><mo>−</mo><mi>k</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>e</mi><mi>l</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></mfrac><mo>+</mo><mn>1</mn><mo separator="true">;</mo></mrow><annotation encoding="application/x-tex">w1=\frac{(w0+2*pad-kernelsize)}{stride}+1;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord mathnormal" style="margin-right:0.0269em;">w</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.355em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">r</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">e</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.0269em;">w</span><span class="mord mtight">0</span><span class="mbin mtight">+</span><span class="mord mtight">2</span><span class="mbin mtight">∗</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">d</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.0315em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">er</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.0197em;">l</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">;</span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mn>1</mn><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>h</mi><mn>0</mn><mo>+</mo><mn>2</mn><mo>∗</mo><mi>p</mi><mi>a</mi><mi>d</mi><mo>−</mo><mi>k</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>e</mi><mi>l</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></mfrac><mo>+</mo><mn>1</mn><mo separator="true">;</mo></mrow><annotation encoding="application/x-tex">h1=\frac{(h0+2*pad-kernelsize)}{stride}+1;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.355em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">r</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">e</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">h</span><span class="mord mtight">0</span><span class="mbin mtight">+</span><span class="mord mtight">2</span><span class="mbin mtight">∗</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">d</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.0315em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">er</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.0197em;">l</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">;</span></span></span></span></p>
 <p>如果设置stride为2，前后两次卷积部分不重叠。100*100的特征图池化后，变成50*50.</p>
-<h3 id="4、Local-Response-Normalization-LRN-层"><a href="#4、Local-Response-Normalization-LRN-层" class="headerlink" title="4、Local Response Normalization (LRN)层"></a>4、Local Response Normalization (LRN)层</h3><p>此层是对一个输入的局部区域进行归一化，达到“侧抑制”的效果。可去搜索AlexNet或GoogLenet，里面就用到了这个功能。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"norm1"</span></span><br><span class="line"><span class="symbol">  type:</span> LRN</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"pool1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"norm1"</span></span><br><span class="line">  <span class="class">lrn_param </span>&#123;</span><br><span class="line"><span class="symbol">    local_size:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">    alpha:</span> <span class="number">0.0001</span></span><br><span class="line"><span class="symbol">    beta:</span> <span class="number">0.75</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="4local-response-normalization-lrn层">4、Local Response Normalization (LRN)层</h3>
+<p>此层是对一个输入的局部区域进行归一化，达到“侧抑制”的效果。可去搜索AlexNet或GoogLenet，里面就用到了这个功能。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "norm1"</span></span>
+<span class="line"><span>  type: LRN</span></span>
+<span class="line"><span>  bottom: "pool1"</span></span>
+<span class="line"><span>  top: "norm1"</span></span>
+<span class="line"><span>  lrn_param {</span></span>
+<span class="line"><span>    local_size: 5</span></span>
+<span class="line"><span>    alpha: 0.0001</span></span>
+<span class="line"><span>    beta: 0.75</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>参数：全部为可选，没有必须</p>
 <ul>
 <li>local_size: 默认为5。如果是跨通道LRN，则表示求和的通道数；如果是在通道内LRN，则表示求和的正方形区域长度。</li>
@@ -188,178 +216,188 @@
 <li>beta: 默认为5，归一化公式中的参数。</li>
 <li>norm_region: 默认为ACROSS_CHANNELS。有两个选择，ACROSS_CHANNELS表示在相邻的通道间求和归一化。WITHIN_CHANNEL表示在一个通道内部特定的区域内进行求和归一化。与前面的local_size参数对应。</li>
 </ul>
-<p>归一化公式：对于每一个输入, 去除以$(1+(\frac{\alpha}{n})\sum_{i}{x_i}^2 )^{\beta}$得到归一化后的输出</p>
-<h3 id="5、im2col层"><a href="#5、im2col层" class="headerlink" title="5、im2col层"></a>5、im2col层</h3><p>im2col先将一个大矩阵，重叠地划分为多个子矩阵，对每个子矩阵序列化成向量，最后得到另外一个矩阵。<br>如下图所示：<br><img src="https://i.imgur.com/30XJEsL.png" alt></p>
-<p>在caffe中，卷积运算就是先对数据进行im2col操作，再进行内积运算（inner product)。这样做，比原始的卷积操作速度更快。<br>对比一下两种卷积操作的异同：<br><img src="https://i.imgur.com/lirD0lH.png" alt></p>
-<h3 id="6、激活层（Activiation-Layers-及参数"><a href="#6、激活层（Activiation-Layers-及参数" class="headerlink" title="6、激活层（Activiation Layers)及参数"></a>6、激活层（Activiation Layers)及参数</h3><p>在激活层中，对输入数据进行激活操作（实际上就是一种函数变换），是逐元素进行运算的。从bottom得到一个blob数据输入，运算后，从top输入一个blob数据。在运算过程中，没有改变数据的大小，即输入和输出的数据大小是相等的。<br>输入：n*c*h*w<br>输出：n*c*h*w</p>
+<p>归一化公式：对于每一个输入, 去除以<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mfrac><mi>α</mi><mi>n</mi></mfrac><mo stretchy="false">)</mo><msub><mo>∑</mo><mi>i</mi></msub><msup><msub><mi>x</mi><mi>i</mi></msub><mn>2</mn></msup><msup><mo stretchy="false">)</mo><mi>β</mi></msup></mrow><annotation encoding="application/x-tex">(1+(\frac{\alpha}{n})\sum_{i}{x_i}^2 )^{\beta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1941em;vertical-align:-0.345em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6954em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0528em;">β</span></span></span></span></span></span></span></span></span></span></span></span>得到归一化后的输出</p>
+<h3 id="5im2col层">5、im2col层</h3>
+<p>im2col先将一个大矩阵，重叠地划分为多个子矩阵，对每个子矩阵序列化成向量，最后得到另外一个矩阵。
+如下图所示：
+<img src="https://i.imgur.com/30XJEsL.png" alt=""></p>
+<p>在caffe中，卷积运算就是先对数据进行im2col操作，再进行内积运算（inner product)。这样做，比原始的卷积操作速度更快。
+对比一下两种卷积操作的异同：
+<img src="https://i.imgur.com/lirD0lH.png" alt=""></p>
+<h3 id="6激活层activiation-layers及参数">6、激活层（Activiation Layers)及参数</h3>
+<p>在激活层中，对输入数据进行激活操作（实际上就是一种函数变换），是逐元素进行运算的。从bottom得到一个blob数据输入，运算后，从top输入一个blob数据。在运算过程中，没有改变数据的大小，即输入和输出的数据大小是相等的。
+输入：n*c*h*w
+输出：n*c*h*w</p>
 <p>常用的激活函数有sigmoid, tanh,relu等，下面分别介绍。</p>
-<h4 id="6-1-Sigmoid层"><a href="#6-1-Sigmoid层" class="headerlink" title="6.1 Sigmoid层"></a>6.1 Sigmoid层</h4><p>对每个输入数据，利用sigmoid函数执行操作。这种层设置比较简单，没有额外的参数。<br>$$s(x)=\frac{1}{1+e^{-x}}$$<br>示例：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"sigmode"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"encode1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"encode1neuron"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Sigmoid"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="6-2-ReLU层"><a href="#6-2-ReLU层" class="headerlink" title="6.2 ReLU层"></a>6.2 ReLU层</h4><p>ReLU是目前使用最多的激活函数，主要因为其收敛更快，并且能保持同样效果。<br>标准的ReLU函数为max(x, 0)，当x&gt;0时，输出x; 当x&lt;=0时，输出0<br>$$f(x)=max(x,0)$$</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"relu1"</span></span><br><span class="line"><span class="symbol">  type:</span> RELU</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"ip1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里有趣的地方在于输入和输出是同一个，官网上说只是因为这个ReLU操作可以原地操作（in place），能够节省内存。ReLU是一个替换sigmoid units的一个函数，全称是Rectified Linear Unit，是一个激活函数。<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks" target="_blank" rel="noopener">wiki</a>)和<a href="https://www.douban.com/note/348196265/" target="_blank" rel="noopener">豆瓣</a>有些资料，可以自己看看。</p>
-<h4 id="6-3-TanH-Hyperbolic-Tangent"><a href="#6-3-TanH-Hyperbolic-Tangent" class="headerlink" title="6.3 TanH/Hyperbolic Tangent"></a>6.3 TanH/Hyperbolic Tangent</h4><p>利用双曲正切函数对数据进行变换。<br>$$tanh x = \frac{\sinh x}{\cosh x} = \frac{e^x  - e^{ - x}}{e^x  + e^{ - x}}$$</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"TanH"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="6-4-Absolute-Value"><a href="#6-4-Absolute-Value" class="headerlink" title="6.4 Absolute Value"></a>6.4 Absolute Value</h4><p>求每个输入数据的绝对值。<br>$$f(x)=abs(x)$$</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"AbsVal"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="6-5-Power"><a href="#6-5-Power" class="headerlink" title="6.5 Power"></a>6.5 Power</h4><p>对每个输入数据进行幂运算<br>$$f(x)= (shift + scale * x) ^ {power}$$</p>
+<h4 id="61-sigmoid层">6.1 Sigmoid层</h4>
+<p>对每个输入数据，利用sigmoid函数执行操作。这种层设置比较简单，没有额外的参数。
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">s(x)=\frac{1}{1+e^{-x}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">s</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2484em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7027em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>
+示例：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "sigmode"</span></span>
+<span class="line"><span>  bottom: "encode1"</span></span>
+<span class="line"><span>  top: "encode1neuron"</span></span>
+<span class="line"><span>  type: "Sigmoid"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h4 id="62-relu层">6.2 ReLU层</h4>
+<p>ReLU是目前使用最多的激活函数，主要因为其收敛更快，并且能保持同样效果。
+标准的ReLU函数为max(x, 0)，当x>0时，输出x; 当x&#x3C;=0时，输出0
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)=max(x,0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ma</span><span class="mord mathnormal">x</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0</span><span class="mclose">)</span></span></span></span></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "relu1"</span></span>
+<span class="line"><span>  type: RELU</span></span>
+<span class="line"><span>  bottom: "ip1"</span></span>
+<span class="line"><span>  top: "ip1"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>这里有趣的地方在于输入和输出是同一个，官网上说只是因为这个ReLU操作可以原地操作（in place），能够节省内存。ReLU是一个替换sigmoid units的一个函数，全称是Rectified Linear Unit，是一个激活函数。<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">wiki</a>和<a href="https://www.douban.com/note/348196265/">豆瓣</a>有些资料，可以自己看看。</p>
+<h4 id="63-tanhhyperbolic-tangent">6.3 TanH/Hyperbolic Tangent</h4>
+<p>利用双曲正切函数对数据进行变换。
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>a</mi><mi>n</mi><mi>h</mi><mi>x</mi><mo>=</mo><mfrac><mrow><mi>sinh</mi><mo>⁡</mo><mi>x</mi></mrow><mrow><mi>cosh</mi><mo>⁡</mo><mi>x</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><msup><mi>e</mi><mi>x</mi></msup><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow><mrow><msup><mi>e</mi><mi>x</mi></msup><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">tanh x = \frac{\sinh x}{\cosh x} = \frac{e^x  - e^{ - x}}{e^x  + e^{ - x}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">anh</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2251em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">c</span><span class="mtight">o</span><span class="mtight">s</span><span class="mtight">h</span></span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mathnormal mtight">x</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">s</span><span class="mtight">i</span><span class="mtight">n</span><span class="mtight">h</span></span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3907em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9874em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5935em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7027em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7385em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8477em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "layer"</span></span>
+<span class="line"><span>  bottom: "in"</span></span>
+<span class="line"><span>  top: "out"</span></span>
+<span class="line"><span>  type: "TanH"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h4 id="64-absolute-value">6.4 Absolute Value</h4>
+<p>求每个输入数据的绝对值。
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>a</mi><mi>b</mi><mi>s</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)=abs(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ab</span><span class="mord mathnormal">s</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "layer"</span></span>
+<span class="line"><span>  bottom: "in"</span></span>
+<span class="line"><span>  top: "out"</span></span>
+<span class="line"><span>  type: "AbsVal"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h4 id="65-power">6.5 Power</h4>
+<p>对每个输入数据进行幂运算
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mi>s</mi><mi>h</mi><mi>i</mi><mi>f</mi><mi>t</mi><mo>+</mo><mi>s</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>e</mi><mo>∗</mo><mi>x</mi><msup><mo stretchy="false">)</mo><mrow><mi>p</mi><mi>o</mi><mi>w</mi><mi>e</mi><mi>r</mi></mrow></msup></mrow><annotation encoding="application/x-tex">f(x)= (shift + scale * x) ^ {power}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mord mathnormal">hi</span><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">sc</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.0269em;">w</span><span class="mord mathnormal mtight" style="margin-right:0.0278em;">er</span></span></span></span></span></span></span></span></span></span></span></span></p>
 <p>可选参数：</p>
 <ul>
 <li>power: 默认为1</li>
 <li>scale: 默认为1</li>
 <li>shift: 默认为0</li>
 </ul>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Power"</span></span><br><span class="line">  <span class="class">power_param </span>&#123;</span><br><span class="line"><span class="symbol">    power:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">    scale:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">    shift:</span> <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="6-6-BNLL"><a href="#6-6-BNLL" class="headerlink" title="6.6 BNLL"></a>6.6 BNLL</h4><p>binomial normal log likelihood的简称<br>$$f(x)=log(1 + e ^ x)$$</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"layer"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"in"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"out"</span></span><br><span class="line"><span class="symbol">  type:</span> “BNLL”</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="7、完全连接层"><a href="#7、完全连接层" class="headerlink" title="7、完全连接层"></a>7、完全连接层</h3><p>全连接层，把输入当作成一个向量，输出也是一个简单向量（把输入数据blobs的width和height全变为1）。<br>输入： n*c0*h*w<br>输出： n*c1*1*1<br>全连接层实际上也是一种卷积层，只是它的卷积核大小和原数据大小一致。因此它的参数基本和卷积层的参数一样。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layers </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"ip2"</span></span><br><span class="line"><span class="symbol">  type:</span> INNER_PRODUCT</span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">1.</span></span><br><span class="line"><span class="symbol">  blobs_lr:</span> <span class="number">2.</span></span><br><span class="line">  <span class="class">inner_product_param </span>&#123;</span><br><span class="line"><span class="symbol">    num_output:</span> <span class="number">10</span></span><br><span class="line">    <span class="class">weight_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"xavier"</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class">bias_filler </span>&#123;</span><br><span class="line"><span class="symbol">      type:</span> <span class="string">"constant"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"ip2"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="8、Loss层"><a href="#8、Loss层" class="headerlink" title="8、Loss层"></a>8、Loss层</h3><p>softmax-loss层和softmax层计算大致是相同的。softmax是一个分类器，计算的是类别的概率（Likelihood），是逻辑回归（Logistic Regression） 的一种推广。逻辑回归只能用于二分类，而softmax可以用于多分类。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "layer"</span></span>
+<span class="line"><span>  bottom: "in"</span></span>
+<span class="line"><span>  top: "out"</span></span>
+<span class="line"><span>  type: "Power"</span></span>
+<span class="line"><span>  power_param {</span></span>
+<span class="line"><span>    power: 2</span></span>
+<span class="line"><span>    scale: 1</span></span>
+<span class="line"><span>    shift: 0</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h4 id="66-bnll">6.6 BNLL</h4>
+<p>binomial normal log likelihood的简称
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><msup><mi>e</mi><mi>x</mi></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)=log(1 + e ^ x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "layer"</span></span>
+<span class="line"><span>  bottom: "in"</span></span>
+<span class="line"><span>  top: "out"</span></span>
+<span class="line"><span>  type: “BNLL”</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="7完全连接层">7、完全连接层</h3>
+<p>全连接层，把输入当作成一个向量，输出也是一个简单向量（把输入数据blobs的width和height全变为1）。
+输入： n*c0*h*w
+输出： n*c1*1*1
+全连接层实际上也是一种卷积层，只是它的卷积核大小和原数据大小一致。因此它的参数基本和卷积层的参数一样。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  name: "ip2"</span></span>
+<span class="line"><span>  type: INNER_PRODUCT</span></span>
+<span class="line"><span>  blobs_lr: 1.</span></span>
+<span class="line"><span>  blobs_lr: 2.</span></span>
+<span class="line"><span>  inner_product_param {</span></span>
+<span class="line"><span>    num_output: 10</span></span>
+<span class="line"><span>    weight_filler {</span></span>
+<span class="line"><span>      type: "xavier"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    bias_filler {</span></span>
+<span class="line"><span>      type: "constant"</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>  bottom: "ip1"</span></span>
+<span class="line"><span>  top: "ip2"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="8loss层">8、Loss层</h3>
+<p>softmax-loss层和softmax层计算大致是相同的。softmax是一个分类器，计算的是类别的概率（Likelihood），是逻辑回归（Logistic Regression） 的一种推广。逻辑回归只能用于二分类，而softmax可以用于多分类。</p>
 <p><em>softmax与softmax-loss的区别：</em></p>
 <p>softmax计算公式：</p>
-<p>$$\sigma_{i}(z)=\frac{exp(z_{i})}{\sum_{j=1}^{m}{exp(z_j)}}, i=1,…m$$</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mi mathvariant="normal">_</mi><mi>i</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>z</mi><mi mathvariant="normal">_</mi><mi>i</mi><mo stretchy="false">)</mo></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></msubsup><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>z</mi><mi mathvariant="normal">_</mi><mi>j</mi><mo stretchy="false">)</mo></mrow></mrow></mfrac><mo separator="true">,</mo><mi>i</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">\sigma\_{i}(z)=\frac{exp(z\_{i})}{\sum_{j=1}^{m}{exp(z\_j)}}, i=1,...m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.0359em;">σ</span><span class="mord" style="margin-right:0.0278em;">_</span><span class="mord"><span class="mord mathnormal">i</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.044em;">z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.7192em;vertical-align:-0.6672em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.052em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mop op-symbol small-op mtight" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7047em;"><span style="top:-2.1786em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-2.8971em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4603em;"><span></span></span></span></span></span></span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">x</span><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mtight" style="margin-right:0.0278em;">_</span><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mclose mtight">)</span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.527em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">x</span><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mtight" style="margin-right:0.0278em;">_</span><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.6672em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mord mathnormal">m</span></span></span></span></p>
 <p>而softmax-loss计算公式：</p>
-<p>$$L(y,z)=-log(\frac{exp(z_y)}{\sum_{j=1}^{m}exp(z_j)})=log({\sum_{j=1}^{m}exp(z_j)})-z_y$$</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>y</mi><mo separator="true">,</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mfrac><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>z</mi><mi mathvariant="normal">_</mi><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></msubsup><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>z</mi><mi mathvariant="normal">_</mi><mi>j</mi><mo stretchy="false">)</mo></mrow></mfrac><mo stretchy="false">)</mo><mo>=</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mrow><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></msubsup><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>z</mi><mi mathvariant="normal">_</mi><mi>j</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo><mo>−</mo><msub><mi>z</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">L(y,z)=-log(\frac{exp(z\_y)}{\sum_{j=1}^{m}exp(z\_j)})=log({\sum_{j=1}^{m}exp(z\_j)})-z_y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.0359em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.044em;">z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.7192em;vertical-align:-0.6672em;"></span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.052em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mop op-symbol small-op mtight" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7047em;"><span style="top:-2.1786em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-2.8971em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4603em;"><span></span></span></span></span></span></span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">x</span><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mtight" style="margin-right:0.0278em;">_</span><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.527em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">x</span><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.044em;">z</span><span class="mord mtight" style="margin-right:0.0278em;">_</span><span class="mord mathnormal mtight" style="margin-right:0.0359em;">y</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.6672em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2401em;vertical-align:-0.4358em;"></span><span class="mord mathnormal" style="margin-right:0.0197em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="mopen">(</span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4358em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal">x</span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.044em;">z</span><span class="mord" style="margin-right:0.0278em;">_</span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">)</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7167em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.044em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0359em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></p>
 <p>用户可能最终目的就是得到各个类别的概率似然值，这个时候就只需要一个Softmax层，而不一定要进行softmax-Loss 操作；或者是用户有通过其他什么方式已经得到了某种概率似然值，然后要做最大似然估计，此时则只需要后面的softmax-Loss而不需要前面的Softmax 操作。因此提供两个不同的Layer结构比只提供一个合在一起的Softmax-Loss Layer要灵活许多。</p>
 <p>不管是softmax层还是softmax-loss层,都是没有参数的，只是层类型不同而已。</p>
-<p>softmax-loss层：输出loss值<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"loss"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"SoftmaxWithLoss"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip1"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"label"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"loss"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>softmax-loss层：输出loss值</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "loss"</span></span>
+<span class="line"><span>  type: "SoftmaxWithLoss"</span></span>
+<span class="line"><span>  bottom: "ip1"</span></span>
+<span class="line"><span>  bottom: "label"</span></span>
+<span class="line"><span>  top: "loss"</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>到这里也解开了我们心头的一个疑惑哈，为什么第一层的top有两个，哈哈，label是传递到这儿来的。</p>
-<p>softmax层: 输出似然值<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">layers</span> &#123;</span><br><span class="line">  <span class="attribute">bottom</span>: <span class="string">"cls3_fc"</span></span><br><span class="line">  <span class="attribute">top</span>: <span class="string">"prob"</span></span><br><span class="line">  <span class="attribute">name</span>: <span class="string">"prob"</span></span><br><span class="line">  <span class="attribute">type</span>: “Softmax"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="9、accuracy层"><a href="#9、accuracy层" class="headerlink" title="9、accuracy层"></a>9、accuracy层</h3><p>输出分类（预测）精确度，只有test阶段才有，因此需要加入include参数。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"accuracy"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Accuracy"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"ip2"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"label"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"accuracy"</span></span><br><span class="line">  <span class="class">include </span>&#123;</span><br><span class="line"><span class="symbol">    phase:</span> TEST</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="10、reshape层"><a href="#10、reshape层" class="headerlink" title="10、reshape层"></a>10、reshape层</h3><p>在不改变数据的情况下，改变输入的维度。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">   name:</span> <span class="string">"reshape"</span></span><br><span class="line"><span class="symbol">   type:</span> <span class="string">"Reshape"</span></span><br><span class="line"><span class="symbol">   bottom:</span> <span class="string">"input"</span></span><br><span class="line"><span class="symbol">   top:</span> <span class="string">"output"</span></span><br><span class="line">   <span class="class">reshape_param </span>&#123;</span><br><span class="line">     <span class="class">shape </span>&#123;</span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">0</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">3</span></span><br><span class="line"><span class="symbol">       dim:</span> <span class="number">-1</span></span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>softmax层: 输出似然值</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layers {</span></span>
+<span class="line"><span>  bottom: "cls3_fc"</span></span>
+<span class="line"><span>  top: "prob"</span></span>
+<span class="line"><span>  name: "prob"</span></span>
+<span class="line"><span>  type: “Softmax"</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="9accuracy层">9、accuracy层</h3>
+<p>输出分类（预测）精确度，只有test阶段才有，因此需要加入include参数。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "accuracy"</span></span>
+<span class="line"><span>  type: "Accuracy"</span></span>
+<span class="line"><span>  bottom: "ip2"</span></span>
+<span class="line"><span>  bottom: "label"</span></span>
+<span class="line"><span>  top: "accuracy"</span></span>
+<span class="line"><span>  include {</span></span>
+<span class="line"><span>    phase: TEST</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="10reshape层">10、reshape层</h3>
+<p>在不改变数据的情况下，改变输入的维度。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> layer {</span></span>
+<span class="line"><span>    name: "reshape"</span></span>
+<span class="line"><span>    type: "Reshape"</span></span>
+<span class="line"><span>    bottom: "input"</span></span>
+<span class="line"><span>    top: "output"</span></span>
+<span class="line"><span>    reshape_param {</span></span>
+<span class="line"><span>      shape {</span></span>
+<span class="line"><span>        dim: 0</span></span>
+<span class="line"><span>        dim: 2</span></span>
+<span class="line"><span>        dim: 3</span></span>
+<span class="line"><span>        dim: -1</span></span>
+<span class="line"><span>      }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>  }</span></span></code></pre>
 <p>有一个可选的参数组shape, 用于指定blob数据的各维的值（blob是一个四维的数据：n*c*w*h）。</p>
 <ul>
 <li>dim:0  表示维度不变，即输入和输出是相同的维度。</li>
 <li>dim:2 或 dim:3 将原来的维度变成2或3</li>
 <li>dim:-1 表示由系统自动计算维度。数据的总量不变，系统会根据blob数据的其它三维来自动计算当前维的维度值 。</li>
 </ul>
-<p>假设原数据为：64*3*28*28，表示64张3通道的28*28的彩色图片<br>经过reshape变换：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">reshape_param </span>&#123;</span><br><span class="line">   <span class="class">shape </span>&#123;</span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">0</span> </span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">0</span></span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">14</span></span><br><span class="line"><span class="symbol">     dim:</span> <span class="number">-1</span></span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>假设原数据为：64*3*28*28，表示64张3通道的28*28的彩色图片
+经过reshape变换：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>   reshape_param {</span></span>
+<span class="line"><span>      shape {</span></span>
+<span class="line"><span>        dim: 0 </span></span>
+<span class="line"><span>        dim: 0</span></span>
+<span class="line"><span>        dim: 14</span></span>
+<span class="line"><span>        dim: -1</span></span>
+<span class="line"><span>      }</span></span>
+<span class="line"><span>    }</span></span></code></pre>
 <p>输出数据为：64*3*14*56</p>
-<h3 id="11、Dropout层"><a href="#11、Dropout层" class="headerlink" title="11、Dropout层"></a>11、Dropout层</h3><p>Dropout是一个防止过拟合的手段。可以随机让网络某些隐含层节点的权重不工作。<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">layer </span>&#123;</span><br><span class="line"><span class="symbol">  name:</span> <span class="string">"drop7"</span></span><br><span class="line"><span class="symbol">  type:</span> <span class="string">"Dropout"</span></span><br><span class="line"><span class="symbol">  bottom:</span> <span class="string">"fc7-conv"</span></span><br><span class="line"><span class="symbol">  top:</span> <span class="string">"fc7-conv"</span></span><br><span class="line">  <span class="class">dropout_param </span>&#123;</span><br><span class="line"><span class="symbol">    dropout_ratio:</span> <span class="number">0.5</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>只需要设置一个dropout_ratio就可以了。</p>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-<!--
-<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
-<div>
-<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
-</div>
--->
-</div>
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
-  <a href="/about">aaronshan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、数据层"><span class="toc-number">1.</span> <span class="toc-text">1、数据层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-数据来自于数据库-如LevelDB和LMDB"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 数据来自于数据库(如LevelDB和LMDB)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-数据来自于内存"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 数据来自于内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-数据来自于HDF5"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 数据来自于HDF5</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-数据来自于图片"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 数据来自于图片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-数据来源于Windows"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 数据来源于Windows</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、卷积层"><span class="toc-number">2.</span> <span class="toc-text">2、卷积层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、pooling层"><span class="toc-number">3.</span> <span class="toc-text">3、pooling层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、Local-Response-Normalization-LRN-层"><span class="toc-number">4.</span> <span class="toc-text">4、Local Response Normalization (LRN)层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、im2col层"><span class="toc-number">5.</span> <span class="toc-text">5、im2col层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、激活层（Activiation-Layers-及参数"><span class="toc-number">6.</span> <span class="toc-text">6、激活层（Activiation Layers)及参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-Sigmoid层"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 Sigmoid层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-ReLU层"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 ReLU层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-TanH-Hyperbolic-Tangent"><span class="toc-number">6.3.</span> <span class="toc-text">6.3 TanH/Hyperbolic Tangent</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-Absolute-Value"><span class="toc-number">6.4.</span> <span class="toc-text">6.4 Absolute Value</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-5-Power"><span class="toc-number">6.5.</span> <span class="toc-text">6.5 Power</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-6-BNLL"><span class="toc-number">6.6.</span> <span class="toc-text">6.6 BNLL</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7、完全连接层"><span class="toc-number">7.</span> <span class="toc-text">7、完全连接层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8、Loss层"><span class="toc-number">8.</span> <span class="toc-text">8、Loss层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9、accuracy层"><span class="toc-number">9.</span> <span class="toc-text">9、accuracy层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10、reshape层"><span class="toc-number">10.</span> <span class="toc-text">10、reshape层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11、Dropout层"><span class="toc-number">11.</span> <span class="toc-text">11、Dropout层</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/caffe/">caffe</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/10/26/shell-special-variable/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          shell特殊变量
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/10/25/mac-install-caffe/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">mac安装caffe&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 aaronshan&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
-</html>
+<h3 id="11dropout层">11、Dropout层</h3>
+<p>Dropout是一个防止过拟合的手段。可以随机让网络某些隐含层节点的权重不工作。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer {</span></span>
+<span class="line"><span>  name: "drop7"</span></span>
+<span class="line"><span>  type: "Dropout"</span></span>
+<span class="line"><span>  bottom: "fc7-conv"</span></span>
+<span class="line"><span>  top: "fc7-conv"</span></span>
+<span class="line"><span>  dropout_param {</span></span>
+<span class="line"><span>    dropout_ratio: 0.5</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>只需要设置一个dropout_ratio就可以了。</p></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/caffe/">caffe</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2016/10/26/shell-special-variable/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">shell特殊变量</span></a><a class="article-nav__item article-nav__item--next" href="/2016/10/25/mac-install-caffe/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">mac安装caffe</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#1数据层">1、数据层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#2卷积层">2、卷积层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#3pooling层">3、pooling层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#4local-response-normalization-lrn层">4、Local Response Normalization (LRN)层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#5im2col层">5、im2col层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#6激活层activiation-layers及参数">6、激活层（Activiation Layers)及参数</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#7完全连接层">7、完全连接层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#8loss层">8、Loss层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#9accuracy层">9、accuracy层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#10reshape层">10、reshape层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#11dropout层">11、Dropout层</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2016/10/25/mac-install-caffe/">mac安装caffe</a></h3><p class="post-card__desc">1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cuda</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-10-25</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2016/10/12/csdn-52795596/">centos 6.5安装caffe(cpu模式)</a></h3><p class="post-card__desc">本文提供了一份详细的Caffe安装教程，包括显卡鉴定、依赖库安装、CUDA与Boost配置、OpenCV与protobu</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-10-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2017/04/19/aprf1/">机器学习评价标准</a></h3><p class="post-card__desc">机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2017-04-19</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

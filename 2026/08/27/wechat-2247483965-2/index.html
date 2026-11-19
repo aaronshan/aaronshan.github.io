@@ -1,0 +1,1269 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎 | 中龄程序猿</title><meta name="description" content="本文按「一次推理的生命周期」走读 nano-vLLM 的当前源码。阅读门槛：会读 Python 即可。"><link rel="canonical" href="https://www.shanruifeng.win/2026/08/27/wechat-2247483965-2/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎 | 中龄程序猿"><meta property="og:description" content="本文按「一次推理的生命周期」走读 nano-vLLM 的当前源码。阅读门槛：会读 Python 即可。"><meta property="og:url" content="https://www.shanruifeng.win/2026/08/27/wechat-2247483965-2/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483965-2/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎 | 中龄程序猿"><meta name="twitter:description" content="本文按「一次推理的生命周期」走读 nano-vLLM 的当前源码。阅读门槛：会读 Python 即可。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483965-2/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎","description":"本文按「一次推理的生命周期」走读 nano-vLLM 的当前源码。阅读门槛：会读 Python 即可。","datePublished":"2026-08-27T12:16:10.000Z","dateModified":"2026-08-27T12:16:10.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/08/27/wechat-2247483965-2/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483965-2/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎</h1><p class="article-desc">本文按「一次推理的生命周期」走读 nano-vLLM 的当前源码。阅读门槛：会读 Python 即可。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-08-27T12:16:10.000Z">2026-08-27</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>50 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483965-2/cover.jpg" alt="nano-vLLM 源码解读：1200 行 Python 实现一个 LLM 推理引擎"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="零先修课只用-python-也够用的背景包">零、先修课：只用 Python 也够用的背景包</h2>
+<p>本章把正文用到的背景知识压缩到「会 Python 就能懂」的颗粒度。每一节都不追求严格，只追求够正文使用。</p>
+<h3 id="01-大模型推理在算什么">0.1 大模型推理在算什么</h3>
+<p><strong>token 与 tokenizer</strong>。模型不读文字，只读整数。tokenizer 把文本切成一个个 token 并查表换成 id：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"Write a travel plan"  --tokenizer-->  [1, 2, 3, 4]   # 示意值</span></span></code></pre>
+<p>词表（vocab）就是「id ↔ 文本片段」的对照表，Qwen3 的词表约 15 万个条目。</p>
+<p><strong>一步推理</strong>。模型拿到一串 id，对词表里<strong>每个词</strong>算一个分数（logits），然后按分数挑一个作为下一个 token：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>logits = model(input_ids)        # 长度 = 词表大小的一列分数，比如 15 万个浮点数</span></span>
+<span class="line"><span>next_id = sample(logits)         # 按分数挑下一个词的 id</span></span></code></pre>
+<p><code>softmax</code> 把这列分数变成和为 1 的概率分布；<code>temperature</code>（温度）调节分布的平与尖——温度高，低分词也有机会被选中，输出更随机；温度低，几乎总选最高分，输出更确定。「采样」就是按这个概率分布抽一个 id。</p>
+<p><strong>生成 = 循环</strong>。每次只产一个 token，把它拼回输入再算下一个——这叫「自回归」：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ids = tokenize(prompt)</span></span>
+<span class="line"><span>while not finished:</span></span>
+<span class="line"><span>    logits = model(ids)</span></span>
+<span class="line"><span>    ids.append(sample(logits))</span></span></code></pre>
+<p>「写一个旅行计划」这样几百 token 的回答，就是把这个循环跑几百圈。推理引擎存在的意义，就是让这个循环转得尽量快、尽量省。</p>
+<h3 id="02-transformer-十分钟版">0.2 Transformer 十分钟版</h3>
+<p><code>model(ids)</code> 内部做的事，用极简伪代码写出来是：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>x = embedding[ids]                  # 查表：每个 id → 一个向量（比如 1024 维）</span></span>
+<span class="line"><span>for layer in layers:                # Qwen3-0.6B 有 28 层，每层结构相同</span></span>
+<span class="line"><span>    x = x + attention(norm(x))      # 残差连接：原向量 + 子层输出</span></span>
+<span class="line"><span>    x = x + mlp(norm(x))</span></span>
+<span class="line"><span>logits = x @ lm_head_weight.T       # 最后一层向量映射回「词表大小」个分数</span></span></code></pre>
+<p>逐个拆开：</p>
+<ul>
+<li>
+<p><strong>embedding</strong>：一张 <code>[词表大小, hidden_dim]</code> 的大表，按 id 查行，把整数变成向量。<code>hidden_dim</code> 是模型内部的向量宽度（Qwen3-0.6B 是 1024）。</p>
+</li>
+<li>
+<p><strong>attention（注意力）</strong>：让位置 i 的向量「看到」它前面的所有位置。每个位置算出三个向量：<strong>query</strong>（我想找什么）、<strong>key</strong>（我是什么）、<strong>value</strong>（我提供什么）。位置 i 的 query 与每个历史位置的 key 做点积得到「相关度分数」，softmax 归一化后对所有 value 加权求和——这就是该位置的新表示。<strong>因果掩码</strong>保证位置 i 只能看不晚于 i 的位置（生成时未来还不存在）。</p>
+</li>
+<li>
+<p><strong>多头（multi-head）</strong>：把向量切成 h 份，每份独立做一次 attention（一个「头」），再拼回去。不同头可以关注不同的关系。<strong>GQA</strong>（分组查询注意力）是让几个 q 头共享同一对 k/v 头的变体——k/v 头数少于 q 头数，为的是省 KV cache 显存（0.4 节和正文 2.9 会用到）。</p>
+</li>
+<li>
+<p><strong>norm（RMSNorm）</strong>：把向量除以它自己的均方根、再乘一组可学习的缩放系数，把数值稳定在合适尺度。每个子层入口都有一次。</p>
+</li>
+<li>
+<p><strong>MLP</strong>：两层全连接加激活函数，对每个位置独立地做。</p>
+</li>
+<li>
+<p><strong>lm_head</strong>：最后把每个位置的向量投影回词表大小的分数列。</p>
+</li>
+</ul>
+<p><strong>位置从哪来</strong>：attention 本身看不出顺序——「狗咬人」和「人咬狗」对它的打分一样。所以要把位置信息注入进去。nano-vLLM 用的 <strong>RoPE</strong>（旋转位置编码）做法是：按位置把 q、k 向量两两一组旋转一个与位置成正比的角度，旋转后两个位置的点积天然携带它们的相对距离。正文 3.4 有完整实现。</p>
+<h3 id="03-为什么推理慢flops-与字节">0.3 为什么推理慢：FLOPs 与字节</h3>
+<p>GPU 做两件事的速度差着数量级（以 H100 为例，bf16 精度）：</p>
+<ul>
+<li>
+<p><strong>算力</strong> ≈ 1000 TFLOP/s（每秒千万亿次浮点运算）</p>
+</li>
+<li>
+<p><strong>显存带宽</strong> ≈ 3 TB/s（每秒从显存读三万亿字节）</p>
+</li>
+</ul>
+<p>换算一下：每从显存读 1 字节数据，GPU 大约「顺手」能做 300 次浮点运算。「每读一字节能摊到多少次运算」这个比值有个名字——<strong>算术强度</strong>（arithmetic intensity），正文会反复用到它：算术强度够高才算力打满，不够就只能干等显存。而模型权重必须常驻显存，且<strong>每产一个 token 都要把全部权重读一遍</strong>。于是同一个模型有两种截然不同的处境：</p>
+<ul>
+<li>
+<p><strong>prefill（预填充）</strong>：处理 prompt 的阶段。一次读权重、并行算几百上千个 token，计算量大到把算力打满——<strong>计算受限</strong>（compute-bound）。</p>
+</li>
+<li>
+<p><strong>decode（解码）</strong>：逐 token 生成的阶段。每步读的权重字节数不变，却只算 1 个 token，算力大量闲置，带宽先被打满——<strong>显存受限</strong>（memory-bound）。</p>
+</li>
+</ul>
+<p>由此得到推理引擎最重要的一条推论：decode 时把 N 个请求捆成一个 batch，权重只读一遍就能为每个请求各产一个 token——<strong>batch 越大，每 token 越便宜</strong>。正文里几乎所有机制（分页、共享、抢占、chunked prefill、CUDA Graph）说到底都在服务这件事：安全地把 batch 做大、把空转做小。</p>
+<h3 id="04-kv-cache用显存换重复计算">0.4 KV cache：用显存换重复计算</h3>
+<p>decode 第 t 步的 attention 需要位置 0 到 t−1 的所有 key/value。不缓存的话，每步都要把整段历史重算一遍，越生成越贵：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 无缓存：第 t 步重算 t 个位置的 K/V，总开销 O(T²)</span></span>
+<span class="line"><span>for t in range(T):</span></span>
+<span class="line"><span>    k, v = compute_kv(ids[:t+1])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 有缓存：旧位置的 K/V 只依赖过去、永远不会变，存起来；每步只算新 token 的一份</span></span>
+<span class="line"><span>for t in range(T):</span></span>
+<span class="line"><span>    cache[t] = compute_kv(ids[t])</span></span></code></pre>
+<p>这就是 <strong>KV cache</strong>：拿显存换计算，把 O(T²) 变成 O(T)。代价是显存占用——每个 token 要在每一层存下它的 k 和 v 两份向量：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>每 token 每层 = 2(k 和 v) × kv 头数 × 头维 × 每元素字节数</span></span></code></pre>
+<p>代入 Qwen3-0.6B（28 层、8 个 kv 头、头维 128、bf16 两字节）：<code>2 × 28 × 8 × 128 × 2 ≈ 112 KB/token</code>。一张 24 GB 显卡扣掉权重和杂项后留给 KV cache 的部分，也就十几万 token 的量级。<strong>显存因此是推理系统里最稀缺的资源</strong>——正文的分页、共享、抢占，全都是围绕「怎么省着用、抢着用这块显存」展开的。</p>
+<h3 id="05-gpu-工程常识包">0.5 GPU 工程常识包</h3>
+<p>正文涉及的几样工程工具，各给一句话：</p>
+<ul>
+<li>
+<p><strong>kernel 与发射开销</strong>：GPU 上的每个操作（矩阵乘、归一化……）是一个 kernel，由 CPU 逐个「发射」过去执行。发射本身有微秒级开销；decode 一步要发射几十上百个小 kernel，CPU 的发射开销可能比 GPU 的实际计算还贵。</p>
+</li>
+<li>
+<p><strong>Triton</strong>：用 Python 语法写 GPU kernel 的框架。<code>kernel[(N,)](args)</code> 表示启动 N 个并行 program；kernel 内 <code>tl.program_id(0)</code> 拿到自己的编号，<code>tl.arange(0, D)</code> 生成 <code>[0, 1, ..., D-1]</code> 下标向量，<code>tl.load / tl.store</code> 按「指针 + 偏移」批量读写显存。正文 2.11 用它实现「把每个 token 的 K/V 存到指定槽位」。</p>
+</li>
+<li>
+<p><strong>CUDA Graph</strong>：把一连串 kernel 的执行录制成一张「图」，之后一次 <code>replay()</code> 整体重放，省掉逐个发射的 CPU 开销。</p>
+</li>
+<li>
+<p><strong>torch.compile</strong>：把一串 PyTorch 操作融合、编译成更少的 kernel，减少发射次数和显存往返。</p>
+</li>
+<li>
+<p><strong>多卡通信（NCCL / all_reduce）</strong>：NCCL 是 NVIDIA 的多 GPU 通信库；<code>all_reduce</code> 把各卡上的同名张量按元素求和、结果人人有份。张量并行（TP）把每层的计算切到多卡上，各卡只算部分结果，靠 all_reduce 合并。</p>
+</li>
+<li>
+<p><strong>SharedMemory + pickle</strong>：Python 多进程之间传数据的朴素方式——一块各进程都能读写的共享内存，配上 pickle 把对象序列化成字节写进去。正文 2.8 主进程指挥 worker 用的就是它。</p>
+</li>
+</ul>
+<h3 id="06-名词速查表">0.6 名词速查表</h3>
+<p>正文首次出现的名词都能在这里查到一句话解释：</p>
+<p>|
+名词</p>
+<p>|</p>
+<p>一句话</p>
+<p>|</p>
+<p>首现于</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>token / tokenizer</p>
+<p>|</p>
+<p>文本切分出的最小单位及其整数 id / 做切分的工具</p>
+<p>|</p>
+<p>0.1</p>
+<p>|
+|</p>
+<p>logits / softmax</p>
+<p>|</p>
+<p>词表大小的分数列 / 把分数变成概率分布</p>
+<p>|</p>
+<p>0.1</p>
+<p>|
+|</p>
+<p>temperature</p>
+<p>|</p>
+<p>采样温度，越高越随机</p>
+<p>|</p>
+<p>0.1</p>
+<p>|
+|</p>
+<p>自回归</p>
+<p>|</p>
+<p>逐个生成 token、边生成边拼回输入</p>
+<p>|</p>
+<p>0.1</p>
+<p>|
+|</p>
+<p>embedding</p>
+<p>|</p>
+<p>id → 向量的查表</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>attention / Q·K·V</p>
+<p>|</p>
+<p>位置间按相关度加权汇总的机制</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>因果掩码</p>
+<p>|</p>
+<p>只允许看历史位置，不许看未来</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>GQA</p>
+<p>|</p>
+<p>多个 q 头共享 k/v 头，省 KV 显存</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>RMSNorm</p>
+<p>|</p>
+<p>均方根归一化，稳定数值尺度</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>RoPE</p>
+<p>|</p>
+<p>旋转位置编码，给 attention 注入顺序信息</p>
+<p>|</p>
+<p>0.2 / 3.4</p>
+<p>|
+|</p>
+<p>hidden_dim / head_dim</p>
+<p>|</p>
+<p>模型向量宽度 / 每个注意力头的宽度</p>
+<p>|</p>
+<p>0.2</p>
+<p>|
+|</p>
+<p>prefill / decode</p>
+<p>|</p>
+<p>处理 prompt 阶段 / 逐 token 生成阶段</p>
+<p>|</p>
+<p>0.3</p>
+<p>|
+|</p>
+<p>compute/memory-bound</p>
+<p>|</p>
+<p>算力瓶颈 / 显存带宽瓶颈</p>
+<p>|</p>
+<p>0.3</p>
+<p>|
+|</p>
+<p>算术强度</p>
+<p>|</p>
+<p>每读一字节能摊到的运算次数，决定打满算力还是干等显存</p>
+<p>|</p>
+<p>0.3</p>
+<p>|
+|</p>
+<p>KV cache</p>
+<p>|</p>
+<p>缓存历史 K/V，避免每步重算</p>
+<p>|</p>
+<p>0.4</p>
+<p>|
+|</p>
+<p>VRAM / 显存带宽</p>
+<p>|</p>
+<p>显卡内存 / 它的读写速度</p>
+<p>|</p>
+<p>0.3</p>
+<p>|
+|</p>
+<p>kernel / Triton</p>
+<p>|</p>
+<p>GPU 上的单个操作 / Python 写 kernel 的框架</p>
+<p>|</p>
+<p>0.5</p>
+<p>|
+|</p>
+<p>CUDA Graph</p>
+<p>|</p>
+<p>录制-重放一串 kernel，省 CPU 发射开销</p>
+<p>|</p>
+<p>0.5 / 2.12</p>
+<p>|
+|</p>
+<p>torch.compile</p>
+<p>|</p>
+<p>把多个操作融合编译成更少 kernel</p>
+<p>|</p>
+<p>0.5</p>
+<p>|
+|</p>
+<p>TP / NCCL / all_reduce</p>
+<p>|</p>
+<p>张量并行 / 多卡通信库 / 跨卡求和合并</p>
+<p>|</p>
+<p>0.5 / 3.2</p>
+<p>|
+|</p>
+<p>FlashAttention</p>
+<p>|</p>
+<p>高性能 attention kernel；varlen 版支持不等长序列拼成一个 batch</p>
+<p>|</p>
+<p>1.3</p>
+<p>|
+|</p>
+<p>PagedAttention</p>
+<p>|</p>
+<p>像操作系统分页一样按块管理 KV cache</p>
+<p>|</p>
+<p>1.4</p>
+<p>|
+|</p>
+<p>块（block）/ 页表（block table）</p>
+<p>|</p>
+<p>KV cache 的分配单位 / 逻辑块→物理块的映射</p>
+<p>|</p>
+<p>1.4</p>
+<p>|
+|</p>
+<p>FCFS</p>
+<p>|</p>
+<p>先来先服务的调度策略</p>
+<p>|</p>
+<p>1.5</p>
+<p>|
+|</p>
+<p>prefix caching</p>
+<p>|</p>
+<p>共享相同前缀的 KV cache，避免重算</p>
+<p>|</p>
+<p>2.5</p>
+<p>|
+|</p>
+<p>chunked prefill</p>
+<p>|</p>
+<p>把长 prompt 切成多段、跨 step 预填充</p>
+<p>|</p>
+<p>2.4</p>
+<p>|
+|</p>
+<p>抢占（preemption）</p>
+<p>|</p>
+<p>显存不够时把序列逐出 running 队列</p>
+<p>|</p>
+<p>2.6</p>
+<p>|
+|</p>
+<p>safetensors</p>
+<p>|</p>
+<p>模型权重的文件格式</p>
+<p>|</p>
+<p>2.8</p>
+<p>|
+|</p>
+<p>pickle</p>
+<p>|</p>
+<p>Python 对象序列化</p>
+<p>|</p>
+<p>2.8 / 3.6</p>
+<p>|
+|</p>
+<p>Megatron-LM</p>
+<p>|</p>
+<p>NVIDIA 的训练框架，正文 TP 切分模式的来源</p>
+<p>|</p>
+<p>3.2</p>
+<p>|
+|</p>
+<p>Gumbel 分布</p>
+<p>|</p>
+<p>一种极值分布，<code>log p + Gumbel 噪声</code> 取 argmax 等价于按 p 采样</p>
+<p>|</p>
+<p>3.5</p>
+<p>|</p>
+<hr>
+<h2 id="一引擎全景">一、引擎全景</h2>
+<h3 id="11-推理引擎到底在优化什么">1.1 推理引擎到底在优化什么</h3>
+<p>LLM 推理引擎的唯一目标是<strong>高性能地运行推理</strong>，而「性能」最终落到两件事上[2]：</p>
+<ol>
+<li>
+<p><strong>更低的每 token 成本</strong>。GPU 按小时计费，空转和满载花一样的钱——所以成本问题本质是利用率问题。</p>
+</li>
+<li>
+<p><strong>更低的 token 延迟</strong>。聊天、编程 agent 等交互场景对延迟尤其敏感。</p>
+</li>
+</ol>
+<p>理解引擎之前，先要理解推理的两个阶段，因为它们的瓶颈完全不同：</p>
+<ul>
+<li>
+<p><strong>Prefill</strong>：一次性并行处理整个 prompt，是<strong>计算受限</strong>（compute-bound）的——GPU 算力是瓶颈。</p>
+</li>
+<li>
+<p><strong>Decode</strong>：逐 token 串行生成，每步都要把全部模型权重从 HBM 读一遍，却只算一个 token，是<strong>显存带宽受限</strong>（memory-bound）的。</p>
+</li>
+</ul>
+<p>一句话概括：<strong>prefill 是计算问题，decode 是显存问题</strong>。这两个阶段分别对应两个关键延迟指标：</p>
+<ul>
+<li>
+<p><strong>TTFT</strong>（Time-To-First-Token）：收到请求到产出第一个 token 的时间，主要反映 prefill（含排队）。</p>
+</li>
+<li>
+<p><strong>TPOT</strong>（Time-Per-Output-Token）：首 token 之后每个输出 token 的平均延迟，主要反映 decode。</p>
+</li>
+</ul>
+<p>端到端延迟近似为 <code>Latency ≈ TTFT + TPOT × (输出 token 数 − 1)</code>。吞吐侧常用 RPS（每秒请求数）和 TPS（每秒 token 数）；更严格的指标是 <strong>goodput</strong>——满足延迟 SLO 的请求速率，例如系统跑 100 RPS 但只有 70 个满足 TTFT/TPOT 目标，goodput 就是 70。</p>
+<p>这组指标解释了推理引擎几乎所有设计决策的动机。比如为什么引擎如此执着于<strong>把 batch 做大</strong>：decode 阶段每步都要完整搬运一遍权重，单请求时这次昂贵的搬运只换来一个 token；把 N 个请求捆在一个 batch 里，同一次权重搬运就能为每个请求各产一个 token——算术强度上去了，每 token 成本就下来了。PagedAttention、prefix caching、chunked prefill、CUDA Graph，说到底都是为「在安全的前提下把 batch 做大、把空转做小」服务的。</p>
+<h3 id="12-四个组件一条流水线">1.2 四个组件，一条流水线</h3>
+<p>nano-vLLM 由四个职责分离的组件构成：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌────────────────────────────────────────────┐</span></span>
+<span class="line"><span>                 │                 LLMEngine                  │</span></span>
+<span class="line"><span>                 │          （编排器，跑在主进程）              │</span></span>
+<span class="line"><span>                 └────────────────────────────────────────────┘</span></span>
+<span class="line"><span>   prompt ──tokenize──►  ┌───────────┐  can_allocate  ┌────────────────┐</span></span>
+<span class="line"><span>                         │ Scheduler │ ◄────────────► │  BlockManager  │</span></span>
+<span class="line"><span>                         │  waiting  │   allocate /   │ free_block_ids │</span></span>
+<span class="line"><span>                         │  running  │   deallocate   │ hash_to_block  │</span></span>
+<span class="line"><span>                         └─────┬─────┘                └────────────────┘</span></span>
+<span class="line"><span>                               │ seqs, is_prefill</span></span>
+<span class="line"><span>                               ▼</span></span>
+<span class="line"><span>                    ┌─────────────────────┐   run   ┌──────────────────┐</span></span>
+<span class="line"><span>                    │  ModelRunner rank 0 │ ──────► │ Qwen3 模型（GPU） │</span></span>
+<span class="line"><span>                    └──────────┬──────────┘         └──────────────────┘</span></span>
+<span class="line"><span>                               │ SharedMemory + Event（多卡时）</span></span>
+<span class="line"><span>                               ▼</span></span>
+<span class="line"><span>                    ┌─────────────────────┐</span></span>
+<span class="line"><span>                    │ ModelRunner rank 1+ │   worker：loop() 等待指令</span></span>
+<span class="line"><span>                    └─────────────────────┘</span></span></code></pre>
+<ul>
+<li>
+<p><strong>LLMEngine（编排器）</strong>：接收用户 prompt，驱动各子组件，输出最终结果。</p>
+</li>
+<li>
+<p><strong>Scheduler（调度器）</strong>：决定下一个 batch 跑哪些请求。</p>
+</li>
+<li>
+<p><strong>BlockManager（块管理器）</strong>：管理 KV cache 显存。调度时 Scheduler 先问它能否分配，它负责实际的分配与回收。</p>
+</li>
+<li>
+<p><strong>ModelRunner（模型执行器）</strong>：拿到调度好的 batch，在 GPU 上跑模型。</p>
+</li>
+</ul>
+<h3 id="13-核心数据结构">1.3 核心数据结构</h3>
+<h4 id="confignanovllmconfigpy6-25"><code>Config</code>（<code>nanovllm/config.py:6-25</code>）</h4>
+<p><code>Config</code> 是集中的静态配置，定义引擎与 tokenizer 的行为（模型路径、最大序列数、单 batch token 预算等）。与其把这些当松散参数到处传，nano-vLLM 把它们捆进一个对象，在各模块间共享同一份真相。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6F42C1">@dataclass</span><span style="color:#24292E">(</span><span style="color:#E36209">slots</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> Config</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    model: </span><span style="color:#005CC5">str</span></span>
+<span class="line"><span style="color:#24292E">    max_num_batched_tokens: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 16384</span></span>
+<span class="line"><span style="color:#24292E">    max_num_seqs: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 512</span></span>
+<span class="line"><span style="color:#24292E">    max_model_len: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 4096</span></span>
+<span class="line"><span style="color:#24292E">    gpu_memory_utilization: </span><span style="color:#005CC5">float</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 0.9</span></span>
+<span class="line"><span style="color:#24292E">    tensor_parallel_size: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 1</span></span>
+<span class="line"><span style="color:#24292E">    enforce_eager: </span><span style="color:#005CC5">bool</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> False</span></span>
+<span class="line"><span style="color:#24292E">    hf_config: AutoConfig </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    eos: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span></span>
+<span class="line"><span style="color:#24292E">    kvcache_block_size: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">    num_kvcache_blocks: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span></span></code></pre>
+<p>几个值得知道的字段与约束：</p>
+<ul>
+<li>
+<p><code>max_num_batched_tokens</code>：单次前向可处理的最大 token 预算，chunked prefill 的切块依据。</p>
+</li>
+<li>
+<p><code>kvcache_block_size</code>：每个 KV 块的 token 数，<code>__post_init__</code> 断言必须是 256 的整数倍。KV cache 块参数正是 PagedAttention 相对早期引擎（如 ORCA）引入的核心。</p>
+</li>
+<li>
+<p><code>num_kvcache_blocks</code>：总块数，启动时按可用显存测算（见 2.9 节）。</p>
+</li>
+<li>
+<p><code>hf_config</code>：构造时即 <code>AutoConfig.from_pretrained(model)</code> 加载；<code>max_model_len</code> 会被钳制到 <code>hf_config.max_position_embeddings</code> 以内。</p>
+</li>
+<li>
+<p><code>eos</code>：默认 <code>-1</code>，实际由 <code>LLMEngine</code> 从 tokenizer 填入（<code>llm_engine.py:33</code>）。</p>
+</li>
+</ul>
+<h4 id="sequencenanovllmenginesequencepy13-60"><code>Sequence</code>（<code>nanovllm/engine/sequence.py:13-60</code>）</h4>
+<p><code>Sequence</code> 是引擎里最基本的对象，跟踪一个请求的全部状态：token id、状态、KV 块表等。</p>
+<p>ℹ️备注</p>
+<p><strong>request 与 sequence</strong> 在 nano-vLLM 里可以简单地把一个 request 理解为一个 sequence。真实引擎中，由于 beam search、投机解码等机制，一个 request 可能对应多个 sequence 分支。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> SequenceStatus</span><span style="color:#24292E">(</span><span style="color:#6F42C1">Enum</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#005CC5">    WAITING</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> auto()</span></span>
+<span class="line"><span style="color:#005CC5">    RUNNING</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> auto()</span></span>
+<span class="line"><span style="color:#005CC5">    FINISHED</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> auto()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> Sequence</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    block_size </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">    counter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> count()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    def</span><span style="color:#005CC5"> __init__</span><span style="color:#24292E">(self, token_ids: list[</span><span style="color:#005CC5">int</span><span style="color:#24292E">], sampling_params </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SamplingParams()):</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.seq_id </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> next</span><span style="color:#24292E">(Sequence.counter)</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.status </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SequenceStatus.</span><span style="color:#005CC5">WAITING</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.token_ids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> copy(token_ids)</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.last_token </span><span style="color:#D73A49">=</span><span style="color:#24292E"> token_ids[</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.num_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(</span><span style="color:#005CC5">self</span><span style="color:#24292E">.token_ids)</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.num_prompt_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(token_ids)</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.num_cached_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.num_scheduled_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.block_table </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.temperature </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sampling_params.temperature</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.max_tokens </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sampling_params.max_tokens</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.ignore_eos </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sampling_params.ignore_eos</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.is_prefill </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> True</span></span></code></pre>
+<p>关键属性：</p>
+<ul>
+<li>
+<p><code>status</code>：<code>WAITING</code>（未调度）→ <code>RUNNING</code>（进 batch）→ <code>FINISHED</code>（完成）。</p>
+</li>
+<li>
+<p><code>num_tokens</code>：含输入在内的已处理 token 总数；<code>num_prompt_tokens</code> 仅输入。</p>
+</li>
+<li>
+<p><code>num_cached_tokens</code>：已落 KV cache 的 token 数——既包括 prefix cache 复用的，也包括 chunked prefill 中已处理的进度游标。</p>
+</li>
+<li>
+<p><code>num_scheduled_tokens</code>：<strong>本次 step 计划处理多少 token</strong>。这是 chunked prefill 的核心状态——一个长 prompt 可以被切成多段、跨多个 step 处理，每段的长度就记在这里。</p>
+</li>
+<li>
+<p><code>is_prefill</code>：标记当前处于 prefill 还是 decode。</p>
+</li>
+<li>
+<p><code>block_table</code>：逻辑块 → 物理块的映射表。</p>
+</li>
+<li>
+<p><code>block_size</code> 是类属性，由 <code>LLMEngine</code> 初始化时注入：<code>Sequence.block_size = config.kvcache_block_size</code>（<code>llm_engine.py:21</code>）。</p>
+</li>
+</ul>
+<p>另外，<code>Sequence</code> 还定义了 <code>num_blocks</code>、<code>last_block_num_tokens</code>、<code>block(i)</code> 等便捷属性，以及一对为跨进程传输优化的 <code>__getstate__/__setstate__</code>（见 3.6 节）。</p>
+<h4 id="scheduler-的两个队列nanovllmengineschedulerpy16-17">Scheduler 的两个队列（<code>nanovllm/engine/scheduler.py:16-17</code>）</h4>
+<p>Scheduler 维护 <code>waiting</code> 与 <code>running</code> 两个双端队列。所有请求先进 <code>waiting</code>；Scheduler 根据约束（KV cache 是否够、batch 预算是否够）把它们移入 <code>running</code>。</p>
+<h4 id="contextnanovllmutilscontextpy5-27"><code>Context</code>（<code>nanovllm/utils/context.py:5-27</code>）</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6F42C1">@dataclass</span><span style="color:#24292E">(</span><span style="color:#E36209">slots</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> Context</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    is_prefill: </span><span style="color:#005CC5">bool</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> False</span></span>
+<span class="line"><span style="color:#24292E">    cu_seqlens_q: torch.Tensor </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    cu_seqlens_k: torch.Tensor </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    max_seqlen_q: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#24292E">    max_seqlen_k: </span><span style="color:#005CC5">int</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#24292E">    slot_mapping: torch.Tensor </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    context_lens: torch.Tensor </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    block_tables: torch.Tensor </span><span style="color:#D73A49">|</span><span style="color:#005CC5"> None</span><span style="color:#D73A49"> =</span><span style="color:#005CC5"> None</span></span></code></pre>
+<p><code>Context</code> 是给 GPU kernel 的 batch 布局信息，在前向前由 ModelRunner 准备好。它是 <strong>per batch</strong> 而非 per sequence 的：一个 batch 里各请求可能长度不同、KV 块散布在显存各处，Context 把这些局部信息打包成一次密集 kernel 启动所需的全部元数据：</p>
+<ul>
+<li>
+<p><code>cu_seqlens_q</code> / <code>cu_seqlens_k</code>：FlashAttention 变长布局的累积长度（<code>cu</code> = cumulative 前缀和）。</p>
+</li>
+<li>
+<p><code>slot_mapping</code>：逻辑 token 位置 → 物理 KV slot。</p>
+</li>
+<li>
+<p><code>block_tables</code>：每个序列的页表，供 attention 按块读历史 KV。</p>
+</li>
+</ul>
+<p><code>set_context</code> 每次重建一个新的 <code>Context</code> 对象赋给全局 <code>_CONTEXT</code>（而非原地修改），避免跨 step 的状态残留。</p>
+<h3 id="14-kv-cache-分页从物理块到-slot-的八步">1.4 KV cache 分页：从物理块到 slot 的八步</h3>
+<p>KV cache 本身很好懂：把已算过的 K/V 存下来，decode 时不必重算（想深入可看这两篇[3][4]）。难的是<strong>管理</strong>——vLLM 的答案是像操作系统分页一样按块管理（理论部分可见 PagedAttention 笔记[5]）。下面用一个具体例子走一遍完整机制：块大小 4，假设硬件最多容纳 100 个 token 的 KV，即 25 个物理块。</p>
+<p><strong>第 1 步：测算能造多少块。</strong> 可用于 KV cache 的显存 ≈ 总 VRAM − 权重 − 激活峰值 − 各类开销，除以单块字节数即块数（详细公式见 2.9 节）。假设算出来是 25 块。</p>
+<p><strong>第 2 步：预分配物理块。</strong> 引擎一次性在显存里建好 25 个空块：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>physical blocks:</span></span>
+<span class="line"><span>[0] [1] [2] [3] ... [24]</span></span></code></pre>
+<p><strong>第 3 步：把序列切成逻辑块。</strong> 新请求的 prompt 按块大小切分。长度 7 的 prompt <code>[1, 2, 3, 4, 5, 6, 7]</code> 切成两个逻辑块：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>logical block 0: [1, 2, 3, 4]</span></span>
+<span class="line"><span>logical block 1: [5, 6, 7]</span></span></code></pre>
+<p>逻辑块只描述「需要几块」，还没有物理位置。</p>
+<p><strong>第 4 步：用 block table 把逻辑块映射到物理块。</strong> 调度时 BlockManager 从空闲池弹出物理块分配给该序列。若池子全空，逻辑块 0、1 分别拿到物理块 0、1：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>seq.block_table = [0, 1]      # 逻辑块 i -> 物理块 block_table[i]</span></span></code></pre>
+<p>这里的关键认知是：<strong>KV cache 的归属权是序列级状态</strong>。BlockManager 管全局空闲/已用池，而每个序列自己携带它占用的物理块列表。由此物理块无需连续——序列看到的 KV 是逻辑连续的，物理上可散布显存各处。</p>
+<p><strong>第 5 步：把块级映射转成 token 级 slot mapping。</strong> attention kernel 按 token 写 KV，所以跑模型前要把 block table 展开成 <code>slot_mapping</code>——每个 token 的精确落点：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>slot = physical_block_id * block_size + offset_in_block</span></span></code></pre>
+<p>两个块 7 个 token 全部展开：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>token 0 -> block 0, offset 0 -> slot 0*4+0 = 0</span></span>
+<span class="line"><span>token 1 -> block 0, offset 1 -> slot 0*4+1 = 1</span></span>
+<span class="line"><span>token 2 -> block 0, offset 2 -> slot 0*4+2 = 2</span></span>
+<span class="line"><span>token 3 -> block 0, offset 3 -> slot 0*4+3 = 3</span></span>
+<span class="line"><span>token 4 -> block 1, offset 0 -> slot 1*4+0 = 4</span></span>
+<span class="line"><span>token 5 -> block 1, offset 1 -> slot 1*4+1 = 5</span></span>
+<span class="line"><span>token 6 -> block 1, offset 2 -> slot 1*4+2 = 6</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>slot_mapping = [0, 1, 2, 3, 4, 5, 6]</span></span></code></pre>
+<p>每个 slot 存一个 token 在每层的 K、V 向量，单 slot 单层约占 <code>2 * num_kv_heads * head_dim * dtype_size</code> 字节。</p>
+<p><strong>第 6 步：前向时把新算的 K/V 写进 slot。</strong> QKV 投影产出新 K/V 后，attention 层按 <code>slot_mapping</code> 把它们写进持久 KV cache：token 0 的 K/V 写 slot 0，……，token 6 的写 slot 6。至此该序列 prompt 的 KV 落在物理块 0、1 里。</p>
+<p><strong>第 7 步：decode 时读旧写新。</strong> decode 只输入最后一个 token，但 attention 需要完整上下文。比如 prefill 完的长度 7 序列，下一步 decode 的输入是 <code>input_ids = [7]</code>、<code>positions = [6]</code>，而 attention 要读 tokens 0–6 的 K/V——按 block table 从物理块 0（slot 0–3）和块 1（slot 4–6）读。设采样出 <code>next_token = 8</code>，序列变成 8 个 token，物理块 1 还有一个空位，新 token 写入 <code>slot = 1*4+3 = 7</code>：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>读旧 K/V: slots 0, 1, 2, 3, 4, 5, 6</span></span>
+<span class="line"><span>写新 K/V: slot 7</span></span></code></pre>
+<p><strong>第 8 步：序列结束后回收块。</strong> 命中 <code>&#x3C;eos></code> 或 <code>max_tokens</code> 后，该序列的块按引用计数归还空闲池（共享块要等所有引用者都释放，见 2.5 节）。</p>
+<h3 id="15-一次迭代的全貌">1.5 一次迭代的全貌</h3>
+<p>把组件和数据结构串起来，引擎的运行就两件事：</p>
+<ol>
+<li>
+<p><strong>启动时（一次）</strong>：<code>Config</code> 初始化并分发给各子模块；ModelRunner 加载权重、预热、测算并预分配 KV 块池。</p>
+</li>
+<li>
+<p><strong>每次迭代（一次前向）</strong>：</p>
+</li>
+<li>
+<p>用户 prompt 被 tokenize、包成 <code>Sequence</code>，推入 Scheduler 的 waiting 队列；</p>
+</li>
+<li>
+<p>Scheduler 按 FCFS[6]（先来先服务）从 waiting 取序列，经 BlockManager 检查显存并分配块；长 prompt 可分块多次 prefill；</p>
+</li>
+<li>
+<p>ModelRunner 准备 batch 布局，写入 <code>Context</code>；</p>
+</li>
+<li>
+<p>ModelRunner 执行前向；</p>
+</li>
+<li>
+<p>重置 context，<code>postprocess()</code> 更新各序列状态、把新填满的块注册进 prefix cache 哈希表；</p>
+</li>
+<li>
+<p>命中 <code>&#x3C;eos></code> 或 <code>max_tokens</code> 的序列释放块、移出 running。</p>
+</li>
+</ol>
+<hr>
+<h2 id="二沿着一次推理走读代码">二、沿着一次推理走读代码</h2>
+<h3 id="21-入口examplepy">2.1 入口：example.py</h3>
+<p><code>example.py</code> 展示了引擎的完整用法（注释为本文所加）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">():</span></span>
+<span class="line"><span style="color:#6A737D">    # 初始化 tokenizer 与推理引擎接口（LLM）</span></span>
+<span class="line"><span style="color:#24292E">    path </span><span style="color:#D73A49">=</span><span style="color:#24292E"> os.path.expanduser(</span><span style="color:#032F62">"~/huggingface/Qwen3-0.6B/"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    tokenizer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> AutoTokenizer.from_pretrained(path)</span></span>
+<span class="line"><span style="color:#24292E">    llm </span><span style="color:#D73A49">=</span><span style="color:#24292E"> LLM(path, </span><span style="color:#E36209">enforce_eager</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">, </span><span style="color:#E36209">tensor_parallel_size</span><span style="color:#D73A49">=</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 采样参数</span></span>
+<span class="line"><span style="color:#24292E">    sampling_params </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SamplingParams(</span><span style="color:#E36209">temperature</span><span style="color:#D73A49">=</span><span style="color:#005CC5">0.6</span><span style="color:#24292E">, </span><span style="color:#E36209">max_tokens</span><span style="color:#D73A49">=</span><span style="color:#005CC5">256</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 设置 prompt</span></span>
+<span class="line"><span style="color:#24292E">    prompts </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [</span></span>
+<span class="line"><span style="color:#032F62">        "introduce yourself"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#032F62">        "list all prime numbers within 100"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">    ]</span></span>
+<span class="line"><span style="color:#24292E">    prompts </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [</span></span>
+<span class="line"><span style="color:#24292E">        tokenizer.apply_chat_template(</span></span>
+<span class="line"><span style="color:#24292E">            [{</span><span style="color:#032F62">"role"</span><span style="color:#24292E">: </span><span style="color:#032F62">"user"</span><span style="color:#24292E">, </span><span style="color:#032F62">"content"</span><span style="color:#24292E">: prompt}],</span></span>
+<span class="line"><span style="color:#E36209">            tokenize</span><span style="color:#D73A49">=</span><span style="color:#005CC5">False</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">            add_generation_prompt</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">        )</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> prompt </span><span style="color:#D73A49">in</span><span style="color:#24292E"> prompts</span></span>
+<span class="line"><span style="color:#24292E">    ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 生成</span></span>
+<span class="line"><span style="color:#24292E">    outputs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> llm.generate(prompts, sampling_params)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> prompt, output </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> zip</span><span style="color:#24292E">(prompts, outputs):</span></span>
+<span class="line"><span style="color:#005CC5">        print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"Prompt: </span><span style="color:#005CC5">{</span><span style="color:#24292E">prompt</span><span style="color:#D73A49">!r</span><span style="color:#005CC5">}</span><span style="color:#032F62">"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#005CC5">        print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"Completion: </span><span style="color:#005CC5">{</span><span style="color:#24292E">output[</span><span style="color:#032F62">'text'</span><span style="color:#24292E">]</span><span style="color:#D73A49">!r</span><span style="color:#005CC5">}</span><span style="color:#032F62">"</span><span style="color:#24292E">)</span></span></code></pre>
+<p>用户面对的 <code>LLM</code> 类其实只是 <code>LLMEngine</code> 的空子类（<code>nanovllm/llm.py</code>：<code>class LLM(LLMEngine): pass</code>），全部实现都在 <code>nanovllm/engine/llm_engine.py</code>。</p>
+<p>接下来的走读分三步：</p>
+<ul>
+<li>
+<p><strong>2.2–2.3</strong>：<code>LLMEngine</code> 初始化引擎，跑 <code>step()</code> 主循环；</p>
+</li>
+<li>
+<p><strong>2.4–2.7</strong>：<code>step()</code> 内，Scheduler 在 BlockManager 配合下调度 batch；</p>
+</li>
+<li>
+<p><strong>2.8–2.12</strong>：ModelRunner 在 GPU 上跑模型，为每个序列产出下一个 token。</p>
+</li>
+</ul>
+<p>这部分容易迷路，所以全程用两个玩具序列做例子（token id 是示意值，不是真实 Qwen tokenizer 输出）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Write a travel plan for Seoul.    ->  [1, 2, 3, 4, 5, 6, 7]</span></span>
+<span class="line"><span> Write a travel plan for Tokyo.    ->  [1, 2, 3, 4, 8, 9, 10]</span></span></code></pre>
+<h3 id="22-初始化llm-的六步">2.2 初始化：LLM 的六步</h3>
+<p><code>llm = LLM(model_path, **kwargs)</code> 这一行内部做了六件事（<code>llm_engine.py:11-41</code>）：</p>
+<p><strong>1. 创建 Config。</strong> 从 <code>kwargs</code> 筛出 <code>Config</code> 的字段，构造配置对象，下传给所有子系统：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#005CC5"> __init__</span><span style="color:#24292E">(self, model, </span><span style="color:#D73A49">**</span><span style="color:#24292E">kwargs):</span></span>
+<span class="line"><span style="color:#24292E">    config_fields </span><span style="color:#D73A49">=</span><span style="color:#24292E"> {field.name </span><span style="color:#D73A49">for</span><span style="color:#24292E"> field </span><span style="color:#D73A49">in</span><span style="color:#24292E"> fields(Config)}</span></span>
+<span class="line"><span style="color:#24292E">    config_kwargs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> {k: v </span><span style="color:#D73A49">for</span><span style="color:#24292E"> k, v </span><span style="color:#D73A49">in</span><span style="color:#24292E"> kwargs.items() </span><span style="color:#D73A49">if</span><span style="color:#24292E"> k </span><span style="color:#D73A49">in</span><span style="color:#24292E"> config_fields}</span></span>
+<span class="line"><span style="color:#24292E">    config </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Config(model, </span><span style="color:#D73A49">**</span><span style="color:#24292E">config_kwargs)</span></span></code></pre>
+<p>同时把块大小注入 <code>Sequence</code> 类属性：<code>Sequence.block_size = config.kvcache_block_size</code>。</p>
+<p><strong>2. 为张量并行 spawn worker 进程。</strong> nano-vLLM 只实现了 TP（张量并行）。除 rank 0 外，额外 spawn <code>tensor_parallel_size - 1</code> 个 worker，每个 worker 跑一个 <code>ModelRunner</code>：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>self.ps = []</span></span>
+<span class="line"><span>self.events = []</span></span>
+<span class="line"><span>ctx = mp.get_context("spawn")</span></span>
+<span class="line"><span>for i in range(1, config.tensor_parallel_size):</span></span>
+<span class="line"><span>    event = ctx.Event()</span></span>
+<span class="line"><span>    process = ctx.Process(target=ModelRunner, args=(config, i, event))</span></span>
+<span class="line"><span>    process.start()</span></span>
+<span class="line"><span>    self.ps.append(process)</span></span>
+<span class="line"><span>    self.events.append(event)</span></span></code></pre>
+<p><code>self.events</code> 用于主进程与 worker 间的同步通信（协议见 2.8 节）。</p>
+<p><strong>3. 创建 rank 0 的 ModelRunner。</strong> 它在主进程内创建，持有 <code>events</code> 以便指挥 worker：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>self.model_runner = ModelRunner(config, 0, self.events)</span></span></code></pre>
+<p><strong>4. 创建 AutoTokenizer。</strong> 注意 tokenize 只在主进程做——worker 只碰张量（输入 token id，输出 logits）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>self.tokenizer = AutoTokenizer.from_pretrained(config.model, use_fast=True)</span></span></code></pre>
+<p>tokenizer 负责把 prompt 编码成 token id、把生成的 id 解码回文本。模型是 HuggingFace 格式时直接用 <code>AutoTokenizer</code> 即可（自写 tokenizer 的例子可参考 nanochat 的 Rust BPE tokenizer）。随后 <code>config.eos = self.tokenizer.eos_token_id</code>。</p>
+<p><strong>5. 创建 Scheduler。</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>self.scheduler = Scheduler(config)</span></span></code></pre>
+<p><strong>6. 注册退出钩子。</strong> <code>atexit.register(self.exit)</code> 保证解释器关闭前清理现场：<code>exit()</code> 先通过 <code>self.model_runner.call("exit")</code> 跨进程广播退出指令（worker 的 <code>loop()</code> 收到 <code>"exit"</code> 后跳出循环），再 <code>del self.model_runner</code>，最后 <code>join</code> 各 worker 进程。</p>
+<h3 id="23-主循环generate-与-step">2.3 主循环：generate 与 step</h3>
+<p><code>llm.generate(prompts, sampling_params)</code> 做四件事。</p>
+<p><strong>1. 添加请求。</strong> 把每个 prompt 编码成 token id、包成 <code>Sequence</code> 推入 waiting 队列。<code>add_request</code> 的 <code>prompt</code> 参数既可以是 <code>str</code> 也可以是 <code>list[int]</code>——预先 tokenize 过的可以直接传 id（<code>llm_engine.py:43-47</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if not isinstance(sampling_params, list):</span></span>
+<span class="line"><span>    sampling_params = [sampling_params] * len(prompts)</span></span>
+<span class="line"><span>for prompt, sp in zip(prompts, sampling_params):</span></span>
+<span class="line"><span>    self.add_request(prompt, sp)</span></span></code></pre>
+<p><strong>2. 反复跑 step 直到全部完成</strong>，顺带统计 prefill/decode 吞吐（带 <code>tqdm</code> 进度条）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>while not self.is_finished():</span></span>
+<span class="line"><span>    t = perf_counter()</span></span>
+<span class="line"><span>    output, num_tokens = self.step()</span></span>
+<span class="line"><span>    if num_tokens > 0:</span></span>
+<span class="line"><span>        prefill_throughput = num_tokens / (perf_counter() - t)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        decode_throughput = -num_tokens / (perf_counter() - t)</span></span></code></pre>
+<p>核心是这个 <code>step()</code>（<code>llm_engine.py:49-55</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> step</span><span style="color:#24292E">(self):</span></span>
+<span class="line"><span style="color:#24292E">    seqs, is_prefill </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.scheduler.schedule()</span></span>
+<span class="line"><span style="color:#24292E">    token_ids </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.model_runner.call(</span><span style="color:#032F62">"run"</span><span style="color:#24292E">, seqs, is_prefill)</span></span>
+<span class="line"><span style="color:#005CC5">    self</span><span style="color:#24292E">.scheduler.postprocess(seqs, token_ids, is_prefill)</span></span>
+<span class="line"><span style="color:#24292E">    outputs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [(seq.seq_id, seq.completion_token_ids) </span><span style="color:#D73A49">for</span><span style="color:#24292E"> seq </span><span style="color:#D73A49">in</span><span style="color:#24292E"> seqs </span><span style="color:#D73A49">if</span><span style="color:#24292E"> seq.is_finished]</span></span>
+<span class="line"><span style="color:#24292E">    num_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> sum</span><span style="color:#24292E">(seq.num_scheduled_tokens </span><span style="color:#D73A49">for</span><span style="color:#24292E"> seq </span><span style="color:#D73A49">in</span><span style="color:#24292E"> seqs) </span><span style="color:#D73A49">if</span><span style="color:#24292E"> is_prefill </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">len</span><span style="color:#24292E">(seqs)</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> outputs, num_tokens</span></span></code></pre>
+<p>每个 step 三件事：<strong>schedule → run → postprocess</strong>——Scheduler 选序列，ModelRunner 跑前向，Scheduler 用采样结果更新状态。</p>
+<p>ℹ️备注</p>
+<p><code>is_prefill</code> 是单一布尔值：nano-vLLM 的一个 step 要么全是 prefill、要么全是 decode，<strong>两阶段不混合</strong>。现代引擎允许同 step 混合，nano-vLLM（与 vLLM V0）为简洁省去了这部分工程。</p>
+<p><code>num_tokens</code> 用正负号区分阶段（正 = prefill 处理的 token 数，负 = decode 的序列数），省去额外返回值。注意 prefill 时累加的是 <code>num_scheduled_tokens</code> 而非序列全长——chunked prefill 下本次可能只处理了一段。</p>
+<p><strong>3. 收集完成的序列。</strong> 每次 <code>step()</code> 返回本步完成的序列，按 <code>seq_id</code> 累积到 dict。</p>
+<p><strong>4. 排序、解码、返回。</strong> 全部完成后按 <code>seq_id</code> 排序恢复输入顺序，decode 回文本返回。引擎等 batch 内所有序列完成才返回——同样是出于简洁的取舍。</p>
+<h3 id="24-调度器chunked-prefill-下的-prefill-调度">2.4 调度器：chunked prefill 下的 prefill 调度</h3>
+<p><code>Scheduler</code> 持有两个队列和 <code>BlockManager</code>（<code>scheduler.py:8-17</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> Scheduler</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#D73A49">    def</span><span style="color:#005CC5"> __init__</span><span style="color:#24292E">(self, config: Config):</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.max_num_seqs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.max_num_seqs</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.max_num_batched_tokens </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.max_num_batched_tokens</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.eos </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.eos</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.block_manager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> BlockManager(config.num_kvcache_blocks, config.kvcache_block_size)</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.waiting: deque[Sequence] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> deque()</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.running: deque[Sequence] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> deque()</span></span></code></pre>
+<p><code>schedule()</code> 先看 waiting（prefill），waiting 空了再看 running（decode）。prefill 调度的当前实现（<code>scheduler.py:25-55</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>scheduled_seqs = []</span></span>
+<span class="line"><span>num_seqs = 0</span></span>
+<span class="line"><span>num_batched_tokens = 0</span></span>
+<span class="line"><span>while self.waiting and num_seqs &#x3C; self.max_num_seqs:</span></span>
+<span class="line"><span>    seq = self.waiting[0]</span></span>
+<span class="line"><span>    remaining = self.max_num_batched_tokens - num_batched_tokens</span></span>
+<span class="line"><span>    if remaining == 0:</span></span>
+<span class="line"><span>        break</span></span>
+<span class="line"><span>    if not seq.block_table:</span></span>
+<span class="line"><span>        # 新序列：检查显存并算 prefix cache 命中</span></span>
+<span class="line"><span>        num_cached_blocks = self.block_manager.can_allocate(seq)</span></span>
+<span class="line"><span>        if num_cached_blocks == -1:</span></span>
+<span class="line"><span>            break</span></span>
+<span class="line"><span>        num_tokens = seq.num_tokens - num_cached_blocks * self.block_size</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        # 继续未完成的分块 prefill</span></span>
+<span class="line"><span>        num_tokens = seq.num_tokens - seq.num_cached_tokens</span></span>
+<span class="line"><span>    if remaining &#x3C; num_tokens and scheduled_seqs:</span></span>
+<span class="line"><span>        break# 只对队首序列允许切块</span></span>
+<span class="line"><span>    if not seq.block_table:</span></span>
+<span class="line"><span>        self.block_manager.allocate(seq, num_cached_blocks)</span></span>
+<span class="line"><span>    seq.num_scheduled_tokens = min(num_tokens, remaining)</span></span>
+<span class="line"><span>    num_batched_tokens += seq.num_scheduled_tokens</span></span>
+<span class="line"><span>    if seq.num_cached_tokens + seq.num_scheduled_tokens == seq.num_tokens:</span></span>
+<span class="line"><span>        seq.status = SequenceStatus.RUNNING    # 整段 prompt 处理完才转 RUNNING</span></span>
+<span class="line"><span>        self.waiting.popleft()</span></span>
+<span class="line"><span>        self.running.append(seq)</span></span>
+<span class="line"><span>    scheduled_seqs.append(seq)</span></span>
+<span class="line"><span>if scheduled_seqs:</span></span>
+<span class="line"><span>    return scheduled_seqs, True</span></span></code></pre>
+<p>三个约束决定能调度多少：</p>
+<ul>
+<li>
+<p><code>max_num_seqs</code>：单 batch 最多多少序列；</p>
+</li>
+<li>
+<p><code>max_num_batched_tokens</code>：单 batch 最多处理多少 token——太大吞吐高但 TTFT 变差；</p>
+</li>
+<li>
+<p><code>block_manager.can_allocate()</code>：KV 块是否还够（不够就是显存耗尽）。</p>
+</li>
+</ul>
+<p>ℹ️备注</p>
+<p><strong>为什么 token 预算和序列数都要限？</strong> 只限序列数，一个超长 prompt 就可能 OOM；只限 token，过多并发序列会让显存管理开销和延迟膨胀。两者各堵一个洞。</p>
+<p>这段代码的关键是 <code>seq.num_scheduled_tokens = min(num_tokens, remaining)</code>：<strong>当 token 预算装不下整个 prompt 时，队首序列会被切成预算内的一段先跑</strong>，剩余部分留在 waiting 队首等后续 step 继续——这就是 chunked prefill。它把「一个长 prompt 独占一个 step」变成「长 prompt 分段、与其他请求共享 step」，直接改善 1.1 节说的 TTFT 与 GPU 利用率。只有累计处理量达到 <code>seq.num_tokens</code> 时，序列才真正进入 <code>RUNNING</code>。</p>
+<p>一个具体例子。设 <code>max_num_batched_tokens = 6</code>，waiting 队首是长度 10 的 seq_x：</p>
+<ul>
+<li>
+<p><strong>第 1 个 step</strong>：<code>remaining = 6 &#x3C; num_tokens = 10</code>，但本轮还没调度任何序列（<code>scheduled_seqs</code> 为空），允许切块——<code>num_scheduled_tokens = 6</code>，本步只算前 6 个 token。<code>postprocess</code> 把游标推进到 <code>num_cached_tokens = 6</code>，因 <code>6 &#x3C; 10</code> 不产出 token，序列仍留在 waiting 队首。</p>
+</li>
+<li>
+<p><strong>第 2 个 step</strong>：<code>seq.block_table</code> 非空，走续跑分支：<code>num_tokens = 10 − 6 = 4</code>，<code>num_scheduled_tokens = 4</code>。算完剩余 4 个 token，累计达 10 = 全长，转 RUNNING、移入 running，本步正常采样出第一个生成 token。</p>
+</li>
+</ul>
+<p>两个细节：其一，<strong>切块只切计算、不切显存</strong>——第一次调度时 <code>allocate</code> 已按全长把 KV 块全部分配好，分块只决定每步算多少；其二，<strong>只有每轮第一个被调度的序列允许切块</strong>——<code>remaining &#x3C; num_tokens and scheduled_seqs</code> 时直接 <code>break</code>，后续序列要么整段进、要么不进，避免一个 batch 里堆多段碎块。</p>
+<h3 id="25-blockmanager链式哈希引用计数与懒惰失效">2.5 BlockManager：链式哈希、引用计数与懒惰失效</h3>
+<h4 id="can_allocate一次遍历同时回答两个问题">can_allocate：一次遍历同时回答两个问题</h4>
+<p><code>can_allocate</code>（<code>block_manager.py:58-73</code>）回答「能不能分配」，顺便算出「prefix cache 能命中几块」：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> can_allocate</span><span style="color:#24292E">(self, seq: Sequence) -> </span><span style="color:#005CC5">int</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    h </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span></span>
+<span class="line"><span style="color:#24292E">    num_cached_blocks </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#24292E">    num_new_blocks </span><span style="color:#D73A49">=</span><span style="color:#24292E"> seq.num_blocks</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(seq.num_blocks </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">):      </span><span style="color:#6A737D"># 注意：不含最后一块</span></span>
+<span class="line"><span style="color:#24292E">        token_ids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> seq.block(i)</span></span>
+<span class="line"><span style="color:#24292E">        h </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.compute_hash(token_ids, h)</span></span>
+<span class="line"><span style="color:#24292E">        block_id </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.hash_to_block_id.get(h, </span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> block_id </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> or</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.blocks[block_id].token_ids </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> token_ids:</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#6A737D"># 未命中（或哈希碰撞），后续块不再可能命中</span></span>
+<span class="line"><span style="color:#24292E">        num_cached_blocks </span><span style="color:#D73A49">+=</span><span style="color:#005CC5"> 1</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> block_id </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.used_block_ids:</span></span>
+<span class="line"><span style="color:#24292E">            num_new_blocks </span><span style="color:#D73A49">-=</span><span style="color:#005CC5"> 1</span><span style="color:#6A737D"># 命中块正被占用，复用即可，不占新块</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(</span><span style="color:#005CC5">self</span><span style="color:#24292E">.free_block_ids) </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> num_new_blocks:</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> num_cached_blocks</span></span></code></pre>
+<p>细节：</p>
+<ul>
+<li>
+<p><strong>不检查最后一块</strong>：最后一块通常没填满，内容还会变，不可复用，所以循环只到 <code>num_blocks - 1</code>。</p>
+</li>
+<li>
+<p><strong>哈希链</strong>：<code>compute_hash(token_ids, prefix_hash)</code> 用 xxhash（<code>block_manager.py:35-41</code>）——先把前一块的哈希值按 8 字节小端写入，再写入本块 token 字节。首块的 prefix 为 <code>-1</code> 不写。</p>
+</li>
+<li>
+<p><strong>碰撞防御</strong>：哈希命中后还要逐 token 比对 <code>blocks[block_id].token_ids != token_ids</code>，防止 64 位哈希撞车导致错误复用。</p>
+</li>
+<li>
+<p><strong>为什么只有在用的命中块才减 <code>num_new_blocks</code></strong>：命中块正被其他序列持有（<code>used_block_ids</code>）时，复用它不消耗任何空闲名额，故扣减；命中块在空闲池里（已释放但哈希还在，见下文懒惰失效）时，把它捞出来仍要从 <code>free_block_ids</code> 拿走一个名额，故不扣减。最后 <code>len(free_block_ids) &#x3C; num_new_blocks</code> 判断的就是「扣完免费复用后，还差几个真块」。</p>
+</li>
+</ul>
+<h4 id="为什么必须链式哈希">为什么必须链式哈希</h4>
+<p>如果不把前缀编进哈希，会出现「块内容相同但上下文不同」的误命中：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>seq_c = [1, 2, 3, 4, 8, 9, 10, 7]    # "Plan a Seoul Trip" + "Include traditional markets."</span></span>
+<span class="line"><span>seq_d = [11, 12, 13, 14, 8, 9, 10, 7] # "Plan a Tokyo Trip" + "Include traditional markets."</span></span></code></pre>
+<p>两个序列的第二块内容完全相同（<code>[8, 9, 10, 7]</code>），但 KV cache 是带上下文的——同样的文字跟在「Seoul」和「Tokyo」后面，attention 算出的 K/V 完全不同。有一个用 Qwen3-0.6B tokenizer 做的最小实验[7]验证了链式哈希的必要性：两个请求的首块相同，两种哈希结果一致；第三块文本同为 <code>' traditional markets.'</code>，<strong>block-only 哈希相同（11326422787819615817），而 prefix-aware 哈希不同</strong>（9041253113613273947 vs 14881714884600895953）——只有前缀与内容都一致才允许命中。</p>
+<h4 id="allocate-与引用计数prefix-cache-的共享">allocate 与引用计数：prefix cache 的共享</h4>
+<p><code>allocate(seq, num_cached_blocks)</code>（<code>block_manager.py:75-92</code>）做实际分配：前 <code>num_cached_blocks</code> 块走复用路径，其余从空闲池弹新块：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>for i in range(num_cached_blocks):</span></span>
+<span class="line"><span>    ...</span></span>
+<span class="line"><span>    block_id = self.hash_to_block_id[h]</span></span>
+<span class="line"><span>    block = self.blocks[block_id]</span></span>
+<span class="line"><span>    if block_id in self.used_block_ids:</span></span>
+<span class="line"><span>        block.ref_count += 1# 正被其他序列持有：引用 +1</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        block.ref_count = 1# 在空闲池里但哈希还在：捞起复用</span></span>
+<span class="line"><span>        self.free_block_ids.remove(block_id)</span></span>
+<span class="line"><span>        self.used_block_ids.add(block_id)</span></span>
+<span class="line"><span>    seq.block_table.append(block_id)</span></span>
+<span class="line"><span>for i in range(num_cached_blocks, seq.num_blocks):</span></span>
+<span class="line"><span>    seq.block_table.append(self._allocate_block())</span></span>
+<span class="line"><span>seq.num_cached_tokens = num_cached_blocks * self.block_size</span></span></code></pre>
+<p>共享机制用块大小 4 的例子画出来（该机制的可视化参考了 Inside vLLM 一文[8]）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>块大小 = 4。seq_a 先跑（prompt 两块），seq_b 与 seq_a 共享首块。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  ① seq_a = [1,2,3,4 | 5,6,7] 调度并跑完 prefill：</span></span>
+<span class="line"><span>     调度时空闲池弹出物理块 7、2 → seq_a.block_table = [7, 2]</span></span>
+<span class="line"><span>     前向结束后的 postprocess 才把首块哈希注册进表（见 2.7）</span></span>
+<span class="line"><span>     block[7]: hash=H([1,2,3,4]) 已注册, ref=1</span></span>
+<span class="line"><span>     block[2]: 未注册（最后一块不满，不入哈希表）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  ② seq_b = [1,2,3,4 | 8,9,10] 到来，can_allocate 命中块 7</span></span>
+<span class="line"><span>     seq_b.block_table = [7, 9]</span></span>
+<span class="line"><span>     block[7].ref: 1 → 2          ← 共享前缀，KV 不重算、不复制</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  ③ seq_a 结束 deallocate：</span></span>
+<span class="line"><span>     block[2].ref = 0 → 归还空闲池</span></span>
+<span class="line"><span>     block[7].ref: 2 → 1          ← 仍被 seq_b 持有，不释放</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  ④ seq_b 也结束：block[7].ref = 0 → 归还空闲池，</span></span>
+<span class="line"><span>     但它的 hash 仍留在 hash_to_block_id 里。</span></span>
+<span class="line"><span>     下一个以 [1,2,3,4] 开头的序列依然能命中它——</span></span>
+<span class="line"><span>     直到该块被 _allocate_block 弹给别的内容时才清掉旧哈希。</span></span></code></pre>
+<p>第 ④ 步是容易忽略的精妙处：<strong>释放不等于失效</strong>（懒惰失效）。<code>_deallocate_block</code> 只把块还回空闲池，不动哈希表（<code>block_manager.py:53-56</code>）；<code>_allocate_block</code> 弹出空闲块时，若发现它带着旧哈希，才从 <code>hash_to_block_id</code> 删除（<code>block_manager.py:47-48</code>）。于是「暂时空闲但内容还有效」的块可以被后续请求零成本命中——对系统 prompt、few-shot 前缀这类高复用场景，这是白捡的命中率和显存。</p>
+<h3 id="26-decode-调度与抢占">2.6 decode 调度与抢占</h3>
+<p>waiting 排空后进入 decode 调度（<code>scheduler.py:57-73</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>while self.running and num_seqs &#x3C; self.max_num_seqs:</span></span>
+<span class="line"><span>    seq = self.running.popleft()</span></span>
+<span class="line"><span>    while not self.block_manager.can_append(seq):</span></span>
+<span class="line"><span>        if self.running:</span></span>
+<span class="line"><span>            self.preempt(self.running.pop())</span></span>
+<span class="line"><span>        else:</span></span>
+<span class="line"><span>            self.preempt(seq)</span></span>
+<span class="line"><span>            break</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        num_seqs += 1</span></span>
+<span class="line"><span>        self.block_manager.may_append(seq)</span></span>
+<span class="line"><span>        scheduled_seqs.append(seq)</span></span>
+<span class="line"><span>assert scheduled_seqs</span></span>
+<span class="line"><span>self.running.extendleft(reversed(scheduled_seqs))</span></span>
+<span class="line"><span>return scheduled_seqs, False</span></span></code></pre>
+<p>decode 不再受 <code>max_num_batched_tokens</code> 约束——每序列每步只输入一个 token，token 预算没有风险，唯一的稀缺资源是 KV 块。</p>
+<p><code>can_append</code> 只有一行（<code>block_manager.py:103-104</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> can_append</span><span style="color:#24292E">(self, seq: Sequence) -> </span><span style="color:#005CC5">bool</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(</span><span style="color:#005CC5">self</span><span style="color:#24292E">.free_block_ids) </span><span style="color:#D73A49">>=</span><span style="color:#24292E"> (</span><span style="color:#005CC5">len</span><span style="color:#24292E">(seq) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.block_size </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">)</span></span></code></pre>
+<p><code>len(seq) % block_size == 1</code> 是布尔值：新 token 落在块首时（需要 1 个新块）为 <code>True</code> 即 1，否则为 <code>False</code> 即 0。<code>may_append</code> 同样只在这个时刻才真正 <code>_allocate_block()</code>——decode 不是每步都要新块，只有写满一块才追加。</p>
+<p><strong>抢占</strong>：当 <code>can_append</code> 失败（没有空闲块）且 running 队列还有别的序列，就驱逐队尾——FCFS 下最晚到达、优先级最低的序列：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> preempt</span><span style="color:#24292E">(self, seq: Sequence):</span></span>
+<span class="line"><span style="color:#24292E">    seq.status </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SequenceStatus.</span><span style="color:#005CC5">WAITING</span></span>
+<span class="line"><span style="color:#005CC5">    self</span><span style="color:#24292E">.block_manager.deallocate(seq)</span></span>
+<span class="line"><span style="color:#005CC5">    self</span><span style="color:#24292E">.waiting.appendleft(seq)</span></span></code></pre>
+<p>注意用 <code>appendleft</code> 放到 waiting <strong>队首</strong>：被驱逐的序列获得最高重调度优先级，保证公平。驱逐会 <code>deallocate</code> 释放它占用的全部块，换回显存给前面的序列续命。</p>
+<p>ℹ️备注</p>
+<p><strong>为什么不一开始就给每个序列按最大长度预留显存，彻底避免抢占？</strong> 这是 ORCA 等早期引擎的做法——免驱逐，但大量请求实际很短，预留让 batch 小得多。nano-vLLM 选择按 prompt 长度分配、decode 按需追加，把 batch 做大；代价就是序列增长可能撑爆块池，此时抢占兜底。</p>
+<h3 id="27-postprocess把新块写回-prefix-cache">2.7 postprocess：把新块写回 prefix cache</h3>
+<p>前向返回采样 token 后，<code>postprocess</code> 更新状态（<code>scheduler.py:81-92</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> postprocess</span><span style="color:#24292E">(self, seqs: list[Sequence], token_ids: list[</span><span style="color:#005CC5">int</span><span style="color:#24292E">], is_prefill: </span><span style="color:#005CC5">bool</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> seq, token_id </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> zip</span><span style="color:#24292E">(seqs, token_ids):</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.block_manager.hash_blocks(seq)                    </span><span style="color:#6A737D"># ① 新填满的块注册进哈希表</span></span>
+<span class="line"><span style="color:#24292E">        seq.num_cached_tokens </span><span style="color:#D73A49">+=</span><span style="color:#24292E"> seq.num_scheduled_tokens      </span><span style="color:#6A737D"># ② 推进已缓存游标</span></span>
+<span class="line"><span style="color:#24292E">        seq.num_scheduled_tokens </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> is_prefill </span><span style="color:#D73A49">and</span><span style="color:#24292E"> seq.num_cached_tokens </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> seq.num_tokens:</span></span>
+<span class="line"><span style="color:#D73A49">            continue</span><span style="color:#6A737D"># ③ 分块 prefill 未收尾，不产生 token</span></span>
+<span class="line"><span style="color:#24292E">        seq.append_token(token_id)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">not</span><span style="color:#24292E"> seq.ignore_eos </span><span style="color:#D73A49">and</span><span style="color:#24292E"> token_id </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.eos) \</span></span>
+<span class="line"><span style="color:#D73A49">                or</span><span style="color:#24292E"> seq.num_completion_tokens </span><span style="color:#D73A49">==</span><span style="color:#24292E"> seq.max_tokens:</span></span>
+<span class="line"><span style="color:#24292E">            seq.status </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SequenceStatus.</span><span style="color:#005CC5">FINISHED</span></span>
+<span class="line"><span style="color:#005CC5">            self</span><span style="color:#24292E">.block_manager.deallocate(seq)</span></span>
+<span class="line"><span style="color:#005CC5">            self</span><span style="color:#24292E">.running.remove(seq)</span></span></code></pre>
+<p>三处都值得停顿：</p>
+<ol>
+<li>
+<p><strong><code>hash_blocks</code> 是 prefix caching 生效的另一半</strong>（<code>block_manager.py:110-120</code>）。<code>can_allocate</code> 只是「查」哈希表；真正把新填满的块「写」进哈希表的是这里——取上一个已哈希块的哈希作为前缀，对本步新填满的每块做链式哈希并注册。没有这一步，<code>hash_to_block_id</code> 永远是空的。</p>
+</li>
+<li>
+<p><strong>游标推进</strong>：<code>num_cached_tokens += num_scheduled_tokens</code>，分块 prefill 的进度就是这样跨 step 累积的。</p>
+</li>
+<li>
+<p><strong>中途不产出</strong>：分块 prefill 未跑完时直接 <code>continue</code>——中间段的 logits 不采样、不判 EOS，只有整段 prompt 处理完的那一步才 append token。这就是为什么 <code>step()</code> 要把 <code>is_prefill</code> 传进来。</p>
+</li>
+</ol>
+<h3 id="28-modelrunner初始化">2.8 ModelRunner：初始化</h3>
+<p>ModelRunner 是 <code>step()</code> 三部曲的第二环，负责把调度好的 batch 真正跑在 GPU 上。这是代码最密集的部分：分布式进程管理、模型初始化、KV 显存、输入准备、FlashAttention、CUDA Graph 都在这。</p>
+<p>先记住拓扑：N 张卡就有 N 个 ModelRunner 实例，rank 0 在主进程，rank 1 到 N-1 是 worker。每个实例的初始化（<code>model_runner.py:18-59</code>）依次是：</p>
+<p><strong>1. NCCL 建组。</strong> 所有进程在 <code>"tcp://localhost:2333"</code> 汇合：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>dist.init_process_group("nccl", "tcp://localhost:2333", world_size=self.world_size, rank=rank)</span></span></code></pre>
+<p><code>world_size</code> = 进程数 = GPU 数。NCCL 是 NVIDIA 的多卡通信后端，后续 TP 的 all_reduce 就走它。</p>
+<p><strong>2. 设 device / dtype / 建模。</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>torch.cuda.set_device(rank)</span></span>
+<span class="line"><span>torch.set_default_dtype(hf_config.dtype)</span></span>
+<span class="line"><span>torch.set_default_device("cuda")</span></span>
+<span class="line"><span>self.model = Qwen3ForCausalLM(hf_config)</span></span></code></pre>
+<p>在默认 device 为 cuda 的状态下建模，权重直接落在 GPU 上。建完后又把默认 device/dtype 复位回 cpu 和原 dtype（<code>model_runner.py:38-39</code>）——避免主进程后续无关操作误占 GPU。</p>
+<p><strong>3. 加载权重。</strong> <code>load_model(self.model, config.model)</code> 把 safetensors 读进模型。融合权重（q/k/v → qkv_proj）与 TP 分片都在这一步完成，细节见 3.2 节。随后创建 <code>Sampler</code>。</p>
+<p><strong>4. 预热。</strong> 用「最坏情况」的假 batch 跑一次 prefill（<code>model_runner.py:91-101</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> warmup_model</span><span style="color:#24292E">(self):</span></span>
+<span class="line"><span style="color:#24292E">    torch.cuda.empty_cache()</span></span>
+<span class="line"><span style="color:#24292E">    torch.cuda.reset_peak_memory_stats()</span></span>
+<span class="line"><span style="color:#24292E">    seq_len </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> min</span><span style="color:#24292E">(</span><span style="color:#005CC5">self</span><span style="color:#24292E">.config.max_num_batched_tokens, </span><span style="color:#005CC5">self</span><span style="color:#24292E">.config.max_model_len)</span></span>
+<span class="line"><span style="color:#24292E">    num_seqs </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> min</span><span style="color:#24292E">(</span><span style="color:#005CC5">self</span><span style="color:#24292E">.config.max_num_batched_tokens </span><span style="color:#D73A49">//</span><span style="color:#24292E"> seq_len, </span><span style="color:#005CC5">self</span><span style="color:#24292E">.config.max_num_seqs)</span></span>
+<span class="line"><span style="color:#24292E">    seqs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [Sequence([</span><span style="color:#005CC5">0</span><span style="color:#24292E">] </span><span style="color:#D73A49">*</span><span style="color:#24292E"> seq_len) </span><span style="color:#D73A49">for</span><span style="color:#24292E"> _ </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(num_seqs)]</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> seq </span><span style="color:#D73A49">in</span><span style="color:#24292E"> seqs:</span></span>
+<span class="line"><span style="color:#24292E">        seq.num_scheduled_tokens </span><span style="color:#D73A49">=</span><span style="color:#24292E"> seq_len</span></span>
+<span class="line"><span style="color:#005CC5">    self</span><span style="color:#24292E">.run(seqs, </span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    torch.cuda.empty_cache()</span></span></code></pre>
+<p>预热的两个目的：一是让 CUDA context、Triton kernel 编译等一次性开销在启动时付掉；二是<strong>量出激活显存的峰值</strong>——<code>reset_peak_memory_stats</code> 后跑一次最大负载，峰值统计就是下一步显存测算的输入。注意预热序列也设了 <code>num_scheduled_tokens</code>，与分块调度语义保持一致。</p>
+<p><strong>5. 测算并分配 KV cache。</strong> <code>allocate_kv_cache()</code> 决定整个块池的大小，是引擎侧最重要的一段算术，单独在 2.9 节展开。</p>
+<p><strong>6. CUDA Graph 捕获。</strong> <code>enforce_eager=False</code> 时执行 <code>capture_cudagraph()</code>，见 2.12 节。</p>
+<p><strong>7. 多卡时主从分叉。</strong> 至此各 rank 初始化相同，从这里开始分流（<code>model_runner.py:51-59</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if self.world_size > 1:</span></span>
+<span class="line"><span>    if rank == 0:</span></span>
+<span class="line"><span>        self.shm = SharedMemory(name="nanovllm", create=True, size=2**20)</span></span>
+<span class="line"><span>        dist.barrier()</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        dist.barrier()</span></span>
+<span class="line"><span>        self.shm = SharedMemory(name="nanovllm")</span></span>
+<span class="line"><span>        self.loop()</span></span></code></pre>
+<p>rank 0 创建 1 MB 共享内存后过 barrier；worker 过 barrier 后连上共享内存，进入 <code>loop()</code> 等指令。通信协议（<code>model_runner.py:61-89</code>）很朴素：</p>
+<ul>
+<li>
+<p>共享内存布局：前 4 字节小端序存数据长度 <code>n</code>，其后 <code>n</code> 字节是 pickle 负载；</p>
+</li>
+<li>
+<p>主进程 <code>write_shm()</code>：<code>pickle.dumps((method_name, *args))</code> 写入，然后 <code>event.set()</code> 通知所有 worker；</p>
+</li>
+<li>
+<p>worker <code>loop()</code>：<code>event.wait()</code> 阻塞，醒来后 <code>read_shm()</code> 反序列化出方法名和参数，执行同名方法；</p>
+</li>
+<li>
+<p>主进程的 <code>call()</code> 先广播、再在本地执行同一方法，保证各 rank 步调一致。</p>
+</li>
+</ul>
+<p>每步 <code>step()</code> 里的 <code>self.model_runner.call("run", seqs, is_prefill)</code> 走的就是这个通道——<code>seqs</code> 会被 pickle 进共享内存（这里埋着一个为 decode 优化的细节，见 3.6 节）。</p>
+<h3 id="29-显存测算能造多少个-kv-块">2.9 显存测算：能造多少个 KV 块</h3>
+<p>KV cache 块池多大，直接决定 batch 能做多大。通用公式（vLLM 文档[10]）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>可用于 KV cache 的显存 ≈ 总 VRAM × gpu_memory_utilization − 权重 − 激活峰值 − 各类开销</span></span></code></pre>
+<p>一块显存的预算大致被五家分：模型权重、KV cache、激活显存（临时的，单步内生灭，经验上约为权重的 10–30%）、CUDA/PyTorch 系统开销、非 torch 分配（如 CUDA Graph 的显存池）。以 H100 80 GB 跑 Qwen3-32B（bf16）为例[2]：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>H100 80 GB，Qwen3-32B（bf16）：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>┌─────────────────────────────────────┬──────────────────────────┐</span></span>
+<span class="line"><span>│  模型权重 ≈ 64 GB                    │  余量 ≈ 16 GB            │</span></span>
+<span class="line"><span>│  32B 参数 × 2 字节                   │  KV cache + 激活 + 开销  │</span></span>
+<span class="line"><span>└─────────────────────────────────────┴──────────────────────────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>每 token 的 KV 占用（GQA：8 个 KV 头 × 128 维，64 层，bf16）：</span></span>
+<span class="line"><span>  2(K/V) × 64(层) × 8 × 128 × 2 字节 = 262,144 字节 ≈ 256 KB/token</span></span>
+<span class="line"><span>  → 2048 token 的上下文 ≈ 0.54 GB——2K 上下文下显存大头仍是权重，不是 KV</span></span></code></pre>
+<p>对照 nano-vLLM 默认的 Qwen3-0.6B（28 层、8 KV 头、head_dim 128、bf16）：每 token KV ≈ <code>2 × 28 × 8 × 128 × 2</code> = 114,688 字节 ≈ 112 KB；块大小 256 时单块约 28 MB。</p>
+<p>代码实现（<code>model_runner.py:103-121</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> allocate_kv_cache</span><span style="color:#24292E">(self):</span></span>
+<span class="line"><span style="color:#24292E">    free, total </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.cuda.mem_get_info()</span></span>
+<span class="line"><span style="color:#24292E">    used </span><span style="color:#D73A49">=</span><span style="color:#24292E"> total </span><span style="color:#D73A49">-</span><span style="color:#24292E"> free</span></span>
+<span class="line"><span style="color:#24292E">    peak </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.cuda.memory_stats()[</span><span style="color:#032F62">"allocated_bytes.all.peak"</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#24292E">    current </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.cuda.memory_stats()[</span><span style="color:#032F62">"allocated_bytes.all.current"</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#24292E">    num_kv_heads </span><span style="color:#D73A49">=</span><span style="color:#24292E"> hf_config.num_key_value_heads </span><span style="color:#D73A49">//</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.world_size</span></span>
+<span class="line"><span style="color:#24292E">    head_dim </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> getattr</span><span style="color:#24292E">(hf_config, </span><span style="color:#032F62">"head_dim"</span><span style="color:#24292E">, hf_config.hidden_size </span><span style="color:#D73A49">//</span><span style="color:#24292E"> hf_config.num_attention_heads)</span></span>
+<span class="line"><span style="color:#24292E">    block_bytes </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 2</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> hf_config.num_hidden_layers </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.block_size </span><span style="color:#D73A49">*</span><span style="color:#24292E"> num_kv_heads </span><span style="color:#D73A49">*</span><span style="color:#24292E"> head_dim </span><span style="color:#D73A49">*</span><span style="color:#24292E"> hf_config.dtype.itemsize</span></span>
+<span class="line"><span style="color:#24292E">    config.num_kvcache_blocks </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> int</span><span style="color:#24292E">(total </span><span style="color:#D73A49">*</span><span style="color:#24292E"> config.gpu_memory_utilization </span><span style="color:#D73A49">-</span><span style="color:#24292E"> used </span><span style="color:#D73A49">-</span><span style="color:#24292E"> peak </span><span style="color:#D73A49">+</span><span style="color:#24292E"> current) </span><span style="color:#D73A49">//</span><span style="color:#24292E"> block_bytes</span></span>
+<span class="line"><span style="color:#D73A49">    assert</span><span style="color:#24292E"> config.num_kvcache_blocks </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#005CC5">    self</span><span style="color:#24292E">.kv_cache </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.empty(</span><span style="color:#005CC5">2</span><span style="color:#24292E">, hf_config.num_hidden_layers, config.num_kvcache_blocks,</span></span>
+<span class="line"><span style="color:#005CC5">                                self</span><span style="color:#24292E">.block_size, num_kv_heads, head_dim)</span></span></code></pre>
+<p>三个显存读数来自不同视角，别混：</p>
+<ul>
+<li>
+<p><code>used</code>：CUDA 驱动视角的当前占用——权重、激活、其他进程、运行时开销全在里面；</p>
+</li>
+<li>
+<p><code>current</code>：PyTorch 分配器视角的当前分配——主要是权重；</p>
+</li>
+<li>
+<p><code>peak</code>：PyTorch 分配器见过的峰值——预热那次最坏前向留下的「权重 + 激活峰值」。</p>
+</li>
+</ul>
+<p>所以 <code>− used − peak + current</code> 的含义是：从目标额度（<code>total × 利用率</code>）里扣掉驱动视角的全部占用（<code>used</code>），再额外扣掉激活峰值——<code>peak − current</code> 恰好是「权重之外、前向高峰时还要多要的激活/工作区」。这一步依赖 2.8 节第 4 步的预热先跑出真实峰值。</p>
+<p>两点 TP 相关的注意：<code>num_kv_heads</code> 要除以 <code>world_size</code>（每卡只持有自己那几片头的 KV）；GQA 下 KV 头数本来就少于 query 头数，这正是 GQA 省 KV 显存的地方。</p>
+<p>最后把大张量切片挂到各层：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>layer_id = 0</span></span>
+<span class="line"><span>for module in self.model.modules():</span></span>
+<span class="line"><span>    if hasattr(module, "k_cache") and hasattr(module, "v_cache"):</span></span>
+<span class="line"><span>        module.k_cache = self.kv_cache[0, layer_id]</span></span>
+<span class="line"><span>        module.v_cache = self.kv_cache[1, layer_id]</span></span>
+<span class="line"><span>        layer_id += 1</span></span></code></pre>
+<p><code>Attention</code> 初始化时 <code>k_cache/v_cache</code> 只是空占位张量（<code>attention.py:57</code>），这里才换成 KV 池的真实切片。</p>
+<h3 id="210-输入准备prefill-与-decode">2.10 输入准备：prefill 与 decode</h3>
+<p>初始化完成后，看一次前向的入口（<code>model_runner.py:160-168</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">(self, seqs: list[Sequence], is_prefill: </span><span style="color:#005CC5">bool</span><span style="color:#24292E">) -> list[</span><span style="color:#005CC5">int</span><span style="color:#24292E">]:</span></span>
+<span class="line"><span style="color:#24292E">    input_ids, positions </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.prepare_prefill(seqs) </span><span style="color:#D73A49">if</span><span style="color:#24292E"> is_prefill </span><span style="color:#D73A49">else</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.prepare_decode(seqs)</span></span>
+<span class="line"><span style="color:#24292E">    temperatures </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.prepare_sample(seqs) </span><span style="color:#D73A49">if</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.rank </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> else</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    logits </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.run_model(input_ids, positions, is_prefill)</span></span>
+<span class="line"><span style="color:#24292E">    token_ids </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.sampler(logits, temperatures).tolist() </span><span style="color:#D73A49">if</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.rank </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> else</span><span style="color:#005CC5"> None</span></span>
+<span class="line"><span style="color:#24292E">    reset_context()</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> token_ids</span></span></code></pre>
+<p>只有 rank 0 采样（温度也只在 rank 0 准备）；worker 跑到 logits 为止，结果靠 TP 通信汇聚。</p>
+<p><strong>prepare_prefill</strong> 要把 <code>Sequence</code> 列表拍平成 FlashAttention 需要的变长布局。核心循环：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>for seq in seqs:</span></span>
+<span class="line"><span>    start = seq.num_cached_tokens</span></span>
+<span class="line"><span>    seqlen_q = seq.num_scheduled_tokens</span></span>
+<span class="line"><span>    end = start + seqlen_q</span></span>
+<span class="line"><span>    seqlen_k = end</span></span>
+<span class="line"><span>    input_ids.extend(seq[start:end])</span></span>
+<span class="line"><span>    positions.extend(range(start, end))</span></span>
+<span class="line"><span>    cu_seqlens_q.append(cu_seqlens_q[-1] + seqlen_q)</span></span>
+<span class="line"><span>    cu_seqlens_k.append(cu_seqlens_k[-1] + seqlen_k)</span></span></code></pre>
+<p>四个局部量：<code>start</code> 是仍需计算的首个位置（有 prefix cache 或分块续跑时非 0）；<code>seqlen_q</code> 是本次算的 query 数（调度的那段）；<code>end = start + seqlen_q</code>；<code>seqlen_k = end</code> 是 attention 可见的完整上下文长度。prefix cache 命中时 <code>seqlen_q &#x3C; seqlen_k</code>——query 只算未缓存后缀，key/value 覆盖全部历史。</p>
+<p><code>input_ids/positions</code> 描述「算什么」，<code>cu_seqlens_q/cu_seqlens_k</code> 描述「边界在哪」。剩余部分用 <code>seq.block_table</code> 把逻辑块翻译成 <code>slot_mapping</code>（新 K/V 写哪），并在有缓存可复用时准备 <code>block_tables</code>（旧 K/V 从哪读），最后 <code>set_context(...)</code> 打包。</p>
+<p>走一个具体例子。设 seq_a = <code>[1,2,3,4,5,6,7]</code>（“Write a travel plan for Seoul.”）已处理过，首块 <code>[1,2,3,4]</code> 已入缓存（尾块不满不入）。新的 prefill batch 有两个序列：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>seq_c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]   # 与 seq_a 共享首块</span></span>
+<span class="line"><span>seq_e = [21, 22, 23, 24, 25]             # 全新 prompt</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>seq_c: num_cached_tokens = 4, num_scheduled_tokens = 6</span></span>
+<span class="line"><span>       → start=4, seqlen_q=6, end=10, seqlen_k=10</span></span>
+<span class="line"><span>       → input_ids += [5,6,7,8,9,10], positions += [4,5,6,7,8,9]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>seq_e: num_cached_tokens = 0, num_scheduled_tokens = 5</span></span>
+<span class="line"><span>       → input_ids += [21,22,23,24,25], positions += [0,1,2,3,4]</span></span></code></pre>
+<p>拍平后的 batch：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>input_ids    = [5, 6, 7, 8, 9, 10,   21, 22, 23, 24, 25]</span></span>
+<span class="line"><span>positions    = [4, 5, 6, 7, 8, 9,     0,  1,  2,  3,  4]</span></span>
+<span class="line"><span>cu_seqlens_q = [0, 6, 11]        # query 行边界</span></span>
+<span class="line"><span>cu_seqlens_k = [0, 10, 15]       # key/value 上下文边界</span></span></code></pre>
+<p>这里值得点破一处统一：<strong>prefix-cache 续跑与 chunked prefill 续跑是同一条代码路径</strong>。上例 seq_c 的 <code>start = 4</code> 来自 prefix cache 命中；换成 2.4 节那个「第一步只跑了 6 个 token」的长 prompt，第二步的 <code>start</code> 同样等于推进后的 <code>num_cached_tokens</code>，<code>seqlen_k > seqlen_q</code> 同样触发 <code>block_tables</code> 的准备，让 FlashAttention 读上一步写入的 KV。调度侧把两种情况统一成「已缓存游标 + 本次调度量」，算子侧统一成「query 只算后缀、K/V 覆盖全史」——prefix caching 和 chunked prefill 共享同一条前向路径，谁也不需要特判。</p>
+<p><strong>prepare_decode</strong> 简单得多：每序列恰贡献一个 token（<code>model_runner.py:172-188</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>for seq in seqs:</span></span>
+<span class="line"><span>    input_ids.append(seq.last_token)</span></span>
+<span class="line"><span>    positions.append(len(seq) - 1)</span></span>
+<span class="line"><span>    context_lens.append(len(seq))</span></span>
+<span class="line"><span>    slot_mapping.append(seq.block_table[-1] * self.block_size + seq.last_block_num_tokens - 1)</span></span></code></pre>
+<p>每序列一行，无需 <code>cu_seqlens</code>。slot 从最后一个块的已用量推算：<code>block_table[-1] * block_size + last_block_num_tokens - 1</code>。注意 decode 总是准备 <code>block_tables</code>——读历史 KV 必须按页表索引，这与 prefix cache 无关。</p>
+<p>回到玩具例子：seq_a 刚 prefill 完并采样出 token 8，则下一步 decode 的输入是 <code>input_ids = [8]</code>、<code>positions = [7]</code>，新 KV 写入 slot 7。</p>
+<h3 id="211-attention写-kv-的-triton-kernel-与-flashattention">2.11 Attention：写 KV 的 Triton kernel 与 FlashAttention</h3>
+<p>前向本身是标准 Transformer 流水线：<code>input_ids → VocabParallelEmbedding → [Attention → RMSNorm → MLP] × N → 最终 RMSNorm → ParallelLMHead → Sampler</code>（Transformer 内部已有太多优秀资料[9]，本文只盯引擎相关的部分；nano-vLLM 的 Qwen3 实现有几处非常规设计，见 3.1 节）。</p>
+<p>Attention 层收到的输入形状：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>q: [num_tokens, num_q_heads, head_dim]</span></span>
+<span class="line"><span>k: [num_tokens, num_kv_heads, head_dim]</span></span>
+<span class="line"><span>v: [num_tokens, num_kv_heads, head_dim]</span></span></code></pre>
+<p>第一件事是把本步新算的 K/V 写进持久池（<code>attention.py:64-65</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if k_cache.numel() and v_cache.numel():</span></span>
+<span class="line"><span>    store_kvcache(k, v, k_cache, v_cache, context.slot_mapping)</span></span></code></pre>
+<p><code>numel()</code> 检查是为了跳过预热（那时 cache 还没分配）。<code>store_kvcache</code> 启动一个 Triton kernel，<strong>每个 token 一个 program</strong>，把该 token 的 K、V 向量拷到 <code>slot_mapping</code> 指定的物理 slot：</p>
+<blockquote>
+<p><strong>第一次读 Triton kernel</strong>（细节见 0.5）：这段代码不是普通 Python 函数——它在 GPU 上同时跑 N 份（N = token 数）。<code>idx = tl.program_id(0)</code> 问「我是第几份」，相当于手写并行循环时的循环变量；<code>tl.arange(0, D)</code> 生成 <code>[0, 1, ..., D-1]</code> 的下标向量；<code>tl.load / tl.store</code> 按「指针 + 下标」一次读写一批显存。整个 kernel 读作：第 <code>idx</code> 份 program 查到自己的槽位号 <code>slot</code>，把本 token 的 K、V 向量整体搬过去。</p>
+</blockquote>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6F42C1">@triton.jit</span></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> store_kvcache_kernel</span><span style="color:#24292E">(key_ptr, key_stride, value_ptr, value_stride,</span></span>
+<span class="line"><span style="color:#24292E">                         k_cache_ptr, v_cache_ptr, slot_mapping_ptr, D: tl.constexpr):</span></span>
+<span class="line"><span style="color:#24292E">    idx </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tl.program_id(</span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    slot </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tl.load(slot_mapping_ptr </span><span style="color:#D73A49">+</span><span style="color:#24292E"> idx)</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> slot </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">: </span><span style="color:#D73A49">return</span><span style="color:#6A737D"># CUDA Graph 填充的空位</span></span>
+<span class="line"><span style="color:#24292E">    key_offsets </span><span style="color:#D73A49">=</span><span style="color:#24292E"> idx </span><span style="color:#D73A49">*</span><span style="color:#24292E"> key_stride </span><span style="color:#D73A49">+</span><span style="color:#24292E"> tl.arange(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, D)</span></span>
+<span class="line"><span style="color:#24292E">    value_offsets </span><span style="color:#D73A49">=</span><span style="color:#24292E"> idx </span><span style="color:#D73A49">*</span><span style="color:#24292E"> value_stride </span><span style="color:#D73A49">+</span><span style="color:#24292E"> tl.arange(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, D)</span></span>
+<span class="line"><span style="color:#24292E">    key </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tl.load(key_ptr </span><span style="color:#D73A49">+</span><span style="color:#24292E"> key_offsets)</span></span>
+<span class="line"><span style="color:#24292E">    value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tl.load(value_ptr </span><span style="color:#D73A49">+</span><span style="color:#24292E"> value_offsets)</span></span>
+<span class="line"><span style="color:#24292E">    cache_offsets </span><span style="color:#D73A49">=</span><span style="color:#24292E"> slot </span><span style="color:#D73A49">*</span><span style="color:#24292E"> D </span><span style="color:#D73A49">+</span><span style="color:#24292E"> tl.arange(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, D)</span></span>
+<span class="line"><span style="color:#24292E">    tl.store(k_cache_ptr </span><span style="color:#D73A49">+</span><span style="color:#24292E"> cache_offsets, key)</span></span>
+<span class="line"><span style="color:#24292E">    tl.store(v_cache_ptr </span><span style="color:#D73A49">+</span><span style="color:#24292E"> cache_offsets, value)</span></span></code></pre>
+<p>其中 <code>D = num_kv_heads * head_dim</code> 是单 token K/V 向量的扁平长度；<code>key.stride(0)</code> 是相邻 token 行之间的显存跨度。<code>slot == -1</code> 直接返回——那是 CUDA Graph 按固定 batch 重放时多出来的填充位（见 2.12）。</p>
+<p>写完 KV 才做注意力，prefill 与 decode 走不同的 FlashAttention 入口：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if context.is_prefill:</span></span>
+<span class="line"><span>    if context.block_tables is not None:    # 有 prefix cache 可复用</span></span>
+<span class="line"><span>        k, v = k_cache, v_cache</span></span>
+<span class="line"><span>    o = flash_attn_varlen_func(q, k, v,</span></span>
+<span class="line"><span>                               max_seqlen_q=context.max_seqlen_q, cu_seqlens_q=context.cu_seqlens_q,</span></span>
+<span class="line"><span>                               max_seqlen_k=context.max_seqlen_k, cu_seqlens_k=context.cu_seqlens_k,</span></span>
+<span class="line"><span>                               softmax_scale=self.scale, causal=True, block_table=context.block_tables)</span></span>
+<span class="line"><span>else:    # decode</span></span>
+<span class="line"><span>    o = flash_attn_with_kvcache(q.unsqueeze(1), k_cache, v_cache,</span></span>
+<span class="line"><span>                                cache_seqlens=context.context_lens, block_table=context.block_tables,</span></span>
+<span class="line"><span>                                softmax_scale=self.scale, causal=True)</span></span></code></pre>
+<p>prefill 命中 prefix cache 时 <code>k, v = k_cache, v_cache</code>——直接把整块持久池当 K/V 传入，配合 <code>block_table</code> 让 FlashAttention 按页表读非连续物理块。<strong>这一行就是 PagedAttention 与 prefix cache 在算子层的接合点</strong>：引擎侧所有的块管理，最终都收敛成 attention kernel 手里的一张页表。</p>
+<h3 id="212-cuda-graph按-batch-size-预捕获">2.12 CUDA Graph：按 batch size 预捕获</h3>
+<p><code>run_model</code> 里 prefill 永远走 eager，decode 可能走 CUDA Graph（<code>model_runner.py:195-212</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if is_prefill or self.enforce_eager or input_ids.size(0) > 512:</span></span>
+<span class="line"><span>    return self.model.compute_logits(self.model(input_ids, positions))</span></span>
+<span class="line"><span>else:</span></span>
+<span class="line"><span>    ...</span></span>
+<span class="line"><span>    graph.replay()</span></span>
+<span class="line"><span>    return self.model.compute_logits(graph_vars["outputs"][:bs])</span></span></code></pre>
+<p>两种模式的差别：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Eager：每次前向，CPU 逐个发射 kernel</span></span>
+<span class="line"><span>  CPU ──launch──launch──launch── ... ──launch──►</span></span>
+<span class="line"><span>  GPU  [emb]  [attn]  [linear]  ...  [lm_head]     ← kernel 之间是空泡</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CUDA Graph：先记录一次，之后整图重放</span></span>
+<span class="line"><span>  捕获: 在 torch.cuda.graph 里跑一次 → 录下完整 kernel 序列</span></span>
+<span class="line"><span>  重放: graph.replay()               → 一次调用，GPU 不间断跑完整段</span></span></code></pre>
+<p>decode 每步只产一个 token，计算量小，<strong>CPU 发射 kernel 的开销在占比上很可观</strong>；而 decode 的计算图形状稳定（每序列一个 token），正适合录下来重放。prefill 的 prompt 长度、总 token 数、attention 形状高度可变，没法高效捕获，所以 nano-vLLM 只对 decode 用图，且 batch 超过 512 也退回 eager。</p>
+<p>捕获的实现（<code>model_runner.py:222-257</code>）比「录一次」精细：</p>
+<ul>
+<li>
+<p><strong>按一组 batch size 各录一张图</strong>：<code>graph_bs = [1, 2, 4, 8] + list(range(16, max_bs + 1, 16))</code>，其中 <code>max_bs = min(max_num_seqs, 512)</code>。因为图的输入形状必须固定，只能为若干档 batch size 分别捕获。</p>
+</li>
+<li>
+<p><strong>共享显存池</strong>：首张图捕获后取 <code>graph.pool()</code> 作为 <code>graph_pool</code>，后续图都在这个池里录（<code>torch.cuda.graph(graph, self.graph_pool)</code>）——多张图复用同一份中间激活显存，否则十几张图各要一份工作区，显存吃不消。</p>
+</li>
+<li>
+<p><strong>重放时向上取整选图</strong>：<code>next(x for x in self.graph_bs if x >= bs)</code> 选不小于实际 batch 的图，把真实输入拷进预分配张量，多余空位的 <code>slot_mapping</code> 填 <code>-1</code>——正对应 2.11 节 kernel 里的 <code>if slot == -1: return</code>，填充位不写 KV。</p>
+</li>
+</ul>
+<hr>
+<h2 id="三模型与算子层">三、模型与算子层</h2>
+<p>引擎骨架（调度、块管理、ModelRunner）之外，模型侧还有几处实现值得读：Qwen3 的两个非常规设计、张量并行 Linear 的切分与通信、RoPE 的预计算、采样器的 Gumbel-max 技巧，以及一个藏在跨进程传输里的瘦身优化。</p>
+<h3 id="31-qwen3qk-norm-与融合残差">3.1 Qwen3：QK-Norm 与融合残差</h3>
+<p>nano-vLLM 的模型实现是 Qwen3（<code>nanovllm/models/qwen3.py</code>）。相比教科书式 Transformer，它有三处值得注意。</p>
+<p><strong>(1) QK-Norm。</strong> RoPE 之前对 q、k 各做一次 RMSNorm（<code>qwen3.py:82-84</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>if not self.qkv_bias:</span></span>
+<span class="line"><span>    q = self.q_norm(q)</span></span>
+<span class="line"><span>    k = self.k_norm(k)</span></span>
+<span class="line"><span>q, k = self.rotary_emb(positions, q, k)</span></span></code></pre>
+<p>这是 Qwen3 相对 Qwen2 的主要注意力改动：归一化 query/key 的尺度，稳定注意力 logit。<code>q_norm/k_norm</code> 是作用在 <code>head_dim</code> 上的 RMSNorm（<code>qwen3.py:68-70</code>）。</p>
+<p><strong>(2) 残差与 RMSNorm 融合。</strong> <code>Qwen3DecoderLayer.forward</code> 的签名多带一个 <code>residual</code>（<code>qwen3.py:146-159</code>）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> forward</span><span style="color:#24292E">(self, positions, hidden_states, residual):</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> residual </span><span style="color:#D73A49">is</span><span style="color:#005CC5"> None</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        hidden_states, residual </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.input_layernorm(hidden_states), hidden_states</span></span>
+<span class="line"><span style="color:#D73A49">    else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        hidden_states, residual </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.input_layernorm(hidden_states, residual)</span></span>
+<span class="line"><span style="color:#24292E">    hidden_states </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.self_attn(positions, hidden_states)</span></span>
+<span class="line"><span style="color:#24292E">    hidden_states, residual </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.post_attention_layernorm(hidden_states, residual)</span></span>
+<span class="line"><span style="color:#24292E">    hidden_states </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.mlp(hidden_states)</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> hidden_states, residual</span></span></code></pre>
+<p>残差不是「子层出口处 <code>x = x + sublayer(x)</code>」，而是作为显式状态在层间传递，在下一个 RMSNorm 里融合：<code>add_rms_forward</code>（<code>layernorm.py:28-40</code>）先 <code>x.add_(residual)</code> 再归一化，加法与归一化合进同一个 <code>@torch.compile</code> kernel，省一次显存往返。首层 <code>residual is None</code>，由 <code>input_layernorm</code> 初始化。</p>
+<p><strong>(3) 权重融合与词表共享。</strong> <code>packed_modules_mapping</code>（<code>qwen3.py:187-193</code>）声明了 HF 分存权重到推理融合权重的映射：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>packed_modules_mapping = {</span></span>
+<span class="line"><span>    "q_proj": ("qkv_proj", "q"),</span></span>
+<span class="line"><span>    "k_proj": ("qkv_proj", "k"),</span></span>
+<span class="line"><span>    "v_proj": ("qkv_proj", "v"),</span></span>
+<span class="line"><span>    "gate_proj": ("gate_up_proj", 0),</span></span>
+<span class="line"><span>    "up_proj": ("gate_up_proj", 1),</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>q/k/v 融合成一个 <code>qkv_proj</code>（一次矩阵乘出 QKV），gate/up 融合成 <code>gate_up_proj</code>。另外 <code>tie_word_embeddings</code> 时 <code>lm_head</code> 直接复用 <code>embed_tokens</code> 的权重（<code>qwen3.py:202-203</code>），省一份词表大小的显存。</p>
+<h3 id="32-张量并行-linear列切行切与-all_reduce-时机">3.2 张量并行 Linear：列切、行切与 all_reduce 时机</h3>
+<p>TP 的核心在 <code>nanovllm/layers/linear.py</code> 的四种 Linear。理解它就理解了「为什么 attention 之后要 all_reduce」。</p>
+<p><strong>两种切分方向：</strong></p>
+<ul>
+<li>
+<p><strong>ColumnParallelLinear（列并行）</strong>：按输出维切。权重 <code>[out, in]</code> 沿 <code>out</code> 切成 <code>tp_size</code> 份，每 rank 持 <code>[out/tp, in]</code>。各 rank 独立算自己那部分输出，<strong>无需通信</strong>——<code>x·W = [x·W₀, x·W₁, ...]</code>，各 rank 算的是不同列。</p>
+</li>
+<li>
+<p><strong>RowParallelLinear（行并行）</strong>：按输入维切。每 rank 持 <code>[out, in/tp]</code>，各 rank 算 <code>xᵢ·Wᵢ</code>，最终输出是这些部分和——所以出口处要 <code>dist.all_reduce(y)</code>（<code>linear.py:152-156</code>）。</p>
+</li>
+</ul>
+<p><strong>一个 attention/MLP 块的典型组合：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>hidden → QKVParallelLinear（列并行，无通信）</span></span>
+<span class="line"><span>       → attention</span></span>
+<span class="line"><span>       → o_proj = RowParallelLinear（行并行，all_reduce）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>hidden → MergedColumnParallelLinear（列并行，gate+up 融合，无通信）</span></span>
+<span class="line"><span>       → SiluAndMul</span></span>
+<span class="line"><span>       → down_proj = RowParallelLinear（行并行，all_reduce）</span></span></code></pre>
+<p>「列并行进、行并行出」，每层只在两个出口各通信一次。这是 Megatron-LM 的经典模式：把通信压到每层两次，而非每个 Linear 都通信。</p>
+<p><strong>QKVParallelLinear 的精巧处</strong>（<code>linear.py:96-128</code>）：GQA 下 q、k、v 头数不同，融合后的输出大小是 <code>(total_num_heads + 2 × total_num_kv_heads) × head_size</code>。加载时按 <code>shard_id</code>（“q”/“k”/“v”）算各自在融合张量里的偏移，再按 rank 切自己的那片。这就是 <code>packed_modules_mapping</code> 里三者同映射到 <code>qkv_proj</code> 却带不同 shard_id 的原因。</p>
+<p><strong>权重如何从 safetensors 进来。</strong> <code>load_model</code>（<code>utils/loader.py:12-29</code>）遍历所有 safetensors 文件的每个权重名：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> load_model</span><span style="color:#24292E">(model: nn.Module, path: </span><span style="color:#005CC5">str</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#24292E">    packed_modules_mapping </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> getattr</span><span style="color:#24292E">(model, </span><span style="color:#032F62">"packed_modules_mapping"</span><span style="color:#24292E">, {})</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#E36209"> file</span><span style="color:#D73A49"> in</span><span style="color:#24292E"> glob(os.path.join(path, </span><span style="color:#032F62">"*.safetensors"</span><span style="color:#24292E">)):</span></span>
+<span class="line"><span style="color:#D73A49">        with</span><span style="color:#24292E"> safe_open(</span><span style="color:#E36209">file</span><span style="color:#24292E">, </span><span style="color:#032F62">"pt"</span><span style="color:#24292E">, </span><span style="color:#032F62">"cpu"</span><span style="color:#24292E">) </span><span style="color:#D73A49">as</span><span style="color:#24292E"> f:</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> weight_name </span><span style="color:#D73A49">in</span><span style="color:#24292E"> f.keys():</span></span>
+<span class="line"><span style="color:#D73A49">                for</span><span style="color:#24292E"> k </span><span style="color:#D73A49">in</span><span style="color:#24292E"> packed_modules_mapping:</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> k </span><span style="color:#D73A49">in</span><span style="color:#24292E"> weight_name:</span></span>
+<span class="line"><span style="color:#24292E">                        v, shard_id </span><span style="color:#D73A49">=</span><span style="color:#24292E"> packed_modules_mapping[k]</span></span>
+<span class="line"><span style="color:#24292E">                        param_name </span><span style="color:#D73A49">=</span><span style="color:#24292E"> weight_name.replace(k, v)</span></span>
+<span class="line"><span style="color:#24292E">                        param </span><span style="color:#D73A49">=</span><span style="color:#24292E"> model.get_parameter(param_name)</span></span>
+<span class="line"><span style="color:#24292E">                        weight_loader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> getattr</span><span style="color:#24292E">(param, </span><span style="color:#032F62">"weight_loader"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                        weight_loader(param, f.get_tensor(weight_name), shard_id)</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span></span>
+<span class="line"><span style="color:#D73A49">                else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">                    param </span><span style="color:#D73A49">=</span><span style="color:#24292E"> model.get_parameter(weight_name)</span></span>
+<span class="line"><span style="color:#24292E">                    weight_loader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> getattr</span><span style="color:#24292E">(param, </span><span style="color:#032F62">"weight_loader"</span><span style="color:#24292E">, default_weight_loader)</span></span>
+<span class="line"><span style="color:#24292E">                    weight_loader(param, f.get_tensor(weight_name))</span></span></code></pre>
+<p>注意内层是 <code>for...else</code>：权重名命中某个 packed key（如 <code>q_proj</code>）时，重映射到融合参数名（<code>qkv_proj</code>）、带着 shard_id 走该参数的 <code>weight_loader</code> 并 <code>break</code>；都不命中时走 <code>else</code> 分支的 <code>default_weight_loader</code>（直接 <code>copy_</code>）。每个融合参数的 <code>weight_loader</code> 内部再按 rank 取自己的 TP 分片（<code>loaded_weight.narrow(tp_dim, start, shard_size)</code> 或 <code>chunk(tp_size)[tp_rank]</code>）——所以**「融合 + 张量并行分片」在加载这一步一次完成**，同一份权重文件，N 个 rank 各取所需、互不重叠。</p>
+<h3 id="33-vocabparallelembedding-与-parallellmhead">3.3 VocabParallelEmbedding 与 ParallelLMHead</h3>
+<p>词表相关的两个层也做了并行化（<code>nanovllm/layers/embed_head.py</code>）。</p>
+<p><code>VocabParallelEmbedding</code>（<code>embed_head.py:9-42</code>）按词表维切，每 rank 持 <code>vocab/tp</code> 行。前向时落在本 rank 区间外的 token id 被 mask 掉再查表，最后 <code>all_reduce</code> 汇总——词表大到单卡放不下时也能分布存。</p>
+<p><code>ParallelLMHead</code>（<code>embed_head.py:45-66</code>）继承它，前向多两步：<strong>prefill 时只取每序列最后一个 token 的 hidden</strong>（<code>last_indices = cu_seqlens_q[1:] - 1</code>）算 logits——中间 token 的投影纯属浪费，跳过；TP 下各 rank 的部分 logits 用 <code>dist.gather</code> 汇到 rank 0，与 2.10 节「只有 rank 0 采样」衔接。</p>
+<h3 id="34-rope预计算-cossin-表">3.4 RoPE：预计算 cos/sin 表</h3>
+<p><code>nanovllm/layers/rotary_embedding.py</code> 的旋转位置编码在构造时预计算一张表：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>inv_freq = 1.0 / (base ** (torch.arange(0, rotary_dim, 2, dtype=torch.float) / rotary_dim))</span></span>
+<span class="line"><span>t = torch.arange(max_position_embeddings, dtype=torch.float)</span></span>
+<span class="line"><span>freqs = torch.einsum("i,j -> ij", t, inv_freq)</span></span>
+<span class="line"><span>cache = torch.cat((freqs.cos(), freqs.sin()), dim=-1).unsqueeze_(1)</span></span>
+<span class="line"><span>self.register_buffer("cos_sin_cache", cache, persistent=False)</span></span></code></pre>
+<p><code>[max_position, 1, 2 × rotary_dim]</code> 的 cos/sin 表，<code>persistent=False</code> 不进 state_dict（可由配置重算，省存储）。前向按 <code>positions</code> 索引出对应行，对 q、k 做旋转（最后一维对半切成 x1/x2，算 <code>y1 = x1·cos − x2·sin; y2 = x2·cos + x1·sin</code> 再拼回）。</p>
+<p>两个优化点：<code>apply_rotary_emb</code> 带 <code>@torch.compile</code>（<code>rotary_embedding.py:37</code>），索引加旋转融合成一个 kernel；<code>get_rope</code> 带 <code>@lru_cache(1)</code>（<code>rotary_embedding.py:51</code>），同配置只建一个实例，N 层共享同一张 cos/sin 表。</p>
+<h3 id="35-samplergumbel-max-批量采样">3.5 Sampler：Gumbel-max 批量采样</h3>
+<p>采样器只有十几行（<code>nanovllm/layers/sampler.py</code>），但藏着一个优雅的批量技巧：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> Sampler</span><span style="color:#24292E">(</span><span style="color:#6F42C1">nn</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Module</span><span style="color:#24292E">):</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">    @torch.compile</span></span>
+<span class="line"><span style="color:#D73A49">    def</span><span style="color:#6F42C1"> forward</span><span style="color:#24292E">(self, logits: torch.Tensor, temperatures: torch.Tensor):</span></span>
+<span class="line"><span style="color:#24292E">        logits </span><span style="color:#D73A49">=</span><span style="color:#24292E"> logits.float().div_(temperatures.unsqueeze(</span><span style="color:#E36209">dim</span><span style="color:#D73A49">=</span><span style="color:#005CC5">1</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">        probs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.softmax(logits, </span><span style="color:#E36209">dim</span><span style="color:#D73A49">=-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        sample_tokens </span><span style="color:#D73A49">=</span><span style="color:#24292E"> probs.div_(torch.empty_like(probs).exponential_(</span><span style="color:#005CC5">1</span><span style="color:#24292E">).clamp_min_(</span><span style="color:#005CC5">1e-10</span><span style="color:#24292E">)).argmax(</span><span style="color:#E36209">dim</span><span style="color:#D73A49">=-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> sample_tokens</span></span></code></pre>
+<p>逐行看：</p>
+<ol>
+<li>
+<p><code>logits.float().div_(temperatures.unsqueeze(1))</code>：升 fp32，按各序列自己的 temperature 缩放（<code>unsqueeze</code> 把 <code>[bs]</code> 广播到 <code>[bs, 1]</code>）——<strong>一个 batch 里每个序列可以用不同温度</strong>。</p>
+</li>
+<li>
+<p><code>softmax</code> 得概率分布。</p>
+</li>
+<li>
+<p>最后一行是 <strong>Gumbel-max 采样</strong>的变体。原理：对每个类别算 <code>log pᵢ + gᵢ</code>（<code>gᵢ</code> 为标准 Gumbel 噪声）再取 argmax，等价于按 <code>p</code> 采样；而指数分布噪声经 <code>-log</code> 变换恰是 Gumbel。所以 <code>probs.div_(exponential_(1))</code> 等价于 <code>log p + g</code>，<code>argmax</code> 即采样结果。<code>clamp_min_(1e-10)</code> 防 log(0)。</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>这行为什么等价于按概率抽样</strong>（不想看推导可跳过）：直觉是「给每个词打分再加噪，谁高选谁」。普通加噪做不到「选中概率恰好是 pᵢ」，但 Gumbel 噪声有一个数学上恰好成立的性质：<code>log pᵢ + gᵢ</code> 取最大值的那个词，被选中的概率正好等于 <code>pᵢ</code>——这就是 Gumbel-max 定理。代码里没直接采 Gumbel，而是采了指数分布噪声（<code>exponential_(1)</code>），因为「指数分布取 <code>-log</code>」正是 Gumbel；而除法取对数后变减法，<code>probs / 噪声</code> 取 argmax 与 <code>log p − log 噪声</code> 取 argmax 等价——后者正是 <code>log p + g</code> 的形式。一行除法 + argmax，就完成了整个 batch 的并行抽样。</p>
+</blockquote>
+<p>为什么不用 <code>torch.multinomial</code>：Gumbel-max 是纯张量运算，可融合、可 <code>@torch.compile</code>，天然支持 batch 内不同温度的并行采样，不需要逐序列 Python 循环。</p>
+<p>一个推论：<code>SamplingParams</code> 断言 <code>temperature > 1e-10</code>（<code>sampling_params.py:10-11</code>），<strong>禁止把 temperature 设 0 做 greedy</strong>——除法会炸。要确定性输出得走别的路径。</p>
+<h3 id="36-sequence-的-pickle-瘦身">3.6 Sequence 的 pickle 瘦身</h3>
+<p>最后是最容易忽略、却很精巧的一处（<code>sequence.py:72-84</code>）。</p>
+<p>多卡时主进程要把 <code>Sequence</code> 经共享内存 pickle 给 worker。默认 pickle 会带上整个 <code>token_ids</code> 列表；而 decode 阶段序列可能已有上千 token，worker 却只需要 <code>last_token</code> 和 <code>block_table</code>。于是：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#005CC5"> __getstate__</span><span style="color:#24292E">(self):</span></span>
+<span class="line"><span style="color:#24292E">    last_state </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.last_token </span><span style="color:#D73A49">if</span><span style="color:#D73A49"> not</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.is_prefill </span><span style="color:#D73A49">else</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.token_ids</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> (</span><span style="color:#005CC5">self</span><span style="color:#24292E">.num_tokens, </span><span style="color:#005CC5">self</span><span style="color:#24292E">.num_prompt_tokens, </span><span style="color:#005CC5">self</span><span style="color:#24292E">.num_cached_tokens,</span></span>
+<span class="line"><span style="color:#005CC5">            self</span><span style="color:#24292E">.num_scheduled_tokens, </span><span style="color:#005CC5">self</span><span style="color:#24292E">.block_table, last_state)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#005CC5"> __setstate__</span><span style="color:#24292E">(self, state):</span></span>
+<span class="line"><span style="color:#005CC5">    ...</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#005CC5"> isinstance</span><span style="color:#24292E">(last_state, </span><span style="color:#005CC5">list</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.token_ids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> last_state</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.last_token </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.token_ids[</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#D73A49">    else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.token_ids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []            </span><span style="color:#6A737D"># decode：不传历史 token</span></span>
+<span class="line"><span style="color:#005CC5">        self</span><span style="color:#24292E">.last_token </span><span style="color:#D73A49">=</span><span style="color:#24292E"> last_state   </span><span style="color:#6A737D"># 只恢复一个标量</span></span></code></pre>
+<p>decode 时 <code>last_state</code> 只装一个 int，<code>token_ids</code> 置空——worker 收到的 Sequence 不带历史 token，共享内存占用大幅压缩。安全性来自 2.10 节的分工：decode 前向只需要 <code>last_token</code>（构造输入）与 <code>block_table</code>（读历史 KV），历史 token 本身用不到。prefill 时才传完整 <code>token_ids</code>（要算整段 prompt）。</p>
+<hr>
+<h2 id="四结语">四、结语</h2>
+<p>从 <code>example.py</code> 一路走到采样器，一个 LLM 推理引擎的本质就是这样一个循环：</p>
+<ol>
+<li>
+<p>Scheduler 选出下一批要跑的序列；</p>
+</li>
+<li>
+<p>BlockManager 保证它们的 KV 块就绪（能复用的复用，不够的抢占）；</p>
+</li>
+<li>
+<p>ModelRunner 把变长、散落的序列打包成一次密集的 kernel 启动；</p>
+</li>
+<li>
+<p>跑模型，采样；</p>
+</li>
+<li>
+<p>追加 token、写回 prefix cache、更新状态，进入下一步。</p>
+</li>
+</ol>
+<p>剩下的一切——分页、链式哈希、引用计数、chunked prefill、CUDA Graph——都是让这个循环在显存约束下转得更快的工程细节。而这 1200 行代码的价值在于：这些细节一个不少，却都读得完。</p>
+<hr>
+<h2 id="参考与延伸阅读">参考与延伸阅读</h2>
+<p>本文的写作受益于 junuxyz 的《Inside nano-vLLM》一文及其引用资料；下列每条附上内容说明，可按需取读。</p>
+<ol>
+<li>
+<p>nano-vLLM 仓库（本文所有代码引用的出处）：<a href="https://github.com/GeeeekExplorer/nano-vLLM">https://github.com/GeeeekExplorer/nano-vLLM</a></p>
+</li>
+<li>
+<p>junuxyz，LLM 推理引擎在优化什么（TTFT/TPOT/goodput 的定义，prefill 计算受限 vs decode 显存受限，H100 + Qwen3-32B 的显存拆解，本文 1.1、2.9 节素材来源）：<a href="https://github.com/junuxyz/mlsys-notes/blob/main/notes/llm-inference-intro-p1.md">https://github.com/junuxyz/mlsys-notes/blob/main/notes/llm-inference-intro-p1.md</a></p>
+</li>
+<li>
+<p>Sebastian Raschka，“Coding the KV Cache in LLMs”（从零手写 KV cache，含代码）：<a href="https://magazine.sebastianraschka.com/p/coding-the-kv-cache-in-llms">https://magazine.sebastianraschka.com/p/coding-the-kv-cache-in-llms</a></p>
+</li>
+<li>
+<p>Hugging Face 的 KV cache 博客（KV cache 机制与显存开销）：<a href="https://huggingface.co/blog/kv-cache">https://huggingface.co/blog/kv-cache</a></p>
+</li>
+<li>
+<p>junuxyz 的 PagedAttention 笔记（分页思想的理论部分）：<a href="https://github.com/junuxyz/mlsys-notes/blob/main/notes/pagedattention.md">https://github.com/junuxyz/mlsys-notes/blob/main/notes/pagedattention.md</a></p>
+</li>
+<li>
+<p>FIFO / FCFS 背景（维基百科）：<a href="https://en.wikipedia.org/wiki/FIFO%5C_(computing%5C_and%5C_electronics)">https://en.wikipedia.org/wiki/FIFO\_(computing\_and\_electronics)</a></p>
+</li>
+<li>
+<p>prefix 链式哈希的最小实验（验证「同内容不同前缀 → 不同哈希」，本文 2.5 节的实验数据）：<a href="https://gist.github.com/junuxyz/89501be9327da5e137515874d4c5b8e1">https://gist.github.com/junuxyz/89501be9327da5e137515874d4c5b8e1</a></p>
+</li>
+<li>
+<p>Aleksa Gordic，“vLLM”（prefix cache 的块共享与引用计数、懒惰失效的可视化，本文 2.5 节配图参考）：<a href="https://www.aleksagordic.com/blog/vllm">https://www.aleksagordic.com/blog/vllm</a></p>
+</li>
+<li>
+<p>The Annotated Transformer（Transformer 逐行实现）：<a href="https://nlp.seas.harvard.edu/annotated-transformer/">https://nlp.seas.harvard.edu/annotated-transformer/</a></p>
+</li>
+<li>
+<p>vLLM 文档：gpu_memory_utilization（显存五构成与测算公式，本文 2.9 节素材来源）：<a href="https://docs.vllm.ai/projects/vllm-omni/en/latest/configuration/gpu%5C_memory%5C_utilization/">https://docs.vllm.ai/projects/vllm-omni/en/latest/configuration/gpu\_memory\_utilization/</a></p>
+</li>
+</ol></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/I23HdHwYpYdEpdit6WTKog" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/27/wechat-2247483965-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">列式存储的第二次革命：AI时代数据底座的演进全景与前瞻</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/27/wechat-2247483965-3/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">OpenMinis 架构分析</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#零先修课只用-python-也够用的背景包">零、先修课：只用 Python 也够用的背景包</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#01-大模型推理在算什么">0.1 大模型推理在算什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#02-transformer-十分钟版">0.2 Transformer 十分钟版</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#03-为什么推理慢flops-与字节">0.3 为什么推理慢：FLOPs 与字节</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#04-kv-cache用显存换重复计算">0.4 KV cache：用显存换重复计算</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#05-gpu-工程常识包">0.5 GPU 工程常识包</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#06-名词速查表">0.6 名词速查表</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一引擎全景">一、引擎全景</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#11-推理引擎到底在优化什么">1.1 推理引擎到底在优化什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#12-四个组件一条流水线">1.2 四个组件，一条流水线</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#13-核心数据结构">1.3 核心数据结构</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#14-kv-cache-分页从物理块到-slot-的八步">1.4 KV cache 分页：从物理块到 slot 的八步</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#15-一次迭代的全貌">1.5 一次迭代的全貌</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二沿着一次推理走读代码">二、沿着一次推理走读代码</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#21-入口examplepy">2.1 入口：example.py</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#22-初始化llm-的六步">2.2 初始化：LLM 的六步</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#23-主循环generate-与-step">2.3 主循环：generate 与 step</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#24-调度器chunked-prefill-下的-prefill-调度">2.4 调度器：chunked prefill 下的 prefill 调度</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#25-blockmanager链式哈希引用计数与懒惰失效">2.5 BlockManager：链式哈希、引用计数与懒惰失效</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#26-decode-调度与抢占">2.6 decode 调度与抢占</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#27-postprocess把新块写回-prefix-cache">2.7 postprocess：把新块写回 prefix cache</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#28-modelrunner初始化">2.8 ModelRunner：初始化</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#29-显存测算能造多少个-kv-块">2.9 显存测算：能造多少个 KV 块</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#210-输入准备prefill-与-decode">2.10 输入准备：prefill 与 decode</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#211-attention写-kv-的-triton-kernel-与-flashattention">2.11 Attention：写 KV 的 Triton kernel 与 FlashAttention</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#212-cuda-graph按-batch-size-预捕获">2.12 CUDA Graph：按 batch size 预捕获</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三模型与算子层">三、模型与算子层</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#31-qwen3qk-norm-与融合残差">3.1 Qwen3：QK-Norm 与融合残差</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#32-张量并行-linear列切行切与-all_reduce-时机">3.2 张量并行 Linear：列切、行切与 all_reduce 时机</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#33-vocabparallelembedding-与-parallellmhead">3.3 VocabParallelEmbedding 与 ParallelLMHead</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#34-rope预计算-cossin-表">3.4 RoPE：预计算 cos/sin 表</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#35-samplergumbel-max-批量采样">3.5 Sampler：Gumbel-max 批量采样</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#36-sequence-的-pickle-瘦身">3.6 Sequence 的 pickle 瘦身</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四结语">四、结语</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#参考与延伸阅读">参考与延伸阅读</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

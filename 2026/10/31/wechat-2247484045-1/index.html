@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>不到48小时2k星：没有root，AI怎么操作手机？ | 中龄程序猿</title><meta name="description" content="没有 root，也没有系统签名，一个普通 App 怎么替你点微信、下单、截图？Mika 开源 48 小时拿到 1923 星——它自己写了一遍 adb 协议，借调试通道换到 shell 身份，再造一块看不见的屏，把 App 搬进去操作。"><link rel="canonical" href="https://www.shanruifeng.win/2026/10/31/wechat-2247484045-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="不到48小时2k星：没有root，AI怎么操作手机？ | 中龄程序猿"><meta property="og:description" content="没有 root，也没有系统签名，一个普通 App 怎么替你点微信、下单、截图？Mika 开源 48 小时拿到 1923 星——它自己写了一遍 adb 协议，借调试通道换到 shell 身份，再造一块看不见的屏，把 App 搬进去操作。"><meta property="og:url" content="https://www.shanruifeng.win/2026/10/31/wechat-2247484045-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484045-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="不到48小时2k星：没有root，AI怎么操作手机？ | 中龄程序猿"><meta name="twitter:description" content="没有 root，也没有系统签名，一个普通 App 怎么替你点微信、下单、截图？Mika 开源 48 小时拿到 1923 星——它自己写了一遍 adb 协议，借调试通道换到 shell 身份，再造一块看不见的屏，把 App 搬进去操作。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484045-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"不到48小时2k星：没有root，AI怎么操作手机？","description":"没有 root，也没有系统签名，一个普通 App 怎么替你点微信、下单、截图？Mika 开源 48 小时拿到 1923 星——它自己写了一遍 adb 协议，借调试通道换到 shell 身份，再造一块看不见的屏，把 App 搬进去操作。","datePublished":"2026-10-31T10:14:27.000Z","dateModified":"2026-10-31T10:14:27.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/10/31/wechat-2247484045-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484045-1/cover.jpg","articleSection":"Java","keywords":"Java,JVM,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/Java/">Java</a><span>/</span><span>不到48小时2k星：没有root，AI怎么操作手机？</span></nav><header class="article-header"><a class="article-header__category" href="/categories/Java/">Java</a><h1 class="article-title">不到48小时2k星：没有root，AI怎么操作手机？</h1><p class="article-desc">没有 root，也没有系统签名，一个普通 App 怎么替你点微信、下单、截图？Mika 开源 48 小时拿到 1923 星——它自己写了一遍 adb 协议，借调试通道换到 shell 身份，再造一块看不见的屏，把 App 搬进去操作。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-10-31T10:14:27.000Z">2026-10-31</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>15 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>Java · JVM · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484045-1/cover.jpg" alt="不到48小时2k星：没有root，AI怎么操作手机？"></figure><div class="article-grid"><div class="article-content"><div class="prose"><p><img src="/images/wechat/wechat-2247484045-1/01.png" alt="图片 1"></p>
+<p>Mika</p>
+<p>10 月 29 日 22:34，GitHub 上出现一个叫 Mika 的仓库。</p>
+<p>到 10 月 31 日 16:30，41 小时 56 分，它拿到 1923 star、305 fork。</p>
+<p>star 和 fork 的比例是 6.3:1。这个比例不太寻常——通常 star 远多于 fork，六个里就有一个 fork，说明每六个人里就有一个打算把代码拉下来真跑一遍。</p>
+<p>它做的事一句话能说完：在一块你看不见的屏上，替你操作手机 App。</p>
+<p>真实点、真实打字、真实翻页。你同时在刷自己的手机，两边互不干扰。</p>
+<p><img src="/images/wechat/wechat-2247484045-1/02.gif" alt="图片 2"></p>
+<p>后台翻完微信群，总结今天聊了啥</p>
+<p><em>（README 里的两段录屏之一，加速播放；总结正文涉及群友发言，已打码）</em></p>
+<p><img src="/images/wechat/wechat-2247484045-1/03.gif" alt="图片 3"></p>
+<p>打开小红书，总结一位博主的内容</p>
+<p><em>（同一段录屏的另一半：逐屏读完一个博主的主页再总结）</em></p>
+<h2 id="难的不是模型">难的不是模型</h2>
+<p>这类产品最难过的一关，从来不在模型。</p>
+<p>模型早就会说”点右上角那个加号”。难的是：凭什么让一个第三方 App 在没有 root 的手机上、在后台跑起来、被人点击、被人读取，还不打断你？</p>
+<p>Mika 的答案分三层：拿一个 shell 身份、造一块假屏、把 App 搬到假屏上。</p>
+<p>下面按这三层拆。所有结论来自我读它的源码——980 个 Kotlin 文件、135,253 行，<code>:core</code> 占 68,988 行，<code>:app</code> 占 66,265 行。</p>
+<p>先说清楚：我读代码，没在真机上跑过。涉及真机行为的地方我会标出来。</p>
+<h2 id="一行命令换来的身份">一行命令换来的身份</h2>
+<p>Mika 的全部特权，起点是这一行：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>read n</span></span>
+<span class="line"><span>( echo "$n" | CLASSPATH=&#x3C;base.apk> setsid app_process /system/bin \</span></span>
+<span class="line"><span>    --nice-name=&#x3C;pkg>:helper \</span></span>
+<span class="line"><span>    com.wangzan101.mika.shell.HelperMain \</span></span>
+<span class="line"><span>    &#x3C;pkg> &#x3C;uid> &#x3C;certPin> >/dev/null 2>&#x26;1 &#x26; )</span></span>
+<span class="line"><span>read _</span></span></code></pre>
+<p><code>app_process</code> 是 Android Runtime 的启动器。用它可以不安装任何东西，直接跑一个 main 类。</p>
+<p>关键在于它由谁启动。这行命令经 adb 送进设备，所以 <code>app_process</code> 继承的是 shell 身份，uid 2000。</p>
+<p>uid 2000 能干什么：<code>INJECT_EVENTS</code>（注入触摸）、<code>CREATE_VIRTUAL_DISPLAY</code>（建虚拟屏）、<code>MANAGE_ACTIVITY_TASKS</code>（管任务栈）。这些权限普通 App 申请不到，系统不给。</p>
+<p>四个细节值得单独看：</p>
+<p>|
+片段</p>
+<p>|</p>
+<p>作用</p>
+<p>|
+| --- | --- |
+| <code>setsid</code> |</p>
+<p>脱离 adbd 会话，adb 断连不会把助手一起杀掉</p>
+<p>|
+| <code>read n</code></p>
+<ul>
+<li>管道</li>
+</ul>
+<p>|</p>
+<p>nonce 从 stdin 传，不落在命令行。否则 <code>/proc/pid/cmdline</code> 全世界可读</p>
+<p>|
+| <code>--nice-name</code> |</p>
+<p>进程名写成 <code>&#x3C;包名>:helper</code>，方便之后按 cmdline 精确清理旧实例</p>
+<p>|
+| <code>&#x3C;certPin></code> |</p>
+<p>助手启动时核对”跑我的 APK 那个包”的签名指纹，不一致就退出</p>
+<p>|</p>
+<p>这套机制的核心，是用一次 adb 换一个常驻的特权进程。</p>
+<p>问题接着来了：adb 从哪来？手机又没连电脑。</p>
+<h2 id="它把-adb-协议自己写了一遍">它把 ADB 协议自己写了一遍</h2>
+<p>Android 11 起有个功能叫无线调试。打开后，手机自己就是 adb 服务端，监听一个端口。</p>
+<p>Mika 在 App 里实现了 adb 客户端，约 1500 行，在 <code>core/adb/</code> 下。配对流程：</p>
+<ol>
+<li>
+<p>mDNS 找到 <code>_adb-tls-pairing._tcp</code> 广播的端口</p>
+</li>
+<li>
+<p>TLS 1.3 连上去，此时双方都还没有对方的信任锚</p>
+</li>
+<li>
+<p>用 <code>exportKeyingMaterial("adb-label\0", 64)</code> 导出 64 字节密钥</p>
+</li>
+<li>
+<p>口令 = 你输入的 6 位配对码 + 这段导出密钥，走 SPAKE2</p>
+</li>
+<li>
+<p>双方算出同一个会话密钥，用 AES-GCM 互换 PeerInfo</p>
+</li>
+<li>
+<p>各自存下对方公钥，配对完成</p>
+</li>
+</ol>
+<p>SPAKE2、Ed25519、TLS 1.3 握手，都是自己写的。</p>
+<p>这也解释了它为什么要求 Android 13+。虚拟屏要用到的几个 flag 和 <code>takeScreenshot</code> 都是 13 才有的：11 能装，13 才能干活。</p>
+<h2 id="binder-怎么从-shell-进程回到-app">Binder 怎么从 shell 进程回到 App</h2>
+<p>助手跑起来了，但它和 Mika 是两个进程，Binder 不能直接传。</p>
+<p>Mika 用 ContentProvider 做中转站：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 助手侧</span></span>
+<span class="line"><span>val holder = ActivityManager.getContentProviderExternal(authority, userId, token, TAG)</span></span>
+<span class="line"><span>holder.provider.call(AttributionSource, authority, "attach", null, extras)</span></span>
+<span class="line"><span>// extras 里塞：我的 Binder、nonce、uid、pid、apkPath</span></span></code></pre>
+<p>App 侧校验完，回一个 <code>KEY_TOKEN</code> 和一个新 nonce。助手存下 Binder，<code>linkToDeath</code>。</p>
+<p>反向的桥也建了。助手用 <code>addOnUidImportanceListener</code> 盯着 Mika 的 uid，Mika 被杀又重启时会重新交接一次，不用再走 adb。</p>
+<p>三道校验：<code>onTransact</code> 第一行比对 calling uid；签名指纹必须匹配；nonce 一次性、30 秒过期。</p>
+<p>到这里，特权通道就有了。整条链路长这样：</p>
+<p><img src="/images/wechat/wechat-2247484045-1/04.png" alt="图片 4"></p>
+<p>权限上升路径</p>
+<p>接下来是更难的部分。</p>
+<h2 id="一块不落在玻璃上的屏">一块不落在玻璃上的屏</h2>
+<p>常规做法都撞墙：</p>
+<ul>
+<li>
+<p>主屏打开再按 Home：Activity 被 onStop，也打断了用户</p>
+</li>
+<li>
+<p>小窗或画中画：还是占着物理屏</p>
+</li>
+<li>
+<p>MediaProjection 录屏：只能看不能点，系统每 30 分钟弹一次授权</p>
+</li>
+</ul>
+<p>Mika 用 <code>VirtualDisplay</code>。App 先建一个 <code>ImageReader</code>，把它的 Surface 交给 shell 进程去建屏：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private val reader = ImageReader.newInstance(w, h, PixelFormat.RGBA_8888, 2)</span></span>
+<span class="line"><span>val id = shell.createDisplay(reader.surface, w, h, dpi)</span></span></code></pre>
+<p>渲染结果全部写进这块 Surface，只有 Mika 能读。物理屏上什么都不显示。</p>
+<p>建屏用的 flags，是整段代码里最能看出”踩过坑”的地方：</p>
+<p>|
+Flag</p>
+<p>|</p>
+<p>缺了会怎样</p>
+<p>|
+| --- | --- |
+| <code>PUBLIC</code> |</p>
+<p>App 无法在上面显示</p>
+<p>|
+| <code>TRUSTED</code> |</p>
+<p>Android 12+ 拒绝在上面启动 Activity</p>
+<p>|
+| <code>SUPPORTS_TOUCH</code> |</p>
+<p>触摸事件被丢弃</p>
+<p>|
+| <code>OWN_DISPLAY_GROUP</code> |</p>
+<p>和主屏共用任务栈，挪任务失效</p>
+<p>|
+| <code>ALWAYS_UNLOCKED</code> |</p>
+<p>用户锁屏后 App 被暂停</p>
+<p>|
+| <code>TOUCH_FEEDBACK_DISABLED</code> |</p>
+<p>画面上出现白色圆点，污染 OCR</p>
+<p>|
+| <code>OWN_FOCUS</code> |</p>
+<p>焦点永远在主屏，输入事件进不去</p>
+<p>|
+| <code>STEAL_TOP_FOCUS_DISABLED</code> |</p>
+<p>用户打字时输入法突然消失</p>
+<p>|</p>
+<p>最后一条最隐蔽。虚拟屏有了自己的焦点后会去抢主屏的 top focus，用户正在微信里打字，键盘会莫名收起。</p>
+<p>还有一个 <code>IME_POLICY = LOCAL</code>，通过反射设 <code>setDisplayImePolicy</code>。不设的话，输入法会弹到用户的主屏上——你在用手机，突然跳出一个键盘。</p>
+<p>这些 flag 没有文档可查，只能一个版本一个版本试。也正因为如此，它对 Android 版本的依赖是硬的。</p>
+<h2 id="把-app-搬到这块屏上">把 App 搬到这块屏上</h2>
+<p>建屏只是有了空地。要让第三方 App 上去，普通 <code>startActivity</code> 不够——系统会用调用者的 display。</p>
+<p>必须用 shell 身份调 <code>startActivityAsUser</code>，带 12 个参数，其中一个 <code>ActivityOptions.setLaunchDisplayId(displayId)</code>。</p>
+<p>Mika 用反射调，失败退回 <code>am start --display</code>。</p>
+<p>它没把返回码简化成成功或失败，而是分了八种：</p>
+<p>|
+码</p>
+<p>|</p>
+<p>含义</p>
+<p>|</p>
+<p>上层怎么办</p>
+<p>|
+| --- | --- | --- |
+| <code>START_OK</code> |</p>
+<p>成功</p>
+<p>|</p>
+<p>继续</p>
+<p>|
+| <code>IN_USE_ON_MAIN</code> |</p>
+<p>用户正在主屏用这个 App</p>
+<p>|</p>
+<p>不启动</p>
+<p>|
+| <code>IN_USE_BY_OTHER</code> |</p>
+<p>另一个任务在 Mika 屏上用它</p>
+<p>|</p>
+<p>排队</p>
+<p>|
+| <code>OK_COLD_IGNORED</code> |</p>
+<p>要求冷启动但任务在自己屏上</p>
+<p>|</p>
+<p>忽略冷启动，不杀用户进程</p>
+<p>|</p>
+<p><code>IN_USE_ON_MAIN</code> 这条是产品级的克制。技术上有能力抢，但选择了不抢。</p>
+<p><img src="/images/wechat/wechat-2247484045-1/05.png" alt="图片 5"></p>
+<p>虚拟屏与App搬迁</p>
+<h2 id="最值钱的-97-行">最值钱的 97 行</h2>
+<p>这是我读这个项目时最意外的发现。</p>
+<p>场景：目标 App 从后台拉起另一个 App。点通知、点分享、跳支付、跳登录，都算。</p>
+<p>系统会把新页面放到发起者的 display 上。但很多路径最终落到了主屏。</p>
+<p>结果很荒谬：用户正在玩手机，屏幕上突然弹出一个 App；Mika 的虚拟屏毫无变化，模型以为没点上，一遍遍重试。</p>
+<p>它的源码注释把这件事写得很直白：</p>
+<blockquote>
+<p>App 不是从自己在 Mika 屏上的页面、而是从后台（服务、通知的跳转、系统的选择器、跨用户的转交）打开另一个 App 时，系统按默认放到主屏；Mika 的屏上看不出变化，模型会以为没点上、一遍遍再点。</p>
+</blockquote>
+<p>Mika 的处理是三步：动作前让助手注册 <code>ITaskStackListener</code> 盯主屏 6 秒；动作后拉取”主屏最上面换人”的事件；再用一段纯逻辑判定。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private fun verdict(a: Arrival, ...): Verdict? {</span></span>
+<span class="line"><span>    if (a.at &#x3C; since || a.at > since + windowMs) return null// 不在窗口内</span></span>
+<span class="line"><span>    if (!a.standard || pkg in excluded) return null// 桌面、Mika 自己</span></span>
+<span class="line"><span>    if (a.from != NEW &#x26;&#x26; a.from != MAIN) return null// 从别的屏挪来的</span></span>
+<span class="line"><span>    if (a.now != MAIN) return null// 已经不在主屏</span></span>
+<span class="line"><span>    if (userTaps.any { it in since..a.at }) return null// 用户点过，算他自己开的</span></span>
+<span class="line"><span>    if (a.taskId == topBefore) return if (a.sameTask) InUse(a) else null</span></span>
+<span class="line"><span>    return PullBack(a)</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>判成 <code>PullBack</code> 就 <code>moveRootTaskToDisplay</code> 挪回来，等它真的到最上面。</p>
+<p>判成 <code>InUse</code> 就不动——原来就在主屏的那个 App 换了页面，说明用户正用着的那个被打开了，那是在用户眼前，别碰。</p>
+<p>还有例外：系统选择器（“用哪个 App 打开”）不挪，留给用户自己选，任务暂停等待。</p>
+<p>这 97 行是纯 Kotlin，没有一行 Android 依赖，可以直接单测。</p>
+<p>能写成纯函数，是因为所有 Android 查询都被抽成了一个 <code>Arrival</code> 数据类。能纯逻辑就纯逻辑，这是这个项目一贯的做法。</p>
+<h2 id="读屏的四段降级">读屏的四段降级</h2>
+<p>App 上屏了，接下来要”看”。</p>
+<p>第一段是无障碍控件树。<code>getWindowsOnAllDisplays()</code> 按 displayId 取窗口，过滤输入法、无障碍浮层、放大镜，遍历节点生成元素表：<code>@e1</code>、<code>@e2</code>，每个带 role、名字、坐标、是否可点、是否密码框。</p>
+<p>几个细节：</p>
+<ul>
+<li>
+<p>坐标归一化到 0–999，和分辨率解耦</p>
+</li>
+<li>
+<p>无名字的可点容器，用子节点文字拼出名字，最多 60 字</p>
+</li>
+<li>
+<p><code>hint</code> 和 <code>placeholder</code> 分开：输入框显示灰色提示语时，告诉模型”这不是你输入的内容”</p>
+</li>
+<li>
+<p>树指纹用 FNV-1a，包含光标位置，只打一个字也能检测到</p>
+</li>
+</ul>
+<p>第二段判质量。<code>TreeQuality</code> 是个纯函数，判这棵树够不够用：有名字的元素少于 6 个就判不准，盲区超过 20% 屏也判不准，控件大多没名字则降为 Partial。</p>
+<p>判不准，就把球踢给下一段。</p>
+<p>第三段是本机 OCR。ML Kit 的中文和拉丁两个模型并行跑，随 APK 打包，不联网。</p>
+<p>第四段才是视觉模型。而且用了两段式：模型给出 bbox，画红框再截一次图，让它自己确认”我框的是不是它”。名字对不上就拒绝。</p>
+<p>这四段有严格的先后。顺序错了会很贵：直接上视觉模型，一次定位的 token 够读十次树。</p>
+<p><img src="/images/wechat/wechat-2247484045-1/06.png" alt="图片 6"></p>
+<p>读屏四段降级</p>
+<h2 id="三路点击三路输入">三路点击，三路输入</h2>
+<p>点击顺序是：可点祖先的 <code>ACTION_CLICK</code> → 无障碍手势 <code>dispatchGesture(setDisplayId)</code> → shell 注入 <code>InputEvent</code>。</p>
+<p>第三种必须 <code>setDisplayId</code>，不设的话事件进的是主屏。这是 <code>@hide</code> API，只有 shell 身份能用。</p>
+<p>输入更麻烦，三条完全不同的路：</p>
+<p>|
+路</p>
+<p>|</p>
+<p>什么时候用</p>
+<p>|</p>
+<p>怎么做</p>
+<p>|
+| --- | --- | --- |
+| <code>ACTION_SET_TEXT</code> |</p>
+<p>普通输入框</p>
+<p>|</p>
+<p>直接写，再全选</p>
+<p>|
+|</p>
+<p>剪贴板粘贴</p>
+<p>|</p>
+<p>WebView、密码框</p>
+<p>|</p>
+<p>全选 → <code>ACTION_PASTE</code></p>
+<p>|
+|</p>
+<p>坐标打字</p>
+<p>|</p>
+<p>自绘界面，树里看不到输入框</p>
+<p>|</p>
+<p>点坐标 → <code>Ctrl+A</code> → <code>Ctrl+V</code></p>
+<p>|</p>
+<p>WebView 里 <code>ACTION_SET_TEXT</code> 打不进去，因为那是 Chromium 自己渲染的输入框，页面 JS 收不到 <code>input</code> 事件。</p>
+<p>第三路最糙：没有控件树，无法知道字有没有进去，只能比对前后两帧的像素，一点没变就报 <code>point_not_typed</code>。</p>
+<p>剪贴板这块写得很克制：读不到原来的剪贴板就放弃粘贴，免得弄丢用户复制的验证码；粘贴时给内容打敏感标记；抑制系统的”已复制”浮层；操作完立刻还原。</p>
+<h2 id="怎么知道真的点到了">怎么知道真的点到了</h2>
+<p>这是 Agent 幻觉最严重的地方。模型说”已点击”，实际什么都没发生，然后它继续往下走，全盘错。</p>
+<p>Mika 的每一步都核。核心是这个包装器：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>val beforeTree = treeHash()</span></span>
+<span class="line"><span>val beforeFrame = frameSignature()</span></span>
+<span class="line"><span>val w = armSpillWatch()</span></span>
+<span class="line"><span>val changed = withEventClock { clock -></span></span>
+<span class="line"><span>    clock.mark()</span></span>
+<span class="line"><span>    if (action()) awaitChange(clock, beforeTree, beforeFrame) else null</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>三个证据：树指纹变化、帧亮度格变化、元素表结构差异。</p>
+<p>等待用的是”等到没有新事件 500 毫秒”，全程没写一个固定 <code>delay</code>。快的时候 80 毫秒返回，慢的时候等到 1.5 秒上限。</p>
+<p>最后给出四种结论：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>enum class EffectKind(val wire: String) {</span></span>
+<span class="line"><span>    Done("done"), SmallChange("small_change"),</span></span>
+<span class="line"><span>    NoEffect("no_effect"), PlaceChanged("place_changed")</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p><code>NoEffect</code> 给模型的提示是”换个做法，别原样再来”。这句很重要，模型最常见的坏行为就是原样重试。</p>
+<p>还有个字段叫 <code>treeBlind</code>：树读不出的地方，不说”你没点上”，避免在自绘界面里无谓重试。</p>
+<p><img src="/images/wechat/wechat-2247484045-1/07.png" alt="图片 7"></p>
+<p>动作后怎么验证</p>
+<h2 id="拟人化不只是为了像人">拟人化不只是为了像人</h2>
+<p>点击落点用三角分布。均匀分布会让 20% 的点落在元素边缘 2 像素内，容易误触相邻控件；三角分布把峰值放在中心。</p>
+<p>路径是贝塞尔弧线，弓高 6%、最大 30 像素。真人的手指不走直线。</p>
+<p>滑动速度用三次 Hermite：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>fun progress(u: Float, endSpeed: Float): Float =</span></span>
+<span class="line"><span>    (-2*u*u*u + 3*u*u) + endSpeed * (u*u*u - u*u)</span></span></code></pre>
+<p>标准 smoothstep 保证起步和结束速度都是 0；加上 <code>endSpeed</code> 项，滑动结束时还有残余速度。</p>
+<p>没有这个残余速度，列表滑不动。匀速直线滑动不会触发惯性滚动。</p>
+<p>看着像在做人设，实际是在修 bug。</p>
+<h2 id="三个取舍和它们的代价">三个取舍和它们的代价</h2>
+<p><strong>取舍一：虚拟屏，而不是 MediaProjection。</strong></p>
+<p>换来的是不占物理屏、不需要反复授权、不受防截屏影响（虚拟屏这一路是渲染管线直出）。</p>
+<p>代价是必须有 shell，而 shell 只能靠无线调试拿。</p>
+<p><strong>取舍二：自己实现 ADB，而不是依赖 Shizuku。</strong></p>
+<p>Shizuku 也要靠 adb 或 root 启动，用户还得再装一个 App。自己实现的代价是 1500 行协议代码，以及一个致命依赖：没有 Wi-Fi 就没有 adbd。</p>
+<p>Android 的无线调试绑在 Wi-Fi 关联上。没连 Wi-Fi 时，系统会把 <code>adb_wifi_enabled</code> 写回 0，并停掉 adbd。</p>
+<p>所以手机重启后如果没连 Wi-Fi，Mika 起不了助手，整个 App 的手机能力全废。这条它自己的 roadmap 里也写着，真机验证还挂着。</p>
+<p><strong>取舍三：树优先，而不是纯视觉。</strong></p>
+<p>树读得快、准、便宜，还能拿到 <code>resourceId</code> 和控件状态。代价是对自绘界面无力，必须补 OCR 和视觉模型，于是有了四段降级和两段式视觉确认。</p>
+<h2 id="什么时候别用">什么时候别用</h2>
+<p>iOS 上无解。四层全封死：没有 adb 等价物、没有虚拟屏、第三方读不到别人 App 的 UI 树、没有合法的输入注入。Apple 的立场是任何第三方都不该拥有跨 App 的控制权。</p>
+<p>无 Wi-Fi 的冷启动不可用。助手还在时断网没事，Binder 不依赖网络；助手不在又没 Wi-Fi，就起不来。</p>
+<p>反射随时会坏。<code>startActivityAsUser</code> 的 12 个参数、<code>setDisplayImePolicy</code>、<code>InputManagerGlobal</code> 全是 <code>@hide</code>，每个 Android 大版本都可能变。</p>
+<p>屏幕内容会发给模型。读屏的截图和元素表会上传到你配的模型服务商。项目说没有自己的服务器，这不等于内容不出手机。</p>
+<p>最终核查是关着的。<code>TaskRun</code> 里 <code>reviewFinalAnswer = false</code>，所以任务有没有真的完成没有独立验证，回答一律记为”未核实”。它自己的 roadmap 把这条列在已知问题第一位。</p>
+<h2 id="哪一部分能搬到你的项目">哪一部分能搬到你的项目</h2>
+<p>一、端口抽象。整个 Android 实现藏在 <code>ScreenPort</code> 接口后面。想换 iOS、换云真机、换测试桩，只需要换一个实现。</p>
+<p>二、动作核实。<code>EffectKind</code> 四态加 <code>InterfaceDiff</code> 内容对齐，和平台无关。任何”点了之后要确认生效”的场景都能用。</p>
+<p>三、树质量判定。<code>TreeQuality</code> 判的是元素够不够用，78 行纯函数。</p>
+<p>四、工具折叠。68 个工具先给 10 个入口，用到再展开。它的注释里还有一句很少见的考虑：展开只影响列表尾部，让 prompt cache 的前缀尽可能长命。</p>
+<p>五、拟人化参数。三角分布、贝塞尔弧、Hermite 曲线，三个函数抄走就能用。</p>
+<h2 id="它还能干别的">它还能干别的</h2>
+<p>除了操作 App，它还有一个内置浏览器：自己的 WebView，跑在私有虚拟屏上，用 DevTools 协议做真实输入，默认以电脑版身份打开。</p>
+<p>还有一个随 APK 自带的 Alpine Linux 沙箱，走 PRoot，每对话一个工作区，默认断网。</p>
+<p>知识库是纯文本：18 个 App、12 个网站、4 类通用做法，放在 <code>core/src/main/resources/</code> 下，可以直接提 PR 补充。</p>
+<p><img src="/images/wechat/wechat-2247484045-1/08.jpg" alt="图片 8"></p>
+<p>在 BOSS 直聘网页上找岗位、打招呼</p>
+<p><img src="/images/wechat/wechat-2247484045-1/09.jpg" alt="图片 9"></p>
+<p>打开汽水音乐，看广告领听歌权益</p>
+<p><img src="/images/wechat/wechat-2247484045-1/10.jpg" alt="图片 10"></p>
+<p>在美团上凑满减、点外卖，付款前问你</p>
+<p>付款前会停下来问你。这是它默认的”询问模式”里唯一会拦的动作——发消息、提交、删除都直接做完。</p>
+<h2 id="写在最后">写在最后</h2>
+<p>过去，想让 AI 操作手机，等于等一个系统级权限。</p>
+<p>Mika 让这道等式松了一格：一个 APK，加一次 6 位配对码，就够了。</p>
+<p>代价它也都摊在明面上：依赖 Wi-Fi、依赖反射、iOS 上完全走不通。</p>
+<p>41 小时 1923 star、305 fork，说明很多人等的就是这个”不用 root 也能试”的版本。</p>
+<p>项目地址：<a href="https://github.com/wangzan101/Mika">https://github.com/wangzan101/Mika</a></p>
+<p>下载地址：<a href="https://github.com/wangzan101/Mika/releases/latest">https://github.com/wangzan101/Mika/releases/latest</a></p>
+<p>如果遇到下载或安装问题也可以在评论区留言交流，欢迎大家一起讨论新技术。</p>
+<h2 id="一句话总结">一句话总结</h2>
+<p>Mika 之所以能在没有 root 的安卓上操作 App，是因为它把 adb 的 shell 身份变成了一个常驻进程，再用一块 VirtualDisplay 把 App 从你眼前挪走。</p>
+<h2 id="下一篇">下一篇</h2>
+<p>下一篇拆会继续拆解，比如OCR和视觉模型在什么条件下才被允许介入。或者你有其他更感兴趣的内容，欢迎评论区留言。</p>
+<hr>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。 关注「AI拆解猿」，每周拆一个 AI协议、框架、源码或架构，直到你能自己动手。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/rZcBzq2XVSKPDUYUtBPFRw" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/Java/">Java</a><a class="tag" href="/tags/JVM/">JVM</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/02/wechat-2247484054-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上</span></a><a class="article-nav__item article-nav__item--next" href="/2026/10/28/wechat-2247484021-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">AI时代，孩子该练什么？家长该做什么？</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#难的不是模型">难的不是模型</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一行命令换来的身份">一行命令换来的身份</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#它把-adb-协议自己写了一遍">它把 ADB 协议自己写了一遍</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#binder-怎么从-shell-进程回到-app">Binder 怎么从 shell 进程回到 App</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一块不落在玻璃上的屏">一块不落在玻璃上的屏</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#把-app-搬到这块屏上">把 App 搬到这块屏上</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#最值钱的-97-行">最值钱的 97 行</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#读屏的四段降级">读屏的四段降级</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三路点击三路输入">三路点击，三路输入</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#怎么知道真的点到了">怎么知道真的点到了</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#拟人化不只是为了像人">拟人化不只是为了像人</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三个取舍和它们的代价">三个取舍和它们的代价</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#什么时候别用">什么时候别用</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#哪一部分能搬到你的项目">哪一部分能搬到你的项目</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#它还能干别的">它还能干别的</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#写在最后">写在最后</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一句话总结">一句话总结</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#下一篇">下一篇</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/Java/">Java</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2012/12/23/csdn-8395756/">Servlet&amp;JSP的那些事儿</a></h3><p class="post-card__desc">本系列博文全面解析Servlet和JSP技术，涵盖web技术基础、Tomcat配置使用、Servlet生命周期管理、会话</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2012-12-23</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

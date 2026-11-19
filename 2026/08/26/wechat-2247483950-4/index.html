@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness | 中龄程序猿</title><meta name="description" content="模型、工具、技能、会话、沙箱、存储、循环、调度、UI——DeepSeek 把 Agent 的一切能力都做成了可热装卸的插件，而本文介绍插件系统的底层原理。"><link rel="canonical" href="https://www.shanruifeng.win/2026/08/26/wechat-2247483950-4/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness | 中龄程序猿"><meta property="og:description" content="模型、工具、技能、会话、沙箱、存储、循环、调度、UI——DeepSeek 把 Agent 的一切能力都做成了可热装卸的插件，而本文介绍插件系统的底层原理。"><meta property="og:url" content="https://www.shanruifeng.win/2026/08/26/wechat-2247483950-4/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483950-4/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness | 中龄程序猿"><meta name="twitter:description" content="模型、工具、技能、会话、沙箱、存储、循环、调度、UI——DeepSeek 把 Agent 的一切能力都做成了可热装卸的插件，而本文介绍插件系统的底层原理。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483950-4/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness","description":"模型、工具、技能、会话、沙箱、存储、循环、调度、UI——DeepSeek 把 Agent 的一切能力都做成了可热装卸的插件，而本文介绍插件系统的底层原理。","datePublished":"2026-08-26T08:57:38.000Z","dateModified":"2026-08-26T08:57:38.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/08/26/wechat-2247483950-4/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483950-4/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness</h1><p class="article-desc">模型、工具、技能、会话、沙箱、存储、循环、调度、UI——DeepSeek 把 Agent 的一切能力都做成了可热装卸的插件，而本文介绍插件系统的底层原理。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-08-26T08:57:38.000Z">2026-08-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>18 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483950-4/cover.jpg" alt="让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="一从一个日常烦恼说起">一、从一个日常烦恼说起</h2>
+<p>你大概用过 VSCode 的插件。装一个插件很爽，但卸载或禁用它呢？大多数情况下，你得<strong>重启整个编辑器</strong>。</p>
+<p>为什么？因为插件的 <code>activate</code> 函数在加载时往共享环境里塞了一堆东西——注册了快捷键、改了配置、订阅了事件、开了定时器。VSCode 没有办法知道某个插件到底改了什么，更没办法在卸载时把它们一一撤回。于是最省事的做法就是：「重启大法」。</p>
+<p>论文开头给出一个让人意外的数字：安装量前 100 的 VSCode 扩展里，<strong>87 个</strong>在卸载时都需要重启宿主。这不是个别插件的实现粗糙，而是<strong>整个编程范式缺了一块</strong>——我们没有一套机制，能让组件在运行时被干净地装上、卸下、替换。</p>
+<p>把视野放大一点。理想中的 AI agent，能力应该像乐高一样随手拼装——换一个模型、加一个工具、升级一个记忆模块、接入一个新沙箱，都该是”热装卸”，而不是”推倒重来”。这正是 DeepSeek Harness 想做的事：它的官网写着一句话，<strong>“一切皆插件”</strong>——模型、工具、技能、会话、沙箱、存储、循环、调度、UI，全部由插件组合而成，开发者不用改源码，在配置层就能替换、扩展任一能力。</p>
+<p>但”一切皆插件”有个绕不开的前提：<strong>插件必须能被干净地装卸</strong>。你热替换一个模型插件，依赖它的工具、会话、调度插件得知道发生了什么、自动重新接上；你卸掉一个沙箱插件，它申请的资源、注册的回调得被完整回收。如果做不到，agent 每改自己一下就得全量重启、丢掉所有在内存里攒下的上下文——那”一切皆插件”就成了”一切皆重启”。</p>
+<p>这篇论文要解决的，就是这件事。</p>
+<hr>
+<h2 id="二问题其实是两个维度">二、问题其实是两个维度</h2>
+<p>仔细想「插件卸不干净」这件事，会发现它其实是<strong>两个相互独立</strong>的麻烦混在一起。论文把它们叫做「时间」和「空间」两个维度。</p>
+<p><strong>时间维度（可逆性）</strong>：一个组件被移除时，它对环境的<strong>修改</strong>能不能被完整地撤销。插件注册的快捷键、开的后台任务、改的全局状态——这些都是「修改」。删插件时这些修改得收回去。问题在于：修改一旦做出，系统通常不再记得是谁做的、做了什么，自然无法逆操作。</p>
+<p><strong>空间维度（依赖管理）</strong>：组件之间是<strong>互相依赖</strong>的。A 依赖 B 提供的服务，那 B 被替换或卸载时，A 怎么办？是 A 自动重新找替代品，还是 A 也跟着停掉？理想情况下，B 一消失，A 应该被「通知」并相应调整——而不是茫然地用一个已经失效的引用。</p>
+<p>这两个维度是正交的：你可以有时间没问题但空间一团糟，也可以反过来。真正的动态组合，需要<strong>同时</strong>搞定两者。</p>
+<p>为什么过去的系统搞不定？因为大家普遍用「进程」和「容器」这种<strong>粗粒度</strong>的机制来硬扛：出问题的模块靠重启进程处理，服务依赖靠容器编排器管理。问题是，进程重启会丢掉所有内存状态（缓存、连接、算到一半的结果），而容器编排又管不到同一个进程内、本可以是一次函数调用的细粒度依赖。<strong>粒度错配</strong>——机制在边界上，需求却在更细的地方。</p>
+<p>论文的抱负是：在<strong>组件自身的粒度上</strong>，把这两个维度都管起来，而且要有一套数学上严格的保证，不能是「大多数情况下大概没问题」。</p>
+<hr>
+<h2 id="三两个现成的理论工具effect-和-coeffect">三、两个现成的理论工具：effect 和 coeffect</h2>
+<p>论文的精妙之处在于：它没有从零发明概念，而是发现了这两个维度恰好对应类型论里两个成熟的理论工具——<strong>effect</strong> 和 <strong>coeffect</strong>。</p>
+<p>先说大白话：</p>
+<ul>
+<li>
+<p><strong>effect（副作用）<strong>描述一个计算会</strong>改变</strong>什么。调用一个函数，它读了文件、写了数据库、抛了异常——这些都是它对外部环境的修改。effect 系统就是给这些「修改能力」打标签、做追踪。</p>
+</li>
+<li>
+<p><strong>coeffect（协副作用）<strong>描述一个计算</strong>需要</strong>什么。一个函数要能跑，它得访问某个配置、持有某个权限、依赖某个服务——这些是它对环境的「索取」。coeffect 系统就是给这些「依赖需求」打标签。</p>
+</li>
+</ul>
+<p>一个往外输出，一个往里索取，正好对偶。论文的关键洞察就一句话：</p>
+<blockquote>
+<p><strong>时间维度的「可逆修改」对应 effect；空间维度的「依赖管理」对应 coeffect。</strong></p>
+</blockquote>
+<p>但传统 effect/coeffect 系统有个硬伤：它们是<strong>编译期的静态分析工具</strong>。effect 标签写在类型上，编译器在程序跑起来之前就检查完了，运行时根本不留这些信息。而动态组合恰恰需要<strong>运行时</strong>还能操作这些信息——我得在运行时记录一个插件做了哪些 effect，才能在卸载时撤销它们；我得在运行时知道一个组件依赖哪些 coeffect，才能在依赖变化时通知它。</p>
+<p>所以论文要做的事情，本质上就是：</p>
+<blockquote>
+<p><strong>把 effect 和 coeffect 从「编译期类型注解」提升为「运行期可操作的机制」。</strong></p>
+</blockquote>
+<p>这是整篇论文的纳米级概括。后面所有的数学，都是为了把这句话说 rigorous（严格）。</p>
+<hr>
+<h2 id="四时间维度让每一次修改都带上撤销键">四、时间维度：让每一次修改都带上「撤销键」</h2>
+<h3 id="41-核心点子给每个-effect-配一个逆">4.1 核心点子：给每个 effect 配一个逆</h3>
+<p>最朴素的想法：既然要能撤销，那每个修改操作就顺便声明它的逆操作就行了。点了「注册快捷键」，就记住「取消注册快捷键」；开了定时器，就记住「关掉定时器」。</p>
+<p>但这远远不够，因为修改会被<strong>组合</strong>。一个插件可能先注册快捷键 A、再改配置、再注册快捷键 B，这些操作还有可能跨多次异步调用。要能撤销这一整串，光记住「每个操作的逆」不够，还得知道<strong>以什么顺序</strong>应用这些逆。</p>
+<p>论文给出的核心数学结构是这样描述一次「带逆的修改」的。它把一个 effect 看作一个状态变换 f（把状态 γ 变成 f(γ)），同时配一个用于撤销的逆变换 g。于是 effect 的「上下文」记作：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/01.svg" alt="公式"></p>
+<p>读作：一份「当前状态 γ」加上一个「撤销函数 φ」。每做一次新 effect f，系统这样更新这笔记录（<code>track</code> 操作）：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/02.svg" alt="公式"></p>
+<p>即：状态真的被 f 改了，而撤销函数变成「先撤这次（g），再撤之前累积的（φ）」——逆被<strong>层层叠加上去</strong>。等你卸载这个组件，只需调用一次最终的 φ（<code>recover</code> 操作）：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/03.svg" alt="公式"></p>
+<p>状态被一次性还原，撤销清零。你看，<strong>撤销一个组件的全部副作用，不一定非要逐个记操作日志，只要把每次操作的逆像洋葱皮一样裹起来，最后整颗剥掉</strong>。</p>
+<h3 id="42-真正的难关逆之间不能打架">4.2 真正的难关：逆之间不能打架</h3>
+<p>上面的故事听起来太顺，因为它偷偷假设了「别的组件不会在中间插一脚」。现实里，插件 A 注册快捷键后，插件 B 可能也改了配置。等 A 卸载、<img src="/images/wechat/wechat-2247483950-4/04.svg" alt="公式"> 跑起来时，状态早不是 A 当初离开时的样子了。A 的逆函数还能正确撤销吗？</p>
+<p>这才是论文真正要啃的硬骨头。它引入<strong>独立性</strong>这个条件：只要 A 的逆与「别人中间做的操作」满足某种可交换性，撤销就依然精确。论文证出来：在这个条件下，把 A 的 <img src="/images/wechat/wechat-2247483950-4/05.svg" alt="公式"> 应用到「大家共同的当前状态」，得到的结果，<strong>恰好等于 A 从来没存在过会达到的状态</strong>。</p>
+<p>这话说出来有点近乎神奇——你在一堆组件都活跃着、状态不断变化的环境里抽掉一个，剩下来的状态竟和它从没来过一样。这就是「时间可组合性」的数学内核。</p>
+<h3 id="43-一个诚实的让步观测等价">4.3 一个诚实的让步：观测等价</h3>
+<p>不过有一处必须诚实：物理状态不可能逐位恢复。<code>free</code> 释放的内存，堆布局回不到从前；生成性名字丢弃后再取就是新值。论文不装作能恢复全部比特，而是退一步：只要<strong>没有任何观察者能区分</strong>两个状态，就认为它们「等价」（记作 ≃）。</p>
+<p>而谁是观察者？正是上下文里那些 coeffect——它们能观察到的，就是它们自己携带的那部分状态。每个 coeffect 自带一个等价判据，整个上下文的等价由它们组装而成。</p>
+<p>这一步看似技术细节，实则是关键一搏：<strong>用观测等价「作商」，恰恰换来独立性所需要的纪律</strong>——不同键上的操作天然独立（定理 40），从而逆可以按任意顺序回退，多个组件交错的副作用序列才回得干净。</p>
+<hr>
+<h2 id="五空间维度让依赖能响应式地满足">五、空间维度：让依赖能「响应式」地满足</h2>
+<h3 id="51-把依赖变成一张可读的表">5.1 把依赖变成一张可读的表</h3>
+<p>空间维度处理的是组件之间的依赖。论文用一个「键值表」(Σ) 来表达当前环境能提供什么：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/06.svg" alt="公式"></p>
+<p>一个组件通过键 k 声明「我需要这类服务」，环境表里若有对应值，依赖就被满足。组件提供（<code>provide</code>）一个服务，就是往表里写一个键；组件使用（<code>get</code>）一个服务，就是从表里按键读。</p>
+<p>但光有读写还不够，因为依赖要能<strong>响应变化</strong>。B 提供的服务没了，依赖 B 的 A 必须有所动作。论文给每次 <code>set</code> 配了一个分类：这次改动是「增加了一个满足」「移除了一个满足」还是「只是换了值」。据此触发依赖者的生命周期转移——这就是 <code>notify</code>：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/07.png" alt="公式"></p>
+<p>（其中 d 是某组件的依赖规约，σ⊨d 读作「状态 σ 满足 d」，即 d 中所有键都在 σ 的域里。）从不满足到满足是 <code>activating</code>——组件该被激活；反过来是 <code>deactivating</code>——该被停用；其余情况 <code>neutral</code>。有了它，依赖就不再是「初始化时连一次就完」，而是<strong>始终对变化敞开</strong>：满足条件变了，组件自动重载或卸载。</p>
+<h3 id="52-一个精妙的排序问题">5.2 一个精妙的排序问题</h3>
+<p>这里有个反直觉的难点，值得单独拎出来讲。</p>
+<p>假设 B 被 A 依赖，现在要卸载 B。直觉上「B 先走，A 再跟着调整」似乎合理。但仔细想：A 在自拆解的过程中，可能还要读 B 提供的服务（比如用 B 的接口去清掉自己注册的东西）。如果 B 一卸载就立刻撤掉自己的服务，A 的拆解就会读到失效引用、甚至崩溃。</p>
+<p>所以正确的顺序是反过来的：<strong>先让所有依赖 B 的 A 们完成自己的停用，再让 B 撤回它提供的服务</strong>。论文用一个叫 <code>relied</code> 的「守卫」把 B 的撤回<strong>推迟</strong>到它的依赖者们都停用之后。这就是「空间可组合性」里关于排序的那一半保证。</p>
+<h3 id="53-隔离与拦截">5.3 隔离与拦截</h3>
+<p>为了让「响应式」更可控，论文还给了两个高级手段：<strong>隔离（isolation）</strong> 和 <strong>拦截（intercept）</strong>。隔离让一组改动局限在一个作用域内、不污染外部；拦截允许在某次读写前后插入逻辑（比如审计、过滤）。它们用一种结构化的 coeffect 上下文表示：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/08.svg" alt="公式"></p>
+<p>细节不必深究，要点是：依赖管理不是「一股脑全局可变」，而是<strong>有边界、可观测、可干预</strong>的。</p>
+<hr>
+<h2 id="六把两个维度缝起来统一上下文">六、把两个维度缝起来：统一上下文</h2>
+<p>到目前为止，effect（修改）和 coeffect（依赖）像是两套平行机制。论文的又一关键步是把它们<strong>缝合进同一个上下文</strong>。它用一个递归定义把「当前状态 + 撤销函数 + 依赖表」熔为一个整体：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/09.svg" alt="公式"></p>
+<p>这里 μΓ 表示这是一个递归/不动点结构（因为撤销函数本身又作用在上下文上）。这个统一上下文 <img src="/images/wechat/wechat-2247483950-4/10.svg" alt="公式"> 是整篇论文的核心数据结构：</p>
+<ul>
+<li>
+<p>它的<strong>第二分量</strong>（Γ→Γ，撤销函数）承载时间维度——可逆修改；</p>
+</li>
+<li>
+<p>它的<strong>第三分量</strong>（Σ，依赖表）承载空间维度——响应式依赖。</p>
+</li>
+</ul>
+<p>而<strong>观测等价 ≃</strong> 是连接两者的桥梁：它既是时间维度「恢复精确性」赖以成立的让步（状态不必逐位相同，只要观察不可区分），又是空间维度「独立性」得以成立的纪律来源。</p>
+<p>一句话：<strong>同一个上下文，左手记录「我能撤回什么」，右手记录「我依赖着什么」，而等价关系保证两边不打架。</strong></p>
+<hr>
+<h2 id="七从组件到整个系统演算与四大保证">七、从「组件」到「整个系统」：演算与四大保证</h2>
+<p>前面讲的都是单个组件的局部故事。真正的系统是很多组件<strong>交错</strong>运行的。论文的第 4 章把这一切形式化为一个带操作语义的演算系统，并给出了四个核心保证——这是论文最有「含金量」的部分。</p>
+<h3 id="71-组件是什么">7.1 组件是什么</h3>
+<p>一个组件被定义成一个三元组：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/11.svg" alt="公式"></p>
+<p>也就是 (d,p,e)：d 是它<strong>声明的依赖</strong>（coeffect，它要读什么），p 是它<strong>提供的服务</strong>（coeffect，它要写什么键），e 是它<strong>激活时贡献的副作用及逆</strong>（effect）。同一个接口的「读」与「写」两面。系统有一条铁律：<strong>一个键至多一个提供者</strong>——避免两个组件抢着定义同一个服务的混乱。</p>
+<p>组件被实例化成「fiber」，fiber 有生命周期状态（Inactive / Reloading / Active / Unloading）。整个系统的状态是一棵 fiber 树。关键的协副作用表<strong>不是单独存的</strong>，而是从所有 Active fiber 动态「派生」出来的：</p>
+<p><img src="/images/wechat/wechat-2247483950-4/12.svg" alt="公式"></p>
+<p>即「当前环境能提供什么」=「所有活跃组件各自提供的东西」之并。因为约定了一个键只有一个提供者，这个并集是良定义的。这是个很优雅的设计：<strong>状态不是被某个中心 authoritative 地维护，而是从存活组件的事实中自然涌现</strong>。</p>
+<h3 id="72-五条规则和两类关系">7.2 五条规则和两类关系</h3>
+<p>系统的运转由五条规则驱动，分两类：</p>
+<ul>
+<li>
+<p><strong>编排规则</strong>（O-前缀，如 O-Insert / O-Retire / O-Remove，形如 γ⇒δ）：外部「编排者」可以发起的动作——请求一个组件存在或消失。</p>
+</li>
+<li>
+<p><strong>生命周期规则</strong>（L-前缀，如 L-Reload / L-Unload，形如 γ⟶δ）：系统在条件满足时<strong>自发</strong>采取的步骤——比较「目标视图」与「已提交视图」，不一致就自动重载或卸载。</p>
+</li>
+</ul>
+<p>注意一个微妙的区分：「退役」(retire) 和「移除」(remove) 是分开的。一个退役但还 Active 的组件，必须先被彻底停用（逆都跑完）才能移除；直接移除会丢掉那笔撤销记录，造成泄漏。这种「退役 ≠ 移除」的克制，正是「时间可组合性」在规则层面的体现。</p>
+<h3 id="73-四大保证">7.3 四大保证</h3>
+<p>把局部保证推广到交错系统，论文给出（非静默状态必有进展的前提下）：</p>
+<ol>
+<li>
+<p><strong>时间可组合性（恢复精确性）</strong>：如第 4.2 节所述，撤掉一个组件后，剩下的状态等于它从没来过——只要独立性满足。</p>
+</li>
+<li>
+<p><strong>空间可组合性</strong>：第 5.2 节那个排序保证的形式化——组件只在依赖被满足时启动，提供者只在所有依赖者停用后才撤回。</p>
+</li>
+<li>
+<p><strong>进展性</strong>：只要前驱关系无环、单次迭代有界，系统就不会死锁，也不会无限空转，最终会停在一个「静默状态」。</p>
+</li>
+<li>
+<p><strong>合流性（Confluence）</strong>：这是最深刻的一条。它说：<strong>从同一个起点出发，无论编排者以什么顺序插入/移除/替换组件（只要最终组合相同），抵达的静默状态都（在观测等价与重命名下）相同。</strong></p>
+</li>
+</ol>
+<p>合流性的工程含义极其诱人：<strong>它授权你把一个动态组合的系统，当成一个静态组装的系统来推理。</strong> 你装个插件、卸了它、换个版本、再回退——保证最终状态和「直接从一开始就装最终版本」一样。动态变化的混乱被数学收束成「唯一规范形」。</p>
+<p>这就是论文交付的承诺：不靠开发者自觉、不靠「重启大法」，靠<strong>结构</strong>让动态组合可预测。</p>
+<hr>
+<h2 id="八落地从理论到-cordis再到-deepseek-harness">八、落地：从理论到 Cordis，再到 DeepSeek Harness</h2>
+<p>理论再漂亮，不落地就是空中楼阁。论文把这套模型实现为 <strong>Cordis</strong>——一个 JavaScript/TypeScript 的「元框架」。叫「元」是因为它不规定你做 Web 路由还是 ORM 还是 Agent 外壳，它<strong>只负责插件的加载、卸载和依赖关系，不承载任何具体业务能力</strong>。所有能力都由插件提供，在它之上长出应用框架。</p>
+<p>实现上有几个关键设计，恰好是前几节理论的直接映射：</p>
+<ul>
+<li>
+<p><strong>单一原语 <code>ctx.effect</code></strong>：所有上下文变更（提供协副作用、实例化组件、任何其他改动）都走这同一个原语。好处是：<strong>通过上下文做的任何操作都自动被追踪、自动有逆</strong>。开发者不用手动记「我改了啥」，系统替你记。它实现的就是模型里的 <img src="/images/wechat/wechat-2247483950-4/13.svg" alt="公式">——时间可组合性在这里落地。</p>
+</li>
+<li>
+<p><strong>reactive coeffects</strong>：在 <code>ctx.effect</code> 之上实现 <code>ctx.get</code> / <code>ctx.set</code>，依赖变化自动通知，对应第 5 节的 <code>notify</code>——空间可组合性在这里落地。</p>
+</li>
+<li>
+<p><strong>生命周期算法</strong>：把第 7 节的规则翻译成 <code>refresh</code> / <code>reload</code> / <code>unload</code> 三个算法。它们小心翼翼地落实「提供者撤回要排在依赖者停用之后」这种排序——<code>reload</code> 先提交解析视图，<code>unload</code> 等所有逆跑完才丢弃视图，<code>refresh</code> 调度逆之前先标记 UNLOADING 让依赖者重算。</p>
+</li>
+</ul>
+<p>读到这儿你可能想问：这套东西真有人用、且敢用在生产级产品上吗？答案是肯定的，而且有一个非常直白的证据——<strong>DeepSeek 的 Agent 外壳 Harness 就构建在 Cordis 之上</strong>。</p>
+<p>打开 DeepSeek Harness 的官网，它的 slogan 是「一切皆插件」：模型、工具、技能、会话、沙箱、存储、循环、调度、UI 这些 Agent 的全部能力，都有对应的 Cordis 插件，通过 Cordis 的”服务与事件”彼此协作。开发者不改动 Harness 源码，就能在配置层选择、替换、扩展任意一项能力。它还内置了标准、极简、PTC、创造等多种”运行模式”——本质上是不同的插件预设组合，能像换挡一样切来切去，这正是合流性定理授权的”动态组合可像静态组装一样推理”在产品层的变现。</p>
+<p>把 Harness 的几个特性对照理论看，会特别有感觉：</p>
+<p>|
+Harness 的特性</p>
+<p>|</p>
+<p>背后的理论概念</p>
+<p>|
+| --- | --- |
+|</p>
+<p>插件可随时启用/禁用/替换，无需重启</p>
+<p>|</p>
+<p>时间可组合性：副作用自带逆，自动追踪与恢复</p>
+<p>|
+|</p>
+<p>换掉一个模型插件，依赖它的工具/会话自动重连</p>
+<p>|</p>
+<p>空间可组合性：协副作用响应式 <code>notify</code> + 排序保证</p>
+<p>|
+|</p>
+<p>不同运行模式（标准/极简/PTC/创造）一键切换</p>
+<p>|</p>
+<p>组件作为三元组 (d,p,e) 的组合，配置层自由编排</p>
+<p>|
+|</p>
+<p>“每一次运行都有迹可循”，会话日志可恢复/分叉/回放</p>
+<p>|</p>
+<p>状态从 Active fiber 派生，生命周期有迹、可重放</p>
+<p>|</p>
+<p>Harness 还有个「创造模式」值得一说：它能”检查当前运行时、在内存中试验 Cordis 插件，并据此组合和创作新的模式”。换句话说，<strong>Agent 在运行时往自己的能力集里动态塞插件、试运行、再决定留不留</strong>——这正是论文开篇设想的”自演化 agent 外壳”的现实雏形。没有 Cordis 在时间/空间两个维度上的形式化保证，这种”边跑边改自己”是根本不敢做的：你不知道一个失败的插件试验会不会留下脏状态、会不会拖垮依赖它的别的插件。</p>
+<p>值得一提的是，Cordis 的生产验证并不只在 Harness 一处。论文里给出的案例是 Koishi——一个基于 Cordis 的聊天机器人框架，生产环境里跑着 <strong>4000+ 插件</strong>。从 Koishi 的 4000+ 插件，到 DeepSeek Harness 把整条 Agent 技术栈插件化，是一个从”聊天机器人框架”到”Agent 操作系统”的跨越，但底下那块”动态组合”的地基始终是同一块——这也是这篇论文价值的最好背书。论文还讨论了如何用同样的模型把「滚动更新」(rolling update) 这种分布式模式表达出来：把网络故障映射成协副作用的「撤回」，让分布式韧性成为动态组合的一个特例。</p>
+<hr>
+<h2 id="九这篇论文好在哪难在哪">九、这篇论文好在哪、难在哪</h2>
+<p>值得停下来评一评。</p>
+<p><strong>好在哪。</strong> 第一是<strong>问题抽象得准</strong>。它没有把「插件装卸」当成一个工程小问题，而是从 VSCode 和 self-evolving agent 两类场景里提炼出「时间/空间」两个正交维度，并精准对接到 effect/coeffect 类型论——这个对接是全文的灵魂。第二是<strong>闭环完整</strong>：理论（第 2-3 章）→ 演算（第 4 章）→ 实现（Cordis，第 5 章）→ 案例（Koishi）→ 相关工作，一条龙。系统型论文能做到这种「数学到代码到生产」闭环的不多。第三是<strong>结论有力</strong>：合流性定理那句「动态组合可像静态组装一样推理」，是真正能改变人思维方式的结果。</p>
+<p><strong>难在哪 / 局限在哪。</strong> 首先<strong>理论密度很高</strong>，几十个定义定理堆叠，对不熟类型论的读者门槛不小——这恰恰是本文想缓解的。其次，合流性等保证<strong>依赖一些前提</strong>：组件两两独立、在其提供的服务上「完全」(total)、最终抵达无失败的静默状态。失败被排除在合流陈述之外——也就是说，<strong>在出错的世界里，这些保证会打折扣</strong>。论文对此是诚实的，把「失败导致的发散」明确点了出来，但这意味着现实中的鲁棒性仍需工程手段兜底。再次，Cordis <strong>不保留组件的内存状态</strong>——它撤回旧组件的副作用、重新跑新组件，所以组件自己进程内的状态在 reload 后不存活（除非放进更长生命周期的依赖里）。这是和 Erlang/DSU 那种「前向迁移状态」路线的根本差异：Cordis 更通用（不用手写迁移函数、能完全卸载），但放弃了状态连续性。</p>
+<hr>
+<h2 id="十所以它到底解决了什么问题">十、所以，它到底解决了什么问题？</h2>
+<p>回到开头那个问题：DeepSeek Harness 凭什么敢说”一切皆插件”？</p>
+<p>因为这篇论文给了它一块<strong>形式化的地基</strong>。把它最终的解题路径串起来看，特别清楚：</p>
+<p>问题层面，“插件卸不干净""依赖一换全乱”这两件恼人的事，被抽象成”时间可组合性”和”空间可组合性”两个正交维度，并精准对接到类型论里的 effect / coeffect——一个管”我改了什么”，一个管”我依赖什么”。</p>
+<p>方法层面，论文把这两个原本只在编译期做静态分析的概念，<strong>提升为运行期可操作的机制</strong>：每个副作用自带逆、层层叠加，卸载时一次性剥掉（时间维度）；每个依赖对变化保持响应、卸载顺序被精心排序（空间维度）；两者缝进同一个统一上下文 <img src="/images/wechat/wechat-2247483950-4/14.svg" alt="公式">，用观测等价 ≃ 连接并约束。</p>
+<p>保证层面，它用一套演算系统证明：哪怕组件在运行时被反复装、卸、替换，只要独立性等前提满足，系统最终抵达的状态是可预测的——<strong>动态组合可以像静态组装一样被推理</strong>（合流性定理）。</p>
+<p>落地层面，它实现为 Cordis 元框架，并在 Koishi（4000+ 插件）和 DeepSeek Harness（整条 Agent 技术栈插件化）上得到生产级验证。</p>
+<p>用一句话讲它解决的，是这件事：</p>
+<blockquote>
+<p><strong>给”动态组合”补上一块缺失的形式化地基——让插件（组件）能在运行时被干净地装卸、依赖能自动重连，且整个过程有数学保证、可预测、可推理，而不是靠”重启大法”和开发者自觉。</strong></p>
+</blockquote>
+<p>DeepSeek Harness 把这块地基用成了产品：Agent 的模型、工具、技能、会话、沙箱……每一项都能热装卸、自动恢复、有迹可循。当”创造模式”让 Agent 在运行时往自己身上试装新插件时，你看到的正是一个”自演化 agent 外壳”的雏形——而这个雏形之所以敢存在，是因为底层那套数学说了：<strong>改了不会乱，乱了能复原</strong>。</p>
+<p>对于实践者，最值得带走的是两个直觉：<strong>给每个副作用配一个逆并自动叠加</strong>（时间维度），以及<strong>让依赖关系对变化保持响应、并精心排序卸载顺序</strong>（空间维度）。哪怕你不碰 Cordis、不做 Agent，这两个直觉也能让你下次设计任何”可热插拔”的系统时，少踩很多”重启大法”的坑。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/zS0LXd4vUdb3TIaD3Ehe2w" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/26/wechat-2247483950-2/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">大模型推理加速进化论（零）：推理加速到底在加速什么</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/25/wechat-2247483935-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">佛教完全入门：从历史到寺庙的通俗科普</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一从一个日常烦恼说起">一、从一个日常烦恼说起</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二问题其实是两个维度">二、问题其实是两个维度</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三两个现成的理论工具effect-和-coeffect">三、两个现成的理论工具：effect 和 coeffect</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四时间维度让每一次修改都带上撤销键">四、时间维度：让每一次修改都带上「撤销键」</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#41-核心点子给每个-effect-配一个逆">4.1 核心点子：给每个 effect 配一个逆</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#42-真正的难关逆之间不能打架">4.2 真正的难关：逆之间不能打架</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#43-一个诚实的让步观测等价">4.3 一个诚实的让步：观测等价</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五空间维度让依赖能响应式地满足">五、空间维度：让依赖能「响应式」地满足</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#51-把依赖变成一张可读的表">5.1 把依赖变成一张可读的表</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#52-一个精妙的排序问题">5.2 一个精妙的排序问题</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#53-隔离与拦截">5.3 隔离与拦截</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#六把两个维度缝起来统一上下文">六、把两个维度缝起来：统一上下文</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#七从组件到整个系统演算与四大保证">七、从「组件」到「整个系统」：演算与四大保证</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#71-组件是什么">7.1 组件是什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#72-五条规则和两类关系">7.2 五条规则和两类关系</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#73-四大保证">7.3 四大保证</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#八落地从理论到-cordis再到-deepseek-harness">八、落地：从理论到 Cordis，再到 DeepSeek Harness</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#九这篇论文好在哪难在哪">九、这篇论文好在哪、难在哪</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#十所以它到底解决了什么问题">十、所以，它到底解决了什么问题？</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

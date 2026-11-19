@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>爆火背后-逆向拆解OpenAI新图片模型的生成原理 | 中龄程序猿</title><meta name="description" content="爆火背后-逆向拆解OpenAI新图片模型的生成原理"><link rel="canonical" href="https://www.shanruifeng.win/2025/03/29/wechat-2247483741-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="爆火背后-逆向拆解OpenAI新图片模型的生成原理 | 中龄程序猿"><meta property="og:description" content="爆火背后-逆向拆解OpenAI新图片模型的生成原理"><meta property="og:url" content="https://www.shanruifeng.win/2025/03/29/wechat-2247483741-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483741-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="爆火背后-逆向拆解OpenAI新图片模型的生成原理 | 中龄程序猿"><meta name="twitter:description" content="爆火背后-逆向拆解OpenAI新图片模型的生成原理"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483741-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"爆火背后-逆向拆解OpenAI新图片模型的生成原理","description":"爆火背后-逆向拆解OpenAI新图片模型的生成原理","datePublished":"2025-03-29T03:24:27.000Z","dateModified":"2025-03-29T03:24:27.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2025/03/29/wechat-2247483741-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483741-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>爆火背后-逆向拆解OpenAI新图片模型的生成原理</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">爆火背后-逆向拆解OpenAI新图片模型的生成原理</h1><p class="article-desc">爆火背后-逆向拆解OpenAI新图片模型的生成原理</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2025-03-29T03:24:27.000Z">2025-03-29</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483741-1/cover.jpg" alt="爆火背后-逆向拆解OpenAI新图片模型的生成原理"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="通过网络流量逆向工程gpt-4o图像生成">通过网络流量逆向工程GPT-4o图像生成</h2>
+<p>reddit上有网友seicaratteri逆向了一下 GPT-4o 的生成图片的网络请求返回。发现 GPT-4o 生成可能是多步骤的，即它并不是一次生成完整的图片，而是先生成，然后再优化（类似ComfyUI中的流程）。如果GPT-4o并不是基于扩散模型（diffusion model），而是个自回归模型（autoregressive model）。</p>
+<p><strong>这是否意味着新的图像生成模式要全面铺开？另外，也可以期待下效果比 diffusion 要好的开源模型的到来。</strong></p>
+<h2 id="原贴翻译">原贴翻译</h2>
+<p>我对这个新模型非常感兴趣；我一直在图像生成领域做了很多工作，我想了解到底发生了什么。</p>
+<p>我在打开网络选项卡查看后端（BE）发送的内容时发现了一些有趣的细节——以下是我的发现。我尝试了几个不同的提示语，我们先从这个开始：</p>
+<p><strong>“一只快乐的小狗在街上跑，吉卜力工作室风格的图像”</strong></p>
+<p>在这里，我得到了四张中间图像，具体如下：</p>
+<p><img src="/images/wechat/wechat-2247483741-1/01.jpg" alt="图片 1"></p>
+<p>我们可以看到：</p>
+<ul>
+<li>
+<p>• 后端实际上返回了我们在用户界面中看到的图像。</p>
+</li>
+<li>
+<p>• 目前还不清楚生成过程是否是自回归的——我们可以看到一些细节和图像的模糊全局结构，这可能意味着两件事：</p>
+</li>
+<li>
+<p>• 像通常的扩散过程一样，我们先生成全局结构，然后添加细节；</p>
+</li>
+<li>
+<p>• 或者，图像实际上是自回归生成的。</p>
+</li>
+</ul>
+<p>如果我们分析第一帧和最后一帧的100%缩放，可以看到细节被添加到高频纹理上，比如树木。</p>
+<p><img src="/images/wechat/wechat-2247483741-1/02.jpg" alt="图片 2"></p>
+<p>这正是我们通常从扩散模型中期待的结果。在另一个例子中，这种情况更加明显，我特意提示了一个高频细节纹理（“创建一张颗粒状纹理的图像，抽象形状，极其高度详细”）。</p>
+<p><img src="/images/wechat/wechat-2247483741-1/03.jpg" alt="图片 3"></p>
+<p>有趣的是，这里我只从后端得到了三张图像；细节的添加非常明显：</p>
+<p><img src="/images/wechat/wechat-2247483741-1/04.jpg" alt="图片 4"></p>
+<p>当然，这也可能作为一个单独的后处理步骤完成，例如像SDXL当年引入的精炼模型（refiner model），专门训练用于在解码到像素空间之前为VAE潜在表示添加细节。</p>
+<p>还不清楚我用这个提示语得到较少的图像是因为可用性（即后端可以给我更多计算资源），还是某种特定优化（例如：潜在缓存）。</p>
+<p><strong>所以我现在的想法是：</strong></p>
+<ul>
+<li>
+<p>• 这可能是一个多步骤的处理管道。</p>
+</li>
+<li>
+<p>• OpenAI在模型卡中提到：“与作为扩散模型运行的DALL·E不同，4o图像生成是一个自回归模型，原生嵌入在ChatGPT中。”</p>
+</li>
+<li>
+<p>• 这让我想起了最近的一篇论文：OmniGen（链接：<a href="https://arxiv.org/pdf/2409.11340%EF%BC%89%E3%80%82">https://arxiv.org/pdf/2409.11340）。</a></p>
+</li>
+</ul>
+<p>在OmniGen中，他们直接将潜在扩散架构的VAE连接到一个大语言模型（LLM），并学习共同建模文本和图像；他们观察到少样本能力（few-shot capabilities）和新兴属性，这也可以解释GPT-4o的广泛能力。如果我们考虑OpenAI一贯的公式，这就更有意义了：</p>
+<ul>
+<li>
+<p>• 更多/更高质量的数据</p>
+</li>
+<li>
+<p>• 更多的计算资源（flops）</p>
+</li>
+</ul>
+<p>OmniGen提出的架构完全基于Transformer，具有很大的扩展潜力——如果我们知道一件事，那就是Transformer的扩展性很好，而OpenAI尤其擅长这一点。</p>
+<p>你们怎么看？我很希望把这个作为一个共同探索的空间！感谢你们阅读，让我们一起深入研究吧！</p>
+<h2 id="补充信息">补充信息</h2>
+<p>openAI之前放出的图片里其实有提到模型的一些“<strong>细节</strong>”信息：</p>
+<p><img src="/images/wechat/wechat-2247483741-1/05.jpg" alt="图片 5"></p>
+<p>跨模态转移：</p>
+<p>假设我们直接建模：P(文本，像素，声音)</p>
+<p>使用一个大型自回归Transformer</p>
+<p>优点：</p>
+<ul>
+<li>
+<p>• 图像生成增强</p>
+</li>
+<li>
+<p>• 下一级文本渲染</p>
+</li>
+<li>
+<p>• 原生上下文学习</p>
+</li>
+<li>
+<p>• 统一的预训练</p>
+</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>
+<p>• 变化的比特率</p>
+</li>
+<li>
+<p>• 计算不适应</p>
+</li>
+</ul>
+<p>修复：</p>
+<ul>
+<li>
+<p>• 模型压缩表示</p>
+</li>
+<li>
+<p>• 结合自回归先验与强大的解码器</p>
+</li>
+</ul>
+<p>流程：</p>
+<ul>
+<li>• 标记 → [Transformer] → [扩散] → 像素</li>
+</ul>
+<h2 id="omnigen">OmniGen</h2>
+<p>OmniGen是一种新的统一图像生成扩散模型，可以在单一框架内处理各种任务。它以统一性、简单性和知识转移为特征。OmniGen不仅展示了文本到图像生成的能力，还支持图像编辑、主题驱动生成和视觉条件生成等任务。它简化的架构消除了对额外插件的需求，可以通过指令完成复杂任务，无需额外的中间步骤。OmniGen有效地跨不同任务传递知识，管理未知任务和领域，并展现出新颖的能力。这项工作代表了通用图像生成模型的首次尝试。</p>
+<h3 id="omnigen架构">OmniGen架构</h3>
+<p>OmniGen 的主要架构如下:</p>
+<p><img src="/images/wechat/wechat-2247483741-1/06.png" alt="图片 6"></p>
+<p>OmniGen 采用了一个由 VAE 和预训练的大型 transformer 模型组成的架构。具体来说:</p>
+<ul>
+<li>
+<p>• 它使用了 SDXL 的 VAE 来提取图像的连续视觉特征。</p>
+</li>
+<li>
+<p>• 它使用由 Phi-3 初始化的 transformer 模型根据指令生成图像。</p>
+</li>
+</ul>
+<p>这种架构具有以下特点:</p>
+<ul>
+<li>
+<p>• 简单性: OmniGen 的架构非常简洁,不需要额外的插件。相比现有的扩散模型,它更加用户友好,可以通过指令直接完成复杂的任务,大大简化了图像生成流程。</p>
+</li>
+<li>
+<p>• 统一性: OmniGen 不仅具有文本到图像生成的能力,还可以支持图像编辑、主题驱动生成和视觉条件生成等多种下游任务。</p>
+</li>
+<li>
+<p>• 知识迁移: 通过统一格式的训练,OmniGen 可以有效地将知识迁移到不同的任务和领域,并展现出新的能力。</p>
+</li>
+</ul>
+<h2 id="写在最后">写在最后</h2>
+<p>希望国内尽快能推出对标且开源的模型，满足国内外网友对此的期待。哈哈~~</p>
+<p><img src="/images/wechat/wechat-2247483741-1/07.png" alt="图片 7"></p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/Zl21PC6HXQyveSpWZd9Pyg" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2025/04/08/wechat-2247483773-3/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">AI编程时代：产品需求到上线的全流程变革，作为产品/设计/研发/测试的你准备好了吗？</span></a><a class="article-nav__item article-nav__item--next" href="/2025/03/28/wechat-2247483729-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">ragflow4j 开发记录 - 2025-03-28</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#通过网络流量逆向工程gpt-4o图像生成">通过网络流量逆向工程GPT-4o图像生成</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#原贴翻译">原贴翻译</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#补充信息">补充信息</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#omnigen">OmniGen</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#omnigen架构">OmniGen架构</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#写在最后">写在最后</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>LLM辅助编码：生产力假象还是技术骗局？ | 中龄程序猿</title><meta name="description" content="背景 大家好，我是Aaron。最近，一篇来自国外网站的热门帖子（原文详见附录：\[1\]）引发了广泛关注，讨论的焦点是基于大语言模型（LLM）的编码辅助工具到底能提升多少生产力？。这篇帖子在原文、Twitter和评论区掀起了热烈反响，吸引了众多开发者的目光。 恰逢我在日常工作中深入体验了AI对编程效率的影响，近期也在使"><link rel="canonical" href="https://www.shanruifeng.win/2025/03/13/wechat-2247483706-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="LLM辅助编码：生产力假象还是技术骗局？ | 中龄程序猿"><meta property="og:description" content="背景 大家好，我是Aaron。最近，一篇来自国外网站的热门帖子（原文详见附录：\[1\]）引发了广泛关注，讨论的焦点是基于大语言模型（LLM）的编码辅助工具到底能提升多少生产力？。这篇帖子在原文、Twitter和评论区掀起了热烈反响，吸引了众多开发者的目光。 恰逢我在日常工作中深入体验了AI对编程效率的影响，近期也在使"><meta property="og:url" content="https://www.shanruifeng.win/2025/03/13/wechat-2247483706-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483706-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="LLM辅助编码：生产力假象还是技术骗局？ | 中龄程序猿"><meta name="twitter:description" content="背景 大家好，我是Aaron。最近，一篇来自国外网站的热门帖子（原文详见附录：\[1\]）引发了广泛关注，讨论的焦点是基于大语言模型（LLM）的编码辅助工具到底能提升多少生产力？。这篇帖子在原文、Twitter和评论区掀起了热烈反响，吸引了众多开发者的目光。 恰逢我在日常工作中深入体验了AI对编程效率的影响，近期也在使"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483706-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"LLM辅助编码：生产力假象还是技术骗局？","description":"背景 大家好，我是Aaron。最近，一篇来自国外网站的热门帖子（原文详见附录：\\[1\\]）引发了广泛关注，讨论的焦点是基于大语言模型（LLM）的编码辅助工具到底能提升多少生产力？。这篇帖子在原文、Twitter和评论区掀起了热烈反响，吸引了众多开发者的目光。 恰逢我在日常工作中深入体验了AI对编程效率的影响，近期也在使","datePublished":"2025-03-13T00:00:00.000Z","dateModified":"2025-03-13T00:00:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2025/03/13/wechat-2247483706-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483706-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>LLM辅助编码：生产力假象还是技术骗局？</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">LLM辅助编码：生产力假象还是技术骗局？</h1><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2025-03-13T00:00:00.000Z">2025-03-13</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483706-1/cover.jpg" alt="LLM辅助编码：生产力假象还是技术骗局？"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="背景">背景</h2>
+<p>大家好，我是Aaron。最近，一篇来自国外网站的热门帖子（原文详见附录：[1]）引发了广泛关注，讨论的焦点是基于大语言模型（LLM）的编码辅助工具到底能提升多少生产力？。这篇帖子在原文、Twitter和评论区掀起了热烈反响，吸引了众多开发者的目光。</p>
+<p><strong>恰逢我在日常工作中深入体验了AI对编程效率的影响，近期也在使用了AI辅助编程来开发<code>ragflow4j</code>( <a href="https://github.com/aaronshan/ragflow4j">https://github.com/aaronshan/ragflow4j</a> ) 项目，积累了一些心得体会。在此，我想分享自己的观察与思考，同时也期待与大家交流探讨。欢迎大家关注我关注公众号、微博和github，第一时间收到更新推送。</strong></p>
+<ul>
+<li>
+<p>• 微博:  <a href="https://weibo.com/u/1801679460">https://weibo.com/u/1801679460</a></p>
+</li>
+<li>
+<p>• Github:  <a href="https://github.com/aaronshan">https://github.com/aaronshan</a></p>
+</li>
+</ul>
+<h2 id="原贴观点">原贴观点</h2>
+<p>先总结阐述下作者的观点：</p>
+<p><strong>1、一个猜测：LLM可能并没有真正提高程序员的整体生产力</strong></p>
+<p>真实情况可能是：</p>
+<ul>
+<li>
+<p>• 你从LLM那里节省的时间，最终又全部浪费在了调整和修复代码上；</p>
+</li>
+<li>
+<p>• 代码规模稍大后，LLM生成的代码常常变得复杂难懂甚至混乱不堪，最后你可能得彻底重来；</p>
+</li>
+<li>
+<p>• LLM帮助开发的新项目，多半都是没人用的小玩意，或毫无意义的重复产品；</p>
+</li>
+<li>
+<p>• LLM生成的代码容易膨胀，使得软件变得臃肿低效。</p>
+</li>
+</ul>
+<p>很多人觉得LLM提高了效率，可能只是因为这种“用自然语言提出需求、立刻看到代码生成”的神奇体验所带来的错觉。但长期来看，这些代码可能并不实用，也并未真正带来整体效率的提高。</p>
+<p><strong>2、LLM的真实价值在哪里？</strong></p>
+<p>作者并完全否认LLM的作用，认为它们在某些情况下确实有帮助，比如：</p>
+<ul>
+<li>
+<p>• 帮助初学者快速入门；</p>
+</li>
+<li>
+<p>• 简单功能或模板代码的生成；</p>
+</li>
+<li>
+<p>• 某些特殊的小型任务或简单的重构工作。</p>
+</li>
+</ul>
+<p>但这些都远没有达到所谓的“5-10倍”的夸张程度，实际效率提升可能只有10%-30%左右。</p>
+<p><strong>3、未来是否会改变？</strong></p>
+<p>作者认为真正的突破，或许只有等到AGI（通用人工智能）诞生的那一天，才能实现。在此之前，LLM对程序员的真正生产力提升可能会一直停留在目前这个水平。</p>
+<h2 id="网友观点">网友观点</h2>
+<p>以下是一些网友对此的观点：</p>
+<ul>
+<li>
+<p>• <strong>Richard Horvath</strong>：根据我的个人经验，只有在非常特定的情况下，LLM才能将我的速度提高10倍，这是（并且一直是）我工作的一小部分，我怀疑这对大多数开发人员来说都是如此。</p>
+</li>
+<li>
+<p>• <strong>DavidmanheimDavidmanheim</strong>：开发只是长链条工作中的一个环节，即使程序员的效率是原来的两倍或五倍，那么对整体产出的影响也很小，因为整个流程并没有运转的得更快，公司需要围绕这一点重建他们的流程以利用这一优势。</p>
+</li>
+<li>
+<p>• <strong>Villam</strong>：人工智能并没有让会议的速度提高10倍，而这正是高级开发人员花费大量时间的地方。</p>
+</li>
+<li>
+<p>• <strong>Michael Roe</strong>：一个可能的解释是，LLM加速的工作部分相对于程序员实际工作的一小部分，因此总体加速很小。程序员的工作包括：弄清楚需求是什么、书写规范、编写测试、在代码审查期间，当审查你的代码的人不同意你的做法时，进行争论讨论等等。</p>
+</li>
+<li>
+<p>• <strong>Jodie themathgenius</strong>：我的个人经验，但对于快速制作自动化任务或原型创意的小工具来说，人工智能已经改变了游戏规则。对于Web开发来说，差异也是巨大的。最大的进步是当我尝试一些对我来说完全陌生的东西时，我可以自信地盲目地快速完成一些事情。当涉及到新算法的严肃工程时，它完全没用，但大多数开发人员不会花时间做这件事。</p>
+</li>
+<li>
+<p>• <strong>laserfiche</strong>：我的个人经验。 我是一名程序员，我看到编程速度至少提高了5倍。然而，我的输出受到Amdahl定律的限制。我的过程中有50%是编码，但50%是在没有加速的非编程任务中，这意味着整个过程只需要原来的60%。</p>
+</li>
+<li>
+<p>• <strong>Duole</strong>：5-10倍确实夸张了，但是提升10%-30%是有的，大模型目前还只能是人为主导引导使用，只能解决具体的小问题，而这之间只要插入了人的干预，那么效率的差异性就会很大，优秀的开发者在借助工具时知道如何更改的引导LLM协助自己的工作，而水平次一点的则可能会引发更多的问题反而要花费更久的时间去做修复。</p>
+</li>
+<li>
+<p>• <strong>Bob</strong>：我个人感觉也是没有 5x、10x 这样的效率提升，但是有一点感受最直观的是，它可以帮助我在一些重复性的、小范围的代码开发和优化上提升效能，相当于是雇了一个初级程序员在帮你做这个事情～这点在我看起来是很有帮助的，同时，要提升自己在架构设计、创意输出的能力上，不然你的“初级程序员”就会瞎干活。</p>
+</li>
+<li>
+<p>• <strong>Monday</strong>：光写代码和调试问题上提升5倍效率并不夸张。之所以没有反应到总体产出上：一来写代码在工程师工作中的占比是非常低的，二来大部分人都跟原作者一样“用 AI 写代码菜”。</p>
+</li>
+</ul>
+<h2 id="个人观点">个人观点</h2>
+<ul>
+<li>
+<p>• <strong>效率提升因任务而异</strong>
+普遍来看，AI辅助编程确实能在一定程度上提升开发效率，但具体幅度取决于任务类型。对于AI擅长的简单任务（如代码生成或模板填充），效率可能提升2-3倍；而对于复杂的后端业务逻辑，AI更适合在局部环节提效，整体效率提升约为20%。以我个人的日常开发为例，综合效率提升大约在40%-50%之间（注：此数据仅反映我的工作场景，未必普适）。</p>
+</li>
+<li>
+<p>• <strong>从工具升级的角度看AI</strong>
+AI辅助编程的体验类似于从基础文本编辑器升级到集成开发环境（IDE），带来的变化更加显著。不同用户感受到的效果差异，主要来源于他们与AI交互的方式和熟练程度。就像熟练使用IDE的人能大幅提高效率一样，善于驾驭AI工具的开发者自然能比不熟悉者获得更大收益。</p>
+</li>
+<li>
+<p>• <strong>专业能力依然不可或缺</strong>
+AI辅助编程并未降低对开发者专业技能的要求。短期内，通用人工智能（AGI）仍遥不可及，AI的能力存在明显边界。即使是像Claude 3.7这样先进的模型，在调试复杂问题时也可能出现逻辑死循环。这时，开发者的介入和问题解决能力就显得尤为重要。</p>
+</li>
+<li>
+<p>• <strong>与AI共同成长</strong>
+编程经验的积累是一个渐进过程，而AI可以成为我们的“对弈伙伴”，类似于AlphaGo之于围棋。通过与AI的互动与切磋，我们能够提升自身能力。理解AI的工作原理及其局限性，不仅能帮助我们更高效地使用工具，还能让我们在协作中发挥更大作用。</p>
+</li>
+<li>
+<p>• <strong>AI并非万能钥匙</strong>
+AI编程不是银弹，不要指望AI能解决所有问题。在开发ragflow4j或处理复杂后端逻辑时，AI编程常会遇到瓶颈。一方面，工具本身的能力尚不完善，比如获取最新资料或上下文的限制；另一方面，某些任务需要真正的创造力，而AI的“创造”更多基于模式预测，而非原创性突破。</p>
+</li>
+</ul>
+<p><strong>总结：AI辅助编程无疑是未来的发展趋势，提前适应并掌握这一工具能够在效率上带来显著提升。面对AI可能引发的失业担忧，我们更应该思考如何借助AI创造更多价值，提升自身的独特竞争力，从而成为不可替代的创造者，而非被取代的对象。</strong></p>
+<h2 id="附录">附录</h2>
+<ul>
+<li>• <a href="https://www.lesswrong.com/posts/tqmQTezvXGFmfSe7f/how-much-are-llms-actually-boosting-real-world-programmer">https://www.lesswrong.com/posts/tqmQTezvXGFmfSe7f/how-much-are-llms-actually-boosting-real-world-programmer</a> [1]</li>
+</ul></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/vcrD-vmWffc9WzY3nbeajw" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2025/03/14/wechat-2247483710-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">ragflow4j 开发记录 - 2025-03-13</span></a><a class="article-nav__item article-nav__item--next" href="/2025/03/12/wechat-2247483700-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">ragflow4j 开发记录 - 2025-03-11</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#背景">背景</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#原贴观点">原贴观点</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#网友观点">网友观点</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#个人观点">个人观点</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#附录">附录</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

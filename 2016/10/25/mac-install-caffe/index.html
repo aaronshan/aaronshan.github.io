@@ -1,258 +1,129 @@
-<!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>mac安装caffe - 中龄程序猿</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.安装nvidia驱动在nvidia官网下载最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。 如果没有安装homebrew，安装homebrew1ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;">
-<meta name="keywords" content="caffe">
-<meta property="og:type" content="article">
-<meta property="og:title" content="mac安装caffe">
-<meta property="og:url" content="www.shanruifeng.win/2016/10/25/mac-install-caffe/index.html">
-<meta property="og:site_name" content="中龄程序猿">
-<meta property="og:description" content="1.安装nvidia驱动在nvidia官网下载最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。 如果没有安装homebrew，安装homebrew1ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-26T07:28:18.787Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mac安装caffe">
-<meta name="twitter:description" content="1.安装nvidia驱动在nvidia官网下载最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。 如果没有安装homebrew，安装homebrew1ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;">
-  
-  
-    <link rel="icon" href="/favicon.ico">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-          <a class="main-nav-link" href="/love">爱情</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-mac-install-caffe" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      mac安装caffe
-      <small class="article-detail-date-index">&nbsp; 2016-10-25</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/2016/10/25/mac-install-caffe/" class="article-date">
-  <time datetime="2016-10-25T09:55:29.000Z" itemprop="datePublished">2016-10-25</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="1-安装nvidia驱动"><a href="#1-安装nvidia驱动" class="headerlink" title="1.安装nvidia驱动"></a>1.安装nvidia驱动</h3><p>在nvidia官网<a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">下载</a>最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。</p>
-<p>如果没有安装homebrew，安装homebrew<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/<span class="keyword">install</span>/<span class="keyword">master</span>/<span class="keyword">install</span>)<span class="string">"</span></span><br></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<h3 id="2-安装依赖："><a href="#2-安装依赖：" class="headerlink" title="2. 安装依赖："></a>2. 安装依赖：</h3><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span>install -vd snappy leveldb gflags glog szip lmdb</span><br><span class="line"><span class="keyword">brew </span>tap homebrew/science</span><br><span class="line"><span class="keyword">brew </span>install hdf5 opencv</span><br></pre></td></tr></table></figure>
-<p>如果你需要使用pycaffe的话，安装依赖：<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>--<span class="keyword">build-from-source </span>--with-python -vd protobuf</span><br><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>--<span class="keyword">build-from-source </span>-vd <span class="keyword">boost </span><span class="keyword">boost-python</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你不需要使用pycaffe的话，则安装依赖：<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>protobuf <span class="keyword">boost</span></span><br></pre></td></tr></table></figure></p>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>mac安装caffe | 中龄程序猿</title><meta name="description" content="1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cudadownloads)最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。"><link rel="canonical" href="https://www.shanruifeng.win/2016/10/25/mac-install-caffe/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="mac安装caffe | 中龄程序猿"><meta property="og:description" content="1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cudadownloads)最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。"><meta property="og:url" content="https://www.shanruifeng.win/2016/10/25/mac-install-caffe/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="mac安装caffe | 中龄程序猿"><meta name="twitter:description" content="1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cudadownloads)最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"mac安装caffe","description":"1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cudadownloads)最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。","datePublished":"2016-10-25T09:55:29.000Z","dateModified":"2016-10-25T09:55:29.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2016/10/25/mac-install-caffe/","articleSection":"机器学习","keywords":"caffe"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span>/</span><span>mac安装caffe</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><h1 class="article-title">mac安装caffe</h1><p class="article-desc">1.安装nvidia驱动 在nvidia官网[下载](https://developer.nvidia.com/cudadownloads)最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2016-10-25T09:55:29.000Z">2016-10-25</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>caffe</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><h3 id="1安装nvidia驱动">1.安装nvidia驱动</h3>
+<p>在nvidia官网<a href="https://developer.nvidia.com/cuda-downloads">下载</a>最新驱动，我选择的是网络dmg安装。安装的时候全选所有选项。</p>
+<p>如果没有安装homebrew，安装homebrew</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span></span></code></pre>
+<!-- more -->
+<h3 id="2-安装依赖">2. 安装依赖：</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install -vd snappy leveldb gflags glog szip lmdb</span></span>
+<span class="line"><span>brew tap homebrew/science</span></span>
+<span class="line"><span>brew install hdf5 opencv</span></span></code></pre>
+<p>如果你需要使用pycaffe的话，安装依赖：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install --build-from-source --with-python -vd protobuf</span></span>
+<span class="line"><span>brew install --build-from-source -vd boost boost-python</span></span></code></pre>
+<p>如果你不需要使用pycaffe的话，则安装依赖：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install protobuf boost</span></span></code></pre>
 <p>由于更新了OS X10.9+和CUDA 7.0的缘故，现在它们都支持libc++的编译方式了，所以以前资料中为此做的各种工作（修改brew edit的内容）都没有必要，直接装就好了。</p>
-<h3 id="3-下载-Caffe-并修改配置"><a href="#3-下载-Caffe-并修改配置" class="headerlink" title="3. 下载 Caffe 并修改配置"></a>3. 下载 Caffe 并修改配置</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="comment">//github.com/BVLC/caffe.git  </span></span><br><span class="line">cd caffe  </span><br><span class="line">cp Makefile<span class="selector-class">.config</span><span class="selector-class">.example</span> Makefile.config</span><br></pre></td></tr></table></figure>
+<h3 id="3-下载-caffe-并修改配置">3. 下载 Caffe 并修改配置</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>git clone https://github.com/BVLC/caffe.git  </span></span>
+<span class="line"><span>cd caffe  </span></span>
+<span class="line"><span>cp Makefile.config.example Makefile.config</span></span></code></pre>
 <p>在Makefile.config中：</p>
-<p>1）如果使用默认的atlas，则将BLAS_INCLUDE和BLAS_LIB指定为如下路径：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">BLAS :</span>= atlas</span><br><span class="line"><span class="string">BLAS_INCLUDE :</span>= <span class="regexp">/Applications/</span>Xcode.app<span class="regexp">/Contents/</span>Developer<span class="regexp">/Platforms/</span>MacOSX.platform<span class="regexp">/Developer/</span>SDKs<span class="regexp">/MacOSX10.12.sdk/</span>System<span class="regexp">/Library/</span>Frameworks<span class="regexp">/Accelerate.framework/</span>Versions<span class="regexp">/A/</span>Frameworks<span class="regexp">/vecLib.framework/</span>Versions<span class="regexp">/A/</span>Headers</span><br><span class="line"><span class="string">BLAS_LIB :</span>= <span class="regexp">/System/</span>Library<span class="regexp">/Frameworks/</span>Accelerate.framework<span class="regexp">/Versions/</span>A<span class="regexp">/Frameworks/</span>vecLib.framework<span class="regexp">/Versions/</span>A</span><br></pre></td></tr></table></figure></p>
-<p>2）如果使用openblas，则使用brew安装，并将BLAS_INCLUDE和BLAS_LIB指定为如下路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install openblas</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BLAS := open</span><br><span class="line">BLAS_INCLUDE := $(shell brew --prefix openblas)/<span class="keyword">include</span>      </span><br><span class="line">BLAS_LIB := $(shell brew --prefix openblas)/<span class="class"><span class="keyword">lib</span></span></span><br></pre></td></tr></table></figure>
-<p>3）其他设置<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">CPU_ONLY :</span>＝ <span class="number">1</span></span><br><span class="line"><span class="string">PYTHON_INCLUDE :</span>= <span class="regexp">/usr/</span>local<span class="regexp">/Cellar/</span>python<span class="regexp">/2.7.12_2/</span>Frameworks<span class="regexp">/Python.framework/</span>Versions<span class="regexp">/2.7/</span>include/python2<span class="number">.7</span> \</span><br><span class="line">       <span class="regexp">/usr/</span>local<span class="regexp">/Cellar/</span>numpy<span class="regexp">/1.11.2/</span>lib<span class="regexp">/python2.7/</span>site-packages<span class="regexp">/numpy/</span>core/include</span><br><span class="line"><span class="string">WITH_PYTHON_LAYER :</span>= <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你需要使用pycaffe，则需要指定WITH_PYTHON_LAYER。另外此处python的include路径使用的是brew安装的python，如果你使用默认python，将来会因为osx的系统保护机制而报错。</p>
-<h3 id="4-安装"><a href="#4-安装" class="headerlink" title="4. 安装"></a>4. 安装</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">make</span> clean</span><br><span class="line"><span class="keyword">make</span> -j8 <span class="keyword">all</span></span><br><span class="line"><span class="keyword">make</span> test</span><br><span class="line"><span class="keyword">make</span> runtest</span><br></pre></td></tr></table></figure>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd caffe</span><br><span class="line">pip install --user -r python/requirements.txt <span class="comment">#pip install -i https://pypi.douban.com/simple/ --user -r python/requirements.txt</span></span><br><span class="line">make -j8 pycaffe</span><br><span class="line">make distribute</span><br><span class="line">cp -r distribute/python/caffe ~<span class="regexp">/Library/</span>Python/<span class="number">2.7</span>/<span class="class"><span class="keyword">lib</span>/<span class="title">python</span>/<span class="title">site</span>-<span class="title">packages</span>/</span></span><br><span class="line">cp distribute/<span class="class"><span class="keyword">lib</span>/<span class="title">libcaffe</span>.<span class="title">so</span>.1.0.0-<span class="title">rc3</span> ~/<span class="title">Library</span>/<span class="title">Python</span>/2.7/<span class="title">lib</span>/<span class="title">python</span>/<span class="title">site</span>-<span class="title">packages</span>/<span class="title">caffe</span>/<span class="title">libcaffe</span>.<span class="title">so</span>.1.0.0-<span class="title">rc3</span></span></span><br><span class="line">install_name_tool -change @rpath/libcaffe.so.<span class="number">1.0</span>.<span class="number">0</span>-rc3 ~<span class="regexp">/Library/</span>Python/<span class="number">2.7</span>/<span class="class"><span class="keyword">lib</span>/<span class="title">python</span>/<span class="title">site</span>-<span class="title">packages</span>/<span class="title">caffe</span>/<span class="title">libcaffe</span>.<span class="title">so</span>.1.0.0-<span class="title">rc3</span> ~/<span class="title">Library</span>/<span class="title">Python</span>/2.7/<span class="title">lib</span>/<span class="title">python</span>/<span class="title">site</span>-<span class="title">packages</span>/<span class="title">caffe</span>/<span class="title">_caffe</span>.<span class="title">so</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="5-常见问题"><a href="#5-常见问题" class="headerlink" title="5. 常见问题"></a>5. 常见问题</h3><h4 id="1-image-not-found"><a href="#1-image-not-found" class="headerlink" title="1) image not found"></a>1) image not found</h4><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">make runtest                                                                                                                            </span><br><span class="line">.build_release<span class="regexp">/tools/</span>caffe</span><br><span class="line"><span class="string">dyld:</span> Library not <span class="string">loaded:</span> libcaffe.so<span class="number">.1</span><span class="number">.0</span><span class="number">.0</span>-rc3</span><br><span class="line">  Referenced <span class="string">from:</span> <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/Downloads/</span>caffe-rc3<span class="regexp">/.build_release/</span>tools/caffe</span><br><span class="line"><span class="symbol">  Reason:</span> image not found</span><br><span class="line"><span class="string">make:</span> *** [runtest] Abort <span class="string">trap:</span> <span class="number">6</span></span><br></pre></td></tr></table></figure>
-<p>在执行完<code>make test</code>命令后，切换到caffe的根目录中，执行如下命令：<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -a .build_release/<span class="class"><span class="keyword">lib</span>/. /<span class="title">usr</span>/<span class="title">local</span>/<span class="title">lib</span>/</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="2-No-module-named-caffe"><a href="#2-No-module-named-caffe" class="headerlink" title="2) No module named _caffe"></a>2) No module named _caffe</h4><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">import</span> caffe</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  <span class="built_in">File</span> <span class="string">"&lt;stdin&gt;"</span>, <span class="built_in">line</span> <span class="number">1</span>, in &lt;<span class="keyword">module</span>&gt;</span><br><span class="line">  <span class="built_in">File</span> <span class="string">"/Users/ruifengshan/githubRepos/caffe/python/caffe/__init__.py"</span>, <span class="built_in">line</span> <span class="number">1</span>, in &lt;<span class="keyword">module</span>&gt;</span><br><span class="line">    from .pycaffe <span class="keyword">import</span> Net, SGDSolver, NesterovSolver, AdaGradSolver, RMSPropSolver, AdaDeltaSolver, AdamSolver</span><br><span class="line">  <span class="built_in">File</span> <span class="string">"/Users/ruifengshan/githubRepos/caffe/python/caffe/pycaffe.py"</span>, <span class="built_in">line</span> <span class="number">13</span>, in &lt;<span class="keyword">module</span>&gt;</span><br><span class="line">    from ._caffe <span class="keyword">import</span> Net, SGDSolver, NesterovSolver, AdaGradSolver, \</span><br><span class="line">ImportError: No <span class="keyword">module</span> named _caffe</span><br></pre></td></tr></table></figure>
-<p>首先确定自己是否执行了<code>make -j8 pycaffe</code>命令，如果没执行，先执行该命令。然后在根目录下的.zshrc文件中（如果用的是其他shell，请自行替换），添加：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">PYTHONPATH</span>=/Users/ruifengshan/githubRepos/caffe/python:$PYTHONPATH</span><br></pre></td></tr></table></figure></p>
-<p>然后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python</span><br><span class="line"><span class="meta">&gt;&gt;</span>&gt; import sys</span><br><span class="line"><span class="meta">&gt;&gt;</span>&gt; sys.path.insert(<span class="number">0</span>, <span class="string">'/Users/ruifengshan/githubRepos/caffe/python'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;</span>&gt; import caffe</span><br></pre></td></tr></table></figure>
-<p>如果出现错误：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AttributeError: <span class="string">'module'</span> <span class="selector-tag">object</span> has no attribute <span class="string">'bool_'</span></span><br></pre></td></tr></table></figure></p>
-<p>是因为直接将PYTHONPATH路径指定了，并且和其他python库产生了冲突。需要<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unset</span> PYTHONPATH</span><br></pre></td></tr></table></figure></p>
-<p>然后用<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.<span class="built_in">path</span>.insert(<span class="number">0</span>, <span class="string">'/Users/ruifengshan/githubRepos/caffe/python'</span>)</span><br><span class="line"><span class="keyword">import</span> caffe</span><br></pre></td></tr></table></figure></p>
-<p>这种方式引入caffe。</p>
-<h4 id="3-其他错误"><a href="#3-其他错误" class="headerlink" title="3) 其他错误"></a>3) 其他错误</h4><p>如果出现“Undefined symbols for architecture x86_64”错误<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">$</span> LDFLAGS=<span class="string">"`pkg-config --libs protobuf` `pkg-config --libs opencv`"</span></span><br><span class="line"><span class="symbol">$</span> make <span class="keyword">all</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="6-参考资料"><a href="#6-参考资料" class="headerlink" title="6. 参考资料"></a>6. 参考资料</h3><ul>
-<li><a href="https://gist.github.com/doctorpangloss/f8463bddce2a91b949639522ea1dcbe4" target="_blank" rel="noopener">https://gist.github.com/doctorpangloss/f8463bddce2a91b949639522ea1dcbe4</a></li>
-<li><a href="http://blog.csdn.net/yinchuandong2/article/details/49030121" target="_blank" rel="noopener">http://blog.csdn.net/yinchuandong2/article/details/49030121</a></li>
-</ul>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-<!--
-<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
-<div>
-<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
-</div>
--->
-</div>
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
-  <a href="/about">aaronshan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-安装nvidia驱动"><span class="toc-number">1.</span> <span class="toc-text">1.安装nvidia驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-安装依赖："><span class="toc-number">2.</span> <span class="toc-text">2. 安装依赖：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-下载-Caffe-并修改配置"><span class="toc-number">3.</span> <span class="toc-text">3. 下载 Caffe 并修改配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安装"><span class="toc-number">4.</span> <span class="toc-text">4. 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-常见问题"><span class="toc-number">5.</span> <span class="toc-text">5. 常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-image-not-found"><span class="toc-number">5.1.</span> <span class="toc-text">1) image not found</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-No-module-named-caffe"><span class="toc-number">5.2.</span> <span class="toc-text">2) No module named _caffe</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-其他错误"><span class="toc-number">5.3.</span> <span class="toc-text">3) 其他错误</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-参考资料"><span class="toc-number">6.</span> <span class="toc-text">6. 参考资料</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/机器学习/">机器学习</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/caffe/">caffe</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/10/26/caffe-learn-1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          caffe学习-模型定义
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/07/28/useful-udf/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">hive和presto一些好用的自定义udf函数&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 aaronshan&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
-</html>
+<p>1）如果使用默认的atlas，则将BLAS_INCLUDE和BLAS_LIB指定为如下路径：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>BLAS := atlas</span></span>
+<span class="line"><span>BLAS_INCLUDE := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers</span></span>
+<span class="line"><span>BLAS_LIB := /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A</span></span></code></pre>
+<p>2）如果使用openblas，则使用brew安装，并将BLAS_INCLUDE和BLAS_LIB指定为如下路径：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install openblas</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>BLAS := open</span></span>
+<span class="line"><span>BLAS_INCLUDE := $(shell brew --prefix openblas)/include      </span></span>
+<span class="line"><span>BLAS_LIB := $(shell brew --prefix openblas)/lib</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>3）其他设置</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>CPU_ONLY :＝ 1</span></span>
+<span class="line"><span>PYTHON_INCLUDE := /usr/local/Cellar/python/2.7.12_2/Frameworks/Python.framework/Versions/2.7/include/python2.7 \</span></span>
+<span class="line"><span>       /usr/local/Cellar/numpy/1.11.2/lib/python2.7/site-packages/numpy/core/include</span></span>
+<span class="line"><span>WITH_PYTHON_LAYER := 1      </span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>如果你需要使用pycaffe，则需要指定WITH_PYTHON_LAYER。另外此处python的include路径使用的是brew安装的python，如果你使用默认python，将来会因为osx的系统保护机制而报错。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>### 4. 安装</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>make clean</span></span>
+<span class="line"><span>make -j8 all</span></span>
+<span class="line"><span>make test</span></span>
+<span class="line"><span>make runtest</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>cd caffe</span></span>
+<span class="line"><span>pip install --user -r python/requirements.txt #pip install -i https://pypi.douban.com/simple/ --user -r python/requirements.txt</span></span>
+<span class="line"><span>make -j8 pycaffe</span></span>
+<span class="line"><span>make distribute</span></span>
+<span class="line"><span>cp -r distribute/python/caffe ~/Library/Python/2.7/lib/python/site-packages/</span></span>
+<span class="line"><span>cp distribute/lib/libcaffe.so.1.0.0-rc3 ~/Library/Python/2.7/lib/python/site-packages/caffe/libcaffe.so.1.0.0-rc3</span></span>
+<span class="line"><span>install_name_tool -change @rpath/libcaffe.so.1.0.0-rc3 ~/Library/Python/2.7/lib/python/site-packages/caffe/libcaffe.so.1.0.0-rc3 ~/Library/Python/2.7/lib/python/site-packages/caffe/_caffe.so</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>### 5. 常见问题</span></span>
+<span class="line"><span>#### 1) image not found</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>make runtest                                                                                                                            </span></span>
+<span class="line"><span>.build_release/tools/caffe</span></span>
+<span class="line"><span>dyld: Library not loaded: libcaffe.so.1.0.0-rc3</span></span>
+<span class="line"><span>  Referenced from: /Users/aaron/Downloads/caffe-rc3/.build_release/tools/caffe</span></span>
+<span class="line"><span>  Reason: image not found</span></span>
+<span class="line"><span>make: *** [runtest] Abort trap: 6</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>在执行完`make test`命令后，切换到caffe的根目录中，执行如下命令：</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>cp -a .build_release/lib/. /usr/local/lib/</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#### 2) No module named _caffe</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>>>> import caffe</span></span>
+<span class="line"><span>Traceback (most recent call last):</span></span>
+<span class="line"><span>  File "&#x3C;stdin>", line 1, in &#x3C;module></span></span>
+<span class="line"><span>  File "/Users/aaron/githubRepos/caffe/python/caffe/__init__.py", line 1, in &#x3C;module></span></span>
+<span class="line"><span>    from .pycaffe import Net, SGDSolver, NesterovSolver, AdaGradSolver, RMSPropSolver, AdaDeltaSolver, AdamSolver</span></span>
+<span class="line"><span>  File "/Users/aaron/githubRepos/caffe/python/caffe/pycaffe.py", line 13, in &#x3C;module></span></span>
+<span class="line"><span>    from ._caffe import Net, SGDSolver, NesterovSolver, AdaGradSolver, \</span></span>
+<span class="line"><span>ImportError: No module named _caffe</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>首先确定自己是否执行了`make -j8 pycaffe`命令，如果没执行，先执行该命令。然后在根目录下的.zshrc文件中（如果用的是其他shell，请自行替换），添加：</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>export PYTHONPATH=/Users/aaron/githubRepos/caffe/python:$PYTHONPATH</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>然后执行：</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>source ~/.zshrc</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>python</span></span>
+<span class="line"><span>>>> import sys</span></span>
+<span class="line"><span>>>> sys.path.insert(0, '/Users/aaron/githubRepos/caffe/python')</span></span>
+<span class="line"><span>>>> import caffe</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>如果出现错误：</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>AttributeError: 'module' object has no attribute 'bool_'</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>是因为直接将PYTHONPATH路径指定了，并且和其他python库产生了冲突。需要</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>unset PYTHONPATH</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>然后用</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>import sys</span></span>
+<span class="line"><span>sys.path.insert(0, '/Users/aaron/githubRepos/caffe/python')</span></span>
+<span class="line"><span>import caffe</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>这种方式引入caffe。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#### 3) 其他错误</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>如果出现“Undefined symbols for architecture x86_64”错误</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span>$ LDFLAGS="`pkg-config --libs protobuf` `pkg-config --libs opencv`"</span></span>
+<span class="line"><span>$ make all</span></span>
+<span class="line"><span>```</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>### 6. 参考资料</span></span>
+<span class="line"><span>* https://gist.github.com/doctorpangloss/f8463bddce2a91b949639522ea1dcbe4</span></span>
+<span class="line"><span>* http://blog.csdn.net/yinchuandong2/article/details/49030121</span></span></code></pre></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/caffe/">caffe</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2016/10/26/caffe-learn-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">caffe学习-模型定义</span></a><a class="article-nav__item article-nav__item--next" href="/2016/10/12/csdn-52795596/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">centos 6.5安装caffe(cpu模式)</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#1安装nvidia驱动">1.安装nvidia驱动</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#2-安装依赖">2. 安装依赖：</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#3-下载-caffe-并修改配置">3. 下载 Caffe 并修改配置</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2016/10/26/caffe-learn-1/">caffe学习-模型定义</a></h3><p class="post-card__desc">本文用来整理在学习caffe时遇到的一些基础概念。希望通过整理能加深自己的理解。</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-10-26</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>10 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2016/10/12/csdn-52795596/">centos 6.5安装caffe(cpu模式)</a></h3><p class="post-card__desc">本文提供了一份详细的Caffe安装教程，包括显卡鉴定、依赖库安装、CUDA与Boost配置、OpenCV与protobu</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-10-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2017/04/19/aprf1/">机器学习评价标准</a></h3><p class="post-card__desc">机器学习(ML),自然语言处理(NLP),信息检索(IR)等领域,评估(Evaluation)是一个必要的工作,而其评价</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2017-04-19</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

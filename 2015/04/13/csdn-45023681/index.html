@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>git安装配置及基本使用 | 中龄程序猿</title><meta name="description" content="安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，基本选择默认设置，但是：在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt2）ubuntu用命令“g"><link rel="canonical" href="https://www.shanruifeng.win/2015/04/13/csdn-45023681/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="git安装配置及基本使用 | 中龄程序猿"><meta property="og:description" content="安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，基本选择默认设置，但是：在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt2）ubuntu用命令“g"><meta property="og:url" content="https://www.shanruifeng.win/2015/04/13/csdn-45023681/"><meta property="og:image" content="https://www.shanruifeng.win/images/csdn/csdn-45023681/cover.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="git安装配置及基本使用 | 中龄程序猿"><meta name="twitter:description" content="安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，基本选择默认设置，但是：在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt2）ubuntu用命令“g"><meta name="twitter:image" content="https://www.shanruifeng.win/images/csdn/csdn-45023681/cover.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"git安装配置及基本使用","description":"安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，基本选择默认设置，但是：在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt2）ubuntu用命令“g","datePublished":"2015-04-13T03:46:10.000Z","dateModified":"2015-04-13T03:46:10.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2015/04/13/csdn-45023681/","image":"https://www.shanruifeng.win/images/csdn/csdn-45023681/cover.png","articleSection":"开发配置","keywords":"开发配置,判断本地仓库是否为孤儿分支,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span>/</span><span>git安装配置及基本使用</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><h1 class="article-title">git安装配置及基本使用</h1><p class="article-desc">安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，基本选择默认设置，但是：在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt2）ubuntu用命令“g</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2015-04-13T03:46:10.000Z">2015-04-13</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>7 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>开发配置 · 判断本地仓库是否为孤儿分支 · CSDN</span></div></header><figure class="article-cover"><img src="/images/csdn/csdn-45023681/cover.png" alt="git安装配置及基本使用"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h3 id="安装git">安装git</h3>
+<p>1）windows</p>
+<p>安装msysgit，下载地址：<a href="http://msysgit.github.io/">http://msysgit.github.io/</a></p>
+<p>安装的时候，基本选择默认设置，但是：</p>
+<p>在Adjusting your PATH environment页，勾选Run Git from the Windows Command Prompt</p>
+<p>2）ubuntu</p>
+<p>用命令“git —version”查看是否已安装，且版本为1.9.5或更高。若没安装或版本太低：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ sudo apt-get install git-core git-gui git-doc gitk</span></span></code></pre>
+<p>3）mac</p>
+<p><a href="http://sourceforge.net/projects/git-osx-installer/">http://sourceforge.net/projects/git-osx-installer/</a>，不仅能装Git本身（选1.9.5或以上版本），还有GUI的安装包</p>
+<h3 id="启动git">启动git</h3>
+<p>1）windows</p>
+<p>Windows：使用Windows自带的命令行界面</p>
+<p>可以在Windows自己的命令行界面下可以直接运行Git命令行，比如</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>D:/test> git help</span></span></code></pre>
+<p>当命令中有些特殊参数的时候，要加上双引号。比如</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>D:/test> git log HEAD^</span></span></code></pre>
+<p>特殊符号^会被Windows误解，所以要加双引号，写成</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>D:/test> git log "HEAD^"</span></span></code></pre>
+<p>Windows：使用msysGit自带的Bash</p>
+<p>使用Bash就不用像上面那样加双引号了。启动Git Bash的简便方法是，在Windows Explorer里，适当目录的右键弹出菜单，Git Bash。此外，也可以从Windows开始菜单进入。</p>
+<p>初次使用时，点击界面右上角，在菜单中选择“属性”项，在弹出对话框中，勾选上“快速编辑模式”和“插入模式”，这样将来copy paste比较方便。</p>
+<p>注意，有利有弊，这个Bash对中文的支持不太好。</p>
+<p>2）linux</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git help</span></span></code></pre>
+<h3 id="设置git">设置git</h3>
+<p>不论Windows还是Linux还是Mac，建议至少config下述内容</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>git config --global user.name "test"                  # 请换成你自己的名字，除非你凑巧也叫wukong.sun</span></span>
+<span class="line"><span>git config --global user.email "test@163.com"         # 同上</span></span>
+<span class="line"><span>git config --global push.default simple               # 要是你非要用低版本的Git（比如1.7.x），好吧，那就不设simple设current，否则你的Git不支持</span></span>
+<span class="line"><span>git config --global core.autocrlf false               # 让Git不要管Windows/Unix换行符转换的事</span></span>
+<span class="line"><span>git config --global gui.encoding utf-8                # 避免git gui中的中文乱码</span></span>
+<span class="line"><span>git config --global core.quotepath off                # 避免git status显示的中文文件名乱码</span></span></code></pre>
+<p>其中最后两个配置是关于中文乱码的，基本够用了。</p>
+<p>Windows上还需要配置：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>git config --global core.ignorecase false</span></span></code></pre>
+<h3 id="设置ssh">设置SSH</h3>
+<p>在Linux的命令行下，或Windos上Git Bash命令行窗口中（总之不要用iOS），键入：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ssh-keygen -t rsa -C "test@163.com"</span></span></code></pre>
+<p>然后一路回车，不要输入任何密码之类，生成ssh key pair。然后就生成一个目录.ssh ，里面有两个文件：id_rsa , id_rsa.pub</p>
+<p>如果在Linux上，需要把其中的私钥告诉本地系统：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ ssh-add ~/.ssh/id_rsa</span></span></code></pre>
+<p>再把其中公钥的内容复制到github上。具体方法是：</p>
+<p>显示ssh公钥的内容：</p>
+<p>$ cat ~/.ssh/id_rsa.pub</p>
+<p>打开github页面：<a href="https://github.com/settings/profile">https://github.com/settings/profile</a>，选择SSH Keys，然后点击Add SSH Key，把刚才ssh公钥id_rsa.pub（windows下的用户目录找到.ssh文件夹进去就可以看到）的内容paste进去。不需要填title，title会自动生成。</p>
+<p>注意：需要copy最开头的“ssh-rsa ”这几个字。</p>
+<h3 id="开始使用">开始使用</h3>
+<p>1）创建新的git仓库</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ mkdir git_repo</span></span>
+<span class="line"><span>$ cd git_repo</span></span>
+<span class="line"><span>$ git init</span></span>
+<span class="line"><span>$ echo "test" > README.mkd</span></span>
+<span class="line"><span>$ git add README.mkd</span></span>
+<span class="line"><span>$ git commit -m "add README.mkd file"</span></span>
+<span class="line"><span>$ git remote add origin git@github.com:username/test.git</span></span>
+<span class="line"><span>$ git push -u origin master</span></span></code></pre>
+<p>2）使用已存在的git仓库</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ cd git_repo</span></span>
+<span class="line"><span>$ git remote add origin git@github.com:username/test.git</span></span>
+<span class="line"><span>$ git push -u origin master</span></span></code></pre>
+<p>注意，如果提示fatal: remote origin already exists.，那么说明该本地仓库已经有远端地址了。你可以先使用git remote rm origin删除origin，或者使用git remote add other_name <a href="mailto:git@github.com">git@github.com</a>:username/test.git来添加（提交时记得使用git push -u other_name master）。</p>
+<p>3）一次提交到多个远端仓库</p>
+<p>假设现有仓库地址为： <a href="mailto:git@github.com">git@github.com</a>:username/test.git</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git clone git@github.com:username/test.git</span></span>
+<span class="line"><span>$ cd test</span></span>
+<span class="line"><span>$ vim .git/config</span></span>
+<span class="line"><span>[core]</span></span>
+<span class="line"><span>    repositoryformatversion = 0</span></span>
+<span class="line"><span>    filemode = true</span></span>
+<span class="line"><span>    bare = false</span></span>
+<span class="line"><span>    logallrefupdates = true</span></span>
+<span class="line"><span>[remote "origin"]</span></span>
+<span class="line"><span>    url = git@github.com:username/test.git</span></span>
+<span class="line"><span>    url = git@gitshell.com:username/test.git</span></span>
+<span class="line"><span>    url = git@bitbucket.org:username/test.git</span></span>
+<span class="line"><span>    fetch = +refs/heads/*:refs/remotes/origin/*</span></span>
+<span class="line"><span>[branch "master"]</span></span>
+<span class="line"><span>    remote = origin</span></span>
+<span class="line"><span>    merge = refs/heads/master</span></span></code></pre>
+<p>然后第一次提交时需要执行git push -u origin master，再往后就只需要执行git push就能把修改提交到上述三个远端仓库了。</p>
+<p>注意：在 Git 2.0 将会更改默认的push动作为【只 push 当前 branch 到远端仓库】。如果想继续使用git push both命令需要手动设置一下git push的默认动作git config —global push.default matching。</p>
+<p>push.default有几个简单动作，这里介绍matching和simple，二者意思分别是 push 本地所有的分支到远端仓库和 push 本地当前分支到上游分支。这个解释貌似还不够精确，可以man git-config来查看详细说明。</p>
+<p>4）在现有仓库上创建孤儿分支</p>
+<p>孤儿分支意思为该分支中没有任何内容，与之前创建的其他分支没有任何关联。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git clone git@github.com:username/test.git</span></span>
+<span class="line"><span>$ cd test</span></span>
+<span class="line"><span>$ git checkout --orphan new_branch</span></span>
+<span class="line"><span>Switched to a new branch 'new_branch'</span></span>
+<span class="line"><span>$ git rm -rf . # 删除旧工作目录树中所有文件</span></span>
+<span class="line"><span>$ rm .gitignore # 如果有该文件的话就删除</span></span>
+<span class="line"><span>$ echo "orphan branch" > README.mkd</span></span>
+<span class="line"><span>$ git add .</span></span>
+<span class="line"><span>$ git commit -m "add README.mkd file"</span></span>
+<span class="line"><span>$ git push origin new_branch</span></span></code></pre>
+<p>5）提交单个分支到远端git仓库</p>
+<p>git push命令默认是将所有分支(branch)都提交到git仓库，有时你只想提交某个分支到远端仓库，那么就就需要使用git push origin HEAD。当然也可以使用git config —global push.default tracking命令来改变git push的默认操作，意思是执行git push时默认只提交当前分支到远端git仓库。</p>
+<h3 id="git常用指令">git常用指令</h3>
+<p>以下几个是git常用的指令，可以简单了解一下。</p>
+<p>1）git config</p>
+<p>在使用git前最好先配置一下你的个人信息及使用偏好。以下命令的意思就不用解释了吧，执行完以下命令就会在你的家目录（<del>）下生成一个文件</del>/.gitconfig。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git config --global user.name "username"</span></span>
+<span class="line"><span>$ git config --global user.email test@163.com</span></span>
+<span class="line"><span>$ git config --global core.editor vim</span></span>
+<span class="line"><span>$ git config --global merge.tool vimdiff</span></span>
+<span class="line"><span>$ git config --global color.status auto</span></span>
+<span class="line"><span>$ git config --global color.branch auto</span></span>
+<span class="line"><span>$ git config --global color.interactive auto</span></span>
+<span class="line"><span>$ git config --global color.diff auto</span></span>
+<span class="line"><span>$ git config --global push.default simple</span></span>
+<span class="line"><span>$ git config --global alias.co checkout</span></span>
+<span class="line"><span>$ git config --global alias.ci commit</span></span>
+<span class="line"><span>$ git config --global alias.st status</span></span>
+<span class="line"><span>$ git config --global alias.last 'log -1 HEAD'</span></span>
+<span class="line"><span>$ git config --global alias.unstage 'reset HEAD --'</span></span></code></pre>
+<p>2）git add</p>
+<p>添加文件内容到索引中去（暂存文件），几个简单示例：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git add .</span></span>
+<span class="line"><span>$ git add --all</span></span>
+<span class="line"><span>$ git add *.txt</span></span>
+<span class="line"><span>$ git add directory/*.sh</span></span></code></pre>
+<p>突然你又不想git add了，那么执行以下命令：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git reset .</span></span>
+<span class="line"><span>$ git reset *.txt</span></span>
+<span class="line"><span>$ git reset directory/*.sh</span></span></code></pre>
+<p>3）git rm</p>
+<p>删除索引和当时工作目录中的文件。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git rm filename</span></span>
+<span class="line"><span>$ git rm -f *.txt</span></span>
+<span class="line"><span>$ git rm -r .</span></span></code></pre>
+<p>4）git commit</p>
+<p>将当前改动记录到仓库中，即提交改动到本地仓库中。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git commit -m "add a file and remove a file"</span></span></code></pre>
+<p>突然你又不想git commit了，那么执行以下命令:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git reset HEAD^</span></span></code></pre>
+<p>你commit之后发现少添加了一个文件：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git commit -m'msg'</span></span>
+<span class="line"><span>$ git add forget_file</span></span>
+<span class="line"><span>$ git commit --amend</span></span></code></pre>
+<p>你的 commit 已经 push 到远程分支(master)了，现在你想反悔了：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git clone git@github.com:username/test.git</span></span>
+<span class="line"><span>$ cd test</span></span>
+<span class="line"><span>$ git reset HEAD^</span></span>
+<span class="line"><span>$ git push -f master</span></span></code></pre>
+<p>5）git status</p>
+<p>查看当前工作目录的状态，即修改、添加及删除了哪些文件。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git status</span></span></code></pre>
+<p>6）git checkout</p>
+<p>检出一个分支和目录到当前工作目录中，可以简单理解为切换分支的命令。</p>
+<p>以下命令分别为切换到分支 branch1 和创建一个新的分支 new_branch 。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git checkout branch1</span></span>
+<span class="line"><span>$ git checkout -b new_branch</span></span></code></pre>
+<p>取消本地改动：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git checkout -- file_name</span></span></code></pre>
+<p>7）git branch</p>
+<p>列出、创建和删除分支。</p>
+<p>以下指令分别为列出本地分支、所有分支、远端分支、创建、删除、强制删除分支。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git branch --list</span></span>
+<span class="line"><span>$ git branch --all</span></span>
+<span class="line"><span>$ git branch --remotes</span></span>
+<span class="line"><span>$ git branch new_branch</span></span>
+<span class="line"><span>$ git branch --delete branch_name</span></span>
+<span class="line"><span>$ git branch -D branch_name</span></span></code></pre>
+<p>删除remote tracking branch，就是git branch -r命令列出的分支。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git branch -r</span></span>
+<span class="line"><span>$ git branch -d -r origin/develop</span></span></code></pre>
+<p>8）合并分支</p>
+<p>如果出现冲突，那么手动解决冲突就可以了。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git checkout branch_name</span></span>
+<span class="line"><span>$ git checkout master</span></span>
+<span class="line"><span>$ git merge branch_name</span></span></code></pre>
+<p>9）删除远程分支</p>
+<p>合并分支之后如果不再需要以前的分支了，那么可以在本地及远程删除它。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git branch -d branch_name</span></span>
+<span class="line"><span>$ git branch -D branch_name</span></span>
+<span class="line"><span>$ git push origin :branch_name</span></span></code></pre>
+<p>这条命令耐人寻味啊，其中origin是你的远程仓库名字（git remote -v可以查看到）。</p>
+<p>10）git diff</p>
+<p>查看改动内容。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git diff filename</span></span>
+<span class="line"><span>$ git diff .</span></span>
+<span class="line"><span>$ git diff revision1 revision2</span></span>
+<span class="line"><span>$ git diff branch1 branch2</span></span></code></pre>
+<p>DIFF暂存（添加到索引中）的文件：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git add .</span></span>
+<span class="line"><span>$ git diff --cached</span></span></code></pre>
+<p>View the redundant Tab or Space in your codes:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plain"><code><span class="line"><span>$ git diff --check</span></span>
+<span class="line"><span>$ git diff --check --cached</span></span></code></pre></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://blog.csdn.net/iAm333/article/details/45023681" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><a class="tag" href="/tags/%E5%88%A4%E6%96%AD%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E6%98%AF%E5%90%A6%E4%B8%BA%E5%AD%A4%E5%84%BF%E5%88%86%E6%94%AF/">判断本地仓库是否为孤儿分支</a><a class="tag" href="/tags/CSDN/">CSDN</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2016/07/01/java-online-debug/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">java线上问题排查指令</span></a><a class="article-nav__item article-nav__item--next" href="/2015/03/11/csdn-44198147/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">linux系统中保证不删除重要的文件</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装git">安装git</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#启动git">启动git</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#设置git">设置git</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#设置ssh">设置SSH</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#开始使用">开始使用</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#git常用指令">git常用指令</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2015/03/11/csdn-44198147/">linux系统中保证不删除重要的文件</a></h3><p class="post-card__desc">safe-rm重新封装了/bin/rm,它可以用来保护重要文件。安装方法：sudo apt-get install sa</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2015-03-11</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2016/10/12/csdn-52795596/">centos 6.5安装caffe(cpu模式)</a></h3><p class="post-card__desc">本文提供了一份详细的Caffe安装教程，包括显卡鉴定、依赖库安装、CUDA与Boost配置、OpenCV与protobu</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-10-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2016/08/30/csdn-52373002/">PredictionIO安装使用</a></h3><p class="post-card__desc">PredictionIO 是一个开源的机器学习服务器框架，用Scala语言开发。它提供了简单的方式使用REST API来</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2016-08-30</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

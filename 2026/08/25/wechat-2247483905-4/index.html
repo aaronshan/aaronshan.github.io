@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化 | 中龄程序猿</title><meta name="description" content="「大模型推理加速进化论」系列 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的DFlash 2出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答问题：为了让大模型\x26quot;说得快还不说错\x26quot;，过去一年半里，研究者们做了哪些极致的优化？"><link rel="canonical" href="https://www.shanruifeng.win/2026/08/25/wechat-2247483905-4/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化 | 中龄程序猿"><meta property="og:description" content="「大模型推理加速进化论」系列 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的DFlash 2出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答问题：为了让大模型\x26quot;说得快还不说错\x26quot;，过去一年半里，研究者们做了哪些极致的优化？"><meta property="og:url" content="https://www.shanruifeng.win/2026/08/25/wechat-2247483905-4/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483905-4/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化 | 中龄程序猿"><meta name="twitter:description" content="「大模型推理加速进化论」系列 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的DFlash 2出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答问题：为了让大模型\x26quot;说得快还不说错\x26quot;，过去一年半里，研究者们做了哪些极致的优化？"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483905-4/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化","description":"「大模型推理加速进化论」系列 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的DFlash 2出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答问题：为了让大模型\\x26quot;说得快还不说错\\x26quot;，过去一年半里，研究者们做了哪些极致的优化？","datePublished":"2026-08-25T02:01:08.000Z","dateModified":"2026-08-25T02:01:08.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/08/25/wechat-2247483905-4/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483905-4/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化</h1><p class="article-desc">「大模型推理加速进化论」系列 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的DFlash 2出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答问题：为了让大模型\x26quot;说得快还不说错\x26quot;，过去一年半里，研究者们做了哪些极致的优化？</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-08-25T02:01:08.000Z">2026-08-25</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483905-4/cover.jpg" alt="大模型推理加速进化论（一）：DFlash 2—当选择器遇上动态卷积，并行草稿的精准进化"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h2 id="大模型推理加速进化论一dflash-2当选择器遇上动态卷积并行草稿的精准进化">大模型推理加速进化论（一）：DFlash 2——当选择器遇上动态卷积，并行草稿的精准进化</h2>
+<h3 id="自我介绍">自我介绍</h3>
+<blockquote>
+<p>大家好，我是Aaron。过去一直从事算法领域相关工作，自工作以来，一直持续在关注算法相关技术的发展，当前除了在工作中会进行一些AI的落地实践，工作之余也在通过AI辅助编程做一些有趣的探索。我会持续更新AI实践过程中的心得体会，以及AI知识分享。欢迎大家关注我关注公众号，以便第一时间收到更新推送。</p>
+</blockquote>
+<ul>
+<li>
+<p>微博: <a href="https://weibo.com/u/1801679460">https://weibo.com/u/1801679460</a></p>
+</li>
+<li>
+<p>Github: <a href="https://github.com/aaronshan">https://github.com/aaronshan</a></p>
+</li>
+</ul>
+<p><strong>「大模型推理加速进化论」系列</strong> 是一套面向有编程经验开发者的大模型推理加速技术解读。我们从最新的 DFlash 2 出发，按时间倒序回溯推理加速这条技术线的关键节点，试图回答一个问题：为了让大模型”说得快还不说错”，过去一年半里，研究者们做了哪些极致的优化？</p>
+<blockquote>
+<p>本系列共五篇（含一篇导论）：DFlash 2 → DSpark → DFlash → EAGLE-3。
+不了解推理加速基础概念的读者建议先读[第零篇导论]。</p>
+</blockquote>
+<hr>
+<h3 id="一为什么从-dflash-2-开始">一、为什么从 DFlash 2 开始</h3>
+<p>2026 年 8 月，Inco AI 发布了 DFlash 2，博客标题叫 <em>Keep Drafting Parallel</em>。</p>
+<p>这句话背后是一个重要的技术立场：上一代的 DFlash（2026 年 1 月）已经证明了”并行草稿”这条路走得通——用一个块扩散模型一次性并行生成整块 token，在 Qwen3-8B 上做到了最高 6× 无损加速，比当时的 EAGLE-3 快约 2.5 倍。但走得通不等于走得稳。并行生成有个根本性的张力：速度快了，但块内 token 之间的依赖建模变弱了，导致<strong>选不对</strong>和<strong>块尾衰减</strong>两个问题。</p>
+<p>DFlash 2 不打算放弃并行路线——它要证明的是：并行草稿的准确率天花板还没摸到，通过更聪明的候选选择和局部依赖建模，可以在不引入串行成本的前提下，把接受长度再推高 16–25%。</p>
+<p>这一篇我们先深入理解这两个”招式”的设计动机、实现细节和工程权衡，然后把它放到整个推理加速的技术地图中，看看它与前一代 DFlash 和后辈 DSpark 的关系。</p>
+<hr>
+<h3 id="二dflash-1-留下的两个结构性缺陷">二、DFlash 1 留下的两个”结构性缺陷”</h3>
+<p>在谈 DFlash 2 之前，必须先理解 DFlash 1 的”天花板”在哪里。这不是简单的”准确率不够高”，而是并行框架<strong>先天</strong>带有的两个问题。</p>
+<h4 id="21-缺陷一独立采样导致的多模态碰撞">2.1 缺陷一：独立采样导致的多模态碰撞</h4>
+<p>DFlash 1 的草稿模型对块内每个位置独立地输出 logits，然后取每个位置的 top-1。问题是：这些位置之间没有任何交互。位置 A 选了”非常”，位置 B 也完全可能选”非常”，因为 B 不知道 A 选了什么。</p>
+<p>从信息论的角度看，这相当于每个位置做了一个<strong>边缘分布</strong>的决策，而不是<strong>联合分布</strong>的决策。联合分布考虑的是”给定前面选了 X，后面选 Y 的概率”，而边缘分布只考虑”这个位置选 Y 的概率”，忽略了条件依赖。</p>
+<p>论文给了一个关键数据：第一个位置的 top-1 命中率是 85.4%，但<strong>正确 token 落在 top-16 候选里的概率高达 99.5%</strong>。这意味着：</p>
+<ol>
+<li>
+<p>正确答案几乎总是在候选池里</p>
+</li>
+<li>
+<p>问题在于我们没有利用”位置之间的条件依赖”来从候选池里挑出最连贯的组合</p>
+</li>
+<li>
+<p>如果能有一个”先知”从 top-16 里挑出正确组合，接受长度能从 4.27 涨到 6.79——提升空间高达 <strong>59%</strong></p>
+</li>
+</ol>
+<p>这个 59% 就是 DFlash 2 路径选择器瞄准的上限。</p>
+<h4 id="22-缺陷二块内位置越远越不准">2.2 缺陷二：块内位置越远越不准</h4>
+<p>块扩散是并行的，块内所有位置同时去噪。对于第 i 个位置（i > 1），它能看到的信息只有：</p>
+<ul>
+<li>
+<p>已验证的上下文（通过目标模型的 KV 注入）</p>
+</li>
+<li>
+<p>它自己在并行去噪时看到的块内其他位置的<strong>噪声输入</strong>（不是最终输出）</p>
+</li>
+</ul>
+<p>也就是说，第 5 个位置无法看到第 1–4 个位置<strong>最终选了什么词</strong>。它只能看到那些位置的噪声/掩码状态。这和自回归草稿（如 EAGLE-3）形成鲜明对比——在自回归中，第 5 个位置明确知道前 4 个位置选的是”The capital of France is Paris”，因此能基于这个精确的前缀做预测。</p>
+<p>结果是：越往块后面，预测准确率掉得越厉害。论文的逐位置分析显示，DFlash 在位置 1 的接受率约 89%，到位置 7 已经跌到约 82%。</p>
+<p>这个衰减不是训练不足造成的——它是并行框架的<strong>结构性限制</strong>。要缓解它，必须在不引入串行 attention 的前提下，给靠后的位置补充”局部上下文”信息。</p>
+<p>先看 DFlash 2 的整体架构，再分别拆解两个招式：</p>
+<p><img src="/images/wechat/wechat-2247483905-4/01.png" alt="图片 1"></p>
+<p>DFlash 2 架构图：左侧为 Backbone（5 层 Transformer + 动态短卷积），右侧为 Parallel Path Selector（每位置 top-16 候选 + associative scan 选连贯路径）</p>
+<p>图的左侧是 DFlash2 Backbone——5 层 Transformer，每层 Attention 和 MLP 之间插入轻量动态短卷积（蓝色竖条），即”双抽头动态卷积”。图的右侧是 Parallel Path Selector——每个位置保留 top-16 候选（白色方框），通过 associative scan 从所有候选组合中找出最连贯的一条路径（绿色粗线）。这两部分分别对应下文要讲的两个招式。</p>
+<hr>
+<h3 id="三招式一路径选择器path-selector">三、招式一：路径选择器（Path Selector）</h3>
+<p>路径选择器解决的是”选不对”的问题。它的核心洞察可以一句话概括：<strong>正确答案就在候选池里，问题是怎么挑。</strong></p>
+<h4 id="31-为什么不重写分布">3.1 为什么不重写分布？</h4>
+<p>在谈路径选择器之前，先看看别的方案是怎么做的。</p>
+<p>Domino 和 DSpark 的做法是引入一个<strong>串行输出头</strong>（autoregressive head），基于前面位置的最终输出，逐个重写每个位置的全词表分布。这样做确实能建模依赖关系，但代价是：</p>
+<ul>
+<li>
+<p>每个位置都要做一次前向传播（串行）</p>
+</li>
+<li>
+<p>引入了额外的延迟，可能抵消并行带来的速度优势</p>
+</li>
+<li>
+<p>草稿模型从”并行”退回到了”半自回归”</p>
+</li>
+</ul>
+<p>DFlash 2 的思路不同：<strong>不修改底层分布，只在已有的 top-k 候选中做选择</strong>。这样做有几个好处：</p>
+<ol>
+<li>
+<p><strong>不改变并行框架</strong>：草稿 Backbone 仍然是一次前向传播并行产出所有候选</p>
+</li>
+<li>
+<p><strong>计算量极小</strong>：只在 top-k 候选上操作（k=16），而不是在全词表上操作（词表大小通常是 50k–150k）</p>
+</li>
+<li>
+<p><strong>输出可证不变</strong>：因为选择器只是从候选中挑一个，不改变每个候选的概率值，所以最终输出分布和原始 DFlash 完全一致——论文称之为”provably unchanged”</p>
+</li>
+</ol>
+<h4 id="32-选择器的具体机制">3.2 选择器的具体机制</h4>
+<p>路径选择器维护两组 embedding codebook：</p>
+<ul>
+<li>
+<p><strong>Predecessor Codebook</strong>：<code>P ∈ R^(V × r)</code>，其中 V 是词表大小，r 是低维秩（rank）</p>
+</li>
+<li>
+<p><strong>Successor Codebook</strong>：<code>S ∈ R^(V × r)</code></p>
+</li>
+</ul>
+<p>对于每个位置 j 的 top-k 候选 <code>{c_j1, c_j2, ..., c_jk}</code>，选择器计算一个<strong>连贯性得分</strong>：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>score(c_ji) = logit(c_ji) + (P[prev_token] ⊙ h_j) · S[c_ji]</span></span></code></pre>
+<p>其中：</p>
+<ul>
+<li>
+<p><code>logit(c_ji)</code> 是草稿模型输出的原始 logits（unary score，衡量候选本身的质量）</p>
+</li>
+<li>
+<p><code>P[prev_token]</code> 是前一个已选词的 predecessor 向量</p>
+</li>
+<li>
+<p><code>h_j</code> 是当前位置的 hidden state 投影到低维空间</p>
+</li>
+<li>
+<p><code>S[c_ji]</code> 是当前候选词的 successor 向量</p>
+</li>
+<li>
+<p><code>⊙</code> 表示逐元素乘法，<code>·</code> 表示点积</p>
+</li>
+</ul>
+<p>这个公式的直觉是：<strong>一个候选词的总得分 = 它自己有多好 + 它和前一个词的连贯性有多好</strong>。</p>
+<h4 id="33-为什么是贪心路径而非全局最优">3.3 为什么是贪心路径而非全局最优？</h4>
+<p>选择器用的是<strong>贪心路径选择</strong>：从锚点 token 开始，每步选得分最高的候选，然后把选中的词作为下一位置的 predecessor。这不是全局最优（全局最优需要枚举所有 k^N 条路径），但：</p>
+<ol>
+<li>
+<p>计算复杂度是 O(N × k)，完全可以忽略</p>
+</li>
+<li>
+<p>实验表明贪心路径已经能捕捉到绝大部分的连贯性收益</p>
+</li>
+<li>
+<p>更重要的是，贪心路径和后面的拒绝采样天然兼容——推理加速本身就是贪心的（从第一个拒绝处截断），所以路径选择器的贪心策略不会引入额外的分布偏差</p>
+</li>
+</ol>
+<h4 id="34-一个代码层面的细节">3.4 一个代码层面的细节</h4>
+<p>在 DFlash 的代码仓库（<code>z-lab/dflash</code>）中，<code>CandidateSelector.select</code> 的实现（model.py:524）用 <code>torch.einsum("br,bkr->bk", ...)</code> 高效地计算 batch × rank 和 batch × k × rank 的相似度。这个实现技巧值得注意：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>scores = unary[:, position] + torch.einsum(</span></span>
+<span class="line"><span>    "br,bkr->bk",</span></span>
+<span class="line"><span>    self.predecessor_codebook(predecessor) * hidden[:, position],</span></span>
+<span class="line"><span>    self.successor_codebook(candidates[:, position]),</span></span>
+<span class="line"><span>)</span></span></code></pre>
+<p>这里 <code>hidden[:, position]</code> 经过 <code>self.hidden_projection</code> 投影到低维空间，和 predecessor 向量做逐元素乘法后再和 successor 向量做 batch 矩阵乘法。整个操作在 GPU 上是非常高效的。</p>
+<hr>
+<h3 id="四招式二双抽头动态卷积dual-tap-dynamic-convolution">四、招式二：双抽头动态卷积（Dual-tap Dynamic Convolution）</h3>
+<p>双抽头动态卷积解决的是”块尾衰减”的问题。它的设计哲学是：<strong>在不引入串行 attention 的前提下，通过局部卷积补充位置间的依赖关系。</strong></p>
+<h4 id="41-为什么用卷积而不是-attention">4.1 为什么用卷积而不是 attention？</h4>
+<p>有人可能会问：既然问题是”位置之间看不见彼此”，那直接让块内位置做 causal attention 不就行了？</p>
+<p>问题在于：causal attention 在块内仍然是串行的——第 5 个位置要看到第 4 个位置的最终输出，必须等第 4 个位置算完。这就破坏了并行性。</p>
+<p>卷积的优势在于：<strong>所有位置可以同时对局部邻域做操作</strong>，不引入跨位置的依赖链。具体来说，一个位置 i 的卷积结果只依赖于位置 i, i-1, i-2, …（局部窗口），而这些输入值在并行骨架的前向传播中已经同时算出来了。</p>
+<h4 id="42-双抽头的设计细节">4.2 “双抽头”的设计细节</h4>
+<p>DFlash 2 的卷积不是普通的 1D 卷积，而是<strong>分两个阶段</strong>作用于每层的 hidden states：</p>
+<p><strong>第一阶段（prepare tap）</strong>：在 attention 计算之前</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># model.py 中的 prepare() 方法</span></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> prepare</span><span style="color:#24292E">(self, hidden):</span></span>
+<span class="line"><span style="color:#24292E">    dynamic </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> self</span><span style="color:#24292E">.kernel_projection(hidden)  </span><span style="color:#6A737D"># 从 hidden 生成动态卷积核</span></span>
+<span class="line"><span style="color:#6A737D">    # 用 base_kernel[0] + dynamic 做第一次卷积</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> convolved_hidden, dynamic_for_finish</span></span></code></pre>
+<p><strong>第二阶段（finish tap）</strong>：在 attention 计算之后</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># model.py 中的 finish() 方法</span></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> finish</span><span style="color:#24292E">(self, hidden, dynamic):</span></span>
+<span class="line"><span style="color:#6A737D">    # 用 base_kernel[1] + dynamic 做第二次卷积</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> convolved_hidden</span></span></code></pre>
+<p>两个阶段的 base kernel 不同（<code>base_kernel[0]</code> 和 <code>base_kernel[1]</code>），但共享同一个动态调制分量。动态调制分量是通过一个轻量的线性投影 <code>self.kernel_projection(hidden)</code> 从当前 hidden states 生成的，这意味着<strong>每个 token 位置有自己定制的卷积核</strong>。</p>
+<h4 id="43-分组grouped和因果causal">4.3 分组（Grouped）和因果（Causal）</h4>
+<p>卷积是<strong>分组的</strong>（grouped convolution）：把 hidden_size 拆成若干 group，每组独立做卷积。这减少了参数量，也让计算更稀疏。</p>
+<p>卷积是<strong>因果的</strong>（causal）：每个位置只能看到前面的位置，看不到后面的位置。这保证了解码时不会泄露未来信息。</p>
+<p>代码实现中（model.py:478 的 <code>_grouped_dynamic_convolve</code>），因果性通过 <code>F.pad(blocks[:, :-offset], ...)</code> 实现：对于偏移量 offset，取前面 <code>length - offset</code> 个位置，后面 pad offset 个零。这样位置 i 只能看到 i-offset 及之前的位置。</p>
+<h4 id="44-工程权衡分析">4.4 工程权衡分析</h4>
+<p>双抽头动态卷积的工程设计体现了几个精妙的权衡：</p>
+<ol>
+<li>
+<p><strong>轻量 vs 有效</strong>：参数量极小（一个 hidden_size → 2×kernel_size×groups 的线性投影 + 两个 base kernel），但实验表明它能有效缓解块尾衰减。</p>
+</li>
+<li>
+<p><strong>局部 vs 全局</strong>：卷积只关注局部邻域（kernel_size 通常是 3 或 5），不试图建模长程依赖——长程依赖由 attention 和目标模型 KV 注入负责，卷积只补”前后看一眼”的短板。</p>
+</li>
+<li>
+<p><strong>动态 vs 静态</strong>：动态调制让卷积能适应不同输入的局部模式，但又不是完全动态（保留了静态的 base kernel），这在表达能力和计算效率之间找到了平衡。</p>
+</li>
+</ol>
+<p>论文说整个双抽头卷积只增加约 <strong>1% 的周期延迟</strong>——对于 16–25% 的额外产出来说，这个投资回报率极高。</p>
+<hr>
+<h3 id="五两代对比dflash-1-vs-dflash-2">五、两代对比：DFlash 1 vs DFlash 2</h3>
+<p>|
+维度</p>
+<p>|</p>
+<p>DFlash 1</p>
+<p>|</p>
+<p>DFlash 2</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>核心问题</p>
+<p>|</p>
+<p>并行草稿快但不够准</p>
+<p>|</p>
+<p>在并行框架内提升准确率</p>
+<p>|
+|</p>
+<p>草稿生成</p>
+<p>|</p>
+<p>块扩散，独立 top-1 采样</p>
+<p>|</p>
+<p>块扩散 + 路径选择器（top-k 中选连贯路径）</p>
+<p>|
+|</p>
+<p>依赖建模</p>
+<p>|</p>
+<p>仅通过目标模型 KV 注入</p>
+<p>|</p>
+<p>KV 注入 + 双抽头动态卷积（局部依赖）</p>
+<p>|
+|</p>
+<p>输出分布</p>
+<p>|</p>
+<p>和 DFlash 一致</p>
+<p>|</p>
+<p>可证不变（provably unchanged）</p>
+<p>|
+|</p>
+<p>额外延迟</p>
+<p>|</p>
+<p>几乎为零</p>
+<p>|</p>
+<p>约 +1% 周期延迟</p>
+<p>|
+|</p>
+<p>典型接受长度</p>
+<p>|</p>
+<p>4.27</p>
+<p>|</p>
+<p>4.80（+12%）</p>
+<p>|
+|</p>
+<p>草稿深度</p>
+<p>|</p>
+<p>5 层 Transformer</p>
+<p>|</p>
+<p>同，每层加两个卷积模块</p>
+<p>|</p>
+<p>一个值得深入思考的观察：DFlash 2 的两项改进本质上是<strong>正交的</strong>——路径选择器解决的是”候选之间的联合选择”问题（宏观层面），动态卷积解决的是”位置之间的局部依赖”问题（微观层面）。两者分别针对两个不同的”漏”，互不干扰，可以叠加使用。这种”分而治之”的设计思路体现了很好的工程品味。</p>
+<hr>
+<h3 id="六dflash-2-在推理加速技术版图中的位置">六、DFlash 2 在推理加速技术版图中的位置</h3>
+<p>四条技术路线是并列关系，而非线性演进。它们围绕”草稿怎么生成”给出了不同答案：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>自回归草稿 ─────→ EAGLE-3（1层，逐词猜，准但深度受限）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>并行草稿 ────────→ DFlash（5层，整块出，快但块内无依赖）</span></span>
+<span class="line"><span>                       │</span></span>
+<span class="line"><span>                       └─→ DFlash 2（并行 + 路径选择器 + 动态卷积，在并行框架内修正）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>半自回归草稿 ────→ DSpark（并行骨架 + 顺序头 + 置信度调度，融合两者 + 系统级优化）</span></span></code></pre>
+<p>DFlash 2 的独特定位是：<strong>它坚定地走在并行路线上，用”并行框架内的轻量修正”来提升准确率，而不是引入顺序性。</strong></p>
+<p>这和 DSpark 形成了方法论上的分野：</p>
+<ul>
+<li>
+<p><strong>DFlash 2 的哲学</strong>：并行是核心优势，不要动它。在并行产出的基础上做后处理（选择、卷积），代价极小。</p>
+</li>
+<li>
+<p><strong>DSpark 的哲学</strong>：并行框架的结构性缺陷（位置之间无依赖）光靠后处理补不够，必须引入顺序模块来从根本上建模依赖。</p>
+</li>
+</ul>
+<p>哪个更好？取决于场景：</p>
+<ul>
+<li>
+<p>在 Apple Silicon（MLX）上，mlx-dspark 的实测显示 DFlash 2 在 Qwen3.8-27B 上的加速比（4.06×）高于 DSpark 社区 drafter（2.92×）。这暗示在量化场景和消费级硬件上，DFlash 2 的”纯并行+轻量修正”可能更有优势。</p>
+</li>
+<li>
+<p>在 DeepSeek-V4 的大规模 MoE 线上服务中，DSpark 的半自回归+置信度调度展示了更强的系统级优化能力（吞吐提升 51–661%）。</p>
+</li>
+</ul>
+<p>两种路线各有胜负，但 DFlash 2 的价值在于：它证明了<strong>并行路线的天花板还没有摸到</strong>——在引入顺序性之前，还有很多”轻量修正”的空间可以利用。</p>
+<hr>
+<h3 id="七系列导读">七、系列导读</h3>
+<p>DFlash 2 用”选对路 + 补后劲”两招，在保持并行框架的前提下把接受长度推高了 16–25%。但它不是这条技术线的终点——在它之前，DSpark 走了另一条路，直接给草稿模型引入了顺序性。</p>
+<p><strong>下一篇</strong>：DSpark：半自回归 + 置信度调度，把推理加速推上生产线</p>
+<p>DSpark 不满足于”在并行框架内做修正”，它用并行骨架 + 轻量顺序头（Markov/RNN）让草稿从”纯并行”变成”半自回归”；同时在验证端引入 Confidence Head 和硬件感知调度器，根据存活概率动态决定验证多长。它是 DeepSeek 团队的官方工作，已部署在 DeepSeek-V4 的真实线上流量中——也是第一个在生产级服务中大规模验证推理加速效果的工作。</p>
+<p><strong>再往后</strong>：</p>
+<ul>
+<li>
+<p>DFlash：用扩散模型给大模型推理”开涡轮增压” —— 理解 DFlash 2 的前身，块扩散 + KV 注入如何让并行草稿第一次成为可能</p>
+</li>
+<li>
+<p>EAGLE-3：从特征预测到 Token 预测，解锁 Scaling Law —— 自回归草稿的极致形态，以及它如何被”特征预测”这个紧箍咒锁住了 scaling 能力</p>
+</li>
+</ul>
+<hr>
+<h3 id="参考资料">参考资料</h3>
+<ul>
+<li>
+<p>DFlash 2 博客：<a href="https://inco.ai/blog/dflash2/">https://inco.ai/blog/dflash2/</a></p>
+</li>
+<li>
+<p>DFlash 项目主页：<a href="https://z-lab.ai/projects/dflash/">https://z-lab.ai/projects/dflash/</a></p>
+</li>
+<li>
+<p>DFlash 论文：<em>DFlash: Block Diffusion for Flash Speculative Decoding</em>（arXiv:2602.06036，ICML 2026）</p>
+</li>
+<li>
+<p>DFlash 代码仓库：<a href="https://github.com/z-lab/dflash">https://github.com/z-lab/dflash</a></p>
+</li>
+<li>
+<p>DSpark 论文：arXiv:2607.05147</p>
+</li>
+<li>
+<p>EAGLE-3 论文：arXiv:2503.01840</p>
+</li>
+</ul></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/ynAoIY_ui8amXZg9eSDsoQ" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/25/wechat-2247483905-3/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">大模型推理加速进化论（二）：DSpark——DeepSeek如何用半自回归+置信度调度把推理加速推上生产线</span></a><a class="article-nav__item article-nav__item--next" href="/2026/05/21/wechat-2247483807-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">不要把学习外包给AI</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#大模型推理加速进化论一dflash-2当选择器遇上动态卷积并行草稿的精准进化">大模型推理加速进化论（一）：DFlash 2——当选择器遇上动态卷积，并行草稿的精准进化</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#自我介绍">自我介绍</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一为什么从-dflash-2-开始">一、为什么从 DFlash 2 开始</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#二dflash-1-留下的两个结构性缺陷">二、DFlash 1 留下的两个”结构性缺陷”</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三招式一路径选择器path-selector">三、招式一：路径选择器（Path Selector）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#四招式二双抽头动态卷积dual-tap-dynamic-convolution">四、招式二：双抽头动态卷积（Dual-tap Dynamic Convolution）</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#五两代对比dflash-1-vs-dflash-2">五、两代对比：DFlash 1 vs DFlash 2</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#六dflash-2-在推理加速技术版图中的位置">六、DFlash 2 在推理加速技术版图中的位置</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#七系列导读">七、系列导读</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#参考资料">参考资料</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

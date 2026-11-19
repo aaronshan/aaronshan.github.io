@@ -1,0 +1,286 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>大模型推理加速进化论（零）：推理加速到底在加速什么 | 中龄程序猿</title><meta name="description" content="「大模型推理加速进化论」系列是一套面向有编程经验开发者的大模型推理加速技术解读。本系列按时间倒序回溯：DFlash 2 → DSpark → DFlash → EAGLE-3。本篇是导论，如果你已经熟悉\x26quot;草稿生成+并行验证\x26quot;的基本概念，可以跳过本篇直接阅读后面的系列文章。"><link rel="canonical" href="https://www.shanruifeng.win/2026/08/26/wechat-2247483950-2/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="大模型推理加速进化论（零）：推理加速到底在加速什么 | 中龄程序猿"><meta property="og:description" content="「大模型推理加速进化论」系列是一套面向有编程经验开发者的大模型推理加速技术解读。本系列按时间倒序回溯：DFlash 2 → DSpark → DFlash → EAGLE-3。本篇是导论，如果你已经熟悉\x26quot;草稿生成+并行验证\x26quot;的基本概念，可以跳过本篇直接阅读后面的系列文章。"><meta property="og:url" content="https://www.shanruifeng.win/2026/08/26/wechat-2247483950-2/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483950-2/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="大模型推理加速进化论（零）：推理加速到底在加速什么 | 中龄程序猿"><meta name="twitter:description" content="「大模型推理加速进化论」系列是一套面向有编程经验开发者的大模型推理加速技术解读。本系列按时间倒序回溯：DFlash 2 → DSpark → DFlash → EAGLE-3。本篇是导论，如果你已经熟悉\x26quot;草稿生成+并行验证\x26quot;的基本概念，可以跳过本篇直接阅读后面的系列文章。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247483950-2/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"大模型推理加速进化论（零）：推理加速到底在加速什么","description":"「大模型推理加速进化论」系列是一套面向有编程经验开发者的大模型推理加速技术解读。本系列按时间倒序回溯：DFlash 2 → DSpark → DFlash → EAGLE-3。本篇是导论，如果你已经熟悉\\x26quot;草稿生成+并行验证\\x26quot;的基本概念，可以跳过本篇直接阅读后面的系列文章。","datePublished":"2026-08-26T08:57:38.000Z","dateModified":"2026-08-26T08:57:38.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/08/26/wechat-2247483950-2/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247483950-2/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>大模型推理加速进化论（零）：推理加速到底在加速什么</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">大模型推理加速进化论（零）：推理加速到底在加速什么</h1><p class="article-desc">「大模型推理加速进化论」系列是一套面向有编程经验开发者的大模型推理加速技术解读。本系列按时间倒序回溯：DFlash 2 → DSpark → DFlash → EAGLE-3。本篇是导论，如果你已经熟悉\x26quot;草稿生成+并行验证\x26quot;的基本概念，可以跳过本篇直接阅读后面的系列文章。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-08-26T08:57:38.000Z">2026-08-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>11 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247483950-2/cover.jpg" alt="大模型推理加速进化论（零）：推理加速到底在加速什么"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h3 id="一chatgpt-为什么一个字一个字地往外蹦">一、ChatGPT 为什么”一个字一个字”地往外蹦</h3>
+<p>用过 ChatGPT 或 Claude 的人都知道，模型的回复是<strong>逐字出现</strong>的——不是网速慢，而是模型内部就得这么算。</p>
+<p>大语言模型（LLM）的生成方式叫<strong>自回归解码（Autoregressive Decoding）</strong>。它的逻辑很简单：每生成一个词（token），都要把这个词接回输入，然后重新算一遍整个模型，才能确定下一个词。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>第1步：输入 "今天天气" → 模型算一遍 → 输出 "很"</span></span>
+<span class="line"><span>第2步：输入 "今天天气很" → 模型算一遍 → 输出 "好"</span></span>
+<span class="line"><span>第3步：输入 "今天天气很好" → 模型算一遍 → 输出 "。"</span></span></code></pre>
+<p>这就好比你在写文章，每写一个字都要把整本词典从头翻一遍才能确定下一个字。哪怕你已经写了几千字，下一个字还是要重新翻一遍词典。</p>
+<p>用流程图来理解自回归解码：</p>
+<p><img src="/images/wechat/wechat-2247483950-2/01.png" alt="图片 1"></p>
+<p>红色框表示”搬完整个 70B 模型”——每生成一个 token 都要搬一次。</p>
+<h4 id="11-慢的根源不是算力不够而是等数据">1.1 慢的根源不是算力不够，而是”等数据”</h4>
+<p>这里有一个反直觉的事实：<strong>GPU 算矩阵乘法的速度极快</strong>，现代 GPU 的算力通常是 100+ TFLOPS（每秒做 100 万亿次浮点运算）。但 LLM 推理时，GPU 的利用率通常 <strong>不足 30%</strong> 。</p>
+<p>为什么？因为<strong>瓶颈在显存带宽</strong>。</p>
+<ul>
+<li>
+<p>模型有几百亿个参数，存放在 GPU 显存中</p>
+</li>
+<li>
+<p>每生成一个 token，都要把所有参数从显存搬到计算核心</p>
+</li>
+<li>
+<p>显存带宽通常是 1–2 TB/s，远远跟不上计算核心的速度</p>
+</li>
+</ul>
+<p>结果是：GPU 大部分时间不是在”算”，而是在”等数据从显存搬过来”。这种场景叫做 <strong>memory-bound</strong>（内存带宽受限）。</p>
+<h4 id="12-能不能一次多算几个">1.2 能不能一次多算几个</h4>
+<p>一个自然的想法：既然 GPU 算矩阵乘法那么快，能不能让它一次算多个 token？</p>
+<p>答案是：<strong>不能，因为每个 token 的输入依赖于前一个 token 的输出。</strong> “好”字的输入必须包含”很”字，所以必须等”很”算完才能开始算”好”。这是自回归的串行本质，无法打破。</p>
+<p>除非——我们换种方式。</p>
+<hr>
+<h3 id="二草稿生成并行验证一个巧妙的作弊方法">二、草稿生成+并行验证：一个巧妙的”作弊”方法</h3>
+<p>草稿生成+并行验证（Speculative Decoding，也叫投机解码或推测解码）是目前最有效的”无损”推理加速技术。它的核心思想可以用一个比喻来理解：</p>
+<blockquote>
+<p>你写论文时，先让一个”实习生”快速写出一版草稿，然后导师一次性批改整段草稿。如果实习生写得准，导师一次批改就能确认好几个段落；如果写得不准，从第一个错误处开始重写。</p>
+</blockquote>
+<p>对应到 LLM 推理中：</p>
+<ul>
+<li>
+<p><strong>导师</strong> = 目标大模型（Target Model），比如 70B 参数的 LLaMA</p>
+</li>
+<li>
+<p><strong>实习生</strong> = 草稿模型（Draft Model），一个又小又快的模型</p>
+</li>
+<li>
+<p><strong>草稿</strong> = 实习生猜测的接下来一串 token（比如 8 个）</p>
+</li>
+<li>
+<p><strong>批改</strong> = 目标模型一次性并行验证这 8 个 token</p>
+</li>
+</ul>
+<h4 id="21-为什么这样能加速">2.1 为什么这样能加速</h4>
+<p>很多人会疑惑：实习生和导师都要跑，相当于跑了两个模型，怎么会更快？关键在于两点：<strong>导师只跑一次</strong>，以及<strong>带宽瓶颈下小模型的代价远低于大模型</strong>。</p>
+<p>先说”导师只跑一次”。目标模型验证 k 个 token 和验证 1 个 token，<strong>带宽成本几乎一样</strong>——因为瓶颈是把几百亿参数从显存搬到计算核心，这个搬运只发生一次；而 Transformer 的 attention 天然支持并行，验证 k 个 token 只是序列变长一点，计算量大致按平方增长，对 k=8–16 这种小序列来说增加微乎其微。</p>
+<p>再说带宽成本不对等。大模型慢，是因为参数多、搬运贵；实习生小（通常是大模型的 1/20），搬运便宜得多。于是总成本变成：</p>
+<blockquote>
+<p><strong>“小模型跑 k 次 + 大模型跑 1 次” vs 原本”大模型跑 k 次”</strong></p>
+</blockquote>
+<p>用具体数字感受一下（假设大模型搬一次参数=100 单位、小模型=5 单位、草稿长 k=8、接受 τ=4 个）：</p>
+<ul>
+<li>
+<p><strong>不用加速</strong>（产 4 个 token）：大模型跑 4 次 = <strong>400 单位</strong></p>
+</li>
+<li>
+<p><strong>用加速</strong>（产 4 个 token）：小模型跑 8 次（40）+ 大模型跑 1 次（100）= <strong>140 单位</strong></p>
+</li>
+</ul>
+<p>140 vs 400，快约 2.85 倍。省下的本质是：大模型从”跑 4 次”变成”跑 1 次”，节省的 3 次大模型带宽成本，远超小模型多跑 8 次的开销。下面这张图把两种成本结构放在一起对比：</p>
+<p><img src="/images/wechat/wechat-2247483950-2/02.png" alt="图片 2"></p>
+<p>左图：不用加速，每生成一个 token 都要搬一次大模型（蓝色），4 个 token = 4 次大模型搬运 = 400 单位。</p>
+<p>右图：用加速，小模型（绿色，便宜）连跑 8 次生成草稿共花 40 单位，大模型（蓝色，贵）<strong>只跑 1 次</strong>并行验证 8 个 token 花 100 单位，合计 140 单位。</p>
+<p>关键差别一目了然：<strong>蓝色大块从 4 个减到 1 个</strong>——这才是加速的真正来源。小模型多跑的次数看起来多（8 次），但因为每次只花 5 单位，总额远小于省下的大模型搬运成本。</p>
+<p>这也说明了一个关键：<strong>加速效果取决于接受长度 τ。</strong> τ 太小（比如基本没接受），“小模型 8 次 + 大模型 1 次”反而比”大模型 4 次”贵，会变慢。所以本系列所有方法（EAGLE-3、DFlash、DSpark）的核心目标都是同一个：<strong>把 τ 推高</strong>——让实习生猜得更准，让导师一次确认更多 token。</p>
+<p><img src="/images/wechat/wechat-2247483950-2/03.png" alt="图片 3"></p>
+<p>绿色 = 小模型（快，多跑几次也便宜），蓝色 = 大模型（慢，但每轮<strong>只跑 1 次</strong>——这就是加速的来源）。</p>
+<h4 id="22-为什么不会说错拒绝采样">2.2 为什么不会说错：拒绝采样</h4>
+<p>先明确一点：<strong>拒绝采样是推理时验证草稿用的，和训练草稿模型无关。</strong> 草稿模型是用普通的监督学习（交叉熵）训练出来的；拒绝采样只发生在上线后”导师批改实习生草稿”这一步。</p>
+<p>关键问题：如果实习生猜错了怎么办？会不会导致输出质量下降？</p>
+<p>答案是：<strong>不会。</strong> 验证阶段采用了一种叫**拒绝采样（Rejection Sampling）**的机制，它有一个数学保证：</p>
+<blockquote>
+<p><strong>最终输出的 token 分布，和目标模型自己逐字生成的分布完全一致。</strong></p>
+</blockquote>
+<p>具体流程是：</p>
+<ol>
+<li>
+<p>目标模型并行计算 8 个 token 的 logits，得到每个位置的概率分布 p</p>
+</li>
+<li>
+<p>对于每个位置，把草稿采的 token x 和两个分布（草稿分布 q、目标分布 p）一起看</p>
+</li>
+<li>
+<p>按 <code>min(1, p(x)/q(x))</code> 的概率接受 x——草稿和目标越接近越容易被接受</p>
+</li>
+<li>
+<p>如果某个位置被拒绝了，就从<strong>修正分布</strong> <code>norm(max(0, p − q))</code> 重新采样一个 token，并停止验证后续位置</p>
+</li>
+<li>
+<p>下一轮从被重新采样的位置开始继续</p>
+</li>
+</ol>
+<p>这意味着：<strong>被接受的 token 都经过了目标模型的确认，被重新采样的 token 也是为了严格对齐目标分布而采的。</strong> 这两步合起来保证了最终输出和目标模型自己写逐字一致——这就是”无损”的含义。</p>
+<h4 id="23-拒绝采样的极简代码">2.3 拒绝采样的极简代码</h4>
+<p>核心逻辑就是”接受-拒绝”两步。假设目标模型输出了 <code>target_probs</code>（每个位置的概率分布 <code>p</code>），草稿模型输出了 <code>draft_probs</code>（每个位置的概率分布 <code>q</code>）和 <code>draft_tokens</code>（草稿猜的 token）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> verify_draft</span><span style="color:#24292E">(target_probs, draft_probs, draft_tokens, temperature</span><span style="color:#D73A49">=</span><span style="color:#005CC5">0</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#032F62">    """</span></span>
+<span class="line"><span style="color:#032F62">    target_probs: [seq_len, vocab_size]  目标模型分布 p</span></span>
+<span class="line"><span style="color:#032F62">    draft_probs:  [seq_len, vocab_size]  草稿模型分布 q</span></span>
+<span class="line"><span style="color:#032F62">    draft_tokens: [seq_len]              草稿采样的 token</span></span>
+<span class="line"><span style="color:#032F62">    """</span></span>
+<span class="line"><span style="color:#24292E">    accepted </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(</span><span style="color:#005CC5">len</span><span style="color:#24292E">(draft_tokens)):</span></span>
+<span class="line"><span style="color:#24292E">        x </span><span style="color:#D73A49">=</span><span style="color:#24292E"> draft_tokens[i]</span></span>
+<span class="line"><span style="color:#24292E">        p, q </span><span style="color:#D73A49">=</span><span style="color:#24292E"> target_probs[i], draft_probs[i]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> temperature </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">:  </span><span style="color:#6A737D"># 贪心解码</span></span>
+<span class="line"><span style="color:#6A737D">            # 贪心只有一个候选：目标分布的 argmax</span></span>
+<span class="line"><span style="color:#24292E">            best </span><span style="color:#D73A49">=</span><span style="color:#24292E"> p.argmax()</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> x </span><span style="color:#D73A49">==</span><span style="color:#24292E"> best:</span></span>
+<span class="line"><span style="color:#24292E">                accepted.append(x)          </span><span style="color:#6A737D"># 草稿命中，接受</span></span>
+<span class="line"><span style="color:#D73A49">            else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">                accepted.append(</span><span style="color:#005CC5">int</span><span style="color:#24292E">(best))  </span><span style="color:#6A737D"># 未命中：用目标的最优替代，并截断</span></span>
+<span class="line"><span style="color:#D73A49">                break</span></span>
+<span class="line"><span style="color:#D73A49">        else</span><span style="color:#24292E">:  </span><span style="color:#6A737D"># 随机采样（温度 > 0）</span></span>
+<span class="line"><span style="color:#6A737D">            # 接受概率 = min(1, p(x)/q(x))，即草稿越接近目标越可能被接受</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> random.random() </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> min</span><span style="color:#24292E">(</span><span style="color:#005CC5">1.0</span><span style="color:#24292E">, p[x] </span><span style="color:#D73A49">/</span><span style="color:#24292E"> q[x]):</span></span>
+<span class="line"><span style="color:#24292E">                accepted.append(x)</span></span>
+<span class="line"><span style="color:#D73A49">            else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#6A737D">                # 拒绝：从修正分布 norm(max(0, p - q)) 重采一个 token</span></span>
+<span class="line"><span style="color:#24292E">                adjusted </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (p </span><span style="color:#D73A49">-</span><span style="color:#24292E"> q).clip(</span><span style="color:#E36209">min</span><span style="color:#D73A49">=</span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                adjusted </span><span style="color:#D73A49">=</span><span style="color:#24292E"> adjusted </span><span style="color:#D73A49">/</span><span style="color:#24292E"> adjusted.sum()</span></span>
+<span class="line"><span style="color:#24292E">                accepted.append(</span><span style="color:#005CC5">int</span><span style="color:#24292E">(sample(adjusted)))</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#6A737D"># 截断：后续草稿全部作废</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> accepted</span></span></code></pre>
+<p>关键点就两个：</p>
+<ol>
+<li>
+<p><strong>贪心模式</strong>：每个位置只比较草稿 token 是否等于目标的 argmax。相等就接受；一旦不等，用目标的 argmax 替代并停止——这保证了输出和目标模型贪心解码逐字一致。</p>
+</li>
+<li>
+<p><strong>采样模式</strong>：用接受概率 <code>min(1, p(x)/q(x))</code> 决定是否接受草稿 token。这里的直觉是——如果草稿猜的 token 在目标分布中概率更高，一定接受；如果更低，按比率概率性接受。<strong>拒绝时不是直接丢掉，而是从修正分布 <code>norm(max(0, p − q))</code> 重新采样一个 token</strong>，这一步是”无损”的数学保证：最终每个 token 的输出概率严格等于目标分布 <code>p</code>。被拒后立即停止验证后续位置（从截断处开始下一轮）。</p>
+</li>
+</ol>
+<hr>
+<h3 id="三核心概念速查">三、核心概念速查</h3>
+<p>在深入各个方法之前，先建立几个核心概念的直觉。</p>
+<h4 id="31-接受长度acceptance-lengthτ">3.1 接受长度（Acceptance Length，τ）</h4>
+<p>导师一次批改平均能接受多少个实习生的 token。τ = 4 意味着平均每次验证产出 4 个 token。</p>
+<p>τ 越大，加速越明显。理想情况下 τ = k（草稿长度），意味着每次都全中。</p>
+<h4 id="32-加速比speedup">3.2 加速比（Speedup）</h4>
+<p>开启推理加速后，生成速度是不开启时的多少倍。比如 4× 意味着原来 10 秒生成的文本现在 2.5 秒完成。</p>
+<p>加速比和接受长度相关，但不是线性关系——还要考虑草稿模型的生成成本。</p>
+<h4 id="33-无损lossless">3.3 无损（Lossless）</h4>
+<p>输出分布和目标模型完全一致。不是”差不多”，是<strong>数学上的完全一致</strong>。这意味着：</p>
+<ul>
+<li>
+<p>不会因为用了加速而降低输出质量</p>
+</li>
+<li>
+<p>可以安全地用于生产环境</p>
+</li>
+<li>
+<p>和量化、蒸馏等有损压缩方法有本质区别</p>
+</li>
+</ul>
+<h4 id="34-草稿模型-vs-目标模型">3.4 草稿模型 vs 目标模型</h4>
+<p>|</p>
+<p>|</p>
+<p>目标模型</p>
+<p>|</p>
+<p>草稿模型</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>参数量</p>
+<p>|</p>
+<p>大（7B–70B+）</p>
+<p>|</p>
+<p>小（通常目标模型的 1/20–1/50）</p>
+<p>|
+|</p>
+<p>速度</p>
+<p>|</p>
+<p>慢</p>
+<p>|</p>
+<p>快</p>
+<p>|
+|</p>
+<p>质量</p>
+<p>|</p>
+<p>高</p>
+<p>|</p>
+<p>较低</p>
+<p>|
+|</p>
+<p>作用</p>
+<p>|</p>
+<p>验证草稿，保证无损</p>
+<p>|</p>
+<p>快速猜测，提供候选</p>
+<p>|</p>
+<hr>
+<h3 id="四草稿模型的设计一场速度与准确率的权衡">四、草稿模型的设计：一场”速度与准确率”的权衡</h3>
+<p>草稿生成+并行验证的加速效果，很大程度上取决于草稿模型的设计。这里有一个根本性的张力：</p>
+<ul>
+<li>
+<p><strong>草稿越准</strong>（接受长度 τ 越大），验证的收益越高</p>
+</li>
+<li>
+<p><strong>草稿越快</strong>（生成延迟越低），整体加速比越高</p>
+</li>
+</ul>
+<p>但”准”和”快”往往冲突。过去一年半的技术演进，本质上就是不同团队在这个张力中寻找不同最优解的过程。</p>
+<h4 id="41-路线一自回归草稿eagle-3">4.1 路线一：自回归草稿（EAGLE-3）</h4>
+<p>让草稿模型和目标模型一样，逐词生成 token。这样每个 token 都能看到前面已经生成的 token，依赖建模很强，准确率有保障。</p>
+<p>但问题是：<strong>生成 k 个 token 要算 k 次</strong>。所以草稿模型必须极浅（通常 1 层 Transformer），否则草稿生成本身就变成瓶颈了。层数一浅，表达能力受限，准确率有天花板。</p>
+<h4 id="42-路线二并行草稿dflash--dflash-2">4.2 路线二：并行草稿（DFlash / DFlash 2）</h4>
+<p>让草稿模型一次性并行生成整块 token（比如 16 个），所有位置同时去噪。这样生成 k 个 token 只要算 1 次，草稿模型可以做深（5+ 层）。</p>
+<p>但代价是：块内位置之间没有依赖交互，导致”选不对”和”块尾衰减”两个结构性问题。DFlash 2 就是在这个路线上做”精准化修正”。</p>
+<h4 id="43-路线三半自回归草稿dspark">4.3 路线三：半自回归草稿（DSpark）</h4>
+<p>折中方案：先用并行骨架一次性生成所有位置的基础特征，再用一个轻量顺序头逐位置精修。既保留了并行的速度，又补充了依赖建模。</p>
+<p>同时 DSpark 还在验证端做了创新：不再固定验证长度，而是根据”存活概率”动态决定验证多长。</p>
+<h4 id="44-四条路线的关系">4.4 四条路线的关系</h4>
+<p><img src="/images/wechat/wechat-2247483950-2/04.png" alt="图片 4"></p>
+<p>本系列文章就是沿着这条时间线从最新到最老逐一解读。</p>
+<hr>
+<h3 id="五草稿验证-vs-其他推理加速方法">五、草稿验证 vs 其他推理加速方法</h3>
+<p>草稿验证不是唯一的推理加速方法，了解它和其他方法的区别有助于判断适用场景。</p>
+<p>|
+方法</p>
+<p>|</p>
+<p>原理</p>
+<p>|</p>
+<p>是否无损</p>
+<p>|</p>
+<p>额外内存</p>
+<p>|</p>
+<p>典型加速比</p>
+<p>|
+| --- | --- | --- | --- | --- |
+| <strong>草稿验证</strong> |</p>
+<p>草稿猜测 + 目标验证</p>
+<p>|</p>
+<p>✅ 无损</p>
+<p>|</p>
+<p>需加载草稿模型</p>
+<p>|</p>
+<p>2–6×</p>
+<p>|
+| <strong>量化</strong></p>
+<p>（INT8/INT4）</p>
+<p>|</p>
+<p>降低参数精度</p>
+<p>|</p>
+<p>❌ 有损</p>
+<p>|</p>
+<p>减少</p>
+<p>|</p>
+<p>1.5–3×</p>
+<p>|
+| <strong>知识蒸馏</strong> |</p>
+<p>训练小模型模仿大模型</p>
+<p>|</p>
+<p>❌ 有损</p>
+<p>|</p>
+<p>替换模型</p>
+<p>|</p>
+<p>2–5×</p>
+<p>|
+| <strong>结构化稀疏</strong> |</p>
+<p>跳过部分 attention 头</p>
+<p>|</p>
+<p>❌ 有损</p>
+<p>|</p>
+<p>不变</p>
+<p>|</p>
+<p>1.2–2×</p>
+<p>|
+| <strong>连续批处理</strong> |</p>
+<p>多个请求共享 GPU 计算</p>
+<p>|</p>
+<p>✅ 无损</p>
+<p>|</p>
+<p>不变</p>
+<p>|</p>
+<p>吞吐提升 2–4×</p>
+<p>|</p>
+<p>草稿验证的独特价值在于：<strong>它是为数不多的”无损”加速方法之一</strong>，而且可以和量化、连续批处理等其他方法<strong>叠加使用</strong>——比如你先量化模型到 INT8，再开启草稿验证，两者互不干扰。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/dH2T7Cp1ZSiUSI8FnW2VGw" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/08/27/wechat-2247483965-3/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">OpenMinis 架构分析</span></a><a class="article-nav__item article-nav__item--next" href="/2026/08/26/wechat-2247483950-4/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">让 Agent 的能力可热插拔：一篇论文如何撑起 DeepSeek Harness</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一chatgpt-为什么一个字一个字地往外蹦">一、ChatGPT 为什么”一个字一个字”地往外蹦</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#二草稿生成并行验证一个巧妙的作弊方法">二、草稿生成+并行验证：一个巧妙的”作弊”方法</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三核心概念速查">三、核心概念速查</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#四草稿模型的设计一场速度与准确率的权衡">四、草稿模型的设计：一场”速度与准确率”的权衡</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#五草稿验证-vs-其他推理加速方法">五、草稿验证 vs 其他推理加速方法</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

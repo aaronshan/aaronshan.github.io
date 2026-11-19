@@ -1,0 +1,593 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>拆解Anthropic FlashProve：400B模型如何自证清白 | 中龄程序猿</title><meta name="description" content="Anthropic 开源的 FlashProve 让 400B MoE 不交权重，也能为每次回复出一份 18.78MB 的证明：普通 CPU 21 秒验完，代价是 93 倍算力。从协议、整数模型到单卡复现，一篇讲透可验证推理。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/06/wechat-2247484163-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="拆解Anthropic FlashProve：400B模型如何自证清白 | 中龄程序猿"><meta property="og:description" content="Anthropic 开源的 FlashProve 让 400B MoE 不交权重，也能为每次回复出一份 18.78MB 的证明：普通 CPU 21 秒验完，代价是 93 倍算力。从协议、整数模型到单卡复现，一篇讲透可验证推理。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/06/wechat-2247484163-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484163-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="拆解Anthropic FlashProve：400B模型如何自证清白 | 中龄程序猿"><meta name="twitter:description" content="Anthropic 开源的 FlashProve 让 400B MoE 不交权重，也能为每次回复出一份 18.78MB 的证明：普通 CPU 21 秒验完，代价是 93 倍算力。从协议、整数模型到单卡复现，一篇讲透可验证推理。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484163-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"拆解Anthropic FlashProve：400B模型如何自证清白","description":"Anthropic 开源的 FlashProve 让 400B MoE 不交权重，也能为每次回复出一份 18.78MB 的证明：普通 CPU 21 秒验完，代价是 93 倍算力。从协议、整数模型到单卡复现，一篇讲透可验证推理。","datePublished":"2026-11-06T04:05:00.000Z","dateModified":"2026-11-06T04:05:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/06/wechat-2247484163-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484163-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>拆解Anthropic FlashProve：400B模型如何自证清白</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">拆解Anthropic FlashProve：400B模型如何自证清白</h1><p class="article-desc">Anthropic 开源的 FlashProve 让 400B MoE 不交权重，也能为每次回复出一份 18.78MB 的证明：普通 CPU 21 秒验完，代价是 93 倍算力。从协议、整数模型到单卡复现，一篇讲透可验证推理。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-06T04:05:00.000Z">2026-11-06</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>25 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484163-1/cover.jpg" alt="拆解Anthropic FlashProve：400B模型如何自证清白"></figure><div class="article-grid"><div class="article-content"><div class="prose"><p>你用 API 调用大模型时，有一个问题从来没人能回答：<strong>服务商说这次回复是 Llama 4 Maverick 算的，你凭什么信？</strong></p>
+<p>Anthropic 开源的 <strong>FlashProve</strong> 给了一个密码学答案：服务商不交出 410GB 权重，也能为每次回复生成一份 <strong>18.78MB 的证明</strong>，任何人在普通 CPU 上 <strong>21 秒</strong>独立验证完。这是公开工作里，<strong>可验证推理（verifiable inference）规模最大的一档——400B MoE</strong>（混合专家模型：4000 亿总参数，每个 token 只激活其中约 170 亿）。</p>
+<p>代价同样硬：证明算力约是 vLLM 的 <strong>93 倍</strong>。</p>
+<p>读完这篇你能拿到：</p>
+<ol>
+<li>
+<p>可验证推理的三阶段协议，以及撑起它的 5 个核心机制（带公式与伪代码）</p>
+</li>
+<li>
+<p>四条可执行的复现路线：纯 CPU 2 分钟、8 层模型 29 分钟、全尺寸 42 分钟、真 Maverick 数小时</p>
+</li>
+<li>
+<p>5个真实踩坑点，全部来自仓库文档与Issue</p>
+</li>
+<li>
+<p>一个关键判断：<strong>它证明的是”权重一致性”，不是”模型身份”</strong></p>
+</li>
+</ol>
+<p><img src="/images/wechat/wechat-2247484163-1/01.png" alt="图片 1"></p>
+<p>图 1</p>
+<p><strong>图 1｜一句话架构</strong>：一次承诺、逐次证明、CPU 免权重验证。整篇文章都在解释这张图里的三个箭头。</p>
+<hr>
+<h3 id="一why当服务商说我用的是-maverick">一、Why：当服务商说”我用的是 Maverick”</h3>
+<h4 id="11-四种你无法察觉的作弊">1.1 四种你无法察觉的作弊</h4>
+<p>MaaS（Model-as-a-Service）的商业模式建立在一个默认前提上：<strong>你相信对方用的是它宣称的模型</strong>。但这个前提没有任何技术保障。服务方有动机、也有能力做四件事：</p>
+<ul>
+<li>
+<p><strong>换模型</strong>：用蒸馏过的小模型顶替大模型，成本降一个数量级，你只看输出质量很难分辨</p>
+</li>
+<li>
+<p><strong>降级</strong>：对低价客户、可疑流量、高峰期切到小模型</p>
+</li>
+<li>
+<p><strong>改输出</strong>：加规则改写、内容过滤，再返回给你</p>
+</li>
+<li>
+<p><strong>事后抵赖</strong>：日志在对方手里，出纠纷时无法作为第三方证据</p>
+</li>
+</ul>
+<p>监管侧要审计，商业侧要按模型计费、要授权合规，两边都需要同一个东西：<strong>一份能被第三方独立检查、又不暴露权重的证据</strong>。</p>
+<p>这个需求听起来简单，做起来极难——因为证据和秘密天然冲突。</p>
+<h4 id="12-五种看起来能用的方案为什么都不行">1.2 五种”看起来能用”的方案，为什么都不行</h4>
+<p>|
+方案</p>
+<p>|</p>
+<p>做法</p>
+<p>|</p>
+<p>为什么不够</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>权重哈希</p>
+<p>|</p>
+<p>公布权重的 SHA-256</p>
+<p>|</p>
+<p>只证明”文件是这份”，不证明”这次推理用了它”。换模型后重新哈希即可</p>
+<p>|
+|</p>
+<p>TEE / 机密计算</p>
+<p>|</p>
+<p>在 enclave 里推理并出 attestation</p>
+<p>|</p>
+<p>要信任 CPU/GPU 厂商与固件；有侧信道；400B 模型根本放不进 enclave</p>
+<p>|
+|</p>
+<p>水印</p>
+<p>|</p>
+<p>输出里嵌统计信号</p>
+<p>|</p>
+<p>概率性、可被改写洗掉；只能事后取证，无法逐次验证</p>
+<p>|
+|</p>
+<p>抽样重跑</p>
+<p>|</p>
+<p>审计方拿权重重算</p>
+<p>|</p>
+<p>需要权重；只能抽查；无法证明”某一次”</p>
+<p>|
+|</p>
+<p>zkML / zkLLM</p>
+<p>|</p>
+<p>为整次推理生成 zkSNARK</p>
+<p>|</p>
+<p>证明开销随参数量爆炸，公开工作多停在 10M–1B 参数；proof 虽小但生成代价无法承受 400B</p>
+<p>|</p>
+<p>FlashProve 的路线是第五种的变体，但换了底层数学——<strong>不用椭圆曲线的 zkSNARK，改用哈希型 IOP</strong>。这一换决定了后面所有取舍：</p>
+<p><img src="/images/wechat/wechat-2247484163-1/02.png" alt="图片 2"></p>
+<p>图 2</p>
+<p><strong>图 2｜两条路线的取舍</strong>。<strong>zkSNARK</strong>（简洁非交互知识论证）把计算摊成算术电路，用椭圆曲线承诺多项式：proof 几百字节、验证几毫秒，但需要可信设置（仪式里留下的秘密，谁保管谁就能伪造证明）、不抗量子、成本随电路规模膨胀。<strong>哈希型 IOP</strong>（交互式预言机证明）改用 Merkle 树承诺整张表，验证者像抽查作业一样只打开少量位置：proof 涨到 18.78MB、验证 21 秒，换来无需仪式、抗量子、成本只受哈希与整数运算限制。</p>
+<h4 id="13-真正的矛盾权重是-ip证据要公开">1.3 真正的矛盾：权重是 IP，证据要公开</h4>
+<p>把所有方案失效的原因归到一句话：<strong>你要证明的东西，恰恰是不能给对方看的东西。</strong></p>
+<p>密码学对这个矛盾的标准解法叫<strong>承诺（commitment）</strong>——把答案装进信封、封口、放桌上：你不能改（binding），但也还没公开（hiding）。</p>
+<p>FlashProve 把这个信封做到了 410GB，并且额外解决了两个工程难题：</p>
+<ul>
+<li>
+<p>承诺之后，<strong>每次推理</strong>都要能证明”我用的权重在信封里”</p>
+</li>
+<li>
+<p>证明过程本身<strong>不能泄露</strong>信封里的内容</p>
+</li>
+</ul>
+<p>前一个是可验证计算问题，后一个是零知识问题。两个都要，且要在单张 H100 上跑 400B 模型。</p>
+<hr>
+<h3 id="二how-宏观三阶段协议">二、How 宏观：三阶段协议</h3>
+<h4 id="21-一次承诺逐次证明随时验证">2.1 一次承诺，逐次证明，随时验证</h4>
+<p><img src="/images/wechat/wechat-2247484163-1/03.png" alt="图片 3"></p>
+<p>图 3</p>
+<p><strong>图 3｜全生命周期</strong>。特别注意阶段二的顺序：<strong>证明是在回复已经生成之后补的</strong>，不是推理的一部分。这也解释了为什么它不覆盖采样——证明时只看最终 token 序列。</p>
+<p>这三个阶段对应三个程序：<code>cp_commit</code>（承诺）、<code>cp_prove</code>（证明服务）、<code>cp_verify</code>（验证器）。验证器是纯 C++、不依赖 GPU、不需要权重，这是整个设计的价值所在。</p>
+<h4 id="22-32-字节里装了什么">2.2 32 字节里装了什么</h4>
+<p>Commitment ID 是 32 字节哈希，覆盖：</p>
+<ul>
+<li>
+<p>三份配置文件（<code>policy.txt</code>、<code>KL.bin</code>、<code>layout.txt</code>）</p>
+</li>
+<li>
+<p>anchor 表的 Merkle 根与形状（<strong>anchor</strong> 是承诺树的顶层块，用来算 ID 指纹；<strong>leaf</strong> 是最末级块，每次证明打开的就是它）</p>
+</li>
+<li>
+<p>OOD 采样的 seeds 与 answers</p>
+</li>
+</ul>
+<p><strong>它不覆盖</strong> leaf 文件与 <code>key.bin</code> 内部的子证明——那两项由 <code>cp_verify</code> 读取时单独检查。这个细节后面讲局限时会再出现。</p>
+<p>关键点：ID 是<strong>带外</strong>使用的。你从官网、合同、独立渠道拿到它，硬编码进客户端，而不是从待检查的服务器上拉取。</p>
+<blockquote>
+<p>仓库文档里有一句警告值得抄下来：<strong>永远不要把别人发给你的文件算出来的 ID 当作 <code>-id</code> 传入</strong>。它与那些文件天然匹配，证明不了任何来源。</p>
+</blockquote>
+<h4 id="23-三类文件哪些必须信哪些必须查">2.3 三类文件：哪些必须信，哪些必须查</h4>
+<p><img src="/images/wechat/wechat-2247484163-1/04.png" alt="图片 4"></p>
+<p>图 4</p>
+<p><strong>图 4｜信任边界</strong>。搞错这张图，后面所有密码学都白搭——验证器的可靠性只在你喂给它正确的公开文件时才有意义。</p>
+<h4 id="24-为什么它敢上-400b三个反直觉的决定">2.4 为什么它敢上 400B：三个反直觉的决定</h4>
+<p>|
+决定</p>
+<p>|</p>
+<p>直觉做法</p>
+<p>|</p>
+<p>FlashProve 的做法</p>
+<p>|</p>
+<p>换来了什么</p>
+<p>|
+| --- | --- | --- | --- |
+|</p>
+<p>算术</p>
+<p>|</p>
+<p>证明浮点前向</p>
+<p>|</p>
+<p>改成<strong>整数模型</strong>（定点激活 + 查表非线性）</p>
+<p>|</p>
+<p>可精确复现、可代数验证；代价是 top-1 差异 6.81%</p>
+<p>|
+|</p>
+<p>验证方式</p>
+<p>|</p>
+<p>全量重算</p>
+<p>| <strong>抽查</strong></p>
+<p>（只打开表中少量列）</p>
+<p>|</p>
+<p>410GB 只需打开约 10GB；代价是概率性保证</p>
+<p>|
+|</p>
+<p>权重可见性</p>
+<p>|</p>
+<p>证明时公开权重</p>
+<p>| <strong>掩码隐藏</strong></p>
+<p>（RS 码随机尾巴）</p>
+<p>|</p>
+<p>权重始终不出服务方；代价是每请求 1 bit 泄漏预算</p>
+<p>|</p>
+<p>这三个决定互相牵制：不改成整数模型就没法抽查；不抽查就压不到 MB 级 proof；不加掩码，抽查就等于泄露权重。</p>
+<hr>
+<h3 id="三how-微观五个核心机制">三、How 微观：五个核心机制</h3>
+<h4 id="31-机制一把浮点模型变成整数模型">3.1 机制一：把浮点模型变成整数模型</h4>
+<p>先定义两个后文反复出现的词。<strong>top-1</strong>：模型在每个位置给所有候选 token 打分，分数最高的那个就是 top-1；全文说“某个 token 是对的”，意思都是“整数模型在这个位置也选了它”。<strong>logit</strong>：softmax 归一化之前的原始分数，可以理解成“还没换算成概率的投票数”。</p>
+<p>为什么非改不可？**浮点加法不满足结合律，舍入规则还依赖硬件。**同一段代码在不同 GPU、不同编译器下可能给出不同结果，而可验证计算要求”每一步都能精确复现”。</p>
+<p>所以 FlashProve 定义了一个<strong>整数版 Llama 4 Maverick</strong>，写在 <code>docs/model.md</code> 里，用两个程序实现（Python 参考实现 + GPU 证明器），Lean 里还有第三份。</p>
+<p>核心是三个替换：</p>
+<p><strong>① 量化权重 + 定点激活。</strong> 权重是整数（除 embedding 外落在 −4096..4095），激活用”整数 + 2 的幂尺度”表示。每次乘法之后右移若干位做舍入，舍入规则固定：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>rq(a, k) = floor((a + 2^(k-1)) / 2^k)      // 除以 2^k，四舍五入，.5 向上</span></span></code></pre>
+<p>一行公式解决”浮点舍入不可复现”的问题：所有运算都是整数，谁都算得出同一个结果。</p>
+<p><strong>② 非线性函数全部查表。</strong> GELU、SiLU、softmax 的 exp 都预先算成整数表，前向时只做查表。这是把”不可代数化的操作”变成”可验证的组合问题”的关键。</p>
+<p><strong>③ 8 类 range condition。</strong> 整数运算必须防溢出。模型被定义成一个<strong>部分函数</strong>：8 类数值只要有一类越界，模型就没有输出，证明也不成立。</p>
+<p>以 RMSNorm 为例，整数版长这样：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Vx    = sum(x[k]^2)</span></span>
+<span class="line"><span>sigma = isqrt(Vx + eps)                       // 整数平方根</span></span>
+<span class="line"><span>Rc    = floor((2^M + floor(sigma/2)) / sigma) // 定点倒数</span></span>
+<span class="line"><span>w[k]  = rq(x[k] * Rc, K)                      // 缩放 + 舍入</span></span>
+<span class="line"><span>nr[k] = clamp(w[k]; 2047)                     // 12 位有符号钳位</span></span></code></pre>
+<p>没有一处浮点。注意 <code>isqrt</code> 和 <code>floor</code> 都是精确定义的整数操作——这是”可证明”的前提。</p>
+<p><strong>代价必须说清楚</strong>：整数模型不是浮点模型。仓库实测 top-1 一致率差异 <strong>6.81%</strong>，logit（每步的原始分数）RMSE 0.035，余弦相似度 0.9954。也就是说，它证明的是”整数模型会给这些 token”，<strong>不是你线上那个 BF16 模型会给这些 token</strong>。</p>
+<h4 id="32-机制二承诺与抽查410gb-只打开-10gb">3.2 机制二：承诺与抽查，410GB 只打开 10GB</h4>
+<p><strong>问题</strong>：怎么在不读完 410GB 的前提下，确认”这份数据整体上没被换过”？</p>
+<p><strong>答案</strong>：Reed-Solomon 编码 + Merkle 树 + 邻近性测试。三步走。</p>
+<p><strong>第一步，加冗余。</strong> 把权重按列看成一个多项式在若干点上的取值，再在更多点上求值，得到更长的<strong>码字</strong>。直觉是：把一句话改写成一首押韵的长诗，改一个字整首诗就不押韵了。任意两个合法码字至少在 <code>n − k + 1</code> 个位置不同——这个数量叫<strong>最小距离</strong>，冗余越大，距离越远。</p>
+<p><strong>第二步，做承诺。</strong> 每个叶子 = 一列数据 + 一个随机盐，向上两两哈希成 Merkle 树，根进入 Commitment ID。想验证某一列没被换，只需给出一条从叶子到根的哈希路径（约 log₂n 个哈希），不用给整张表。</p>
+<p><strong>第三步，抽查。</strong> 验证器随机打开少量列，检查：</p>
+<ol>
+<li>
+<p>打开的值确实在承诺的 Merkle 树里（路径校验）</p>
+</li>
+<li>
+<p>这些值满足该满足的代数关系（sumcheck 等）</p>
+</li>
+</ol>
+<p>抽查点的数量决定了安全性：点越多越安全，proof 越大。18.78MB 的 proof 里，<strong>Merkle 路径占了 15.84MB（84%）</strong>——这就是”抽查”的账单。</p>
+<p><strong>一个容易翻车的细节</strong>：抽查只能保证”数据接近<strong>某个</strong>合法码字”，不能保证”接近<strong>唯一那个</strong>”。当数据落在 list decoding 区域时，可能有多个候选码字，攻击者可以挑一个对自己有利的来解释。</p>
+<p>这就是 <strong>OOD 采样</strong>（out-of-domain）存在的原因：在码的”编码点集之外”再问几个点。真正持有低次多项式的证明者答得出，拼凑假数据的答不出。这些 seeds 与 answers 都被写进 Commitment ID，防止事后挑选。</p>
+<p>而把 410GB 的检查压到 18.78MB，靠的是<strong>邻近性测试</strong>的递归结构：</p>
+<p><strong>fold（折叠）</strong> 是其中的核心动作：把码字按奇偶位置拆成两半，再用一个随机系数把两半线性组合成一个新的、长度减半的码字——一列数据变两列、查一次相当于查两处。反复折叠，规模指数下降；但每折一次码的参数就变了，所以要靠 <strong>code switching</strong> 换到同族的另一个码上，保证”折完的东西仍然落在可检查的码族里”。折到常数规模后，验证者只需要检查最后那一点点。</p>
+<p><img src="/images/wechat/wechat-2247484163-1/05.png" alt="图片 5"></p>
+<p>图 5</p>
+<p><strong>图 5｜邻近性测试的四步</strong>。fold 负责缩小规模，code switching 保证折叠后仍在可验证的码族里，OOD 采样负责消除列表解码的歧义。</p>
+<h4 id="33-机制三sumcheck把一百万个点压成一个点">3.3 机制三：sumcheck，把一百万个点压成一个点</h4>
+<p>前向计算里有大量形如”这一层的输出等于权重矩阵乘输入”的断言。逐项验证不可能，需要把它变成一条等式。</p>
+<p><strong>sumcheck</strong> 干的就是这件事：要确认”一百万个数的加权和等于 c”，不用逐个核对；把这一百万个数压成一个多变量多项式，随机取一个点问”这里对不对”。</p>
+<p>依据是 Schwartz-Zippel：两个不同的多项式，在随机点上取值相同的概率极小。于是一个关于<strong>大量</strong>坐标的断言，被归约成关于<strong>单个</strong>随机点的断言。</p>
+<p>sumcheck 跑完之后，剩下的通常是形如 <code>sum_i a_i · f(i) = c</code> 的<strong>线性声明</strong>，再归约成对承诺表若干 opening 的检查——这里的 opening 就是“打开”：给出某个位置的值，外加一条 Merkle 路径证明它确实在表里。验证者只需要这些点和路径，不用读整张表。</p>
+<p><strong>另外两个工具补剩下的缺口。</strong> sumcheck 只能处理加减乘；模型里的钳位、指数、除法是非线性的，写不成多项式，于是用 <strong>lookup argument</strong>：把“输入 → 输出”预先算成一张表，只证明“我用到的每一项都在表里”，比拟合多项式便宜得多。<strong>range check</strong> 则防溢出——整数模型要求每个中间值落在指定区间，证明“它没越界”比证明“它等于多少”便宜。</p>
+<p>整条证明的骨架就是这套动作的叠加：</p>
+<p><img src="/images/wechat/wechat-2247484163-1/06.png" alt="图片 6"></p>
+<p>图 6</p>
+<p><strong>图 6｜从权重到 proof 的完整流水线</strong>。左边是数据，中间是”把断言变小”的三个工具，右边是打开的少量列。</p>
+<h4 id="34-机制四权重怎么藏以及每请求-1-bit的预算">3.4 机制四：权重怎么藏，以及”每请求 1 bit”的预算</h4>
+<p>抽查会打开真实数值。如果打开的是原始权重，那证明一次就等于泄露一部分权重——多证几次权重就被拼出来了。</p>
+<p>解法是<strong>三重掩码</strong>：</p>
+<p>|
+层</p>
+<p>|</p>
+<p>做法</p>
+<p>|</p>
+<p>作用</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>编码层</p>
+<p>|</p>
+<p>RS 码后追加随机列（随机尾巴）</p>
+<p>|</p>
+<p>让码字本身不含信息</p>
+<p>|
+|</p>
+<p>承诺层</p>
+<p>|</p>
+<p>Merkle 叶子加随机盐</p>
+<p>|</p>
+<p>防止相同内容产生相同哈希</p>
+<p>|
+|</p>
+<p>计算层</p>
+<p>|</p>
+<p>每个请求用新随机性重写相关行</p>
+<p>|</p>
+<p>让不同请求的打开值不可关联</p>
+<p>|</p>
+<p>掩盖到什么程度？仓库给了精确答案：在 <strong>2⁶⁴ 次哈希查询、688,127 次回复</strong>的预算内，平均每个请求泄露约 <strong>1 bit</strong>，验证器所见与模拟器的统计距离小于 <strong>2⁻¹⁵⁴</strong>。</p>
+<p>用人话说：泄露存在，但被压到了”统计上不可区分”的量级。</p>
+<p><strong>这里藏着一个致命失效模式</strong>：验证器<strong>从不检查掩码是否存在</strong>。如果硬件故障或代码 bug 让未掩码的值进入了一个”验证通过”的文件，验证器无法察觉——权重就静默泄露了。这是全系统唯一一个”验证通过但仍然泄密”的路径。</p>
+<h4 id="35-机制五非交互化哈希链--pow--三条链">3.5 机制五：非交互化，哈希链 + PoW + 三条链</h4>
+<p>交互式证明需要验证者现场提问。但服务场景里验证者几小时后才上线，得先把证明录下来。</p>
+<p><strong>Fiat-Shamir 变换</strong>解决这个问题：让哈希函数扮演提问者，挑战 = H(陈述, 承诺, 此前所有消息)。证明者无法预知问题，也就无法针对性造假，整个交互被压成一份静态文件。</p>
+<p>为了把”暴力尝试”的成本抬上去，还叠了一层 <strong>PoW</strong>：20–32 bit，恶意证明者每试一次假陈述要多付 2²⁰–2³² 的计算。</p>
+<p>最终一个 proof 里包含<strong>三条链</strong>：</p>
+<p><img src="/images/wechat/wechat-2247484163-1/07.png" alt="图片 7"></p>
+<p>图 7</p>
+<p><strong>图 7｜三条链</strong>。批链是性能的来源（同批共享一次全表扫描），也是安全上最脆弱的地方——64 请求/批在 80GB 卡上会顶到显存上限。</p>
+<hr>
+<h3 id="四action手把手跑一遍">四、Action：手把手跑一遍</h3>
+<p>先说门槛，免得白折腾：<strong>证明侧只支持单张 H100 80GB + CUDA 13.2 Update 2 + x86-64 Linux</strong>。没有 H100 也能玩前两条路线——验证器是纯 CPU 的。</p>
+<p>这一节<strong>不给终端截图</strong>：我手上没有 H100 环境，下文所有命令、输出格式与退出码都逐字抄自仓库的 <code>README.md</code> 和 <code>verifier/README.md</code>。P 一张”跑通了”的截图很容易，但那会让这篇文失去唯一的价值——你照着敲，应该得到同样的结果。判断成功与否只看<strong>退出码</strong>和下面标出的末行关键字，不要凭”看起来跑完了”。</p>
+<p>先对着这张图选路线，别一上来就下载 232GB 权重：</p>
+<p><img src="/images/wechat/wechat-2247484163-1/08.png" alt="图片 8"></p>
+<p>图 8</p>
+<p><strong>图 8｜四条路线，按你手上的机器选</strong>。路线 1、2 只在 CPU 上验证工具链能跑，3a/3b 用合成权重跑通协议实现，只有路线 4 触及真实权重——别拿路线 1 的 <code>YES</code> 当”系统已验证”。</p>
+<p>|
+路线</p>
+<p>|</p>
+<p>需要</p>
+<p>|</p>
+<p>耗时</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>1 / 2 验证与自测</p>
+<p>|</p>
+<p>Linux + g++ 13+，&#x3C; 2GB 内存</p>
+<p>|</p>
+<p>编译 1–2 分钟，验证 &#x3C; 2 秒</p>
+<p>|
+|</p>
+<p>3a 8 层合成模型</p>
+<p>|</p>
+<p>GPU 栈，10GB 内存</p>
+<p>|</p>
+<p>编译约 29 分钟，运行 23–30 秒</p>
+<p>|
+|</p>
+<p>3b 全尺寸合成权重</p>
+<p>|</p>
+<p>GPU 栈，280GB 内存</p>
+<p>|</p>
+<p>约 42 分钟</p>
+<p>|
+|</p>
+<p>4 真 Maverick</p>
+<p>|</p>
+<p>GPU 栈 + 330GB 内存 + 245GB 磁盘</p>
+<p>|</p>
+<p>数小时</p>
+<p>|</p>
+<h4 id="41-路线-1两分钟验证一份证明">4.1 路线 1：两分钟验证一份证明</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 从仓库根目录，用普通用户（不要 root / sudo）</span></span>
+<span class="line"><span>verifier/build.sh</span></span>
+<span class="line"><span># 静默 1–2 分钟，最后一行以 "THE VERIFIER IS BUILT:" 开头，退出码 0</span></span></code></pre>
+<p>然后用仓库自带的示例 proof 跑一次真实调用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bin/cp_verify \</span></span>
+<span class="line"><span>  examples/accepted-proof/config \</span></span>
+<span class="line"><span>  examples/accepted-proof/ivk \</span></span>
+<span class="line"><span>  examples/accepted-proof/example.req \</span></span>
+<span class="line"><span>  examples/accepted-proof/example.y \</span></span>
+<span class="line"><span>  examples/accepted-proof/example.proof \</span></span>
+<span class="line"><span>  -id "$(cat examples/accepted-proof/ID.txt)"</span></span></code></pre>
+<p>期望最后一行是 <code>YES</code>，退出码 0。</p>
+<p><strong>这个示例只证明”验证器能工作”</strong>——它是小模型 + 合成权重，跟真实 Maverick 没关系。别拿它当”系统已验证”的证据。</p>
+<h4 id="42-路线-3在-h100-上证明一个-64-token-请求">4.2 路线 3：在 H100 上证明一个 64-token 请求</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>examples/quickstart-gpu.sh</span></span></code></pre>
+<p>它会依次编译 <code>cp_verify</code>、<code>cp_commit</code>、<code>cp_prove</code>，然后承诺、证明一个 64-token 请求、再验证。</p>
+<p>这条命令<strong>可能静默 15 分钟以上</strong>（编译 CUDA 很慢），日志写在它自己创建目录下的 <code>quickstart-gpu.log</code>。成功的标志是退出码 0，且出现一行以 <code>quickstart-gpu: all steps ended as expected</code> 开头。</p>
+<p>顺手核对一下编译器版本：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>grep "Compiled by" quickstart-gpu.log | tail -3</span></span>
+<span class="line"><span># 每一行都应以 "release 13.2, V13.2.86" 结尾</span></span></code></pre>
+<p>全尺寸合成权重（不下载真权重，只按 Maverick 的形状造数据）：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>W=$(mktemp -d) &#x26;&#x26; WORK="$W/example"</span></span>
+<span class="line"><span>prover/examples/run_target_example.sh target_full_f2 "${WORK:?先执行上面那行}"</span></span></code></pre>
+<p>期望看到 <code>status 0</code>、一行 <code>proof of work:</code>，最后 <code>YES</code>。进度在 <code>$WORK/cp_commit.log</code>。内存不够会在启动时就以退出码 2 结束。</p>
+<h4 id="43-客户端怎么读结果退出码比-yes-更重要">4.3 客户端怎么读结果：退出码比 <code>YES</code> 更重要</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bin/cp_verify CONFIG_DIR PUBLIC_KEY_DIR REQUEST_FILE TOKEN_FILE PROOF_FILE -id COMMITMENT_ID</span></span></code></pre>
+<p>|
+退出码</p>
+<p>|</p>
+<p>末行</p>
+<p>|</p>
+<p>含义</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>0</p>
+<p>| <code>YES</code></p>
+<p>/ <code>WITHIN LIMITS: …</code></p>
+<p>|</p>
+<p>精确匹配通过 / 阈值策略通过</p>
+<p>|
+|</p>
+<p>1</p>
+<p>| <code>NO: &#x3C;name></code> |</p>
+<p>拒绝（或本地故障）</p>
+<p>|
+|</p>
+<p>5</p>
+<p>| <code>NOT CHECKED: &#x3C;name></code> |</p>
+<p>没有结论。只有 <code>internal-stage</code> / <code>internal-exception-parFor</code> 可重试一次</p>
+<p>|
+|</p>
+<p>14</p>
+<p>| <code>NOT-A-VERIFICATION</code> |</p>
+<p>调用本身不合法，看 <code>---- the call ----</code> 之后的说明</p>
+<p>|
+|</p>
+<p>2, 3, 4, 15</p>
+<p>|</p>
+<p>|</p>
+<p>命令行或文件有问题、只跑了部分阶段（<code>-key</code> / <code>-leaf</code>）、或只是计划调用（<code>-plan</code>），均无结论</p>
+<p>|</p>
+<p>两个反直觉点：</p>
+<ul>
+<li>
+<p><strong>退出码 0 不等于 <code>YES</code></strong>。<code>WITHIN LIMITS</code> 也是 0，但它是阈值策略，保证弱得多。</p>
+</li>
+<li>
+<p><strong>拿到 <code>NO</code> 不要试图调试</strong>。<code>NO</code> 说明证明不成立或文件有问题，唯一正确的动作是拒绝这次回复。</p>
+</li>
+</ul>
+<p>阈值策略要显式传参，且每个值必须与 <code>policy.txt</code> 对应行完全一致：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bin/cp_verify ... -policy clipped-gap,C,THETA,CAP,S,SH</span></span></code></pre>
+<h4 id="44-五个真实的坑">4.4 五个真实的坑</h4>
+<p><strong>坑 1：构建通过，不等于环境对。</strong> 三个最容易一起踩的：用 root 构建，<code>bin/</code> 属主变成 root，之后非 root 构建一律以退出码 2 拒绝；输出目录或它的上级目录允许其他账号写入，脚本直接拒绝构建——否则别人能换掉你即将运行的程序；装了比 13.2 Update 2 更新的 CUDA 照样能构建成功，但这个组合从没被验证过，查日志里每条 <code>Compiled by</code> 是否以 <code>release 13.2, V13.2.86</code> 结尾。</p>
+<p><strong>坑 2：批大小拉到 64，显存直接顶满。</strong> 文档实测：64 请求/批时显存到 <strong>80,629 / 81,559 MiB</strong>；用合成权重的 8 次尝试<strong>全部没有产出 proof</strong>，原因未明。实际按 <strong>24 请求/批</strong>规划。</p>
+<p><strong>坑 3：备份了 <code>isk/</code>，以为能容灾。</strong><code>isk</code> 是服务身份密钥，<strong>不可备份、不可复制、不可恢复</strong>。它一旦丢失，410GB 的承诺就废了，只能重新跑 39 分钟的 commit，拿到一个与旧 ID 无任何证明关联的新 ID。更要命的是计数器：回退会导致同一掩码用两次，权重可被解出，而且<strong>验证器无法检测</strong>。</p>
+<p><strong>坑 4：把服务器返回的 ID 直接传给 <code>-id</code>。</strong><code>-plan id</code> 和 <code>-show-stages</code> 都会打印”从这些文件算出来的 ID”。它与那些文件天然匹配，传进去必然 <code>YES</code>——但它证明不了任何来源。ID 必须带外获得。</p>
+<p><strong>坑 5：拿单请求的耗时去估算线上吞吐。</strong> 一次证明 pass 只检查<strong>一个</strong> token 位置。<strong>prefill</strong> 指把 prompt 整体读一遍、算出第一个 token 的阶段，区别于逐 token 生成的 decode。24 请求/批时 prefill 约 110 tok/s，但单请求延迟会被批大小放大：24 个短请求一批，等待约 220 秒。批越大吞吐越高、尾延迟越差，这是个纯工程取舍。</p>
+<hr>
+<h3 id="五它证明了什么没证明什么">五、它证明了什么，没证明什么</h3>
+<h4 id="51-一个-yes-的四层含义">5.1 一个 <code>YES</code> 的四层含义</h4>
+<p>在 exact match、ID 与 policy 都由客户端自带的前提下，<code>YES</code> 说明：</p>
+<ol>
+<li>
+<p>承诺表在代数上”接近”某个由承诺权重构成的合法码字（邻近性测试通过）</p>
+</li>
+<li>
+<p>模型每一步整数运算用到的权重，都能在承诺表中找到对应项（lookup / 线性声明成立）</p>
+</li>
+<li>
+<p>被检查范围内每个 token 都是该整数模型在该位置的 top-1（含 tie 规则）</p>
+</li>
+<li>
+<p>若范围覆盖到窗口末尾，next token 也是 top-1</p>
+</li>
+</ol>
+<p><strong>这四条只关于”权重一致性”。</strong> 它们合起来说的是：这套权重确实算出了这些 token。仅此而已。</p>
+<h4 id="52-七个证不了">5.2 七个”证不了”</h4>
+<p>|
+证不了</p>
+<p>|</p>
+<p>为什么</p>
+<p>|</p>
+<p>后果</p>
+<p>|
+| --- | --- | --- |
+| <strong>这是 Maverick</strong> |</p>
+<p>provider 自己选权重、自己写配置，ID 只绑定”某套权重”</p>
+<p>|</p>
+<p>可以承诺一个小模型、蒸馏模型，甚至退化模型，然后诚实地证明它</p>
+<p>|
+| <strong>模型没被”关掉”</strong> | <code>KL.bin</code></p>
+<p>的尺度在验证器允许范围内时，可把某些层乃至全部层的贡献舍入为 0</p>
+<p>|</p>
+<p>一个”全零模型”也能出证；验证器只查数值范围，不查模型是否合理</p>
+<p>|
+| <strong>和浮点模型一致</strong> |</p>
+<p>整数模型是另一个函数</p>
+<p>|</p>
+<p>top-1 差异 6.81%</p>
+<p>|
+| <strong>回复是完整的</strong> |</p>
+<p>验证器不知道 end token、不知道 tokenizer</p>
+<p>|</p>
+<p>被截断的回复按更短的回复验证通过</p>
+<p>|
+| <strong>没有采样</strong> |</p>
+<p>request 里没有随机种子</p>
+<p>|</p>
+<p>temperature > 0、top-p、beam search 全部无法证明</p>
+<p>|
+| <strong>是这次请求的新鲜结果</strong> |</p>
+<p>proof 不含 client、不含时间戳； spool（服务端工作目录）里的 nonce 不进入 proof</p>
+<p>|</p>
+<p>同一份证明可以转发给任何人，也可被反复使用</p>
+<p>|
+| <strong>tokenizer 没被动过</strong> |</p>
+<p>token 序列到文本的映射不在证明内</p>
+<p>|</p>
+<p>同一串 token id 可以对应不同文本</p>
+<p>|</p>
+<p>第一条和第二条最要命。把它们放在一起看：<strong>验证器证明”这套权重算出了这些 token”，但”这套权重是什么”完全由 provider 决定。</strong></p>
+<p>所以 FlashProve 只在一种场景下有意义：<strong>你已经通过带外渠道确认了 ID 对应哪个模型</strong>。否则证明再漂亮也是自说自话。</p>
+<h4 id="53-三层落差协议lean程序">5.3 三层落差：协议、Lean、程序</h4>
+<p>这是最容易被误读的地方，也是我读完仓库后最想强调的一点。</p>
+<p><img src="/images/wechat/wechat-2247484163-1/09.png" alt="图片 9"></p>
+<p>图 9</p>
+<p><strong>图 9｜三层落差</strong>。仓库里 <code>lean/</code> 有 <strong>29,654 个文件</strong>，是 C++/CUDA 代码量的 30 倍，全部用来证明第一层。</p>
+<p>但第二层到第三层的连接是测试，不是证明。README 里写得很直白：</p>
+<blockquote>
+<p>This is research code. It is tested, not verified: no theorem is about this program, and no security level is claimed for it.</p>
+</blockquote>
+<p>还有几个连带的细节：</p>
+<ul>
+<li>
+<p>程序打印的 “128.00 bits” <strong>不是安全等级</strong>，是程序自己的误差核算；它默认把 PoW 算进去了，去掉 PoW 后暴力界约 96.23 bit</p>
+</li>
+<li>
+<p>绑定（binding）的书面证明针对的是”ID 不含 OOD seeds”的形式，而程序产生的 ID <strong>含</strong> OOD seeds</p>
+</li>
+<li>
+<p>没有任何独立安全审计；作者自述 AI 写了几乎全部代码、证明与文档</p>
+</li>
+</ul>
+<hr>
+<h3 id="六局限与思考">六、局限与思考</h3>
+<h4 id="61-性能账93-到底意味着什么">6.1 性能账：93× 到底意味着什么</h4>
+<p>|
+指标</p>
+<p>|</p>
+<p>数值</p>
+<p>|
+| --- | --- |
+|</p>
+<p>prefill（24 请求/批）</p>
+<p>|</p>
+<p>约 110–111 tok/s，相对 vLLM 同卡 <strong>93.0×</strong></p>
+<p>|
+|</p>
+<p>512 路并发 decode</p>
+<p>|</p>
+<p>相对 vLLM <strong>20.1×</strong></p>
+<p>|
+|</p>
+<p>验证一份 proof</p>
+<p>|</p>
+<p>21 秒，3.53 GB 内存，单 CPU 线程</p>
+<p>|</p>
+<p>93× 是每 GPU 的比值。按这个比例线性外推：一台 8 卡 H100 的推理服务，要做到”每个 prompt token 都被证明”，需要约 <strong>744 张 H100 等价</strong>的证明算力（8 × 93）。</p>
+<p>这个数字决定了它现在的定位：<strong>不是在线 API 的默认路径，而是抽样审计与争议补证的工具。</strong></p>
+<p>一条现实的产品化路径是对高价值请求开启证明：合同金额大的、涉及监管的、客户申诉的。按比例抽证，争议时补证。</p>
+<h4 id="62-语义账最强的密码学最弱的语义">6.2 语义账：最强的密码学，最弱的语义</h4>
+<p>FlashProve 有个结构性尴尬：<strong>证明的强度取决于你选哪种验收策略，而两种策略都不理想。</strong></p>
+<p><img src="/images/wechat/wechat-2247484163-1/10.png" alt="图片 10"></p>
+<p>图 10</p>
+<p><strong>图 10｜两难</strong>。exact match 要求每个 token 都是整数模型 top-1——现货浮点引擎根本做不到（96/96 失败）。clipped-gap 让 96/96 都能通过，但它的保证只是”gap 的均值与超阈个数满足你声明的界”。</p>
+<p>阈值是 provider 自己拟合的（<code>expect.bin</code>），客户端如果判断不了松紧，作者的建议很直接：<strong>只接受 exact match</strong>。</p>
+<p>再加上”配置可把模型关掉”这一条，语义层的结论是：<strong>密码学部分做到了工业级严谨，语义部分还停留在”你要自己判断对方是否诚实”。</strong></p>
+<h4 id="63-工程账它是原型不是产品">6.3 工程账：它是原型，不是产品</h4>
+<ul>
+<li>
+<p><strong>承诺会耗尽</strong>：每 leaf 最多 688,127 个 batch，M 在 commit 时固定，事后不能加。到期只能重新承诺，新 ID 与旧 ID 没有证明关联。</p>
+</li>
+<li>
+<p><strong>单卡单模型</strong>：没有多卡、多机、多模型；窗口 1,024 token，长上下文要截断，而截断会破坏跨块注意力。</p>
+</li>
+<li>
+<p><strong>容灾几乎为零</strong>：<code>isk</code> 不可恢复，磁盘故障等于重新承诺。</p>
+</li>
+<li>
+<p><strong>示例前端不满足多租户</strong>：凭 proof ID + 共享 API key 可以取走别人的 proof。</p>
+</li>
+</ul>
+<h4 id="64-我的判断">6.4 我的判断</h4>
+<p><strong>值得关注的三点：</strong></p>
+<ol>
+<li>
+<p><strong>它把”可验证推理”的规模上限从 10 亿参数推到了 4000 亿</strong>，而且用的是透明、后量子友好的哈希型 IOP，不走椭圆曲线那条路。</p>
+</li>
+<li>
+<p><strong>3 万行 Lean 不是炫技</strong>。这个系统的可靠性论证依赖大量易错的编码论细节（Johnson 半径、列表解码、掩码预算），把验证器形式化至少排除了”实现 bug 导致接受假陈述”这一类错误。</p>
+</li>
+<li>
+<p><strong>它诚实地列出了自己的局限</strong>。仓库里有一份 <code>docs/limits-all-rows.tsv</code>，逐条列了所有已知限制；这种自我披露在开源项目里少见。</p>
+</li>
+</ol>
+<p><strong>现在不要指望的三点：</strong></p>
+<ol>
+<li>
+<p><strong>不要指望它解决”模型身份”</strong>。它解决的是”这套权重的一致性”，身份问题必须靠带外锚定。</p>
+</li>
+<li>
+<p><strong>不要指望它上线到默认链路</strong>。93× 的算力成本决定了它只能是抽样或高价值场景。</p>
+</li>
+<li>
+<p><strong>不要把它当”已审计的安全产品”</strong>。研究工件、无独立审计、程序无定理，三个条件同时成立。</p>
+</li>
+</ol>
+<h4 id="65-一个更根本的问题">6.5 一个更根本的问题</h4>
+<p>把 FlashProve 放到整个”AI 可信”的版图里看，它回答的是最硬、也最窄的一个问题：<strong>这次计算是不是这套权重做的。</strong></p>
+<p>但它没回答的问题同样重要：这套权重是谁训练的、训练数据是什么、有没有后门、回复有没有被内容策略改写、这次请求是不是真的来自你。</p>
+<p>这些问题的答案不在密码学里。密码学能做的，是把”计算完整性”这一块从”信任人”变成”信任数学”。剩下的部分，仍然要靠合同、审计、监管和开源。</p>
+<p>这大概也是为什么它被定位成”研究工件”而不是产品：<strong>它证明了这条路能走通，但离”能放心依赖”还有距离。</strong></p>
+<hr>
+<h3 id="附参考资料全部一手">附：参考资料（全部一手）</h3>
+<p>|
+想核对什么</p>
+<p>|</p>
+<p>看哪里</p>
+<p>|
+| --- | --- |
+|</p>
+<p>定位与快速开始</p>
+<p>| <code>README.md</code> |
+|</p>
+<p>设计与威胁模型</p>
+<p>| <code>docs/architecture.md</code></p>
+<p>、<code>docs/service.md</code></p>
+<p>|
+|</p>
+<p>到底证了什么、没证什么</p>
+<p>| <code>guide/what-is-proved.md</code></p>
+<p>、<code>docs/what-is-not-hidden.md</code></p>
+<p>|
+|</p>
+<p>已知局限与性能数字</p>
+<p>| <code>guide/known-limits.md</code></p>
+<p>、<code>docs/limits-all-rows.tsv</code>、<code>guide/performance.md</code></p>
+<p>|
+|</p>
+<p>形式化验证与数学</p>
+<p>| <code>lean/THEOREM.md</code></p>
+<p>、<code>paper/</code>（技术报告需另行索取）</p>
+<p>|</p>
+<p><strong>关于本文数字的说明</strong>：所有性能与通过率数据均来自仓库文档的实测记录，我没有复现；Lean 定理的边界以 <code>guide/what-is-proved.md</code> 与 <code>verifier/README.md</code> 的自我声明为准。如果仓库更新（当前 Version 0.16.0），细节可能变化。</p>
+<hr>
+<blockquote>
+<p>如果这篇让你对”可验证推理”有了具体的手感，欢迎留言聊聊：<strong>在你的业务里，你会为哪一类请求开启证明？</strong> 是监管审计、模型授权，还是客户申诉？</p>
+</blockquote>
+<hr>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。</p>
+<p>关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/Km4l7-ghWELbGNx-KMJkdw" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/07/wechat-2247484173-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">16GB单卡怎么微调Qwen3：从SFT到GRPO的四个步骤</span></a><a class="article-nav__item article-nav__item--next" href="/2026/11/05/wechat-2247484131-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">FreeToken深度解读：让你的游戏PC也能跑753B前沿MoE大模型</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一why当服务商说我用的是-maverick">一、Why：当服务商说”我用的是 Maverick”</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#二how-宏观三阶段协议">二、How 宏观：三阶段协议</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三how-微观五个核心机制">三、How 微观：五个核心机制</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#四action手把手跑一遍">四、Action：手把手跑一遍</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#五它证明了什么没证明什么">五、它证明了什么，没证明什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#六局限与思考">六、局限与思考</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#附参考资料全部一手">附：参考资料（全部一手）</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

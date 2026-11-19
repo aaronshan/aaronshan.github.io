@@ -1,108 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>mac osx单机上安装apache-kylin - 中龄程序猿</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近开始调研apache-kylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作：  hadoop-2.7.3 mysql-5.6.31 hive-2.1.1 zookeeper-3.4.8 hbas">
-<meta name="keywords" content="kylin">
-<meta property="og:type" content="article">
-<meta property="og:title" content="mac osx单机上安装apache-kylin">
-<meta property="og:url" content="www.shanruifeng.win/2017/03/03/mac-install-apache-kylin/index.html">
-<meta property="og:site_name" content="中龄程序猿">
-<meta property="og:description" content="最近开始调研apache-kylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作：  hadoop-2.7.3 mysql-5.6.31 hive-2.1.1 zookeeper-3.4.8 hbas">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://i.imgur.com/pcynAL1.png">
-<meta property="og:image" content="https://i.imgur.com/MfvCCcu.png">
-<meta property="og:image" content="https://i.imgur.com/XtQH55d.png">
-<meta property="og:image" content="https://i.imgur.com/PMYZZEl.png">
-<meta property="og:updated_time" content="2019-02-26T07:28:18.784Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mac osx单机上安装apache-kylin">
-<meta name="twitter:description" content="最近开始调研apache-kylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作：  hadoop-2.7.3 mysql-5.6.31 hive-2.1.1 zookeeper-3.4.8 hbas">
-<meta name="twitter:image" content="https://i.imgur.com/pcynAL1.png">
-  
-  
-    <link rel="icon" href="/favicon.ico">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-          <a class="main-nav-link" href="/love">爱情</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="www.shanruifeng.win"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-mac-install-apache-kylin" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      mac osx单机上安装apache-kylin
-      <small class="article-detail-date-index">&nbsp; 2017-03-03</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/2017/03/03/mac-install-apache-kylin/" class="article-date">
-  <time datetime="2017-03-03T14:37:27.000Z" itemprop="datePublished">2017-03-03</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/kylin/">kylin</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近开始调研apache-kylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。<br>需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作：</p>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>mac osx单机上安装apache-kylin | 中龄程序猿</title><meta name="description" content="最近开始调研apachekylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。 需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作"><link rel="canonical" href="https://www.shanruifeng.win/2017/03/03/mac-install-apache-kylin/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="mac osx单机上安装apache-kylin | 中龄程序猿"><meta property="og:description" content="最近开始调研apachekylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。 需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作"><meta property="og:url" content="https://www.shanruifeng.win/2017/03/03/mac-install-apache-kylin/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="mac osx单机上安装apache-kylin | 中龄程序猿"><meta name="twitter:description" content="最近开始调研apachekylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。 需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"mac osx单机上安装apache-kylin","description":"最近开始调研apachekylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。 需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作","datePublished":"2017-03-03T14:37:27.000Z","dateModified":"2017-03-03T14:37:27.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2017/03/03/mac-install-apache-kylin/","articleSection":"kylin","keywords":"kylin"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/kylin/">kylin</a><span>/</span><span>mac osx单机上安装apache-kylin</span></nav><header class="article-header"><a class="article-header__category" href="/categories/kylin/">kylin</a><h1 class="article-title">mac osx单机上安装apache-kylin</h1><p class="article-desc">最近开始调研apachekylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。 需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2017-03-03T14:37:27.000Z">2017-03-03</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>kylin</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><p>最近开始调研apache-kylin，关于kylin的介绍往上有很多，本文就不再过多介绍，只讲述如何在mac osx配置测试用的kylin环境。
+需要安装及部署的软件包括：hadoop,mysql,hive,zookeeper,hbase,kylin。本篇主要讲述如下版本的安装工作：</p>
 <ul>
 <li>hadoop-2.7.3</li>
 <li>mysql-5.6.31</li>
@@ -111,216 +8,366 @@
 <li>hbase-1.3.0</li>
 <li>kylin-1.6.0-hbase1.x</li>
 </ul>
-<a id="more"></a>
-<h3 id="安装hadoop-2-7-3"><a href="#安装hadoop-2-7-3" class="headerlink" title="安装hadoop-2.7.3"></a>安装hadoop-2.7.3</h3><p>从官网下载对应的二进制压缩包并解压</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /Users/ruifengshan/soft</span><br><span class="line">wget http:<span class="comment">//apache.mirrors.lucidnetworks.net/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz</span></span><br><span class="line">tar -xf hadoop-<span class="number">2.7</span>.<span class="number">3</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br></pre></td></tr></table></figure>
-<p>进入etc/hadoop目录下进行相关配置，主要包括<br>hdfs-site.xml</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="params">&lt;configuration&gt;</span></span><br><span class="line">  <span class="params">&lt;property&gt;</span></span><br><span class="line">    <span class="params">&lt;name&gt;</span>dfs.name.dir<span class="params">&lt;/name&gt;</span></span><br><span class="line">    <span class="params">&lt;value&gt;</span>/Users<span class="meta-keyword">/ruifengshan/</span>hadoop/datalog<span class="params">&lt;/value&gt;</span></span><br><span class="line">  <span class="params">&lt;/property&gt;</span></span><br><span class="line">  <span class="params">&lt;property&gt;</span></span><br><span class="line">    <span class="params">&lt;name&gt;</span>dfs.data.dir<span class="params">&lt;/name&gt;</span></span><br><span class="line">    <span class="params">&lt;value&gt;</span>/Users<span class="meta-keyword">/ruifengshan/</span>hadoop/data<span class="params">&lt;/value&gt;</span></span><br><span class="line">  <span class="params">&lt;/property&gt;</span></span><br><span class="line">  <span class="params">&lt;property&gt;</span></span><br><span class="line">    <span class="params">&lt;name&gt;</span>dfs.replication<span class="params">&lt;/name&gt;</span></span><br><span class="line">    <span class="params">&lt;value&gt;</span><span class="number">3</span><span class="params">&lt;/value&gt;</span></span><br><span class="line">  <span class="params">&lt;/property&gt;</span></span><br><span class="line"><span class="params">&lt;/configuration&gt;</span></span><br></pre></td></tr></table></figure>
+<!-- more -->
+<h3 id="安装hadoop-273">安装hadoop-2.7.3</h3>
+<p>从官网下载对应的二进制压缩包并解压</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft</span></span>
+<span class="line"><span>wget http://apache.mirrors.lucidnetworks.net/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz</span></span>
+<span class="line"><span>tar -xf hadoop-2.7.3.tar.gz</span></span></code></pre>
+<p>进入etc/hadoop目录下进行相关配置，主要包括
+hdfs-site.xml</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;configuration></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>dfs.name.dir&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>/Users/aaron/hadoop/datalog&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>dfs.data.dir&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>/Users/aaron/hadoop/data&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>dfs.replication&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>3&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>&#x3C;/configuration></span></span></code></pre>
 <p>mapred-site.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.job.tracker<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:9001<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>mapreduce.framework.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>yarn<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;configuration></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>mapred.job.tracker&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>localhost:9001&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>mapreduce.framework.name&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>yarn&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>&#x3C;/configuration></span></span></code></pre>
 <p>yarn-site.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.resourcemanager.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8032<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.resourcemanager.scheduler.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8030<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.resourcemanager.resource-tracker.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8031<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.resourcemanager.admin.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8033<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.resourcemanager.webapp.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8088<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.address<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	　　<span class="tag">&lt;<span class="name">value</span>&gt;</span>localhost:8034<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.aux-services<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>mapreduce_shuffle<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.aux-services.mapreduce.shuffle.class<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>org.apache.hadoop.mapred.ShuffleHandler<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;configuration></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.resourcemanager.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8032&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.resourcemanager.scheduler.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8030&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.resourcemanager.resource-tracker.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8031&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.resourcemanager.admin.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8033&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.resourcemanager.webapp.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8088&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>	　　&#x3C;name>yarn.nodemanager.address&#x3C;/name></span></span>
+<span class="line"><span>	　　&#x3C;value>localhost:8034&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>		&#x3C;name>yarn.nodemanager.aux-services&#x3C;/name></span></span>
+<span class="line"><span>		&#x3C;value>mapreduce_shuffle&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>		&#x3C;name>yarn.nodemanager.aux-services.mapreduce.shuffle.class&#x3C;/name></span></span>
+<span class="line"><span>		&#x3C;value>org.apache.hadoop.mapred.ShuffleHandler&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;/configuration></span></span></code></pre>
 <p>core-site.xml</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.default.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://localhost:9000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后进入sbin目录，启动hadoop:<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> <span class="string">/Users/ruifengshan/soft/hadoop-2.7.3/sbin</span></span><br><span class="line"><span class="string">./start-all.sh</span></span><br></pre></td></tr></table></figure></p>
-<p>hadoop需要启动日志服务<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/mr-jobhistory-daemon<span class="selector-class">.sh</span> start historyserver</span><br></pre></td></tr></table></figure></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;configuration></span></span>
+<span class="line"><span>  &#x3C;property></span></span>
+<span class="line"><span>    &#x3C;name>fs.default.name&#x3C;/name></span></span>
+<span class="line"><span>    &#x3C;value>hdfs://localhost:9000&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;/property></span></span>
+<span class="line"><span>&#x3C;/configuration></span></span></code></pre>
+<p>然后进入sbin目录，启动hadoop:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/hadoop-2.7.3/sbin</span></span>
+<span class="line"><span>./start-all.sh</span></span></code></pre>
+<p>hadoop需要启动日志服务</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>sbin/mr-jobhistory-daemon.sh start historyserver</span></span></code></pre>
 <p>可以查看如下几个页面，看是否正常：</p>
-<p><a href="http://localhost:50070/" target="_blank" rel="noopener">http://localhost:50070/</a></p>
-<p><img src="https://i.imgur.com/pcynAL1.png" alt></p>
-<p><a href="http://localhost:8088/" target="_blank" rel="noopener">http://localhost:8088/</a></p>
-<p><img src="https://i.imgur.com/MfvCCcu.png" alt></p>
-<h3 id="安装mysql-5-6-31"><a href="#安装mysql-5-6-31" class="headerlink" title="安装mysql-5.6.31"></a>安装mysql-5.6.31</h3><p>可以参考文章<a href="http://blog.shanruifeng.win/2016/07/19/mac-install-mysql/" target="_blank" rel="noopener">mac-osx安装mysql</a>进行安装。</p>
-<h3 id="安装hive-2-1-1"><a href="#安装hive-2-1-1" class="headerlink" title="安装hive-2.1.1"></a>安装hive-2.1.1</h3><p>下载hive：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /Users/ruifengshan/soft</span><br><span class="line">wget http:<span class="comment">//mirror.symnds.com/software/Apache/hive/hive-2.1.1/apache-hive-2.1.1-bin.tar.gz</span></span><br><span class="line">tar -xf apache-hive-<span class="number">2.1</span>.<span class="number">1</span>-bin<span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br></pre></td></tr></table></figure>
+<p><a href="http://localhost:50070/">http://localhost:50070/</a></p>
+<p><img src="https://i.imgur.com/pcynAL1.png" alt=""></p>
+<p><a href="http://localhost:8088/">http://localhost:8088/</a></p>
+<p><img src="https://i.imgur.com/MfvCCcu.png" alt=""></p>
+<h3 id="安装mysql-5631">安装mysql-5.6.31</h3>
+<p>可以参考文章<a href="/2016/07/19/mac-install-mysql/">mac-osx安装mysql</a>进行安装。</p>
+<h3 id="安装hive-211">安装hive-2.1.1</h3>
+<p>下载hive：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft</span></span>
+<span class="line"><span>wget http://mirror.symnds.com/software/Apache/hive/hive-2.1.1/apache-hive-2.1.1-bin.tar.gz</span></span>
+<span class="line"><span>tar -xf apache-hive-2.1.1-bin.tar.gz</span></span></code></pre>
 <p>配置hive:</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/soft/</span>apache-hive<span class="number">-2.1</span><span class="number">.1</span>-bin/conf</span><br><span class="line">cp hive-<span class="keyword">default</span>.xml.template hive-site.xml</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/apache-hive-2.1.1-bin/conf</span></span>
+<span class="line"><span>cp hive-default.xml.template hive-site.xml</span></span></code></pre>
 <p>在hive-site.xml文件中配置mysql作为元数据库，需修改以下内容：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>JDBC connect string for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>hive<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>hive<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>  &#x3C;name>javax.jdo.option.ConnectionURL&#x3C;/name></span></span>
+<span class="line"><span>  &#x3C;value>jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;description>JDBC connect string for a JDBC metastore&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>  &#x3C;name>javax.jdo.option.ConnectionDriverName&#x3C;/name></span></span>
+<span class="line"><span>  &#x3C;value>com.mysql.jdbc.Driver&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;description>Driver class name for a JDBC metastore&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>  &#x3C;name>javax.jdo.option.ConnectionUserName&#x3C;/name></span></span>
+<span class="line"><span>  &#x3C;value>hive&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;description>username to use against metastore database&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>  &#x3C;name>javax.jdo.option.ConnectionPassword&#x3C;/name></span></span>
+<span class="line"><span>  &#x3C;value>hive&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;description>password to use against metastore database&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span></code></pre>
 <p>元数据库在mysql中的database为hive，Driver为com.mysql.jdbc.Driver，用户名与密码均为hive；需在mysql中配置Hive元数据库：</p>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysql -u root -p</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>mysql -u root -p</span></span></code></pre>
 <p>创建hive用户，并赋予访问hive数据库的权限</p>
-<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE DATABASE hive;</span><br><span class="line">mysql&gt; GRANT <span class="literal">ALL</span> PRIVILEGES <span class="keyword">ON</span> hive.* <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'localhost'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>此外还需要添加mysql-jdbc-jar包：<br>到<a href="https://dev.mysql.com/downloads/connector/j/" target="_blank" rel="noopener">https://dev.mysql.com/downloads/connector/j/</a> 页面下载压缩包，然后移动到hive的lib目录下。如下：</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf mysql-connector-java-<span class="number">5.1</span>.<span class="number">41</span>.tar.gz</span><br><span class="line">mv mysql-connector-java-<span class="number">5.1</span>.<span class="number">41</span>/mysql-connector-java-<span class="number">5.1</span>.<span class="number">41</span>-bin.jar /Users/ruifengshan/soft/apache-hive-<span class="number">2.1</span>.<span class="number">1</span>-bin/<span class="class"><span class="keyword">lib</span></span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>mysql> CREATE DATABASE hive;</span></span>
+<span class="line"><span>mysql> GRANT ALL PRIVILEGES ON hive.* TO 'hive'@'localhost' IDENTIFIED BY 'hive';</span></span>
+<span class="line"><span>mysql> FLUSH PRIVILEGES;</span></span></code></pre>
+<p>此外还需要添加mysql-jdbc-jar包：
+到<a href="https://dev.mysql.com/downloads/connector/j/">https://dev.mysql.com/downloads/connector/j/</a> 页面下载压缩包，然后移动到hive的lib目录下。如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>tar xvzf mysql-connector-java-5.1.41.tar.gz</span></span>
+<span class="line"><span>mv mysql-connector-java-5.1.41/mysql-connector-java-5.1.41-bin.jar /Users/aaron/soft/apache-hive-2.1.1-bin/lib</span></span></code></pre>
 <p>创建hive元数据库</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">cd</span> /Users/ruifengshan/soft/apache-hive-<span class="number">2</span>.<span class="number">1</span>.<span class="number">1</span>-<span class="keyword">bin</span></span><br><span class="line"><span class="keyword">bin/schematool </span>-dbType mysql -initSchema</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/apache-hive-2.1.1-bin</span></span>
+<span class="line"><span>bin/schematool -dbType mysql -initSchema</span></span></code></pre>
 <p>Kylin用 HCatalog 读取Hive表的，而HCatalog用属性 hive.metastore.uris创建HiveMetaStoreClient得到元信息。因此，我们还需修改hive-site.xml：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">&lt;property&gt;</span></span><br><span class="line">  <span class="symbol">&lt;name&gt;</span>hive.metastore.uris&lt;/name&gt;</span><br><span class="line">  <span class="symbol">&lt;value&gt;</span>thrif<span class="variable">t:</span>//localhos<span class="variable">t:9083</span>&lt;/value&gt;</span><br><span class="line">  <span class="symbol">&lt;description&gt;</span>Thrift URI <span class="keyword">for</span> the remote metastore. Used by metastore client <span class="keyword">to</span> connect <span class="keyword">to</span> remote metastore.&lt;/description&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>  &#x3C;name>hive.metastore.uris&#x3C;/name></span></span>
+<span class="line"><span>  &#x3C;value>thrift://localhost:9083&#x3C;/value></span></span>
+<span class="line"><span>  &#x3C;description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span></code></pre>
 <p>开启metastore 服务：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/hive --service metastore -<span class="selector-tag">p</span> <span class="number">9083</span> &amp;</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bin/hive --service metastore -p 9083 &#x26;</span></span></code></pre>
 <p>此时就可以正常执行hive操作。</p>
-<h3 id="安装zookeeper-3-4-8"><a href="#安装zookeeper-3-4-8" class="headerlink" title="安装zookeeper-3.4.8"></a>安装zookeeper-3.4.8</h3><p>到zookeeper官网下载zookeeper并解压缩，然后到conf目录下修改配置文件：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/Users/ruifengshan/soft</span><br><span class="line">tar -xf zookeeper-<span class="number">3.4</span>.<span class="number">8</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br><span class="line">cd /Users/ruifengshan/soft/zookeeper-<span class="number">3.4</span>.<span class="number">8</span></span><br><span class="line">cp zoo_sample<span class="selector-class">.cfg</span> zoo.cfg</span><br></pre></td></tr></table></figure>
+<h3 id="安装zookeeper-348">安装zookeeper-3.4.8</h3>
+<p>到zookeeper官网下载zookeeper并解压缩，然后到conf目录下修改配置文件：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/Users/aaron/soft</span></span>
+<span class="line"><span>tar -xf zookeeper-3.4.8.tar.gz</span></span>
+<span class="line"><span>cd /Users/aaron/soft/zookeeper-3.4.8</span></span>
+<span class="line"><span>cp zoo_sample.cfg zoo.cfg</span></span></code></pre>
 <p>修改zoo.cfg</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tickTime</span>=<span class="number">2000</span></span><br><span class="line"><span class="attr">initLimit</span>=<span class="number">10</span></span><br><span class="line"><span class="attr">syncLimit</span>=<span class="number">5</span></span><br><span class="line"><span class="attr">dataDir</span>=/Users/ruifengshan/zookeeper</span><br><span class="line"><span class="attr">clientPort</span>=<span class="number">2181</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>tickTime=2000</span></span>
+<span class="line"><span>initLimit=10</span></span>
+<span class="line"><span>syncLimit=5</span></span>
+<span class="line"><span>dataDir=/Users/aaron/zookeeper</span></span>
+<span class="line"><span>clientPort=2181</span></span></code></pre>
 <p>执行如下命令启动zookeeper服务:</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/soft/</span>zookeeper-<span class="number">3.4</span>.<span class="number">8</span></span><br><span class="line">bin<span class="regexp">/zkServer.sh start</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/zookeeper-3.4.8</span></span>
+<span class="line"><span>bin/zkServer.sh start</span></span></code></pre>
 <p>检查是否正常：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkServer.sh status </span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /Users/ruifengshan/soft/zookeeper-3.4.8/bin/<span class="built_in">..</span>/conf/zoo.cfg</span><br><span class="line">Mode: standalone</span><br></pre></td></tr></table></figure>
-<h3 id="安装hbase-1-3-0"><a href="#安装hbase-1-3-0" class="headerlink" title="安装hbase-1.3.0"></a>安装hbase-1.3.0</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /Users/ruifengshan/soft</span><br><span class="line">wget http:<span class="comment">//apache.osuosl.org/hbase/1.3.0/hbase-1.3.0-bin.tar.gz</span></span><br><span class="line">tar -xf hbase-<span class="number">1.3</span>.<span class="number">0</span>-bin<span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ bin/zkServer.sh status </span></span>
+<span class="line"><span>ZooKeeper JMX enabled by default</span></span>
+<span class="line"><span>Using config: /Users/aaron/soft/zookeeper-3.4.8/bin/../conf/zoo.cfg</span></span>
+<span class="line"><span>Mode: standalone</span></span></code></pre>
+<h3 id="安装hbase-130">安装hbase-1.3.0</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft</span></span>
+<span class="line"><span>wget http://apache.osuosl.org/hbase/1.3.0/hbase-1.3.0-bin.tar.gz</span></span>
+<span class="line"><span>tar -xf hbase-1.3.0-bin.tar.gz</span></span></code></pre>
 <p>修改conf下的hbase-site.xml</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="params">&lt;configuration&gt;</span></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.rootdir<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span>hdfs:<span class="comment">//localhost:9000/hbase&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.master<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span>hdfs:<span class="comment">//localhost:60000&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.cluster.distributed<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span>true<span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.zookeeper.property.clientPort<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">2181</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.zookeeper.quorum<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span>localhost<span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.zookeeper.property.dataDir<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span>/Users<span class="meta-keyword">/ruifengshan/</span>zookeeper<span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.client.scanner.caching<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">200</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.balancer.period<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">300000</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.client.write.buffer<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">10485760</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.hregion.majorcompaction<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">7200000</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.hregion.max.filesize<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">67108864</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;description&gt;</span><span class="params">&lt;/description&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.hregion.memstore.flush.size<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">1048576</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;description&gt;</span><span class="params">&lt;/description&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="params">&lt;property&gt;</span></span><br><span class="line"><span class="params">&lt;name&gt;</span>hbase.server.thread.wakefrequency<span class="params">&lt;/name&gt;</span></span><br><span class="line"><span class="params">&lt;value&gt;</span><span class="number">30000</span><span class="params">&lt;/value&gt;</span></span><br><span class="line"><span class="params">&lt;description&gt;</span><span class="params">&lt;/description&gt;</span></span><br><span class="line"><span class="params">&lt;/property&gt;</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;configuration></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.rootdir&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>hdfs://localhost:9000/hbase&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.master&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>hdfs://localhost:60000&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.cluster.distributed&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>true&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.zookeeper.property.clientPort&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>2181&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.zookeeper.quorum&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>localhost&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.zookeeper.property.dataDir&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>/Users/aaron/zookeeper&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.client.scanner.caching&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>200&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.balancer.period&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>300000&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.client.write.buffer&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>10485760&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.hregion.majorcompaction&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>7200000&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.hregion.max.filesize&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>67108864&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;description>&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.hregion.memstore.flush.size&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>1048576&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;description>&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;property></span></span>
+<span class="line"><span>&#x3C;name>hbase.server.thread.wakefrequency&#x3C;/name></span></span>
+<span class="line"><span>&#x3C;value>30000&#x3C;/value></span></span>
+<span class="line"><span>&#x3C;description>&#x3C;/description></span></span>
+<span class="line"><span>&#x3C;/property></span></span></code></pre>
 <p>启动hbase:</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/soft/</span>hbase-<span class="number">1.3</span>.<span class="number">0</span></span><br><span class="line">bin<span class="regexp">/start-hbase.sh</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/hbase-1.3.0</span></span>
+<span class="line"><span>bin/start-hbase.sh</span></span></code></pre>
 <p>查看如下页面看是否正常：</p>
-<p><a href="http://localhost:16010/master-status" target="_blank" rel="noopener">http://localhost:16010/master-status</a></p>
-<p><img src="https://i.imgur.com/XtQH55d.png" alt></p>
-<h3 id="安装kylin-1-6-0-hbase1-x"><a href="#安装kylin-1-6-0-hbase1-x" class="headerlink" title="安装kylin-1.6.0-hbase1.x"></a>安装kylin-1.6.0-hbase1.x</h3><p>下载并解压</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /Users/ruifengshan/soft</span><br><span class="line">wget http:<span class="comment">//www.apache.org/dyn/closer.cgi/kylin/apache-kylin-1.6.0/apache-kylin-1.6.0-hbase1.x-bin.tar.gz</span></span><br><span class="line">tar -xf apache-kylin-<span class="number">1.6</span>.<span class="number">0</span>-hbase1<span class="selector-class">.x-bin</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br></pre></td></tr></table></figure>
+<p><a href="http://localhost:16010/master-status">http://localhost:16010/master-status</a></p>
+<p><img src="https://i.imgur.com/XtQH55d.png" alt=""></p>
+<h3 id="安装kylin-160-hbase1x">安装kylin-1.6.0-hbase1.x</h3>
+<p>下载并解压</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft</span></span>
+<span class="line"><span>wget http://www.apache.org/dyn/closer.cgi/kylin/apache-kylin-1.6.0/apache-kylin-1.6.0-hbase1.x-bin.tar.gz</span></span>
+<span class="line"><span>tar -xf apache-kylin-1.6.0-hbase1.x-bin.tar.gz</span></span></code></pre>
 <p>我用的zsh，所以修改~/.zshrc。如果你用的bash，可以修改~/.bashrc，添加如下内容。</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">HADOOP_HOME</span>=/Users/ruifengshan/soft/hadoop-2.7.3</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">HBASE_HOME</span>=/Users/ruifengshan/soft/hbase-1.3.0</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KYLIN_HOME</span>=/Users/ruifengshan/soft/apache-kylin-1.6.0-hbase1.x-bin</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">HIVE_HOME</span>=/Users/ruifengshan/soft/apache-hive-2.1.1-bin</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">HCAT_HOME</span>=<span class="variable">$HIVE_HOME</span>/hcatalog</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">PATH</span>=<span class="variable">$PATH</span>:$HBASE_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:$HCAT_HOME/bin</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>export HADOOP_HOME=/Users/aaron/soft/hadoop-2.7.3</span></span>
+<span class="line"><span>export HBASE_HOME=/Users/aaron/soft/hbase-1.3.0</span></span>
+<span class="line"><span>export KYLIN_HOME=/Users/aaron/soft/apache-kylin-1.6.0-hbase1.x-bin</span></span>
+<span class="line"><span>export HIVE_HOME=/Users/aaron/soft/apache-hive-2.1.1-bin</span></span>
+<span class="line"><span>export HCAT_HOME=$HIVE_HOME/hcatalog</span></span>
+<span class="line"><span>export PATH=$PATH:$HBASE_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:$HCAT_HOME/bin</span></span></code></pre>
 <p>然后执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>source ~/.zshrc</span></span></code></pre>
 <p>让配置生效。</p>
-<p>用脚本检查环境是否准备好 </p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd <span class="regexp">/Users/</span>ruifengshan<span class="regexp">/soft/</span>apache-kylin-<span class="number">1.6</span>.<span class="number">0</span>-hbase1.x-bin</span><br><span class="line">bin<span class="regexp">/check-env.sh</span></span><br></pre></td></tr></table></figure>
+<p>用脚本检查环境是否准备好</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/apache-kylin-1.6.0-hbase1.x-bin</span></span>
+<span class="line"><span>bin/check-env.sh</span></span></code></pre>
 <p>此处mac有坑，因为检查脚本使用的是gnu的一些命令，和mac上的命令不同。所以需要安装gnu命令:</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>gnu-sed</span><br><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>findutils</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>brew install gnu-sed</span></span>
+<span class="line"><span>brew install findutils</span></span></code></pre>
 <p>具体的解决方法请参考下面的安装中遇到的问题部分。</p>
 <p>然后启动kylin:</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /Users/ruifengshan/soft/apache-kylin-<span class="number">1.6</span>.<span class="number">0</span>-hbase1.x-bin</span><br><span class="line">bin/kylin<span class="selector-class">.sh</span> start</span><br></pre></td></tr></table></figure>
-<p><a href="http://localhost:7077/kylin" target="_blank" rel="noopener">http://localhost:7077/kylin</a><br><img src="https://i.imgur.com/PMYZZEl.png" alt></p>
-<p>运行简单例子请参考官方文档：<a href="http://kylin.apache.org/docs/tutorial/kylin_sample.html" target="_blank" rel="noopener">http://kylin.apache.org/docs/tutorial/kylin_sample.html</a></p>
-<h3 id="安装中遇到的问题"><a href="#安装中遇到的问题" class="headerlink" title="安装中遇到的问题"></a>安装中遇到的问题</h3><p><strong>1.LocalDirsHandlerService ERROR</strong></p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-03</span><span class="number">-03</span> <span class="number">14</span>:<span class="number">32</span>:<span class="number">09</span>,<span class="number">695</span> WARN org.apache.hadoop.yarn.server.nodemanager.DirectoryCollection: Directory /Users/ruifengshan/soft/hadoop<span class="number">-2.7</span><span class="number">.3</span>/logs/userlogs <span class="keyword">error</span></span><br><span class="line">, used <span class="literal">space</span> <span class="keyword">above</span> threshold <span class="keyword">of</span> <span class="number">90.0</span>%, removing <span class="keyword">from</span> <span class="built_in">list</span> <span class="keyword">of</span> valid directories</span><br><span class="line"><span class="number">2017</span><span class="number">-03</span><span class="number">-03</span> <span class="number">14</span>:<span class="number">32</span>:<span class="number">09</span>,<span class="number">696</span> ERROR org.apache.hadoop.yarn.server.nodemanager.LocalDirsHandlerService: Most <span class="keyword">of</span> <span class="keyword">the</span> disks failed. <span class="number">1</span>/<span class="number">1</span> <span class="keyword">local</span>-dirs are bad: /tmp/hadoop-ruifengshan/nm-<span class="keyword">local</span>-dir; <span class="number">1</span>/<span class="number">1</span> <span class="built_in">log</span>-dirs are bad: /Users/ruifengshan/soft/hadoop<span class="number">-2.7</span><span class="number">.3</span>/logs/userlogs</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cd /Users/aaron/soft/apache-kylin-1.6.0-hbase1.x-bin</span></span>
+<span class="line"><span>bin/kylin.sh start</span></span></code></pre>
+<p><a href="http://localhost:7077/kylin">http://localhost:7077/kylin</a>
+<img src="https://i.imgur.com/PMYZZEl.png" alt=""></p>
+<p>运行简单例子请参考官方文档：<a href="http://kylin.apache.org/docs/tutorial/kylin_sample.html">http://kylin.apache.org/docs/tutorial/kylin_sample.html</a></p>
+<h3 id="安装中遇到的问题">安装中遇到的问题</h3>
+<p><strong>1.LocalDirsHandlerService ERROR</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>2017-03-03 14:32:09,695 WARN org.apache.hadoop.yarn.server.nodemanager.DirectoryCollection: Directory /Users/aaron/soft/hadoop-2.7.3/logs/userlogs error</span></span>
+<span class="line"><span>, used space above threshold of 90.0%, removing from list of valid directories</span></span>
+<span class="line"><span>2017-03-03 14:32:09,696 ERROR org.apache.hadoop.yarn.server.nodemanager.LocalDirsHandlerService: Most of the disks failed. 1/1 local-dirs are bad: /tmp/hadoop-aaron/nm-local-dir; 1/1 log-dirs are bad: /Users/aaron/soft/hadoop-2.7.3/logs/userlogs</span></span></code></pre>
 <p>这是因为磁盘占用空间超过了90%，可以在yarn-site.xml里面配置</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>95.0<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>	&#x3C;property></span></span>
+<span class="line"><span>		&#x3C;name>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage&#x3C;/name></span></span>
+<span class="line"><span>		&#x3C;value>95.0&#x3C;/value></span></span>
+<span class="line"><span>	&#x3C;/property></span></span></code></pre>
 <p>或者清除一下磁盘目录，重启hadoop服务即可。</p>
 <p><strong>2.无法导入示例数据</strong></p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">2017-02-27 18:53:55,845 ERROR [http-bio-7070-exec-1] cube.CubeManager:947 : Error during <span class="keyword">load</span> <span class="keyword">cube</span> <span class="keyword">instance</span>, skipping : /<span class="keyword">cube</span>/kylin_sales_cube.json</span><br><span class="line">java.lang.IllegalStateException: <span class="keyword">Failed</span> <span class="keyword">to</span> init CubeDescManager <span class="keyword">from</span> kylin_metadata@hbase</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.cube.CubeDescManager.getInstance(CubeDescManager.java:<span class="number">78</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.cube.CubeManager.reloadCubeLocalAt(CubeManager.java:<span class="number">922</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.cube.CubeManager.loadAllCubeInstance(CubeManager.java:<span class="number">900</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.cube.CubeManager.&lt;init&gt;(CubeManager.java:<span class="number">141</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.cube.CubeManager.getInstance(CubeManager.java:<span class="number">105</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.rest.service.BasicService.getCubeManager(BasicService.java:<span class="number">68</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.rest.service.CubeService.listAllCubes(CubeService.java:<span class="number">100</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.rest.service.CubeService$$FastClassBySpringCGLIB$$<span class="number">17</span>a07c0e.invoke(&lt;<span class="keyword">generated</span>&gt;)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:<span class="number">204</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:<span class="number">700</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:<span class="number">150</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor.invoke(MethodSecurityInterceptor.java:<span class="number">64</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:<span class="number">172</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:<span class="number">633</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.rest.service.CubeService$$EnhancerBySpringCGLIB$$<span class="number">4612</span>bb79.listAllCubes(&lt;<span class="keyword">generated</span>&gt;)</span><br><span class="line">        <span class="keyword">at</span> org.apache.kylin.rest.controller.CubeController.getCubes(CubeController.java:<span class="number">97</span>)</span><br><span class="line">        <span class="keyword">at</span> sun.reflect.NativeMethodAccessorImpl.invoke0(<span class="keyword">Native</span> Method)</span><br><span class="line">        <span class="keyword">at</span> sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">        <span class="keyword">at</span> sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">        <span class="keyword">at</span> java.lang.reflect.Method.invoke(Method.java:<span class="number">498</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:<span class="number">221</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:<span class="number">136</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:<span class="number">104</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandleMethod(RequestMappingHandlerAdapter.java:<span class="number">743</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:<span class="number">672</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:<span class="number">82</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:<span class="number">933</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:<span class="number">867</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:<span class="number">951</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:<span class="number">842</span>)</span><br><span class="line">        <span class="keyword">at</span> javax.servlet.http.HttpServlet.service(HttpServlet.java:<span class="number">624</span>)</span><br><span class="line">        <span class="keyword">at</span> org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:<span class="number">827</span>)</span><br><span class="line">        <span class="keyword">at</span> javax.servlet.http.HttpServlet.service(HttpServlet.java:<span class="number">731</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:<span class="number">303</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:<span class="number">208</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:<span class="number">52</span>)</span><br><span class="line">        <span class="keyword">at</span> org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:<span class="number">241</span>)</span><br><span class="line">        ......</span><br><span class="line">Caused <span class="keyword">by</span>: com.fasterxml.jackson.core.JsonParseException: Unexpected <span class="built_in">character</span> (<span class="string">'%'</span> (code <span class="number">37</span>)): expected a valid <span class="keyword">value</span> (<span class="built_in">number</span>, <span class="keyword">String</span>, <span class="built_in">array</span>, <span class="keyword">object</span>, <span class="string">'true'</span>, <span class="string">'false'</span> <span class="keyword">or</span> <span class="string">'null'</span>)</span><br><span class="line"> <span class="keyword">at</span> [<span class="keyword">Source</span>: java.io.DataInputStream@<span class="number">1399</span>d6b2; line: 196, column: 20]</span><br><span class="line">        at com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1581)</span><br><span class="line">        at com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:533)</span><br><span class="line">        at com.fasterxml.jackson.core.base.ParserMinimalBase._reportUnexpectedChar(ParserMinimalBase.java:462)</span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8StreamJsonParser._handleUnexpectedValue(UTF8StreamJsonParser.java:2613)</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>2017-02-27 18:53:55,845 ERROR [http-bio-7070-exec-1] cube.CubeManager:947 : Error during load cube instance, skipping : /cube/kylin_sales_cube.json</span></span>
+<span class="line"><span>java.lang.IllegalStateException: Failed to init CubeDescManager from kylin_metadata@hbase</span></span>
+<span class="line"><span>        at org.apache.kylin.cube.CubeDescManager.getInstance(CubeDescManager.java:78)</span></span>
+<span class="line"><span>        at org.apache.kylin.cube.CubeManager.reloadCubeLocalAt(CubeManager.java:922)</span></span>
+<span class="line"><span>        at org.apache.kylin.cube.CubeManager.loadAllCubeInstance(CubeManager.java:900)</span></span>
+<span class="line"><span>        at org.apache.kylin.cube.CubeManager.&#x3C;init>(CubeManager.java:141)</span></span>
+<span class="line"><span>        at org.apache.kylin.cube.CubeManager.getInstance(CubeManager.java:105)</span></span>
+<span class="line"><span>        at org.apache.kylin.rest.service.BasicService.getCubeManager(BasicService.java:68)</span></span>
+<span class="line"><span>        at org.apache.kylin.rest.service.CubeService.listAllCubes(CubeService.java:100)</span></span>
+<span class="line"><span>        at org.apache.kylin.rest.service.CubeService$$FastClassBySpringCGLIB$$17a07c0e.invoke(&#x3C;generated>)</span></span>
+<span class="line"><span>        at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)</span></span>
+<span class="line"><span>        at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:700)</span></span>
+<span class="line"><span>        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:150)</span></span>
+<span class="line"><span>        at org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor.invoke(MethodSecurityInterceptor.java:64)</span></span>
+<span class="line"><span>        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)</span></span>
+<span class="line"><span>        at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:633)</span></span>
+<span class="line"><span>        at org.apache.kylin.rest.service.CubeService$$EnhancerBySpringCGLIB$$4612bb79.listAllCubes(&#x3C;generated>)</span></span>
+<span class="line"><span>        at org.apache.kylin.rest.controller.CubeController.getCubes(CubeController.java:97)</span></span>
+<span class="line"><span>        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span></span>
+<span class="line"><span>        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)</span></span>
+<span class="line"><span>        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span></span>
+<span class="line"><span>        at java.lang.reflect.Method.invoke(Method.java:498)</span></span>
+<span class="line"><span>        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:221)</span></span>
+<span class="line"><span>        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:104)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandleMethod(RequestMappingHandlerAdapter.java:743)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:672)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:82)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:933)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:867)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:951)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:842)</span></span>
+<span class="line"><span>        at javax.servlet.http.HttpServlet.service(HttpServlet.java:624)</span></span>
+<span class="line"><span>        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:827)</span></span>
+<span class="line"><span>        at javax.servlet.http.HttpServlet.service(HttpServlet.java:731)</span></span>
+<span class="line"><span>        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:303)</span></span>
+<span class="line"><span>        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)</span></span>
+<span class="line"><span>        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)</span></span>
+<span class="line"><span>        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)</span></span>
+<span class="line"><span>        ......</span></span>
+<span class="line"><span>Caused by: com.fasterxml.jackson.core.JsonParseException: Unexpected character ('%' (code 37)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')</span></span>
+<span class="line"><span> at [Source: java.io.DataInputStream@1399d6b2; line: 196, column: 20]</span></span>
+<span class="line"><span>        at com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1581)</span></span>
+<span class="line"><span>        at com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:533)</span></span>
+<span class="line"><span>        at com.fasterxml.jackson.core.base.ParserMinimalBase._reportUnexpectedChar(ParserMinimalBase.java:462)</span></span>
+<span class="line"><span>        at com.fasterxml.jackson.core.json.UTF8StreamJsonParser._handleUnexpectedValue(UTF8StreamJsonParser.java:2613)</span></span></code></pre>
 <p>这是因为默认的导入脚本</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gsed -i <span class="string">"s/%default_storage_type%/$&#123;default_storage_type&#125;/g"</span> <span class="variable">$&#123;KYLIN_HOME&#125;</span><span class="regexp">/sample_cube/m</span>etadata<span class="regexp">/cube_desc/</span>kylin_sales_cube_desc.json</span><br><span class="line">gsed -i <span class="string">"s/%default_engine_type%/$&#123;default_engine_type&#125;/g"</span> <span class="variable">$&#123;KYLIN_HOME&#125;</span><span class="regexp">/sample_cube/m</span>etadata<span class="regexp">/cube_desc/</span>kylin_sales_cube_desc.json</span><br></pre></td></tr></table></figure>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>gsed -i "s/%default_storage_type%/${default_storage_type}/g" ${KYLIN_HOME}/sample_cube/metadata/cube_desc/kylin_sales_cube_desc.json</span></span>
+<span class="line"><span>gsed -i "s/%default_engine_type%/${default_engine_type}/g" ${KYLIN_HOME}/sample_cube/metadata/cube_desc/kylin_sales_cube_desc.json</span></span></code></pre>
 <p>然后重新导入即可。</p>
-<p><strong>3.File does not exists:hive-exec-2.1.1.jar</strong><br>和问题2一样，是因为mac上命令与linux不同导致，所以需要修改bin/find-hive-dependency.sh文件中的如下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive_lib=`gfind -L <span class="string">"<span class="variable">$(dirname $hive_exec_path)</span>"</span> -name <span class="string">'*.jar'</span> ! -name <span class="string">'*calcite*'</span> -<span class="built_in">printf</span> <span class="string">'%p:'</span> | gsed <span class="string">'s/:$//'</span>`</span><br></pre></td></tr></table></figure>
+<p><strong>3.File does not exists:hive-exec-2.1.1.jar</strong>
+和问题2一样，是因为mac上命令与linux不同导致，所以需要修改bin/find-hive-dependency.sh文件中的如下内容：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>hive_lib=`gfind -L "$(dirname $hive_exec_path)" -name '*.jar' ! -name '*calcite*' -printf '%p:' | gsed 's/:$//'`</span></span></code></pre>
 <p>否则会因为找不到hive的lib而产生异常。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">java<span class="selector-class">.io</span><span class="selector-class">.FileNotFoundException</span>: File does not exist: hdfs:<span class="comment">//localhost:9000/Users/ruifengshan/soft/apache-hive-2.1.1-bin/lib/hive-exec-2.1.1.jar</span></span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hdfs</span><span class="selector-class">.DistributedFileSystem</span>$<span class="number">17</span>.doCall(DistributedFileSystem<span class="selector-class">.java</span>:<span class="number">1072</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hdfs</span><span class="selector-class">.DistributedFileSystem</span>$<span class="number">17</span>.doCall(DistributedFileSystem<span class="selector-class">.java</span>:<span class="number">1064</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.FileSystemLinkResolver</span><span class="selector-class">.resolve</span>(FileSystemLinkResolver<span class="selector-class">.java</span>:<span class="number">81</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hdfs</span><span class="selector-class">.DistributedFileSystem</span><span class="selector-class">.getFileStatus</span>(DistributedFileSystem<span class="selector-class">.java</span>:<span class="number">1064</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.filecache</span><span class="selector-class">.ClientDistributedCacheManager</span><span class="selector-class">.getFileStatus</span>(ClientDistributedCacheManager<span class="selector-class">.java</span>:<span class="number">288</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.filecache</span><span class="selector-class">.ClientDistributedCacheManager</span><span class="selector-class">.getFileStatus</span>(ClientDistributedCacheManager<span class="selector-class">.java</span>:<span class="number">224</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.filecache</span><span class="selector-class">.ClientDistributedCacheManager</span><span class="selector-class">.determineTimestamps</span>(ClientDistributedCacheManager<span class="selector-class">.java</span>:<span class="number">99</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.filecache</span><span class="selector-class">.ClientDistributedCacheManager</span><span class="selector-class">.determineTimestampsAndCacheVisibilities</span>(ClientDistributedCacheManager<span class="selector-class">.java</span>:<span class="number">57</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.copyAndConfigureFiles</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">265</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.copyAndConfigureFiles</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">301</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.submitJobInternal</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">389</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span>$<span class="number">10</span>.run(Job<span class="selector-class">.java</span>:<span class="number">1285</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span>$<span class="number">10</span>.run(Job<span class="selector-class">.java</span>:<span class="number">1282</span>)</span><br><span class="line">        at java<span class="selector-class">.security</span><span class="selector-class">.AccessController</span><span class="selector-class">.doPrivileged</span>(Native Method)</span><br><span class="line">        at javax<span class="selector-class">.security</span><span class="selector-class">.auth</span><span class="selector-class">.Subject</span><span class="selector-class">.doAs</span>(Subject<span class="selector-class">.java</span>:<span class="number">422</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.security</span><span class="selector-class">.UserGroupInformation</span><span class="selector-class">.doAs</span>(UserGroupInformation<span class="selector-class">.java</span>:<span class="number">1614</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span><span class="selector-class">.submit</span>(Job<span class="selector-class">.java</span>:<span class="number">1282</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.engine</span><span class="selector-class">.mr</span><span class="selector-class">.common</span><span class="selector-class">.AbstractHadoopJob</span><span class="selector-class">.waitForCompletion</span>(AbstractHadoopJob<span class="selector-class">.java</span>:<span class="number">149</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.engine</span><span class="selector-class">.mr</span><span class="selector-class">.steps</span><span class="selector-class">.FactDistinctColumnsJob</span><span class="selector-class">.run</span>(FactDistinctColumnsJob<span class="selector-class">.java</span>:<span class="number">108</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.engine</span><span class="selector-class">.mr</span><span class="selector-class">.MRUtil</span><span class="selector-class">.runMRJob</span>(MRUtil<span class="selector-class">.java</span>:<span class="number">92</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.engine</span><span class="selector-class">.mr</span><span class="selector-class">.common</span><span class="selector-class">.MapReduceExecutable</span><span class="selector-class">.doWork</span>(MapReduceExecutable<span class="selector-class">.java</span>:<span class="number">120</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.job</span><span class="selector-class">.execution</span><span class="selector-class">.AbstractExecutable</span><span class="selector-class">.execute</span>(AbstractExecutable<span class="selector-class">.java</span>:<span class="number">113</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.job</span><span class="selector-class">.execution</span><span class="selector-class">.DefaultChainedExecutable</span><span class="selector-class">.doWork</span>(DefaultChainedExecutable<span class="selector-class">.java</span>:<span class="number">57</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.job</span><span class="selector-class">.execution</span><span class="selector-class">.AbstractExecutable</span><span class="selector-class">.execute</span>(AbstractExecutable<span class="selector-class">.java</span>:<span class="number">113</span>)</span><br><span class="line">        at org<span class="selector-class">.apache</span><span class="selector-class">.kylin</span><span class="selector-class">.job</span><span class="selector-class">.impl</span><span class="selector-class">.threadpool</span><span class="selector-class">.DefaultScheduler</span><span class="variable">$JobRunner</span>.run(DefaultScheduler<span class="selector-class">.java</span>:<span class="number">136</span>)</span><br><span class="line">        at java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span><span class="selector-class">.ThreadPoolExecutor</span><span class="selector-class">.runWorker</span>(ThreadPoolExecutor<span class="selector-class">.java</span>:<span class="number">1142</span>)</span><br><span class="line">        at java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span><span class="selector-class">.ThreadPoolExecutor</span><span class="variable">$Worker</span>.run(ThreadPoolExecutor<span class="selector-class">.java</span>:<span class="number">617</span>)</span><br><span class="line">        at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.run</span>(Thread<span class="selector-class">.java</span>:<span class="number">745</span>)</span><br></pre></td></tr></table></figure>
-<p>然后重新启动kylin即可。</p>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/O2KwD6W.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/7mGVpga.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/2jR6Gdk.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick" style="background: url(https://i.imgur.com/0LNj3xG.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-<!--
-<h3 id="bottom-donation-title">支持 让文章变得更优质</h3>
-<div>
-<a id="bottom-donation-button" href="/support">点我 赞助 作者</a>
-</div>
--->
-</div>
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="https://www.shanruifeng.win"> 中龄程序猿</a>，作者：
-  <a href="/about">aaronshan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请邮件联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装hadoop-2-7-3"><span class="toc-number">1.</span> <span class="toc-text">安装hadoop-2.7.3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装mysql-5-6-31"><span class="toc-number">2.</span> <span class="toc-text">安装mysql-5.6.31</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装hive-2-1-1"><span class="toc-number">3.</span> <span class="toc-text">安装hive-2.1.1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装zookeeper-3-4-8"><span class="toc-number">4.</span> <span class="toc-text">安装zookeeper-3.4.8</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装hbase-1-3-0"><span class="toc-number">5.</span> <span class="toc-text">安装hbase-1.3.0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装kylin-1-6-0-hbase1-x"><span class="toc-number">6.</span> <span class="toc-text">安装kylin-1.6.0-hbase1.x</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装中遇到的问题"><span class="toc-number">7.</span> <span class="toc-text">安装中遇到的问题</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/kylin/">kylin</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/kylin/">kylin</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2017/03/04/olap-cube/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          数据立方体和OLAP
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/12/02/mac-install-faster-rcnn/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">mac安装Faster R-CNN&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 aaronshan&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
-</html>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>java.io.FileNotFoundException: File does not exist: hdfs://localhost:9000/Users/aaron/soft/apache-hive-2.1.1-bin/lib/hive-exec-2.1.1.jar</span></span>
+<span class="line"><span>        at org.apache.hadoop.hdfs.DistributedFileSystem$17.doCall(DistributedFileSystem.java:1072)</span></span>
+<span class="line"><span>        at org.apache.hadoop.hdfs.DistributedFileSystem$17.doCall(DistributedFileSystem.java:1064)</span></span>
+<span class="line"><span>        at org.apache.hadoop.fs.FileSystemLinkResolver.resolve(FileSystemLinkResolver.java:81)</span></span>
+<span class="line"><span>        at org.apache.hadoop.hdfs.DistributedFileSystem.getFileStatus(DistributedFileSystem.java:1064)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.getFileStatus(ClientDistributedCacheManager.java:288)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.getFileStatus(ClientDistributedCacheManager.java:224)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.determineTimestamps(ClientDistributedCacheManager.java:99)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.determineTimestampsAndCacheVisibilities(ClientDistributedCacheManager.java:57)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.JobSubmitter.copyAndConfigureFiles(JobSubmitter.java:265)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.JobSubmitter.copyAndConfigureFiles(JobSubmitter.java:301)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:389)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1285)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1282)</span></span>
+<span class="line"><span>        at java.security.AccessController.doPrivileged(Native Method)</span></span>
+<span class="line"><span>        at javax.security.auth.Subject.doAs(Subject.java:422)</span></span>
+<span class="line"><span>        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1614)</span></span>
+<span class="line"><span>        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1282)</span></span>
+<span class="line"><span>        at org.apache.kylin.engine.mr.common.AbstractHadoopJob.waitForCompletion(AbstractHadoopJob.java:149)</span></span>
+<span class="line"><span>        at org.apache.kylin.engine.mr.steps.FactDistinctColumnsJob.run(FactDistinctColumnsJob.java:108)</span></span>
+<span class="line"><span>        at org.apache.kylin.engine.mr.MRUtil.runMRJob(MRUtil.java:92)</span></span>
+<span class="line"><span>        at org.apache.kylin.engine.mr.common.MapReduceExecutable.doWork(MapReduceExecutable.java:120)</span></span>
+<span class="line"><span>        at org.apache.kylin.job.execution.AbstractExecutable.execute(AbstractExecutable.java:113)</span></span>
+<span class="line"><span>        at org.apache.kylin.job.execution.DefaultChainedExecutable.doWork(DefaultChainedExecutable.java:57)</span></span>
+<span class="line"><span>        at org.apache.kylin.job.execution.AbstractExecutable.execute(AbstractExecutable.java:113)</span></span>
+<span class="line"><span>        at org.apache.kylin.job.impl.threadpool.DefaultScheduler$JobRunner.run(DefaultScheduler.java:136)</span></span>
+<span class="line"><span>        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span></span>
+<span class="line"><span>        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span></span>
+<span class="line"><span>        at java.lang.Thread.run(Thread.java:745)</span></span></code></pre>
+<p>然后重新启动kylin即可。</p></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/kylin/">kylin</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2017/03/04/olap-cube/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">数据立方体和OLAP</span></a><a class="article-nav__item article-nav__item--next" href="/2016/12/02/mac-install-faster-rcnn/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">mac安装Faster R-CNN</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装hadoop-273">安装hadoop-2.7.3</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装mysql-5631">安装mysql-5.6.31</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装hive-211">安装hive-2.1.1</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装zookeeper-348">安装zookeeper-3.4.8</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装hbase-130">安装hbase-1.3.0</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装kylin-160-hbase1x">安装kylin-1.6.0-hbase1.x</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#安装中遇到的问题">安装中遇到的问题</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

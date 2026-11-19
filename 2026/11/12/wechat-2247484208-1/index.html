@@ -1,0 +1,320 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>AutoResearch：算法优化自动进行 | 中龄程序猿</title><meta name="description" content="AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把“等”删掉：提交拿submitId就走，下轮收割。执行器1366行，最贵的却是221行坑清单。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/12/wechat-2247484208-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="AutoResearch：算法优化自动进行 | 中龄程序猿"><meta property="og:description" content="AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把“等”删掉：提交拿submitId就走，下轮收割。执行器1366行，最贵的却是221行坑清单。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/12/wechat-2247484208-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484208-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="AutoResearch：算法优化自动进行 | 中龄程序猿"><meta name="twitter:description" content="AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把“等”删掉：提交拿submitId就走，下轮收割。执行器1366行，最贵的却是221行坑清单。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484208-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"AutoResearch：算法优化自动进行","description":"AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把“等”删掉：提交拿submitId就走，下轮收割。执行器1366行，最贵的却是221行坑清单。","datePublished":"2026-11-12T09:45:00.000Z","dateModified":"2026-11-12T09:45:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/12/wechat-2247484208-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484208-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>AutoResearch：算法优化自动进行</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">AutoResearch：算法优化自动进行</h1><p class="article-desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把“等”删掉：提交拿submitId就走，下轮收割。执行器1366行，最贵的却是221行坑清单。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-12T09:45:00.000Z">2026-11-12</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484208-1/cover.jpg" alt="AutoResearch：算法优化自动进行"></figure><div class="article-grid"><div class="article-content"><div class="prose"><p>一次训练2小时，排队8到20小时，而编码Agent的会话只有10分钟。想让AI自己改代码，会先撞上一件跟模型没关系的事：它等不起。这套装置在内部叫AutoResearch，办法很土：提交完拿submitId就走，下一轮回来收。1366行执行器加221行坑清单，换来主指标+0.056pp、相对+2.02%，端到端耗时持平。</p>
+<hr>
+<h2 id="先说结论">先说结论</h2>
+<p>这套装置不想新点子。它干的事只有一件：把一个已经写下来的研究方向，拆成能验证的小假设，一轮一轮试到尽头。</p>
+<p>四件可以直接拿走的东西：</p>
+<ol>
+<li>
+<p>一个不用等的循环：提交完就返回，下一轮开头再收（图1）</p>
+</li>
+<li>
+<p>三道护栏：不重复提交、不静默失败、不无限重启</p>
+</li>
+<li>
+<p>一份12条”静默失败”清单的写法，以及它为什么比代码更值钱</p>
+</li>
+<li>
+<p>边界：它只会沿着一个方向往下试</p>
+</li>
+</ol>
+<p>规模摆在这里：执行器主文件1366行，收割模块172行，后端6张表。最值钱的不是代码，是那份记录平台毛病的手册。</p>
+<p>一次真实产出：排序主干从MaskNet换成RankMixer，主指标2.786%→2.843%，相对+2.02%，端到端耗时持平。</p>
+<p><img src="/images/wechat/wechat-2247484208-1/01.png" alt="图片 1"></p>
+<p>三层分工</p>
+<p><strong>图1｜三个面各管一段，边界先划清</strong>。控制面只记账不碰代码，执行面只干活不做规划，算力面只排队不管谁在等。后面那些看着奇怪的设计，命令轮询也好、提交即返回也好、结果靠收割也好，都是这三条边界推出来的。</p>
+<hr>
+<h2 id="一第一版写成同步的卡在等训练上">一、第一版写成同步的，卡在等训练上</h2>
+<p>排序模型怎么调，说到底是一堆想法互相打架：“warmup从2000加到4000会不会更好”、“batch从512改到1024收益多大”、“把FFN换成gated结构值不值”。每个想法一句话就能说完，可验证起来都得走一遍：改代码、提训练、等两小时、看一个指标。</p>
+<p>麻烦的不是技术。一轮两小时起步，一天跑三轮就算勤快，剩下那二十一个小时机器闲着，人也不会守着。等他想起来回来看结果，脑子里那点上下文早凉了。</p>
+<p>也不是所有研发都适合这么干。判断标准很朴素：这一轮做完，能不能马上知道好不好？</p>
+<ul>
+<li>
+<p>架构评审不能，结论得靠人吵出来；</p>
+</li>
+<li>
+<p>故障排查不能，根因往往要靠直觉收敛；</p>
+</li>
+<li>
+<p>调一个超参、换一个模块、试一种归一化，能，指标就在那里，跑完即知。</p>
+</li>
+</ul>
+<p>第二类活有个共同点：判断起来便宜，看一个数就够；执行起来贵，两小时训练，前面还排着一段不知道多长的队。这种活天生适合交给机器，因为机器不怕等，人受不了等。</p>
+<p>一开始就划了一条线：这东西不想新点子，只管把已经写下来的方向拆成一串小假设。所以它不需要会做规划的大模型，只要一个能改代码、能调平台、能记住上一轮干了啥的Agent，现成的编码Agent就够。</p>
+<p>第一版写成了同步：改代码、提交、等训练跑完、读指标、决定下一步。</p>
+<p>时间线是这样：改代码几分钟，提交几十秒，然后等2小时。</p>
+<p>问题就出在中间那两小时。编码Agent一次会话撑不到那时候，超时设的600秒，也就是十分钟。<strong>训练还没真正开始，会话先超时了。</strong></p>
+<p>超时之后会怎样？这一轮要是什么都没记下来，下一轮的Agent根本不知道自己提过什么，于是再提一遍同样的实验。队列里堆一堆重复的画布，记录里一片空白。</p>
+<p>跟模型聪明不聪明没关系，是时间对不上：两小时的活，塞进十分钟的会话里。差12倍。</p>
+<p><img src="/images/wechat/wechat-2247484208-1/02.png" alt="图片 2"></p>
+<p>两条时间线</p>
+<p><strong>图2｜左边是顺手写出来的版本，右边是能跑下去的版本</strong>。会话上限600秒，训练要2小时，同步方案里第3步一定超时。右边只是不在这一轮里等，两小时就落到了一个不会超时的常驻进程身上：等这件事没消失，只是换了个地方等。</p>
+<hr>
+<h2 id="二提交即返回下一轮再收">二、提交即返回，下一轮再收</h2>
+<p>做法很土：第N轮只做四件事，改代码、复制画布、改参数、提交。画布是平台上的一份实验配置，复制一份就是开一个新实验。提交完立刻拿到一个submitId，写进记录，状态标submitted，这一轮就结束了。</p>
+<p>训练在平台上自己跑。到第N+1轮，第一件事不是想下一步，而是回头看看上一轮提的东西跑完没有：查状态、读指标、填回记录、上报。这一步叫收割。</p>
+<p>主循环就这么缩成六步，顺序不能随便换：</p>
+<p><img src="/images/wechat/wechat-2247484208-1/03.png" alt="图片 3"></p>
+<p>一轮六步</p>
+<p><strong>图3｜先去收上一轮的结果，再决定这轮还提不提</strong>。把②放在⑤前面不是为了好看：上一轮还在飞的时候就想新假设，等于拿半截历史做判断。</p>
+<p>为什么非得先收？反过来试一次就知道了：先想新假设、先提交、回头再收。Agent提假设的时候，上一轮的结果还在飞，它不知道那条路走通没有，只能拿更早的信息来推，很可能又提一个已经被证伪的东西。而且没收的实验会越堆越多，每轮先加一个新的，旧的还没收，堆起来一次比一次多。</p>
+<p>顺序之外，还得说清楚任务、方向、实验这三层怎么记，因为它决定了能同时试几种想法。</p>
+<p><img src="/images/wechat/wechat-2247484208-1/04.png" alt="图片 4"></p>
+<p>实体与血缘</p>
+<p><strong>图4｜任务→方向→实验，实验之间的父子关系是一张DAG</strong>。方向的ID是定死的，不含时间戳，进程重新拉起后注册的还是同一个Agent；实验的父子关系用一个可变长数组表达，多父就是融合。</p>
+<p>关键字段只有一个：parentTrialIds，一个JSON数组。空数组是baseline，一个父是常规推进，多个父是融合。</p>
+<p>多父这个设计是逼出来的。A线在调warmup，B线在调batch，两边各自都涨了点，可没人知道叠在一起是正还是负。要是父子关系只能记一个父节点，融合实验就存不进去，它既不是A的子节点，也不是B的子节点。那加两个字段，parentA、parentB？三父融合又没地方放。</p>
+<p>一个数组就完了。长度不固定，能装任意多个前驱，比加一堆固定字段省事，也不用每来一种融合就改一次表结构。</p>
+<p>每条实验最后落在五种状态之一：baseline、keep、rollback、discard、inconclusive。有rollback这一档，说明设计的时候就认了大多数实验会失败。这是这类工作的常态，谈不上悲观；真正要紧的是错的时候能干净地退回上一个状态。</p>
+<hr>
+<h2 id="三几个容易写错的地方">三、几个容易写错的地方</h2>
+<p>上面是主干。能让它连跑三天不出事的，是下面这几个地方。</p>
+<h3 id="收割的三条规矩">收割的三条规矩</h3>
+<p>收割本身只有172行，要处理的情况一点不少。状态机很简单，submitted推成completed或failed，外加一条超时路径。</p>
+<p><img src="/images/wechat/wechat-2247484208-1/05.png" alt="图片 5"></p>
+<p>收割状态机</p>
+<p><strong>图5｜收割只干一件事：把submitted推成终态</strong>。三条规矩说的是同一件事：收割是附带功能，不能挡住主循环。</p>
+<p>第一条最容易写错：<strong>收割出错就出错，实验不能停</strong>。查状态失败、读指标超时、后端502，一律吞掉，写一行日志，下一轮再说。收割失败无非晚一点知道结果，主循环一挡，整个方向就停了。</p>
+<p>第二条是踩过一次才补的：记录得在提交成功那一刻就落盘，不能等结果回来再写。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 条件不是"这轮成功了"，而是"这轮可能提交过"</span></span>
+<span class="line"><span>// 只要提交动作发生过，就必须留下痕迹</span></span>
+<span class="line"><span>if (opts.taskId &#x26;&#x26; currentSubmitId) {</span></span>
+<span class="line"><span>  appendTrialToJsonl(..., {</span></span>
+<span class="line"><span>    submitId: currentSubmitId,</span></span>
+<span class="line"><span>    status: "submitted",</span></span>
+<span class="line"><span>  });</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>哪怕后来进程被kill、机器重启，下一轮读jsonl依然知道有一个submitId在飞，可以去收。</p>
+<p>第三条是限流：一轮最多收10条。堆了30个没收的实验，一次全查会把这一轮拖到几分钟以上。所以这轮收10个，剩下的还是submitted，下轮接着收，别扔。</p>
+<h3 id="两道闸门">两道闸门</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">/** 在途上限：未收割的实验数，超过就只收不发 */</span></span>
+<span class="line"><span style="color:#D73A49">const</span><span style="color:#005CC5"> MAX_IN_FLIGHT</span><span style="color:#D73A49"> =</span></span>
+<span class="line"><span style="color:#6F42C1">  Number</span><span style="color:#24292E">(process.env.</span><span style="color:#005CC5">AUTORESEARCH_MAX_IN_FLIGHT</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span><span style="color:#005CC5"> 3</span><span style="color:#24292E">;</span></span></code></pre>
+<p>第一道管”手上同时有几个还没出结果的实验”。3是个折中，够并行，也不至于把队列打爆。这个数是踩出来的：有一次17个画布同时挂在平台上，每个都在排队，等多久完全说不准，看着在并行探索，其实是互相拖。</p>
+<p>第二道管”这个方向一共花多少”：maxSteps默认20，跑满就正常收尾退出，不是出错。</p>
+<p>把两轮的数字写在一起，就是成本的上界：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>同步：循环 = 改 + 提 + 训练 = 7200s > 会话 600s → 必被杀</span></span>
+<span class="line"><span>异步：循环 = 改 + 提 + 收割 = 300~600s &#x3C; 600s → 能活</span></span>
+<span class="line"><span>上界：轮数 ≤ 20 → 单方向最贵 20×2h = 40h 训练</span></span></code></pre>
+<p>两道闸门都在花之前检查，所以不会超。</p>
+<h3 id="记忆只有三个字段">记忆只有三个字段</h3>
+<p>做决定的活交给Agent了，它干得好不好靠什么保证？靠每一轮喂进去的那段文字。</p>
+<p>每一轮，worker拼一段提示词交给编码Agent：研究目标、仓库分支和commit、参考画布、当前第几轮，最后是历史实验记录。末尾压着四条硬要求：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. 修改代码（如果有改进思路）</span></span>
+<span class="line"><span>2. 用工具操作画布：复制、改参数、提交</span></span>
+<span class="line"><span>3. 提交画布后立即结束本轮，不要等待训练完成</span></span>
+<span class="line"><span>4. 完成后只输出 JSON</span></span></code></pre>
+<p>第三条最关键：它把”别等”写成了给Agent的指令。前面那一堆收割机制，全建立在”Agent真的会按时返回”这个前提上，它要是不听话，后面全白搭。</p>
+<p>历史记录那块是做减法。每条trial只压成三个字段：desc、metrics、status。注意是desc，不是hypothesis，上一轮Agent写进desc的那句话，就是下一轮Agent能看到的全部记忆。</p>
+<p>写得含糊（“优化了一下结构”），下一轮没法参考；写得具体（“把FFN换成gated，参数量+3%，指标持平”），下一轮才知道往哪走。这三个字段怎么定，基本决定了它下一轮能想到什么。这地方最容易被忽略，又最影响产出。</p>
+<h3 id="六个故障六条补丁">六个故障，六条补丁</h3>
+<p>|
+故障</p>
+<p>|</p>
+<p>补丁</p>
+<p>|
+| --- | --- |
+|</p>
+<p>进程悄悄死了，后端还在等</p>
+<p>|</p>
+<p>心跳30秒，120秒收不到判离线；离线是被动算出来的，不改存储状态</p>
+<p>|
+|</p>
+<p>后端抖动一轮就废</p>
+<p>|</p>
+<p>整轮try/catch，出错等5秒重进，进程不退出</p>
+<p>|
+|</p>
+<p>命令处理到一半崩了</p>
+<p>|</p>
+<p>确认分三态；有意不确认，命令留在队列里，下轮再做</p>
+<p>|
+|</p>
+<p>同一结果报了两遍</p>
+<p>|</p>
+<p>上报幂等，按trialId去重更新</p>
+<p>|
+|</p>
+<p>重启留下一堆孤儿进程</p>
+<p>|</p>
+<p>启动与退出都统一清理，状态文件分开命名</p>
+<p>|
+|</p>
+<p>会话超时被杀，这轮白干</p>
+<p>|</p>
+<p>提交后立刻写记录，否则下轮不知道提过什么</p>
+<p>|</p>
+<p>第三行和第六行值得多看两眼，它们不是系统坏了，是有些状态压根没定义清楚。</p>
+<p>命令队列天然会遇到这个问题：worker拿到命令，处理到一半崩了，这条算处理完了吗？确认要是只有成功和失败两态，“崩了”只能算失败，可失败的意思是”这条不用再做了”，而它其实应该被重做。所以确认分三态，还留了一个口子：不确认。命令留在pending里，下一轮再取。</p>
+<p>这样一来，“不确定”就成了一种正常状态，不用急着把它消掉。</p>
+<p>还有一处退避在调度侧：worker退出时按2的n次方秒重新拉起，1秒、2秒、4秒，最多3次。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#D73A49">const</span><span style="color:#005CC5"> delay</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">pow</span><span style="color:#24292E">(</span><span style="color:#005CC5">2</span><span style="color:#24292E">, restartInfo.count) </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 1000</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#24292E"> (restartInfo.count </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> (opts.maxRestarts </span><span style="color:#D73A49">||</span><span style="color:#005CC5"> 3</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6A737D">  // 重新拉起：1s → 2s → 4s</span></span>
+<span class="line"><span style="color:#24292E">} </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">  await</span><span style="color:#6F42C1"> reportTaskFailed</span><span style="color:#24292E">(</span><span style="color:#D73A49">...</span><span style="color:#24292E">);   </span><span style="color:#6A737D">// 超上限就上报失败</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>为什么只给三次？反复崩的worker，十有八九不是运气差，是环境坏了：凭据过期、依赖没装、接口改了。这种时候重启只会多烧token，把问题拖成一条”一直在重试”的日志。</p>
+<p>设这个上限，图的是让故障早点暴露，省不省钱倒在其次。</p>
+<h3 id="十二个坑把平台没说出口的规矩写成文档">十二个坑：把平台没说出口的规矩写成文档</h3>
+<p>如果只让我留一个文件，我留那份平台操作手册，221行，最后一节叫”已知坑总清单”，十二条。</p>
+<p>里面记的不是我们的代码，是平台那些没说出口的规矩。挑几条：</p>
+<p>|
+坑</p>
+<p>|</p>
+<p>表现</p>
+<p>|
+| --- | --- |
+|</p>
+<p>submitId藏在redirectUrl里</p>
+<p>|</p>
+<p>响应里没有独立字段，得从跳转URL的query里抠</p>
+<p>|
+|</p>
+<p>改参数要三件套</p>
+<p>|</p>
+<p>URL query、毫秒时间戳header、值要encode，少一样静默不生效</p>
+<p>|
+|</p>
+<p>队列选错集群</p>
+<p>|</p>
+<p>指标计算直接exit 13，报错信息完全指不到根因</p>
+<p>|
+|</p>
+<p>读指标要用快照组件ID</p>
+<p>|</p>
+<p>用主画布ID查，返回空</p>
+<p>|
+|</p>
+<p>指标组件必须独立运行</p>
+<p>|</p>
+<p>走上游模式，即使成功也读不到</p>
+<p>|</p>
+<p><img src="/images/wechat/wechat-2247484208-1/06.png" alt="图片 6"></p>
+<p>静默失败</p>
+<p><strong>图6｜十二个坑一个样：不报错，只给一个空结果</strong>。不抛异常，返回一个空数组就完了；成本却按轮结算，一轮就是两小时。</p>
+<p>人踩过一次就记住了，Agent每次会话都从零开始，它没有”上次那个坑”这回事。所以这份文档不当接口教程写，它记的是老同事嘴里的经验，好让机器每次启动都能读到。</p>
+<p>写了，Agent第一次上手就能绕开；不写，它每次都得重踩一遍，一次两小时训练。</p>
+<hr>
+<h2 id="四跑出来的结果">四、跑出来的结果</h2>
+<p>讲了这么多机制，看结果。</p>
+<p><img src="/images/wechat/wechat-2247484208-1/07.png" alt="图片 7"></p>
+<p>一次真实产出</p>
+<p><strong>图7｜同一个提交，四个口径都要交代</strong>。缺了”工程耗时持平”这一行，收益就不干净。</p>
+<p>+0.056个百分点听起来小，可这类精排模型的主指标常年在2.8%附近徘徊，能稳定推动0.05pp的结构性改动，值得单独发一次版。</p>
+<p>工程耗时这一行必须交代。换结构最容易出现的情况是效果涨了、推理慢一倍，那不叫优化，只是换了个更贵的模型。这次没出现，所以这个收益站得住。</p>
+<p>回头看，这类任务能被交出去，是因为同时满足四个条件：目标能用一个数说清、改动只碰一个模块、失败能整条退回、几个方向互不干扰。</p>
+<p>反过来也一样：目标说不清、改一处牵全身、失败退不回来的实验，它干不了。这东西有边界。</p>
+<hr>
+<h2 id="五想自己搭一套先写这四份东西">五、想自己搭一套，先写这四份东西</h2>
+<p>这套系统没开源，下面的片段来自内部实现，已经脱敏。<strong>真正能抄走的，是四份文档。</strong></p>
+<p>第一份，一个最小的状态机。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>submitted ──成功──> completed</span></span>
+<span class="line"><span>    ├──────失败──> failed</span></span>
+<span class="line"><span>    └──────24h───> failed</span></span></code></pre>
+<p>两个终态，加一条超时路径就够了。别设”处理中”这种中间态，一设状态机就变成一张网，网是没有测试能盖全的。</p>
+<p>第二份，一条在途上限。</p>
+<p>别拿并发数当上限，用没收的数。并发数说的是”我开了几个”，没收的数说的是”我还欠几个结果”，会堆起来的是后者。</p>
+<p>第三份，一份判据表。这是对平台的验收标准，每条都能自己测：</p>
+<p>|
+判据</p>
+<p>|</p>
+<p>怎么测</p>
+<p>|</p>
+<p>通过标准</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>崩溃后可恢复</p>
+<p>|</p>
+<p>kill掉worker再重启</p>
+<p>|</p>
+<p>第一轮日志出现收割记录</p>
+<p>|
+|</p>
+<p>超时不悬挂</p>
+<p>|</p>
+<p>造一条pending指向不存在的任务</p>
+<p>|</p>
+<p>24h后变failed，不是永远挂着</p>
+<p>|
+|</p>
+<p>闸门生效</p>
+<p>|</p>
+<p>在途上限设成1，连跑两轮</p>
+<p>|</p>
+<p>第二轮只有收割，没有新提交</p>
+<p>|</p>
+<p>三条判据覆盖三种不同的坏法：崩溃、悬挂、越界。再多就没人测了。</p>
+<p>第四份，一份坑清单。格式固定成三行：现象、原因、正确做法，外加一行”不写会怎样”。判断标准很简单：这份清单能不能让一个从没见过这个平台的人，一次就把参数改对。能，就合格。</p>
+<p>写的顺序也有讲究：先做落盘，不然崩一次就全忘；再做状态机，不然说不清谁欠着结果；最后做闸门，不然队列会被打爆。反着来也能跑，就是第一次崩了得推倒重来。</p>
+<p>四份里只有判据表能当天验完，其余三份都得等事故来考。所以别指望一次写对：先写最小的一版，跑起来，让它崩一次，再把崩出来的那条补进去。</p>
+<p>有句话可能不中听：很多人的第一反应是”把这些要求写进系统提示词不就行了”。提示词管不住崩溃，进程被杀的时候，提示词已经不在内存里了。文档的价值恰恰在于没有进程的时候它还在：落盘的记录、队列里的状态、下次启动读到的坑清单。提示词只对这一次会话有效，文档对下一次启动有效。</p>
+<p>所以落盘要最先做，而且当天就能验：跑起来之后手动kill一次，看jsonl里有没有那条submitted。有，说明它崩了也知道自己欠着什么；没有，后面全是空中楼阁。</p>
+<p>还有个容易漏的点：别给Agent看全量历史。每条只留三个字段是故意的，历史越长它越容易在旧结论上打转，而且每轮都要重读一遍，token全花在回忆上。</p>
+<h3 id="两个真踩过的坑">两个真踩过的坑</h3>
+<p>坑一，停止只改了本地变量。</p>
+<p>现象：后端显示已停止，平台上的训练还在跑，卡继续烧。 原因：本地改了不等于对面停了。跨系统的操作，得在对面看到结果才算数，本地把变量清空没用。 正确做法：真的去调平台的stop接口，并在下一轮用终态查询确认它停了。</p>
+<p>坑二，选错集群，报错指不到根因。</p>
+<p>现象：训练成功，指标计算组件exit 13，日志是空的。 原因：集群ID决定了指标计算的环境，选错了连指标都算不出来，报错只告诉你退出码。 正确做法：把集群写进坑清单的固定字段，提交前校验一次，不要靠Agent记得。</p>
+<h3 id="环境与未实测声明">环境与未实测声明</h3>
+<p>运行环境：一台装着git和平台CLI的Linux或macOS机器，Node.js 18+，一个能长时间存活的进程管理器。这套代码没有开源，上面的片段是真实实现；判据表的第三条我在系统上验证过，但没有可复现的公开环境，所以本文不给截图、不给命令。</p>
+<hr>
+<h2 id="六它做不了什么">六、它做不了什么</h2>
+<p>只讲成功没意思，下面这几条我自己也还在踩。四条局限都成立：</p>
+<p>|
+局限</p>
+<p>|</p>
+<p>影响</p>
+<p>|
+| --- | --- |
+|</p>
+<p>没有GPU资源感知调度</p>
+<p>|</p>
+<p>并发只按worker数限制，不知道集群还剩多少卡</p>
+<p>|
+|</p>
+<p>调度进程不会自动拉起</p>
+<p>|</p>
+<p>需要人工重启，这期间任务名义上还在running</p>
+<p>|
+|</p>
+<p>任务没有failed状态</p>
+<p>|</p>
+<p>worker全崩之后仍显示running，得靠人看出来再停</p>
+<p>|
+|</p>
+<p>重试与否由Agent判断</p>
+<p>|</p>
+<p>同一假设要不要重试，取决于它当时的判断，不稳定</p>
+<p>|</p>
+<p>这四条看着像工程债，其实是一回事：调度做得越简单，越得有人盯着。这东西本来就是替人跑腿的，不是替人值班的。</p>
+<p>前三条都能靠加监控、加人补上，第四条不能。重试与否由Agent判断，意味着同一个假设昨天被放弃、今天可能被重试，同一份历史跑两遍未必有一样的结论。这条最难补，也最影响”结论能不能被引用”。</p>
+<p>比这四条更根本的还有一条：<strong>它只会沿着一个方向往下试，不会自己换方向。</strong></p>
+<p>把warmup从2000试到4000，是沿着一条路往下走；想到”warmup这个维度根本不用调，该换的是整个优化器”，是换一条路。前者它擅长，给个方向就能走到头；后者它做不了，因为它每一步都是从历史记录里相邻的点推出来的，<strong>历史里没有的东西，它想不出来</strong>。</p>
+<p>所以用法应该是人给方向、它把方向走完，而不是让它自己找方向。这个分工不酷，但能把人从两小时的等待里捞出来，让他去想下一个方向。</p>
+<p>它还会放大你的错误。研究方向错了，它不会质疑方向，只会在错的方向上更快地跑到尽头，一轮两小时，跑得越顺，错得越彻底。</p>
+<p>还有一个不容易注意到的代价：试错变便宜之后，人会不自觉地多试。轮数闸门管的是一个方向，管不住方向越开越多，同一个目标开五个方向，成本就是五倍。它也不会告诉你”这条路走到头了”，只会把20轮用完，然后交给你一堆不显著的结论。什么时候该换方向，还是得人看。</p>
+<p>什么时候该关掉它？三条里占一条就别信它的结论：指标抖动大到一次实验说不清、评估周期长于一天、改动需要跨多仓。这三种情况下，它给出的”keep”可能只是噪声刚好涨了一点点。拿不准的时候，先按没收益算。</p>
+<p>剩下要人干的事：提方向、判断这波收益值不值得发版、把踩过的坑写成文档。前两件靠判断，第三件靠写，把脑子里那点经验写成机器每次启动都能读到的东西。</p>
+<p>所以它更像放大器，不像研究员：方向给得准，放大出来的是收益；方向含糊，放大的就是噪声。它的位置是把一个想法验证到底，不是替你想下一个想法。</p>
+<hr>
+<h2 id="参考">参考</h2>
+<ul>
+<li>
+<p>MaskNet：用实例引导的掩码做特征交叉，本文替换前的排序主干结构</p>
+</li>
+<li>
+<p>RankMixer：替换后的结构，参数量与推理耗时基本持平</p>
+</li>
+<li>
+<p>代码片段：内部实验装置（执行器、收割模块、平台操作手册），已脱敏</p>
+</li>
+<li>
+<p>平台行为（退出码、快照组件ID、submitId位置）：来自坑清单原文</p>
+</li>
+</ul>
+<hr>
+<p>你们团队的自动化实验，卡在”等”还是卡在”记”？评论区说说你在哪一步放弃的，我挑三个写进下一篇。</p>
+<blockquote>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。 关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p>
+</blockquote></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/UCyNtuhBwheBDRBiG3upcg" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/17/wechat-2247484221-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">133ms一帧，语音模型Haru不会因为你也开口就停下来</span></a><a class="article-nav__item article-nav__item--next" href="/2026/11/09/wechat-2247484184-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#先说结论">先说结论</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一第一版写成同步的卡在等训练上">一、第一版写成同步的，卡在等训练上</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二提交即返回下一轮再收">二、提交即返回，下一轮再收</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三几个容易写错的地方">三、几个容易写错的地方</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#收割的三条规矩">收割的三条规矩</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#两道闸门">两道闸门</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#记忆只有三个字段">记忆只有三个字段</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#六个故障六条补丁">六个故障，六条补丁</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#十二个坑把平台没说出口的规矩写成文档">十二个坑：把平台没说出口的规矩写成文档</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四跑出来的结果">四、跑出来的结果</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五想自己搭一套先写这四份东西">五、想自己搭一套，先写这四份东西</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#两个真踩过的坑">两个真踩过的坑</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#环境与未实测声明">环境与未实测声明</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#六它做不了什么">六、它做不了什么</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#参考">参考</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/07/wechat-2247484173-1/">16GB单卡怎么微调Qwen3：从SFT到GRPO的四个步骤</a></h3><p class="post-card__desc">一张16GB显卡，通过微调把Qwen3-1.7B的可用率从0%训到60.5%：180条数据、LoRA SFT、GRPO组</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-07</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

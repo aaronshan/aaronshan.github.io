@@ -1,0 +1,392 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数 | 中龄程序猿</title><meta name="description" content="2.78万亿参数的模型，8GB笔记本就能跑。代价是每个Token从磁盘搬134GB、等26.5秒。176KB的C代码重新定义了哪些字节必须常驻——这才是它真正值得学的地方。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/09/wechat-2247484184-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数 | 中龄程序猿"><meta property="og:description" content="2.78万亿参数的模型，8GB笔记本就能跑。代价是每个Token从磁盘搬134GB、等26.5秒。176KB的C代码重新定义了哪些字节必须常驻——这才是它真正值得学的地方。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/09/wechat-2247484184-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484184-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数 | 中龄程序猿"><meta name="twitter:description" content="2.78万亿参数的模型，8GB笔记本就能跑。代价是每个Token从磁盘搬134GB、等26.5秒。176KB的C代码重新定义了哪些字节必须常驻——这才是它真正值得学的地方。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484184-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数","description":"2.78万亿参数的模型，8GB笔记本就能跑。代价是每个Token从磁盘搬134GB、等26.5秒。176KB的C代码重新定义了哪些字节必须常驻——这才是它真正值得学的地方。","datePublished":"2026-11-09T11:28:00.000Z","dateModified":"2026-11-09T11:28:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/09/wechat-2247484184-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484184-1/cover.jpg","articleSection":"读书","keywords":"读书,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a><span>/</span><span>拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a><h1 class="article-title">拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数</h1><p class="article-desc">2.78万亿参数的模型，8GB笔记本就能跑。代价是每个Token从磁盘搬134GB、等26.5秒。176KB的C代码重新定义了哪些字节必须常驻——这才是它真正值得学的地方。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-09T11:28:00.000Z">2026-11-09</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>读书 · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484184-1/cover.jpg" alt="拆解kimi-k3-in-c：8GB笔记本如何跑2.78万亿参数"></figure><div class="article-grid"><div class="article-content"><div class="prose"><p><strong>摘要</strong>：1.56TB的checkpoint（专家权重原样就是MXFP4）、108.8GB的主干按层流式读、每生成一个Token搬134GB；六个C文件、176KB的引擎，让2.78万亿参数在一台8GB笔记本上跑起来。我在macOS上编译：1.8秒构建、173条测试全过、五道oracle门逐位相等。</p>
+<hr>
+<h3 id="概述">概述</h3>
+<p>2.78万亿参数的模型，在一台8GB内存的笔记本上跑起来了，代价是每生成一个Token都要从磁盘搬走134GB、等上26.5秒。它不是把模型塞进内存，而是重新定义了”哪些字节必须常驻”——这才是这个项目真正能学的东西。</p>
+<p>读完你能拿走三样：</p>
+<ol>
+<li>
+<p><strong>一本字节账</strong>：从5.56TB到8.24GB，四步各降一个量级，每一步都对应一个可以复用的决定（4位量化、稀疏激活、权重打包、流式读取）。</p>
+</li>
+<li>
+<p><strong>三个具体手法</strong>：4位浮点权重不还原成高精度就直接参与乘法；主干按固定顺序流式读；线性注意力把递归状态做成与上下文长度无关。</p>
+</li>
+<li>
+<p><strong>一套验证方法</strong>：没有那1.56TB权重，也能把引擎验到”输出逐位相等”；以及为什么作者会主动公布33%的噪声地板，还据此撤回了自己的结论。</p>
+</li>
+</ol>
+<p><strong>图1｜降维的每一步都是字节决定，不是参数决定</strong>。5.56TB是16位浮点全参，1.56TB是专家权重改存4位浮点之后，113GB是稀疏激活后每个Token真正要过的量，8.24GB是把主干也改成流式之后的内存峰值。代价写在右下角。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/01.png" alt="图片 1"></p>
+<p>图1</p>
+<hr>
+<h3 id="一为什么装不下不是容量问题">一、为什么”装不下”不是容量问题</h3>
+<p>先算一笔最朴素的账。2.78万亿参数，bf16每个2字节，全参就是5.56TB。一台顶配工作站的内存在1TB上下，差着五倍；换8bit是2.78TB，还是差三倍；换4bit是1.39TB，依然装不下。任何”把整个模型放进内存”的路线，在这一步就已经死了。</p>
+<p>常规的两条退路也都不通。</p>
+<p><strong>第一条是量化。</strong> 4bit基本是性价比的临界点，再往下掉点明显，而且1.39TB照样超过内存。更关键的是，量化在这里不是作者为了跑起来临时做的压缩——K3官方发布的checkpoint，路由专家本来就是MXFP4。也就是说，这不是一份”被牺牲了精度”的权重，而是原始权重就长这样。这一点很重要：它把”精度损失”从作者的账上划掉了。</p>
+<p><strong>第二条是offload。</strong> 把层换进换出，本质上是把模型当分页文件用。这条路上限就是磁盘带宽，而内存和NVMe差了将近两个数量级——前者几百GB/s，后者个位数。如果每生成一个token要把5.56TB完整过一遍，按6GB/s算就是十五分钟一个token（<strong>这是我的推算，不是实测</strong>）。所以”层换入换出”这种做法，只能应付”模型比内存大一点”的场景，模型比内存大三个数量级时，它退化成纯粹的磁盘扫描。</p>
+<p>这两条路的问题在于，它们都在回答”怎么把5.56TB装进8GB”这个错问题。</p>
+<p>真正的问题是：一个token前向的时候，到底有多少参数是同时活着的？</p>
+<p>答案是很少。K3是MoE结构，93层里有92层是MoE，每层896个路由专家，但一个token只选16个，再加2个共享专家。主干（注意力、norm、embed、lm_head）每个token都要过，专家只过被选中的那一小撮。</p>
+<p>于是问题被拆成两个可以分别回答的问题：</p>
+<ol>
+<li>
+<p>哪些字节<strong>每个token都要</strong>？（主干 + 常驻表）</p>
+</li>
+<li>
+<p>哪些字节<strong>这次要、下次不要</strong>？（路由专家）</p>
+</li>
+</ol>
+<p>这两个问题的答案，决定了后面所有的设计。而且注意，这两个问题的性质完全不同：第一个是”必答题”，只能靠压缩和流式；第二个是”概率题”，可以靠缓存和预取。把它们混在一起调，就是大部分offload方案做得不理想的原因。图2把这两件事分开画了。</p>
+<p><strong>图2｜一层里896个专家只有16个亮，相邻Token亮的还不是同一批</strong>。左边是一个Token经过MoE的路径：先降到3584维，路由打分后取前16个，2个共享专家全程参与。右边是第1层68个Token的真实路由记录：1088次请求只碰到150个专家，相邻两个Token平均只重合1.5个。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/02.png" alt="图片 2"></p>
+<p>图2</p>
+<hr>
+<h3 id="二四条流把内存变成一个旋钮">二、四条流：把内存变成一个旋钮</h3>
+<p>作者的做法可以概括成一句话：能流式的就不常驻，必须常驻的就钉死。</p>
+<p>|
+步骤</p>
+<p>|</p>
+<p>从</p>
+<p>|</p>
+<p>到</p>
+<p>|</p>
+<p>做了什么</p>
+<p>|
+| --- | --- | --- | --- |
+|</p>
+<p>1</p>
+<p>|</p>
+<p>5.56TB</p>
+<p>|</p>
+<p>1.56TB</p>
+<p>|</p>
+<p>专家权重按MXFP4存，不反量化</p>
+<p>|
+|</p>
+<p>2</p>
+<p>|</p>
+<p>1.56TB</p>
+<p>|</p>
+<p>113GB</p>
+<p>|</p>
+<p>只算top-16，专家按需读</p>
+<p>|
+|</p>
+<p>3</p>
+<p>|</p>
+<p>113GB</p>
+<p>|</p>
+<p>8.24GB</p>
+<p>|</p>
+<p>主干93层打包成trunk.bin，按层流式</p>
+<p>|
+|</p>
+<p>4</p>
+<p>|</p>
+<p>8.24GB</p>
+<p>|</p>
+<p>26.5s/token</p>
+<p>|</p>
+<p>内存只影响速度，不影响输出</p>
+<p>|</p>
+<p>拆开看一个token在干什么，会更清楚这四步是怎么落到代码里的：</p>
+<ul>
+<li>
+<p>先查词表，把token变成向量。这张表11.7亿参数，每个token都用，<strong>必须常驻</strong>；</p>
+</li>
+<li>
+<p>然后过93层。到了第L层，就按固定偏移去trunk.bin里读这一层（约1.17GB），算完就扔；</p>
+</li>
+<li>
+<p>每层的MoE要选16个专家。选完去checkpoint里读这16个（每个17.55MB），算完还回去；</p>
+</li>
+<li>
+<p>最后过lm_head，又是11.7亿参数，同样常驻。</p>
+</li>
+</ul>
+<p>这四步加起来134.6GB。技术报告的官方口径是每Token激活104B参数，两个数看着对不上——因为主干按bf16存（每参数2字节），只有专家是MXFP4（0.53字节）。参数账和字节账要分开算，混着算就会得出”装得下”的错误结论。</p>
+<p>常驻的部分加起来4.7GB——embed和lm_head各占一半。为什么它们不能流式？因为它们是”每个token的第一跳和最后一跳”，读它的时候没有别的事情可以重叠，读它就是在等。而中间那93层不一样，第L层在算的时候，第L+1层可以同时在读。</p>
+<p>到第三步，内存的语义彻底变了：它不再是”模型能不能装下”的门槛，而是”每次少读多少盘”的缓存。同一份模型，8GB和224GB跑出来的每一个token，ID逐个相同，只有时钟不一样。</p>
+<p>这一点是整篇文章里最值得记住的：把容量问题转成带宽问题，模型就可以在任何机器上跑，只是快慢不同。这个转换不是免费的，它要求引擎对”读的顺序”有完全的控制权——这就是为什么它必须用C重写，而不是在PyTorch里写个DataLoader。框架的显存分配器、算子调度、张量生命周期，都不允许你在”这一层的字节什么时候进内存”这个粒度上做决定。</p>
+<p><strong>图3｜两条流各自独立：主干按层读、专家按路由读</strong>。主干108.8GB按固定顺序流式，专家1.45TB按路由随机读。前者可预测，所以能预取；后者不可预测，所以只能缓存。两条流的失败模式完全不同，调优也必须分开做——这正是下一节两个不同结论的来源。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/03.png" alt="图片 3"></p>
+<p>图3</p>
+<hr>
+<h3 id="三四个决定四种可迁移的手法">三、四个决定，四种可迁移的手法</h3>
+<h4 id="31-专家权重不反量化直接从4bit算">3.1 专家权重不反量化，直接从4bit算</h4>
+<p>一个路由专家3303万参数，反量化成fp32是132MB；一个token要碰1472个专家（92层乘16），光”展宽”就是194GB的纯流量。所以引擎压根不反量化：MXFP4的编码是每32个元素共享一个8bit指数，每个元素4bit，平均0.53125字节/权重。</p>
+<p>对比一下：fp32是4字节，bf16是2字节，它是0.53字节——同样的权重，读的字节少了7.5倍。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">/* OCP MX E2M1：4bit码直接查表，第3位是符号 */</span></span>
+<span class="line"><span style="color:#24292E">static </span><span style="color:#D73A49">const</span><span style="color:#005CC5"> float</span><span style="color:#24292E"> K3_E2M1[16] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    0.0f, 0.5f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f,</span></span>
+<span class="line"><span style="color:#24292E">   -0.0f,-0.5f,-1.0f,-1.5f,-2.0f,-3.0f,-4.0f,-6.0f</span></span>
+<span class="line"><span style="color:#24292E">};</span></span>
+<span class="line"><span style="color:#6A737D">/* 一个字节拆成两个值：内循环一次读8字节=16个权重 */</span></span>
+<span class="line"><span style="color:#005CC5">K3_E2M1_PAIR</span><span style="color:#24292E">[b][</span><span style="color:#005CC5">0</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> K3_E2M1</span><span style="color:#24292E">[b </span><span style="color:#D73A49">&#x26;</span><span style="color:#005CC5"> 0x0F</span><span style="color:#24292E">];  </span><span style="color:#6A737D">/* 低半字节=偶 */</span></span>
+<span class="line"><span style="color:#005CC5">K3_E2M1_PAIR</span><span style="color:#24292E">[b][</span><span style="color:#005CC5">1</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> K3_E2M1</span><span style="color:#24292E">[b </span><span style="color:#D73A49">>></span><span style="color:#005CC5"> 4</span><span style="color:#24292E">];    </span><span style="color:#6A737D">/* 高半字节=奇 */</span></span></code></pre>
+<p>这段代码背后有个反直觉的结论：不反量化不只是省内存，它更快。矩阵向量乘本来就是带宽瓶颈，读的字节少7.5倍，等数据的时间就少7.5倍，计算量一点没变。作者的论证是纯字节账而不是跑分——本机单线程跑出MXFP4 13.6GFLOP/s、bf16 18.1GFLOP/s，但这两个数不能互相比，它们是两种精度的峰值，不是同一条路径的前后对比。</p>
+<p>代价是精度契约变了。这个内核<strong>故意不</strong>和”先反量化再乘”逐位相同：它把指数折进权重、把一行拆成十六个独立累加器并行求和。但每个乘积在double下是精确的（3位尾数乘24位尾数，只用掉53位里的27位），重结合只动1个ULP，而测试门槛是1e-6——<strong>余量有九个数量级</strong>。</p>
+<p><strong>可迁移的一点</strong>：当精度契约被明明白白写出来——“我不逐位等于谁、但我保证差多少”——优化才敢放手做。含糊的”应该差不多”，最后一定会在某个版本里变成错。</p>
+<h4 id="32-主干打包把随机读变成可预取">3.2 主干打包：把”随机读”变成”可预取”</h4>
+<p>93层稠密权重在官方checkpoint里是散的。作者写了个脚本，用93次区间拷贝把它们拼成一个109GB的trunk.bin，第L层落在已知偏移上——此后加载一层就是一次pread，不用解析。</p>
+<p>真正关键的不是打包，是<strong>顺序</strong>：93层每个token都按同一顺序走一遍，预取永远不会猜错。给定内存预算，层不是被LRU轮转，而是被<strong>钉住</strong>：循环扫描会把LRU打成0%命中，钉住前缀才是对的。</p>
+<p>钉住多少层，命中率就是多少。48层钉住、93层总量，命中率就是51.6%——一个可以直接验算的式子，不需要跑模型就能知道自己这台机器的理论命中率。<strong>这就是”计数优于秒表”</strong>：命中率是计数，不受调度抖动影响。</p>
+<p>还有一个细节值得抄：单条顺序pread把NVMe留在队列深度1（发一个、等一个），实测只有3.1GB/s，不到盘标称速率的一半；本来就在并行读的专家路径能到6.7GB/s。于是作者把一层切成64MB的对齐块，用OpenMP并发发出去，把深度补回来。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#6A737D">/* 一层约1.17GB；单条顺序pread只到盘的一半速率 */</span></span>
+<span class="line"><span style="color:#D73A49">const</span><span style="color:#005CC5"> int</span><span style="color:#24292E"> nchunk </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (nb </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> K3_TRUNK_CHUNK</span><span style="color:#D73A49"> -</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">                 /</span><span style="color:#005CC5"> K3_TRUNK_CHUNK</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">#pragma omp parallel for </span><span style="color:#6F42C1">schedule</span><span style="color:#24292E">(dynamic, </span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> (int ci </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; ci </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> nchunk; ci</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">    int64_t base </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ci </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> K3_TRUNK_CHUNK</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    int64_t rest </span><span style="color:#D73A49">=</span><span style="color:#24292E"> nb </span><span style="color:#D73A49">-</span><span style="color:#24292E"> base;</span></span>
+<span class="line"><span style="color:#24292E">    int64_t len  </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rest </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> K3_TRUNK_CHUNK</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> rest</span></span>
+<span class="line"><span style="color:#D73A49">                                        :</span><span style="color:#005CC5"> K3_TRUNK_CHUNK</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">    pread</span><span style="color:#24292E">(tr</span><span style="color:#D73A49">-></span><span style="color:#24292E">fd, dst </span><span style="color:#D73A49">+</span><span style="color:#24292E"> base, len,</span></span>
+<span class="line"><span style="color:#24292E">          lay</span><span style="color:#D73A49">-></span><span style="color:#24292E">file_off </span><span style="color:#D73A49">+</span><span style="color:#24292E"> base);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p><strong>可迁移的一点</strong>：磁盘喜欢”深队列”，不喜欢”大请求”。这不是SSD的怪癖，是所有块设备的共性——把一个大读切成多个并发的小读，往往比换更快的盘更有效，而且不花钱。</p>
+<h4 id="33-kda与mla让每token的状态与上下文长度无关">3.3 KDA与MLA：让每token的状态与上下文长度无关</h4>
+<p>K3的93层里，69层是线性注意力KDA，24层是Gated MLA（第4、8、…、92层，加第93层收尾）。</p>
+<p><strong>图4｜93层的排列：三浅一深，每12层一个残差边界</strong>。第0层是唯一没有MoE的dense层；第1–92层按KDA三次、MLA一次的节奏循环；第93层用MLA收尾。每12层落一个AttnRes快照，残差不再是一条线累加。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/04.png" alt="图片 4"></p>
+<p>图4</p>
+<p>KDA的状态是每头一个128×128的矩阵，<strong>与序列长度无关</strong>：读到第1000个token和第10个token，状态大小一样。整套递归状态加起来626MB，这也是它敢常驻的原因——不管喂多长的上下文，这个数字都不变。相比之下，MLA每层每个position要缓存2.37MB的展开K/V——真正贵的不是KDA，是那24层MLA。</p>
+<p>按这个数算，32000个token的KV就是75GB（<strong>我的推算</strong>）。反过来看，这也解释了为什么这个引擎在长上下文上没什么可吹的：它省的是权重流量，不是KV流量。KV是随上下文线性增长的，权重是固定的。两者优化手段完全不同，市面上很多”长上下文优化”的文章把这两笔账混着算，结论就会失真。</p>
+<p><strong>图5｜KDA一步的四个动作，③必须在②之后、④之前</strong>。先衰减、再用旧状态读出、再写增量、最后用新状态读输出。顺序反了不会崩，只会静默错。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/05.png" alt="图片 5"></p>
+<p>图5</p>
+<p>这个”静默错”是全文出现最多的坑：<strong>错误实现的输出依然通顺</strong>。所以作者给每个模块都准备了一个”错误实现也能通过”的对抗夹具：</p>
+<ul>
+<li>
+<p>A_log用linspace排布——按通道误索引会把每个元素都挪位，肉眼看不出来；</p>
+</li>
+<li>
+<p>router夹具让bias在六行里改写五行的top-k，选错专家只看一行是不够的；</p>
+</li>
+<li>
+<p>MLA夹具断言softmax用的是完整head宽度，漏掉rope的64维会静默改变缩放。</p>
+</li>
+</ul>
+<p>测试不是证明写对了，是证明写错了一定会被抓到。这两种测试的写法完全不同：前者只需要一个正确的输入，后者需要专门构造一个”错误实现也会通过”的输入。</p>
+<h4 id="34-专家缓存基本没用所以给谁内存比给多少重要">3.4 专家缓存基本没用，所以”给谁内存”比”给多少”重要</h4>
+<p>按直觉，896个专家16个一组，总该有点热子集可以缓存。实测：从28槽加到1344槽（48倍容量），命中率恒为0.0%，每个token照旧读25.83GB。</p>
+<p>原因是K3的路由训练用了Quantile Balancing，故意把专家使用率摊平了。10万次专家请求里出现了10010个不同的专家（12.1%），compulsory miss决定了上限——90%的命中率只在192GB以上才出现，那时候模型已经全装下了，缓存也就没意义了。</p>
+<p>于是调优结论反直觉但可推导：给主干1GB，确定省1.17GB/token；给专家缓存1GB，在36GB以下省0。同样128GB预算，把”专家优先”改成”主干优先”，端到端从28.6秒降到16.8秒；反过来，224GB配得烂（19.2秒）还打不过128GB配得好。</p>
+<p>作者对这个倍数的处理值得单独记一笔：十二个点、单样本、噪声地板33%，所以他不主张”1.69倍”，只主张<strong>方向</strong>——两个独立预算下Spearman秩相关分别是−0.886和−0.714，加上机制推导。方向硬，数字软，说清楚。</p>
+<p><strong>可迁移的一点</strong>：缓存命中率不是靠加大缓存刷出来的，它由访问分布决定。先量分布，再定分配——顺序反了，就是在为不存在的热点付钱。</p>
+<hr>
+<h3 id="四动手没有权重也能验到逐位相等">四、动手：没有权重也能验到”逐位相等”</h3>
+<p>这一章的命令我都实际跑过。环境是macOS 15.7.4、Apple Silicon、24GB内存、Apple clang 17，<strong>没有libomp</strong>，所以是单线程构建；Linux上直接<code>make</code>即可。</p>
+<h4 id="41-构建与测试">4.1 构建与测试</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 本机github.com不通，代码走jsDelivr拉取并校验</span></span>
+<span class="line"><span style="color:#6F42C1">python3</span><span style="color:#032F62"> fetch_repo.py</span></span>
+<span class="line"><span style="color:#005CC5">cd</span><span style="color:#032F62"> repo</span></span>
+<span class="line"><span style="color:#6A737D"># 无OpenMP时可关掉，其余与官方一致</span></span>
+<span class="line"><span style="color:#6F42C1">make</span><span style="color:#005CC5"> -j8</span><span style="color:#032F62"> CC=/usr/bin/clang</span><span style="color:#032F62"> OMP_CFLAGS=</span><span style="color:#032F62"> OMP_LDFLAGS=</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">     LDFLAGS="-lm -pthread"</span></span></code></pre>
+<p>我这里的结果：构建1.82秒，<code>make test</code>7.67秒，173条PASS。</p>
+<p>判据不是”没报错”，是三行具体的输出：</p>
+<p>|
+判据</p>
+<p>|</p>
+<p>通过的样子</p>
+<p>|</p>
+<p>不通过时</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>退出码</p>
+<p>| <code>0</code> |</p>
+<p>make通用行为下为<code>2</code>；先别改代码，先定位哪一节FAIL</p>
+<p>|
+|</p>
+<p>末行</p>
+<p>| <code>ALL WEIGHTLESS TESTS PASSED</code> |</p>
+<p>逐字匹配，不接受”差不多”</p>
+<p>|
+|</p>
+<p>oracle门</p>
+<p>| <code>GATE 1</code></p>
+<p>到<code>GATE 3b</code>都是exact</p>
+<p>|</p>
+<p>32/32、20/20、20/20，外加两个PASS</p>
+<p>|</p>
+<p>这五道门各自在验什么，值得说清楚，因为它们的失败模式完全不同：</p>
+<ul>
+<li>
+<p>GATE 1 teacher forcing：给定真实前缀，每个位置的logits都要和参考实现一致。它验的是前向算得对不对。</p>
+</li>
+<li>
+<p>GATE 1b状态复用：同一段前缀算两遍，logits要逐位相同。它验的是”有没有泄漏状态”——单槽ring被预取覆盖这种bug，就是在这里抓到原型的。</p>
+</li>
+<li>
+<p>GATE 2/3贪心解码与增量：生成20个token，和”整段重算”的结果逐位比对。它验的是KV缓存和递归状态在跨token时是否一致。</p>
+</li>
+<li>
+<p>GATE 3b前缀复用：第二轮沿用前22个token的KV与KDA状态，只prefill新增的10个，logits、KV、状态都要和”整段32个重算”逐位相同。它验的是复用状态时会不会串味。</p>
+</li>
+</ul>
+<p>只跑第一个，你会得到一个”前向正确”的引擎；五个都跑，才有一个”能连续生成、还敢复用”的引擎。</p>
+<p><strong>图6｜要不要相信这套测试，按这个顺序看</strong>。先看末行，再看GATE是否exact，最后看有没有NOT RUN——那个NOT RUN不是通过，是”这条没测”。</p>
+<p><img src="/images/wechat/wechat-2247484184-1/06.png" alt="图片 6"></p>
+<p>图6</p>
+<h4 id="42-两个真踩过的坑">4.2 两个真踩过的坑</h4>
+<p>坑一：<code>omp.h file not found</code>，装libomp不是唯一解。</p>
+<ul>
+<li>
+<p>现象：<code>fatal error: 'omp.h' file not found</code>，指向<code>k3_run.c</code>。</p>
+</li>
+<li>
+<p>原因：macOS的clang不带OpenMP运行时，而引擎默认按OpenMP编译。</p>
+</li>
+<li>
+<p>正确做法：不想装库就显式传<code>OMP_CFLAGS= OMP_LDFLAGS=</code>（单线程构建，测试与输出不受影响）；要性能就装<code>libomp</code>再传头文件与库路径。注意单线程下跑出来的GFLOP/s不能拿去和作者的多核数字比，我前面引用的两个内核跑分都是单核。</p>
+</li>
+</ul>
+<p>坑二：文件”下载完成”不等于”文件齐全”。</p>
+<ul>
+<li>
+<p>现象：拉下来275个文件，<code>make</code>在深处报<code>No rule to make target 'src/cli/k3_state.c'</code>。</p>
+</li>
+<li>
+<p>原因：CDN的文件清单元数据对刚推送的文件有滞后，清单里少了一批v1.1新增文件，而内容接口本身是新的——所以每个文件都能下，只是<strong>少下了一批</strong>。</p>
+</li>
+<li>
+<p>正确做法：以tag的清单为准重新对齐（v1.1.0是325个文件），或直接<code>git clone</code>；下完先核文件数再<code>make</code>。</p>
+</li>
+</ul>
+<p>（还有一个环境干扰：我这台机器的shell里预置了<code>LDFLAGS</code>，Makefile用的是<code>?=</code>，于是<code>-lm -pthread</code>被静默替换掉了。macOS因为libm在libSystem里没报错，Linux上大概率会链接失败——这条是推测，我没实测。）</p>
+<p>真要只跑一条，<code>make test</code>里最有价值的其实是GATE 1和GATE 3这一对：前者验单步前向，后者验跨token的状态传递。两个都过，中间那十几条基本是它们的细分；只过一个，说明问题在”状态”而不在”算子”，排查范围立刻小一半。</p>
+<h4 id="43-不下载156tb也能做的两件事">4.3 不下载1.56TB也能做的两件事</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 复现官方"专家缓存容量"表（需要numpy）</span></span>
+<span class="line"><span>python3 tools/sim_cache.py tests/fixtures/expert_trace.bin</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 内核微基准</span></span>
+<span class="line"><span>make bench &#x26;&#x26; ./bin/bench_kernels</span></span></code></pre>
+<p>前者用仓库自带的10万次专家请求trace，跑出LRU与Belady最优解的对比，我把输出和文档里的表逐格对过，一致；后者给出本机内核吞吐：单线程下MXFP4是13.6GFLOP/s、bf16是18.1GFLOP/s。这两个数不能换算成端到端——按每token约507GFLOP算（<strong>我的推算</strong>），单线程光算就要三十多秒，而作者那台8线程机器上算是几秒的事。真正的大头是读盘：134.6GB按作者实测的主干吞吐5.4到6.1GB/s，要22到25秒，和26.5秒的实测值对得上。这条比任何解释都能说明：它是I/O问题，不是算力问题。</p>
+<h4 id="44-环境门槛">4.4 环境门槛</h4>
+<p>|
+项目</p>
+<p>|</p>
+<p>要求</p>
+<p>|
+| --- | --- |
+|</p>
+<p>磁盘</p>
+<p>|</p>
+<p>约1.7TB空闲，权重与打包主干各占一份</p>
+<p>|
+|</p>
+<p>内存</p>
+<p>|</p>
+<p>8GB可跑，但只够单请求、短上下文</p>
+<p>|
+|</p>
+<p>编译器</p>
+<p>|</p>
+<p>C99 + libm，OpenMP可选（关掉只是慢）</p>
+<p>|
+|</p>
+<p>网络</p>
+<p>|</p>
+<p>需要HF token，下载以小时计</p>
+<p>|
+|</p>
+<p>权重</p>
+<p>|</p>
+<p>不下也能跑完全部无权重测试</p>
+<p>|</p>
+<hr>
+<h3 id="五边界哪些话能说哪些不能说">五、边界：哪些话能说，哪些不能说</h3>
+<p>先说结论：“8GB跑2.78万亿参数”这句话，字面是假的，机制是真的。差的三个前提必须补上。</p>
+<p><strong>第一，权重在磁盘上。</strong> 那1.56TB的checkpoint加109GB的打包主干，门票是约1.7TB的空闲磁盘，还得有HF token才能下载。内存里的8.24GB是”这一次运行的工作集”，不是模型本身。说”装进8GB”和说”在8GB里跑起来”，差的是同一句话里最重要的动词。</p>
+<p>第二，速度是半分钟一个token。26.5秒（8GB档）、19.8秒（64GB档）、5.6秒（128GB以上）。作者自己写得很直白：“我从没打算让它服务任何人。“仓库里还有一份更硬的证据：Jetson Orin Nano Super上单token跑通，峰值内存2.57GiB，四轮token与logits的SHA-256完全一致，但每轮949秒——主干走内置NVMe，专家走外置机械盘。这份数据比8GB那台更有说服力，因为它是四轮重复且哈希相同的。</p>
+<p><strong>第三，数字要分级看。</strong></p>
+<p>|
+层级</p>
+<p>|</p>
+<p>例子</p>
+<p>|</p>
+<p>可信度</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>计数与字节</p>
+<p>|</p>
+<p>12档内存输出逐个相同、每token恒读25.83GB、48倍缓存0命中</p>
+<p>|</p>
+<p>硬，不受调度影响</p>
+<p>|
+|</p>
+<p>秒表</p>
+<p>|</p>
+<p>26.5/19.8/5.6秒、1.69倍、5.4%大页收益</p>
+<p>|</p>
+<p>软，同配置三次实测spread达33%，作者自己把整页标成”单样本”</p>
+<p>|
+|</p>
+<p>单样本推断</p>
+<p>|</p>
+<p>主干优先相对专家优先的1.69倍</p>
+<p>|</p>
+<p>方向可信（秩相关−0.886/−0.714），倍数不要引用</p>
+<p>|</p>
+<p>功能缺口也要说清楚：</p>
+<ul>
+<li>
+<p><strong>没有chunked prefill</strong>。21000 token的prompt是一次性的二次复杂度前向，基本跑不完。这意味着它只能在”短问题”上用，而短问题恰恰是最不需要2.78万亿参数的场景——这是个真实的产品错配，作者自己也没回避。</p>
+</li>
+<li>
+<p><strong>没有GPU</strong>。如果哪天有卡，这套流式设计的大部分收益会立刻消失，因为HBM带宽是NVMe的几十倍。</p>
+</li>
+<li>
+<p><strong>没有质量评测</strong>。仓库测的是引擎是否等价于参考实现，不是K3本身好不好用。想看能力，得去官方评测。</p>
+</li>
+<li>
+<p><strong>批次只支持贪心</strong>。这不是偷懒：贪心才能保证跨内存档位逐位一致，采样会让”同一份输出”这句话失效。</p>
+</li>
+</ul>
+<p>如果要在自己项目里复用这套思路，还缺三块：一是chunked prefill，把长prompt切成可流式的段，否则长上下文的门槛永远过不去；二是KV的分页与换出，权重既然能流式，KV按理也能；三是采样与批处理，现在的贪心是为了可验证，真要用得补上温度和批。这三块本身都不难，难的是它们每一个都会削弱”逐位相同”这个性质——所以作者是选择不做，而不是做不好——这两件事在README里是分开写的。</p>
+<p>还有一处口径要对齐：176KB是v1.0在Linux上的数字。到v1.1加了chat、sampler、状态管理，源码变成十个C文件；我在macOS arm64构建的<code>__text</code>是195KB、文件328KB。量级结论不变，但引用时得带平台和版本。</p>
+<hr>
+<h3 id="六这个项目真正教了什么">六、这个项目真正教了什么</h3>
+<p>如果只记一句话：把”跑得动”拆成”哪些字节必须常驻”，是这类超大模型在消费级硬件上唯一的出路。</p>
+<p>再记三句可操作的：</p>
+<ol>
+<li>
+<p><strong>先量分布，再定分配</strong>——专家缓存48倍容量0命中，说明”给多少”之前必须先回答”给谁”。这个顺序反了，就是在为不存在的热点付钱。</p>
+</li>
+<li>
+<p><strong>把精度契约写出来</strong>——“我不逐位等于谁、但我保证差在1e-16量级、门槛卡在1e-6”，是优化敢放手的前提。写不出这句话，说明你还没想清楚这个内核在数学上做了什么。</p>
+</li>
+<li>
+<p><strong>测试要能测出错误实现</strong>——每写一个夹具就问一句”如果这里写错了，这条测试会红吗”，不会红的测试就删掉。作者那句复盘值得抄下来：夹具只能证明某个安排被处理了，只有枚举能证明没有漏掉的安排。</p>
+</li>
+</ol>
+<p>至于它慢：半分钟一个token，确实是给人看的，不是给服务用的。但它证明了一件事——同一份权重，从2.57GiB的Jetson到128GB的工作站，输出逐字节相同。这个性质比速度值钱，因为它是可验证的。</p>
+<hr>
+<h3 id="参考">参考</h3>
+<ul>
+<li>
+<p>仓库：<code>github.com/FareedKhan-dev/kimi-k3-in-c</code>，Apache-2.0，v1.1.0</p>
+</li>
+<li>
+<p>结构与内核：<code>src/core/k3_ops.c</code>、<code>src/io/k3_trunk.c</code>、<code>docs/ARCHITECTURE.md</code></p>
+</li>
+<li>
+<p>性能与测量：<code>docs/PERFORMANCE.md</code>、<code>docs/data/</code>（内存阶梯、Jetson四轮原始结果）</p>
+</li>
+<li>
+<p>被否决的方案：<code>docs/notes/compressed-trunk.md</code>、<code>docs/notes/int8-draft-container.md</code></p>
+</li>
+<li>
+<p>本地复现记录：<code>kimi-k3-in-c-research/build.log</code>、<code>test-run.log</code></p>
+</li>
+<li>
+<p>模型报告：Kimi Team，《Kimi K3: Open Frontier Intelligence》，arXiv:2607.24653</p>
+</li>
+</ul>
+<hr>
+<p>写到这儿，回到那个最容易被跳过的问题：这个”8GB”到底能拿来干什么？我的答案是——它不是给你跑生产推理的，它是给你在没有H100的时候，把一个新模型的结构、权重、数值路径完整走一遍的。你最近一次为了”看清楚一个模型”而重写推理路径，是什么时候？</p>
+<blockquote>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。 关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p>
+</blockquote></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/f7T0Pq8ZU0VXFemFHaL5QQ" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E8%AF%BB%E4%B9%A6/">读书</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/12/wechat-2247484208-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">AutoResearch：算法优化自动进行</span></a><a class="article-nav__item article-nav__item--next" href="/2026/11/07/wechat-2247484173-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">16GB单卡怎么微调Qwen3：从SFT到GRPO的四个步骤</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#概述">概述</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一为什么装不下不是容量问题">一、为什么”装不下”不是容量问题</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#二四条流把内存变成一个旋钮">二、四条流：把内存变成一个旋钮</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三四个决定四种可迁移的手法">三、四个决定，四种可迁移的手法</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#四动手没有权重也能验到逐位相等">四、动手：没有权重也能验到”逐位相等”</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#五边界哪些话能说哪些不能说">五、边界：哪些话能说，哪些不能说</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#六这个项目真正教了什么">六、这个项目真正教了什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#参考">参考</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/10/26/wechat-2247483991-1/">许愿式编程：当7岁的糖果说“我想做一个杀猪游戏”</a></h3><p class="post-card__desc">许愿式编程：当7岁的糖果说“我想做一个杀猪游戏”糖果不到8岁。本文讲述她如何在AI的帮助下实现了自己的想法。</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-10-26</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/08/25/wechat-2247483935-1/">佛教完全入门：从历史到寺庙的通俗科普</a></h3><p class="post-card__desc">佛教完全入门：从历史到寺庙的通俗科普。这是一篇面向零基础读者的佛教科普长文，供感兴趣的读者参考。读完之后，你将了解佛教从</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-08-25</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>38 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

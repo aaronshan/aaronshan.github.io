@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上 | 中龄程序猿</title><meta name="description" content="两个免root的手机 Agent，一个 4325 星，一个 721星，路线完全相反：一个自己写1500行adb 去借 shell 身份，一个靠无障碍加 Shizuku。有意思的是，两条路最后都写了同一个20 行的类。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/02/wechat-2247484054-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上 | 中龄程序猿"><meta property="og:description" content="两个免root的手机 Agent，一个 4325 星，一个 721星，路线完全相反：一个自己写1500行adb 去借 shell 身份，一个靠无障碍加 Shizuku。有意思的是，两条路最后都写了同一个20 行的类。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/02/wechat-2247484054-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484054-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上 | 中龄程序猿"><meta name="twitter:description" content="两个免root的手机 Agent，一个 4325 星，一个 721星，路线完全相反：一个自己写1500行adb 去借 shell 身份，一个靠无障碍加 Shizuku。有意思的是，两条路最后都写了同一个20 行的类。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484054-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上","description":"两个免root的手机 Agent，一个 4325 星，一个 721星，路线完全相反：一个自己写1500行adb 去借 shell 身份，一个靠无障碍加 Shizuku。有意思的是，两条路最后都写了同一个20 行的类。","datePublished":"2026-11-02T09:00:00.000Z","dateModified":"2026-11-02T09:00:00.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/02/wechat-2247484054-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484054-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上</h1><p class="article-desc">两个免root的手机 Agent，一个 4325 星，一个 721星，路线完全相反：一个自己写1500行adb 去借 shell 身份，一个靠无障碍加 Shizuku。有意思的是，两条路最后都写了同一个20 行的类。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-02T09:00:00.000Z">2026-11-02</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484054-1/cover.jpg" alt="没有root操作手机：两个热门Agent开源项目，最后撞在同一行代码上"></figure><div class="article-grid"><div class="article-content"><div class="prose"><p>10 月 27 日和 10 月 29 日，GitHub 上先后出现两个安卓项目。</p>
+<p>一个叫 DSH-Android，一个叫 Mika。</p>
+<p>地址分别是:</p>
+<ul>
+<li>
+<p><a href="https://github.com/jackwener/DSH-Android">https://github.com/jackwener/DSH-Android</a></p>
+</li>
+<li>
+<p><a href="https://github.com/wangzan101/Mika%E3%80%82">https://github.com/wangzan101/Mika。</a></p>
+</li>
+</ul>
+<p>到今天，一个721star，一个4325 star。</p>
+<blockquote>
+<p>注：star数时刻在变动，该数字为文章撰写时的数值。</p>
+</blockquote>
+<p>两个都不需要root，都装一个 APK 就能让 AI 替你操作手机，都用 Kotlin 写，都是 Apache-2.0。</p>
+<p>路线却完全相反。</p>
+<p>上一篇<a href="https://mp.weixin.qq.com/s?__biz=MzU5ODExNDg2Nw==&#x26;mid=2247484045&#x26;idx=1&#x26;sn=92e92b6d8b3d627923bf75d089dcae0e&#x26;scene=21#wechat_redirect">《不到 48 小时 1923 星：没有 root，AI 怎么操作手机？》</a>拆解了 Mika 怎么用无线调试换到 shell 身份。后台收到最多的一句话是：它到底怎么拿到 shell 的？</p>
+<p>这篇把这个问题讲透，顺便回答另一件更有意思的事：另一个项目选了看起来更省事的路，为什么在一个更隐蔽的地方撞了同一堵墙。</p>
+<h2 id="先把-root-说清楚">先把 root 说清楚</h2>
+<p>安卓的底层是 Linux。Linux 里有个超级用户，uid 0，习惯上叫 root。</p>
+<p>root 能做任何事：改系统文件、装内核模块、读任何 App 的数据、伪造任意权限。</p>
+<p>普通 App 的 uid 是装机时随机分配的，比如 10234。它能碰的只有自己那一个目录，加上系统明确开放给你的那些接口。</p>
+<p>而手机厂商把大部分系统接口锁在几个特权 uid 后面。想要注入触摸事件、想建一块虚拟屏、想把别的 App 拉到指定屏幕上，全在这一类里——要么要求 <code>signature</code> 级权限（跟系统同签名），要么要求 <code>privileged</code>（装在 <code>/system/priv-app</code>），要么干脆只对 uid 0、1000、2000 开放。</p>
+<p>这就是为什么「让 AI 操作手机」这件事，绕不开提权。</p>
+<h3 id="那为什么不直接-root">那为什么不直接 root</h3>
+<p>传统做法是刷 root：解锁 bootloader、刷 Magisk、装一个 su 二进制。</p>
+<p>代价很实在：解锁 bootloader 会清空数据，很多机型还会永久失去保修；银行、支付、部分游戏会检测到 root 直接拒绝运行；系统 OTA 更新会失败，得手动刷；一旦 su 被恶意 App 调起来，整台机器就没了。</p>
+<p>所以「免 root」三个字，问的其实是同一件事：<strong>能不能不碰内核、不刷机，也拿到那几个特权接口？</strong></p>
+<p>能。这篇讲的两种路子，都是在回答它。</p>
+<h2 id="先说-shell-身份是什么">先说 shell 身份是什么</h2>
+<p>uid 2000。</p>
+<p>在安卓上，这个 uid 叫 shell，是你用 adb 连上手机后得到的那个身份。</p>
+<p>它能做的事，普通 App 一件都做不了：注入触摸事件、创建虚拟屏、把 Activity 启动到指定屏幕、移动任务栈。</p>
+<p>Mika 和 DSH 都要这个东西。区别在怎么拿。</p>
+<h2 id="mika-的路自己当-adb-客户端">Mika 的路：自己当 adb 客户端</h2>
+<p>上一篇文章里写过一句「手机自己就是 adb 服务端」，容易被读成「它执行了 adb 命令」。</p>
+<p>实际是相反的：Mika 在 App 里实现了 adb 客户端。</p>
+<p>安卓 11 起有个无线调试，打开后手机的 adbd 会监听一个端口，等你来连。Mika 就扮演那个来连的角色——SPAKE2 配对、TLS 1.3 握手、开 shell 通道，约 1500 行，在 <code>core/adb/</code> 下。</p>
+<p>通道建好之后，它往设备里送这一行：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>( echo "$n" | CLASSPATH=&#x3C;base.apk> setsid app_process /system/bin \</span></span>
+<span class="line"><span>    --nice-name=&#x3C;pkg>:helper \</span></span>
+<span class="line"><span>    com.wangzan101.mika.shell.HelperMain &#x3C;pkg> &#x3C;uid> &#x3C;certPin> >/dev/null 2>&#x26;1 &#x26; )</span></span></code></pre>
+<p><code>app_process</code> 是 ART 的启动器。它能在不安装任何东西的前提下，直接跑一个 main 类。</p>
+<p>关键在于这行命令由谁启动。命令是经 adbd 送进设备的，所以新进程继承 adbd 的身份，uid 2000。</p>
+<p><code>setsid</code> 让它脱离 adbd 的会话。之后 adb 断了、无线调试关了，这个进程还活着。</p>
+<p>于是 Mika 有了一个常驻的、uid 2000 的、跑自己代码的进程。</p>
+<h2 id="dsh-的路请-shizuku-代劳">DSH 的路：请 Shizuku 代劳</h2>
+<p>DSH 用另一种办法。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private val args = Shizuku.UserServiceArgs(</span></span>
+<span class="line"><span>    ComponentName(BuildConfig.APPLICATION_ID, ShellUserService::class.java.name),</span></span>
+<span class="line"><span>).daemon(false).processNameSuffix("shell")</span></span></code></pre>
+<p>Shizuku 是 rikka 写的一个开源工具：用户装它、用 adb 或 root 启动一次，它就以 shell 身份常驻，然后允许别的 App 通过 binder 请它办事。</p>
+<p><code>UserServiceArgs</code> 是它的一个能力——请 Shizuku fork 一个进程，以 shell uid 跑你指定的类。</p>
+<p>所以 DSH 也有一个 uid 2000 的独立进程，叫 <code>ShellUserService</code>，实现了一个 binder 接口 <code>IShellService</code>。</p>
+<p><strong>两条路最后到的是同一个地方</strong>：一个 uid 2000、跑自己代码的常驻进程。</p>
+<p>差别只在谁帮你 fork。Mika 自己写 adb 客户端去敲 adbd 的门，DSH 请 Shizuku 代劳。</p>
+<p>代价也就跟着不同：</p>
+<p>|</p>
+<p>|</p>
+<p>Mika</p>
+<p>|</p>
+<p>DSH</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>要装第二个 App</p>
+<p>|</p>
+<p>不用</p>
+<p>|</p>
+<p>要装 Shizuku</p>
+<p>|
+|</p>
+<p>用户操作</p>
+<p>|</p>
+<p>输 6 位配对码</p>
+<p>|</p>
+<p>Shizuku 自己那套流程</p>
+<p>|
+|</p>
+<p>重启之后</p>
+<p>|</p>
+<p>没 Wi-Fi 就废</p>
+<p>|</p>
+<p>Shizuku 要重启服务</p>
+<p>|
+|</p>
+<p>自己写的代码</p>
+<p>|</p>
+<p>1500 行 adb 协议</p>
+<p>|</p>
+<p>一个 SDK 依赖</p>
+<p>|</p>
+<p>这就解释了 Mika 为什么要自己啃 1500 行协议：它能省掉「再装一个 App」，代价是自己扛协议实现，以及那个致命的 Wi-Fi 依赖。</p>
+<p><img src="/images/wechat/wechat-2247484054-1/01.png" alt="图片 1"></p>
+<p>两条权限路径：Mika 自己写 adb 客户端去敲 adbd 的门，DSH 请 Shizuku fork 一个 UserService，最后到的是同一个地方</p>
+<h2 id="无障碍能做到哪一步">无障碍能做到哪一步</h2>
+<p>DSH 不是一上来就要 shell。</p>
+<p>它的默认路径是无障碍服务，装完开了权限就能用，Android 10 就够。</p>
+<p>无障碍能干的：读元素树（可以按 displayId 读指定屏）、点击滑动拖拽（<code>dispatchGesture</code> 也带 displayId）、截图（<code>takeScreenshot</code>）、输入文字。</p>
+<p>无障碍干不了的，恰好是 Mika 的全部卖点：</p>
+<p>|
+能力</p>
+<p>|</p>
+<p>无障碍</p>
+<p>|</p>
+<p>要 shell</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>读元素树、点击、输入</p>
+<p>|</p>
+<p>能</p>
+<p>|</p>
+<p>能</p>
+<p>|
+|</p>
+<p>建一块虚拟屏</p>
+<p>|</p>
+<p>不能</p>
+<p>|</p>
+<p>能</p>
+<p>|
+|</p>
+<p>把 App 启动到指定屏</p>
+<p>|</p>
+<p>不能</p>
+<p>|</p>
+<p>能</p>
+<p>|
+|</p>
+<p>移动任务栈</p>
+<p>|</p>
+<p>不能</p>
+<p>|</p>
+<p>能</p>
+<p>|
+|</p>
+<p>单独静音某个 App</p>
+<p>|</p>
+<p>不能</p>
+<p>|</p>
+<p>能</p>
+<p>|</p>
+<p>后四件事全在 <code>IShellService</code> 里。</p>
+<p>于是两个项目的默认形态完全不一样。</p>
+<p>Mika 一上来就建屏，因为它卖的就是「不占你的屏幕」。DSH 默认在你的屏幕上操作，只有配好 Shizuku 才有「不打扰模式」，而且要求 Android 14 以上。</p>
+<p>这不是设计品味不同，是能力边界的必然结果。</p>
+<h2 id="两条路撞在同一行代码上">两条路撞在同一行代码上</h2>
+<p>这是这篇最想讲的地方。</p>
+<p>两个项目的代码里，都有一个叫 <code>ShellContext.kt</code> 的文件。</p>
+<p>Mika 的注释是中文的：</p>
+<blockquote>
+<p>不能用 getSystemService：那样拿到的 DisplayManager 绑的是系统上下文，包名与 shell uid 对不上。</p>
+</blockquote>
+<p>DSH 的注释是英文的：</p>
+<blockquote>
+<p>The process runs as the shell uid, but the ActivityThread system context it borrows reports package “android”.</p>
+</blockquote>
+<p>说的是同一件事。</p>
+<h3 id="为什么会有这个问题">为什么会有这个问题</h3>
+<p>系统服务在建虚拟屏之前会核一件事：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>final int callingUid = Binder.getCallingUid();</span></span>
+<span class="line"><span>if (!validatePackageName(callingUid, packageName)) {</span></span>
+<span class="line"><span>    throw new SecurityException("packageName must match the calling uid");</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>你的进程是 uid 2000，但你借来的那个 Context 报的包名是 <code>android</code>——ActivityThread 的系统上下文属于 framework。</p>
+<p>uid 2000 对应的包名是 <code>com.android.shell</code>。</p>
+<p><code>validatePackageName(2000, "android")</code> 返回 false。四组 flag 全部抛异常，建屏失败。</p>
+<p><img src="/images/wechat/wechat-2247484054-1/02.png" alt="图片 2"></p>
+<p>同一个校验，两条路都要过：进程是 uid 2000，Context 却报 android，除了拿 ShellContext 把包名改对，没有别的办法</p>
+<h3 id="解法几乎一模一样">解法几乎一模一样</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>internal class ShellContext(base: Context) : ContextWrapper(base) {</span></span>
+<span class="line"><span>    override fun getPackageName(): String = "com.android.shell"</span></span>
+<span class="line"><span>    override fun getOpPackageName(): String = "com.android.shell"</span></span>
+<span class="line"><span>    override fun getApplicationContext(): Context = this</span></span>
+<span class="line"><span>    override fun getAttributionSource(): AttributionSource =</span></span>
+<span class="line"><span>        AttributionSource.Builder(2000).setPackageName("com.android.shell").build()</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>光有这个还不够。<code>DisplayManager</code> 会缓存创建它的那个 Context，所以要反射用这个 wrapper 重新造一个：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>DisplayManager::class.java.getDeclaredConstructor(Context::class.java)</span></span>
+<span class="line"><span>    .apply { isAccessible = true }.newInstance(context)</span></span></code></pre>
+<p>两个项目都做了这一层，四个方法覆盖得一模一样，包括 Android 12 之后要单独补的 <code>AttributionSource</code>。</p>
+<p>只有一处不同。</p>
+<p>Mika 的 <code>ShellContext.create()</code> 里多一条兜底：如果当前进程还没有 <code>ActivityThread</code>（不是 <code>app_process</code> 起的那种），它会用反射自己造一个——设 <code>sCurrentActivityThread</code>、<code>mSystemThread</code>，再补一个 <code>ConfigurationController</code> 和一个 <code>Instrumentation</code> 出来的 Application。</p>
+<p>DSH 不需要这层，因为 Shizuku 的 UserService 一定是 <code>app_process</code> 起的，<code>ActivityThread</code> 必然存在。</p>
+<p>但 Mika 的 Helper 也是 <code>app_process</code> 起的。多写的这三十行，说明作者当时不确定，干脆两种都兜住。</p>
+<h3 id="两个来源">两个来源</h3>
+<p>Mika 的 <code>ShellContext.kt</code> 开头挂着一段 Apache-2.0 的归属声明，写着改编自 scrcpy。</p>
+<p>DSH 那边，是一个用户在 issue #34（<a href="https://github.com/jackwener/DSH-Android/issues/34%EF%BC%89">https://github.com/jackwener/DSH-Android/issues/34）</a> 里自己推出来的。五步：</p>
+<p>一、现象：同一个 APK，v0.3.0 建屏抛异常，v0.1.2 在同一台机器上不抛。</p>
+<p>二、定位：dump 出的异常是 <code>packageName must match the calling uid</code>，指向 <code>DisplayManagerService.createVirtualDisplay</code> 里的一次校验。</p>
+<p>三、对照：那台机器上 scrcpy 能建出屏来，所以不是系统版本的问题。</p>
+<p>四、读 scrcpy 源码：它有个 <code>FakeContext</code>，<code>getPackageName()</code> 硬编码成 <code>com.android.shell</code>。</p>
+<p>五、结论：uid 2000 对应的包名是 <code>com.android.shell</code>，而 <code>SystemContext.get().getPackageName()</code> 报的是 <code>android</code>。</p>
+<p>作者回复「判断完全正确」，v0.3.1 修了，还补了一句：逐检查了这个服务里其他传包名的系统调用，只有这一处受影响。</p>
+<p>一个是照着 scrcpy 写的，一个是别人指路才发现的。</p>
+<p>这件事说明的不是水平高低。<strong>是这层 API 强制你这么写。</strong></p>
+<p>任何想以 shell 身份建虚拟屏的人，最后都会走到这个 20 行的 ContextWrapper 上。绕不过去。</p>
+<p>那条校验也不是新加的。issue 里的人用旧版在同一台机器上跑，报的是另一句文案 <code>packageName must match the owner uid</code>，同一处校验，只是措辞改过。</p>
+<h2 id="第二个坑两边也各写了一遍">第二个坑，两边也各写了一遍</h2>
+<p>如果只是 Context 一处巧合，还能说是借鉴。</p>
+<p>但还有一处。</p>
+<p>场景：AI 让目标 App 从后台拉起另一个 App。点通知、点分享、跳支付、跳登录，都算。</p>
+<p>系统会把新页面放到发起者的屏幕上。但很多路径最终落到了用户的主屏。</p>
+<p>结果很荒谬：你正在刷手机，屏幕上突然弹出一个 App；AI 那一侧毫无变化，它以为没点上，一遍遍重试。</p>
+<p>Mika 的解法是 97 行纯 Kotlin 的判定，<code>MainScreenSpill</code>，判成 <code>PullBack</code> 就 <code>moveRootTaskToDisplay</code> 挪回来。</p>
+<p>DSH 的解法在 <code>AgentScreen.kt</code> 里，一个 <code>spilled()</code> 函数加上任务表：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>fun spilled(rows: List&#x3C;TaskRow>, topBefore: Int?, excluded: Set&#x3C;String>, handedOver: Int?): TaskRow? {</span></span>
+<span class="line"><span>    val top = rows.firstOrNull { it.displayId == Display.DEFAULT_DISPLAY } ?: return null</span></span>
+<span class="line"><span>    if (top.taskId == topBefore || top.taskId == handedOver) return null</span></span>
+<span class="line"><span>    if (!top.standard || top.packageName.isEmpty() || top.packageName in excluded) return null</span></span>
+<span class="line"><span>    return top</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>判据几乎一样：主屏最上面换了人、换的是普通 App（不是桌面和最近任务）、不是接管中换的。</p>
+<p>连例外都一样——系统那个「用哪个 App 打开」的选择器不能挪，挪了它要按新屏重建，有的重建时自己就关了。Mika 留给用户选，DSH 也留给用户选，代码里专门有个 <code>isChooser()</code>。</p>
+<p>两个人在不同的时间、不同的架构下，写出了同一组判据。</p>
+<p>这不是巧合，是这个功能的固有形状。</p>
+<h2 id="一处有意为之的不同flag">一处有意为之的不同：flag</h2>
+<p>建虚拟屏要传一组 flag。这组 flag 决定这块屏能不能被 App 用、能不能收触摸、会不会抢主屏焦点。</p>
+<p>Mika 是固定一套，注释写得很实在：</p>
+<blockquote>
+<p>这些 flag 没有文档可查，只能一个版本一个版本试。</p>
+</blockquote>
+<p>DSH 把它变成了运行时的降级链：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private fun displayFlags(): List&#x3C;Int> {</span></span>
+<span class="line"><span>    val base = PUBLIC or OWN_CONTENT_ONLY or SUPPORTS_TOUCH or ROTATES_WITH_CONTENT</span></span>
+<span class="line"><span>        or DESTROY_CONTENT_ON_REMOVAL or TRUSTED</span></span>
+<span class="line"><span>    val t = base or OWN_DISPLAY_GROUP or ALWAYS_UNLOCKED or TOUCH_FEEDBACK_DISABLED</span></span>
+<span class="line"><span>    val u = t or OWN_FOCUS or STEAL_TOP_FOCUS_DISABLED</span></span>
+<span class="line"><span>    return listOfNotNull(</span></span>
+<span class="line"><span>        u.takeIf { Build.VERSION.SDK_INT >= 34 },   // 最新最全</span></span>
+<span class="line"><span>        t.takeIf { Build.VERSION.SDK_INT >= 33 },</span></span>
+<span class="line"><span>        base,</span></span>
+<span class="line"><span>        PUBLIC or OWN_CONTENT_ONLY or TRUSTED,      // 兜底</span></span>
+<span class="line"><span>    )</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>从多到少试，哪一组能过就用哪一组。同时把每组失败的异常原文存下来，<code>lastDisplayError()</code> 交给模型看。</p>
+<p>这是把「一个版本一个版本试」从人工经验，变成了每次开机都自动跑一遍的策略。</p>
+<h2 id="引擎一个自己写一个把-node-塞进来">引擎：一个自己写，一个把 Node 塞进来</h2>
+<p>Mika 的 agent 循环、工具调度、提示词全是 Kotlin，从 adb 协议到读屏管线每一层都看得到。</p>
+<p>DSH 走另一条：它跑的是完整的 DeepSeek Harness，把 Node 24 编译成 <code>libnode.so</code> 塞进 APK，在 <code>:engine</code> 进程里跑。</p>
+<p>代价是一串安卓特有的坑。</p>
+<p><code>AT_SECURE</code> 是第一道：zygote fork 出来的 App 进程带这个标志，Node 的 <code>SafeGetenv</code> 因此忽略 <code>NODE_OPTIONS</code>、忽略 <code>TMPDIR</code>、忽略 CA 证书——但 <code>process.env</code> 里明明看得见它们。所以参数要在 argv 里再传一遍，再用一个 preload 脚本把 <code>os.tmpdir()</code> 和证书补回来。</p>
+<p><code>TZ</code> 是第二道：Node 的 ICU 在安卓上找不到时区，不手动传就全按 UTC 算。</p>
+<p>第三个算不上坑，是规矩：安卓只允许从 <code>nativeLibraryDir</code> 执行 <code>.so</code>，所以 <code>rg</code> 和 <code>node</code> 都得改名成 <code>librg.so</code>、<code>libdshnode.so</code> 才能装进去。</p>
+<p>换来的是 dsh 一行不改——技能、MCP、子 agent、网页搜索全部能用。</p>
+<p>这个取舍很干净：自己写，控制力强、代码量大；搬引擎，功能全、要跟安卓的进程模型搏斗。</p>
+<p>两个安装包都不小，88 MB 和 110 MB，但构成完全不同。</p>
+<p>Mika 那 88 MB 里，占大头的是 ML Kit 的中文 OCR 模型。它选择随 APK 打包，不依赖 Google Play Services，所以完全离线，代价就是包大。</p>
+<p>DSH 那 110 MB 里，是 Node 24 运行时加上 dsh 那一整棵 JS 依赖树。</p>
+<p>一个把体积花在「看得懂中文界面」，一个花在「跑得动 Node」。</p>
+<h2 id="两张图看清全貌">两张图看清全貌</h2>
+<p>先把 Mika 的架构摆出来：</p>
+<p><img src="/images/wechat/wechat-2247484054-1/03.png" alt="图片 3"></p>
+<p>Mika：App 进程负责想，特权操作全穿过 Binder 交给 Helper 进程，再落到系统服务</p>
+<p>它的关键在中间那根线。App 进程里的每一个特权操作，都得穿过 Binder 到对面那个 uid 2000 的进程里做。</p>
+<p>DSH 是另一个形状：</p>
+<p><img src="/images/wechat/wechat-2247484054-1/04.png" alt="图片 4"></p>
+<p>DSH：engine 跑 dsh，App 进程靠无障碍就能直达系统，ShellUserService 是加装的一块</p>
+<p>右下那块是虚线。无障碍那条出口永远通，不需要任何特权；shell 那条是加装的。</p>
+<p>两张图放一起看，差别就一句话：</p>
+<p><strong>Mika 的 App 进程只负责想，动手的事全交给对面那个 uid 2000 的进程；DSH 的 App 进程自己能读能点，只是造屏和搬 App 得加装 shell。</strong></p>
+<h2 id="一份对照">一份对照</h2>
+<p>|</p>
+<p>|</p>
+<p>Mika</p>
+<p>|</p>
+<p>DSH-Android</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>权限路径</p>
+<p>|</p>
+<p>自研 adb → shell 进程</p>
+<p>|</p>
+<p>无障碍，可选 Shizuku</p>
+<p>|
+|</p>
+<p>最低版本</p>
+<p>|</p>
+<p>Android 13</p>
+<p>|</p>
+<p>Android 10；不打扰模式要 14</p>
+<p>|
+|</p>
+<p>装完直接用</p>
+<p>|</p>
+<p>配对后可以</p>
+<p>|</p>
+<p>无障碍可以，虚拟屏要 Shizuku</p>
+<p>|
+|</p>
+<p>锁屏之后</p>
+<p>|</p>
+<p>照常跑</p>
+<p>|</p>
+<p>不能操作别的 App</p>
+<p>|
+|</p>
+<p>断网</p>
+<p>|</p>
+<p>冷启动会废</p>
+<p>|</p>
+<p>不影响本地能力</p>
+<p>|
+|</p>
+<p>安装包</p>
+<p>|</p>
+<p>88 MB（arm64 单独打包 75.8 MB）</p>
+<p>|</p>
+<p>110 MB</p>
+<p>|
+|</p>
+<p>引擎</p>
+<p>|</p>
+<p>自研 Kotlin，约 13 万行</p>
+<p>|</p>
+<p>dsh + Node 24，Kotlin 34k 行 + JS 16k 行</p>
+<p>|
+|</p>
+<p>仓库</p>
+<p>|</p>
+<p>github.com/wangzan101/Mika</p>
+<p>|</p>
+<p>github.com/jackwener/DSH-Android</p>
+<p>|
+|</p>
+<p>star / fork</p>
+<p>|</p>
+<p>4325 / 826</p>
+<p>|</p>
+<p>721 / 78</p>
+<p>|</p>
+<p>star 差 6 倍，但这两件事不是同一个难度的。</p>
+<p>Mika 的卖点一句话说完：你看不见的那块屏上，AI 替你干活。GIF 一放，不需要解释。</p>
+<p>DSH 的卖点要解释很多：完整的 dsh、文件系统、系统设置、定时触发、SSH 连电脑。它的能力面宽得多，但第一眼看不出来。</p>
+<h2 id="你怎么选">你怎么选</h2>
+<p>想省事：手机是 Android 10 或 11，能接受 AI 在你眼前操作，装 DSH，开无障碍就能跑。</p>
+<p>想后台跑：不想被打断，能接受一次配对和 Wi-Fi 依赖，用 Mika。</p>
+<p>想抄一套机制：两个都读。<code>ShellContext</code> 那 20 行是通用答案，<code>spilled()</code> 和 <code>MainScreenSpill</code> 是同一道题的两个解法，对着看比看任何一个都快。</p>
+<h2 id="能搬走的四件事">能搬走的四件事</h2>
+<p>一、ShellContext。20 行，两个独立项目验证过，直接可用。注意 <code>getApplicationContext()</code> 必须返回 <code>this</code>，否则包的还是原来那层。</p>
+<p>二、flag 降级链。别写死一套 flag，按 SDK 版本从多到少试，把每组失败的原因留给日志。</p>
+<p>三、spill 检测。判据就三条：主屏换了人、是普通 App、不是接管中换的。剩下的全是例外处理（桌面、自己、系统选择器、用户刚点过）。</p>
+<p>四、引擎内嵌的两条路。要么自己写（可控），要么把 Node 编成 .so（功能全）。后者的第一道门槛不是编译，是 <code>AT_SECURE</code>。</p>
+<h2 id="一句话总结">一句话总结</h2>
+<p>两个项目都在没有 root 的安卓上操作 App，Mika 自己写 adb 客户端向 adbd 要 shell 身份，DSH 请 Shizuku 代劳，最后都得到一个 uid 2000 的常驻进程——也都在同一个 <code>ContextWrapper</code> 上，把包名从 <code>android</code> 改成 <code>com.android.shell</code>。</p>
+<h2 id="下一篇写什么你定">下一篇写什么，你定</h2>
+<p>后台回复或者直接留言,我会根据大家的兴趣和建议撰写内容。</p>
+<hr>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。</p>
+<p>关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/m8nTHv3OExtfMNMgfQBGNA" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2026/11/03/wechat-2247484080-1/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">大模型的Embedding层，为什么不能直接拿来做检索？</span></a><a class="article-nav__item article-nav__item--next" href="/2026/10/31/wechat-2247484045-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">不到48小时2k星：没有root，AI怎么操作手机？</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#先把-root-说清楚">先把 root 说清楚</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#那为什么不直接-root">那为什么不直接 root</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#先说-shell-身份是什么">先说 shell 身份是什么</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#mika-的路自己当-adb-客户端">Mika 的路：自己当 adb 客户端</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#dsh-的路请-shizuku-代劳">DSH 的路：请 Shizuku 代劳</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#无障碍能做到哪一步">无障碍能做到哪一步</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#两条路撞在同一行代码上">两条路撞在同一行代码上</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#为什么会有这个问题">为什么会有这个问题</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#解法几乎一模一样">解法几乎一模一样</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#两个来源">两个来源</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#第二个坑两边也各写了一遍">第二个坑，两边也各写了一遍</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一处有意为之的不同flag">一处有意为之的不同：flag</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#引擎一个自己写一个把-node-塞进来">引擎：一个自己写，一个把 Node 塞进来</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#两张图看清全貌">两张图看清全貌</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一份对照">一份对照</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#你怎么选">你怎么选</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#能搬走的四件事">能搬走的四件事</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一句话总结">一句话总结</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#下一篇写什么你定">下一篇写什么，你定</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a></h3><p class="post-card__desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

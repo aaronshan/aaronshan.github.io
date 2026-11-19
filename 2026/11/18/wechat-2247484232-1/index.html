@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>Agent该买还是该造，先看数据能不能出内网 | 中龄程序猿</title><meta name="description" content="内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加的三个问题，都写成了能直接回答是或否的形式。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/18/wechat-2247484232-1/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="Agent该买还是该造，先看数据能不能出内网 | 中龄程序猿"><meta property="og:description" content="内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加的三个问题，都写成了能直接回答是或否的形式。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/18/wechat-2247484232-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484232-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Agent该买还是该造，先看数据能不能出内网 | 中龄程序猿"><meta name="twitter:description" content="内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加的三个问题，都写成了能直接回答是或否的形式。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484232-1/cover.jpg"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Agent该买还是该造，先看数据能不能出内网","description":"内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加的三个问题，都写成了能直接回答是或否的形式。","datePublished":"2026-11-18T11:36:38.000Z","dateModified":"2026-11-18T11:36:38.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/18/wechat-2247484232-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484232-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.7Os63KlA.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span class="brand__mark" aria-hidden="true">山</span><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span>/</span><span>Agent该买还是该造，先看数据能不能出内网</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">Agent该买还是该造，先看数据能不能出内网</h1><p class="article-desc">内部Agent该买还是该造，第一道分叉不是功能对比，是数据能不能出内网。三档判定条件、一周到两周的验证方法、网关该不该加的三个问题，都写成了能直接回答是或否的形式。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-18T11:36:38.000Z">2026-11-18</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484232-1/cover.jpg" alt="Agent该买还是该造，先看数据能不能出内网"></figure><div class="article-grid"><div class="article-content"><div class="prose"><h3 id="能买的时候别造">能买的时候别造</h3>
+<p>先说结论。内部agent这件事，绝大多数公司的正确路径是三段，不是一步到位：</p>
+<p>能直接买产品，就先买。买不到合适的，复用开源底座。只有在三种明确的情况下，才考虑全自研。</p>
+<p>先说清楚讨论范围。这里说的agent应用，指的是能接内部系统、替人跑业务流程的那种，不是写代码的编程助手。如果你要解决的只是写代码，直接用现成的编码agent就够了，那不在本文范围内。</p>
+<p>这三种情况是：要改agent循环的语义、合规不允许引入任何第三方运行时、agent本身就是你要卖的产品。</p>
+<p>三条都不符合，就别自研。我把判断条件、复用边界和几个必须自己把控的点写在下面，最后给三条路各自的上限。</p>
+<p><img src="/images/wechat/wechat-2247484232-1/01.png" alt="图片 1"></p>
+<p>图1｜三档决策</p>
+<p>图1｜三档决策：先看数据能不能出内网，再看有没有一个能写代码的人</p>
+<hr>
+<h3 id="为什么大家第一反应都是自研">为什么大家第一反应都是自研</h3>
+<p>我见过不少团队，一开始的讨论都是”我们要不要做个agent平台”。</p>
+<p>这个问法本身就是陷阱。它默认了一件事——agent能力需要自己造。但2026年这个前提已经不成立了：循环、工具调用、上下文压缩、流式协议，至少有三个MIT许可的开源项目做完了，而且都还在活跃维护。</p>
+<p>真正没人替你做的，是另外几件事。</p>
+<p>一个能读代码的agent遍地都是。能查你们工单系统、按部门隔离数据、每次操作都留下可追溯记录的agent，才是内部应用的价值所在。这部分和模型无关，和循环无关，只和你们自己的系统与组织结构有关。</p>
+<p>所以自研的第一个误区是：把力气花在循环上，把治理层留到最后。等到要上线时才发现，权限没设计、审计没埋点、模型凭证还散在客户端里。</p>
+<p>第二个误区更隐蔽：以为”自研”是一个开关，要么全用现成的，要么全自己写。实际上中间有很大一片空间——循环用开源的，治理层自己写，工具接自己的系统。这条路比两端都更常见。</p>
+<p>第三个误区是可控性的错觉。自己写的代码当然更可控，但可控不等于可维护。一套自研的循环加上配套的压缩、恢复、流式，稳定下来通常要三到六个月，这期间每个bug都得自己查。而开源项目里这些问题已经被几百个issue打磨过。可控性带来的收益，常常抵不过这段时间的消耗。</p>
+<p><img src="/images/wechat/wechat-2247484232-1/02.png" alt="图片 2"></p>
+<p>图2｜必须自己做的六件事</p>
+<p>图2｜必须自己做的六件事：权限、审计、工具契约、工具接入、上下文策略、网关</p>
+<hr>
+<h3 id="我把选择拆成三档">我把选择拆成三档</h3>
+<p>为了让讨论能落地，我把选择拆成三档，每档给了可判定的条件。条件不是”看情况”，是能直接回答是或否的。</p>
+<p>|
+档位</p>
+<p>|</p>
+<p>需同时满足</p>
+<p>|</p>
+<p>第一周该做什么</p>
+<p>|
+| --- | --- | --- |
+|</p>
+<p>第一档：直接用产品</p>
+<p>|</p>
+<p>数据可出内网；需求在厂商已覆盖的场景内；不需要agent调你们的写接口</p>
+<p>|</p>
+<p>让3个真实用户用起来</p>
+<p>|
+|</p>
+<p>第二档：复用开源底座</p>
+<p>|</p>
+<p>能提供模型端点；至少有1个能写代码的人；接受底座的许可证与迭代风险</p>
+<p>|</p>
+<p>一天跑通底座，三天接第一个内部系统</p>
+<p>|
+|</p>
+<p>第三档：全自研</p>
+<p>|</p>
+<p>满足至少一条：要改循环语义；合规禁止第三方运行时；agent本身是产品</p>
+<p>|</p>
+<p>两周做出端到端最小链路</p>
+<p>|</p>
+<p>表格里的顺序也是用法：自上而下走一遍，第一档成立就用第一档；不成立就落进第二档；第三档是例外，不是”能力强的升级选项”。下面统一用”第一档、第二档、第三档”指代这三行。</p>
+<p>怎么判断”需求在厂商已覆盖的场景内”？有个简单办法：把你最想做的三件事写下来，逐条问”这件事如果厂商明天改版，我要不要重新实现一遍”。</p>
+<p>三条里两条答案是”要”，说明你的需求和厂商的产品形态绑定不深，第一档成立。反过来，三条里两条都是”这是我自己的系统”，那就直接进第二档。</p>
+<p>另外还有一条隐含条件容易被忽略：如果你连”一个能写代码的人”都没有，那后两档都不成立，只能回到第一档。这不是能力问题，是资源约束——没有工程能力却硬上自研，最后大概率得到一个跑不起来也维护不了的半成品。</p>
+<hr>
+<h3 id="数据能不能出内网决定了第一道分叉">数据能不能出内网，决定了第一道分叉</h3>
+<p>这一条比”功能多不多”重要得多，但经常被放在最后讨论。</p>
+<p>如果数据可以出内网，第一档就成立。你可以直接买一个成熟的办公agent产品，一周内让业务方用起来。代价是数据经过厂商，能力上限由厂商的路线图决定，深度集成内部系统基本做不到。</p>
+<p>如果数据不能出内网，第一档直接排除，进入第二档。这时候要回答的问题变成：模型端点从哪来。</p>
+<p>两条路：一是用合规的托管服务，只把数据发到模型，不发到应用厂商；二是自建或私有部署模型。前者成本低得多，后者要看你们有没有推理资源。</p>
+<p>我见过一些团队卡在这里：合规要求”数据不出内网”，但内网里没有可用的模型。这种情况下真正的瓶颈是模型供给，不是agent框架，先解决前者再谈后者。</p>
+<p>现实里”能不能出内网”往往不是全有全无。更常见的是分级：公开信息可以出去，客户数据不行，代码和设计文档视情况。</p>
+<p>这种时候第一档不是不能用，而是要限定范围——让它只处理公开资料和非敏感文档，涉及客户数据的任务走私有部署。把这条界限提前划清楚，比直接放弃第一档划算得多。</p>
+<p>第二道分叉是”要不要接内部写接口”。</p>
+<p>只读查询（查工单、查文档、查指标）用现成产品加MCP就能覆盖一部分。但一旦要让agent下单、改配置、走审批，就必须自己控制工具层——因为写操作要权限、要审计、要能回滚，这三样厂商通常不给。</p>
+<p>走到这一步，就该问第二档具体选谁了。目前有三个MIT许可的实现值得看，取向差得很远。</p>
+<p>pi走极简，七个公开包，明确不提供权限系统，隔离交给容器。适合已经有治理方案、只想要一个干净循环的团队。</p>
+<p>deepseek-harness走全栈，公开包超过五十个，自带三平台沙箱，还把工具的输出也做成契约，连agent loop本身都是可替换的插件。适合要从零搭内部平台的团队。</p>
+<p>OpenClaw走网关路线，强项是渠道：二十多个IM加五个平台的原生应用。如果用户主要在飞书或企微里，它省下的适配工作量最大。</p>
+<p>三者的共同点是循环都能用，差别在治理层给多少、渠道要不要自己接。</p>
+<hr>
+<h3 id="复用开源的时候哪些必须自己做">复用开源的时候，哪些必须自己做</h3>
+<p>这一节是给第二档的。选了开源底座之后，有些事情仍然没人能替你做。</p>
+<p><img src="/images/wechat/wechat-2247484232-1/03.png" alt="图片 3"></p>
+<p>图3｜四层与治理</p>
+<p>图3｜四层与治理：底座覆盖下面三层，横切的那一层永远是你的活</p>
+<p>把agent应用拆开看，底座覆盖的是下面三层：编排、执行、推理。这三层它有现成实现，出了问题也能在社区找到答案。最上面的交互层通常给一个默认界面，要定制还得自己改。</p>
+<p>但它替不了你的是横切的那一条——治理。权限约束每一层的调用，审计记录每一层的动作，网关收口每一层的对外请求，工具契约卡住每一层的输入输出。这些事的答案在你的公司里，不在任何开源项目里。</p>
+<p>下面先讲五件，第六件是网关，单独用一章讲——它最容易做过头。</p>
+<h4 id="权限和安全预检是两件事">权限和安全预检是两件事</h4>
+<p>很多人把它们做成一套规则，结果业务方和安全侧的诉求互相打架。</p>
+<p>业务权限是”哪些部门能用哪些工具”，随组织架构调整，管理员可配。安全红线是”某些操作一律禁止”，由平台统一维护，用户不可覆盖。</p>
+<p>两者的变更节奏不同、审批人不同、粒度也不同。混在一起之后，任何一次调整都要同时说服两边的人。</p>
+<h4 id="审计日志第一天就要有">审计日志第一天就要有</h4>
+<p>不是上线前补。至少要记清这几项：谁、什么时候、让agent做了什么、调用了哪些工具、结果如何。单机阶段落在本地文件就行，不必等网关。</p>
+<p>还有一个容易漏的：工具调用的耗时和失败原因。出问题时这是唯一能复盘的东西，而且它决定了你能不能回答”这个功能到底有没有人用”。</p>
+<h4 id="工具契约要连输出一起管">工具契约要连输出一起管</h4>
+<p>大多数自研实现只校验输入（参数是否符合schema），不校验输出。</p>
+<p>后果是工具返回了什么模型就吃什么，字段缺失、类型不对、结构变了都没人发现，直到模型基于错误数据给出一个看似合理的答案。</p>
+<p>工具契约应该包含两部分：输入schema和输出schema。输出校验失败时，要么让工具重试，要么把错误作为结果回灌给模型，而不是静默放行。</p>
+<h4 id="工具接入有三种粒度先选最轻的">工具接入有三种粒度，先选最轻的</h4>
+<p>接内部系统时，很多人的第一反应是写SDK或者改服务端。其实有三档可选，成本差一个数量级。</p>
+<p>最轻的是MCP。如果内部系统已经有HTTP接口，写一个MCP server包一层就行，一个文件能跑，不动服务端。</p>
+<p>中间是sidecar。接口需要签名、需要网关鉴权的时候，加一个sidecar进程统一处理鉴权，MCP server只做协议转换。</p>
+<p>最重的是直连。改服务端加一个专用的agent接口，只有在需要严格控制调用频率、或者要做细粒度审批时才值得。</p>
+<p>先选最轻的。MCP接不上的时候再往上升，不要一开始就改服务端。</p>
+<h4 id="上下文压缩放在哪一侧">上下文压缩放在哪一侧</h4>
+<p>这个问题看起来是技术细节，其实由架构决定。</p>
+<p>如果你的架构是”每轮只发最后一条消息、完整历史在服务端”，那客户端根本拿不到完整transcript，压缩只能在服务端做。</p>
+<p>如果历史确实都在客户端，那就该客户端压，没必要多一跳。</p>
+<p>两种都行，但要想清楚。我见过一种糟糕的组合：历史在服务端，压缩也在客户端，结果压缩时看到的是残缺上下文，摘要质量一塌糊涂。</p>
+<hr>
+<h3 id="模型网关什么时候必须加">模型网关什么时候必须加</h3>
+<p>这是被问得最多的问题，也是最容易过度设计的地方。</p>
+<p>先给一个下限：只有一个用户、一个模型、一台机器的时候，不需要网关。直接调模型API就行，加一层只会增加延迟和运维成本。</p>
+<p>这里要分清两件事：网关代理的是模型和能力调用，审计是另一条线，两者不绑在一起。</p>
+<p>单用户场景下，审计落在本地文件就够——没有计费分摊，也没有多租户隔离，记清楚谁在什么时候调了什么工具，自己能查就行。</p>
+<p>一旦出现第二个用户，情况就变了：token用量要分摊、权限要隔离，这些数据必须在可信位置产生。客户端自己记的账，改一行代码就能造假。这时候加网关不只是为了省事，是因为只有服务端记录才可信。</p>
+<p>所以顺序通常是：先有本地审计，再有网关（因为多用户），然后审计数据顺路从网关走。网关不是审计的前提。</p>
+<p>出现以下任一情况，网关就该加了：</p>
+<p>需要给第二个用户计量。只要有两个人用，你就要回答”谁用了多少”，否则没法做配额，也没法解释账单。</p>
+<p>需要接第二种模型。两家厂商的消息格式、流式协议、错误码都不一样，抽象层迟早要做。晚做不如早做，因为越晚改动面越大。</p>
+<p>接入了一个花钱的能力。图片生成、语音合成、按次计费的搜索，这些如果不集中计量，很容易在某个下午被一次批量调用烧掉一个月预算。</p>
+<p>有一条要能随时改的安全策略。比如临时禁用某个模型的某个能力，或者拦掉一类URL。写在客户端就要发版，而桌面应用的版本覆盖率永远不齐。</p>
+<p><img src="/images/wechat/wechat-2247484232-1/04.png" alt="图片 4"></p>
+<p>图4｜网关的三个阈值</p>
+<p>图4｜网关的三个阈值：第二个用户、第二种模型、第一个花钱的能力</p>
+<p>网关的最简形态可以很小：一个反向代理，加一张”哪个团队能用哪个模型”的表。不需要拆服务，不需要独立部署，一个进程几百行就能跑。</p>
+<p>先把凭证和计量收进来，其余能力等有第二个需求再加。我见过一上来就把所有能力都拆成独立服务的，结果半年时间都花在运维上，业务功能一个没上。</p>
+<p>如果决定要加，还有一个判断标准，对每项能力问三个问题：</p>
+<p><strong>它是否需要持有客户端不该持有的凭证？</strong></p>
+<p><strong>它是否花钱，需要计量或限流？</strong></p>
+<p><strong>它的策略是否需要不发布就能改？</strong></p>
+<p>有一个是”是”就放网关，三个都是”否”就留在客户端。</p>
+<p>按这个标准，模型推理、搜索、生成、内部系统代理、身份票据、安全预检都该进网关。文件读写、代码检索、会话存储的本地副本不该进。</p>
+<p>最后一条值得单独说：文件读写包进网关是纯负担。延迟从毫秒变百毫秒，而且用户第一反应是”我的文件被上传了？“。我们试过，后来撤回来了——技术上只是解析结构、不上传内容，但信任成本一旦产生，解释是补不回来的。</p>
+<hr>
+<h3 id="验证一遍比看十篇对比有用">验证一遍，比看十篇对比有用</h3>
+<p>三档各自的验证方法不一样，但都该有明确的时限。超过时限还没结论，通常不是时间不够，是方向不对。</p>
+<h4 id="先用一周别写代码">先用一周，别写代码</h4>
+<p>第一档的验证最简单：找一个现成产品，让三到五个真实用户用一周。</p>
+<p>判据不是”能不能用”，是”第二天还打不打开”。如果第二天打开率明显下降，说明需求本身不成立，换框架也救不了。</p>
+<p>这一步花掉一周，我的估算是能省掉后面至少一个月的返工。</p>
+<h4 id="跑通一条链路再谈扩展">跑通一条链路再谈扩展</h4>
+<p>第二档的验证是两条命令加一次接入。下面拿pi和dsh举例，它们正好代表极简和全栈两条路，命令都来自各自仓库的README。</p>
+<p>pi的官方安装脚本会锁定依赖版本：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 官方脚本，安装时锁定全部依赖，生产环境用这条</span></span>
+<span class="line"><span style="color:#6F42C1">curl</span><span style="color:#005CC5"> -fsSL</span><span style="color:#032F62"> https://pi.dev/install.sh</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># npm方式不锁定传递依赖，只适合本地试用</span></span>
+<span class="line"><span style="color:#6F42C1">npm</span><span style="color:#032F62"> install</span><span style="color:#005CC5"> -g</span><span style="color:#005CC5"> --ignore-scripts</span><span style="color:#032F62"> @earendil-works/pi-coding-agent</span></span></code></pre>
+<p>dsh不需要预装，直接跑：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 默认在127.0.0.1:3080启Web UI，并尝试打开浏览器</span></span>
+<span class="line"><span>npx @deepseek-ai/dsh web</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 容器或SSH里跑加这个参数，否则会尝试调用不存在的浏览器</span></span>
+<span class="line"><span>npx @deepseek-ai/dsh web --no-open</span></span></code></pre>
+<p>跑通之后做一件事：接一个只读的内部系统。三天内接不上，说明你们的鉴权方案没想清楚，这时候不要继续加功能，先把鉴权理顺。</p>
+<p>dsh还有个命令能直接打印它启动时的完整插件配置树，每个条目都能自己patch替换。评估”它到底做了什么”时，这比读文档快得多：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 打印当前profile的完整配置树，不需要启动服务</span></span>
+<span class="line"><span>dsh --profile web --dump-config</span></span></code></pre>
+<h4 id="两周内必须有一条端到端链路">两周内必须有一条端到端链路</h4>
+<p>第三档的验证最严。两周之内，必须有一个真实用户能用它完整做完一件事。</p>
+<p>最小可用的形态是：一个模型、三个工具、一个对话界面、一份审计日志。缺一个都不算跑通。</p>
+<p>如果两周结束时你做完的是”框架”而不是”一条链路”，说明设计过度了，砍功能重来。</p>
+<hr>
+<h3 id="三条路各自的上限">三条路各自的上限</h3>
+<p>最后把三条路的天花板说清楚，这决定了你三年后会不会想推倒重来。</p>
+<p><img src="/images/wechat/wechat-2247484232-1/05.png" alt="图片 5"></p>
+<p>图5｜三条路的上限与下限</p>
+<p>图5｜三条路的上限与下限：买看厂商路线图，复用看治理投入，自研看团队规模</p>
+<p>第一档的上限是厂商的路线图。厂商做什么你才能用什么，厂商不做的你只能等。下限是厂商的稳定性——它涨价、改定价、砍功能，你没有太多办法。</p>
+<p>第二档的上限是你的治理投入。循环、工具协议、沙箱这些基础件开源项目会持续迭代，你能腾出的人力全部投在权限、审计、工具接入上，这部分恰好是别人替不了的。下限是底座的质量，选错了会持续还债。</p>
+<p>第三档的上限是你的团队规模。三五个人的平台团队能长期维护一套自研栈，一个人不行。下限也最低——没有足够的人，你会得到一个既不好用也改不动的系统。</p>
+<p>所以”要不要自研”这个问题，本质是问：你打算在这个方向上投入多少人、投多久。如果答案是一两个人加半年，选第二档。如果是三五个人长期投入，第三档才成立。</p>
+<p>还有一层要考虑：换档的成本不对称。</p>
+<p>从第一档换到第二档，主要成本是重新接一遍工具，历史数据基本带不走。</p>
+<p>从第二档换到第三档，成本集中在治理层。如果你的权限、审计、工具契约一直自己写，换底座时这部分能留下来，只需要换循环。反过来，如果一开始就依赖底座自带的权限模型，换档时这层要重写。</p>
+<p>这也是我建议治理层自己写的另一个理由：它让后面两次换档都便宜很多。</p>
+<hr>
+<h3 id="写在最后">写在最后</h3>
+<p>前面提到的三个项目，地址放这里。建议直接从README开始看，比任何二手解读都准——安装命令、依赖版本、失败判据都在里面。</p>
+<p>GitHub：<code>earendil-works/pi</code>、<code>deepseek-ai/deepseek-harness</code>、<code>OpenClaw/OpenClaw</code> 底层框架：<code>cordiverse/cordis</code></p>
+<p>你们现在卡在哪一步？是还没验证需求，还是底座跑通了但接不上内部系统？评论区说说具体情况，我挑几个典型的在下一篇里拆开讲。</p>
+<hr>
+<blockquote>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。 关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p>
+</blockquote></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/9a-Fdd-bL-DIftstMVTxNA" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><span></span><a class="article-nav__item article-nav__item--next" href="/2026/11/17/wechat-2247484221-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">133ms一帧，语音模型Haru不会因为你也开口就停下来</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#能买的时候别造">能买的时候别造</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#为什么大家第一反应都是自研">为什么大家第一反应都是自研</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#我把选择拆成三档">我把选择拆成三档</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#数据能不能出内网决定了第一道分叉">数据能不能出内网，决定了第一道分叉</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#复用开源的时候哪些必须自己做">复用开源的时候，哪些必须自己做</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#模型网关什么时候必须加">模型网关什么时候必须加</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#验证一遍比看十篇对比有用">验证一遍，比看十篇对比有用</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三条路各自的上限">三条路各自的上限</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#写在最后">写在最后</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a></h3><p class="post-card__desc">4000万小时真实语音训出的全双工模型Haru-4B：7.5Hz、64维latent、单步MeanFlow，一帧133m</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-17</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a></h3><p class="post-card__desc">AutoResearch：一次训练2小时，排队8到20小时，编码Agent的会话却只有10分钟。解法不是更强的模型，是把</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-12</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2026/11/07/wechat-2247484173-1/">16GB单卡怎么微调Qwen3：从SFT到GRPO的四个步骤</a></h3><p class="post-card__desc">一张16GB显卡，通过微调把Qwen3-1.7B的可用率从0%训到60.5%：180条数据、LoRA SFT、GRPO组</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2026-11-07</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro · Design inspired by tech.meituan.com</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>
