@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>（二）Bash shell? | 中龄程序猿</title><meta name="description" content="本文介绍了 Linux 下的 Bash Shell，包括 Shell 的概念、Bash 的功能与特点、变量设定与管理、命令重定向与管道命令等内容。"><link rel="canonical" href="https://www.shanruifeng.win/2012/11/26/csdn-8205832/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="（二）Bash shell? | 中龄程序猿"><meta property="og:description" content="本文介绍了 Linux 下的 Bash Shell，包括 Shell 的概念、Bash 的功能与特点、变量设定与管理、命令重定向与管道命令等内容。"><meta property="og:url" content="https://www.shanruifeng.win/2012/11/26/csdn-8205832/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="（二）Bash shell? | 中龄程序猿"><meta name="twitter:description" content="本文介绍了 Linux 下的 Bash Shell，包括 Shell 的概念、Bash 的功能与特点、变量设定与管理、命令重定向与管道命令等内容。"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"（二）Bash shell?","description":"本文介绍了 Linux 下的 Bash Shell，包括 Shell 的概念、Bash 的功能与特点、变量设定与管理、命令重定向与管道命令等内容。","datePublished":"2012-11-26T02:37:22.000Z","dateModified":"2012-11-26T02:37:22.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2012/11/26/csdn-8205832/","articleSection":"开发配置","keywords":"开发配置,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span>/</span><span>（二）Bash shell?</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><h1 class="article-title">（二）Bash shell?</h1><p class="article-desc">本文介绍了 Linux 下的 Bash Shell，包括 Shell 的概念、Bash 的功能与特点、变量设定与管理、命令重定向与管道命令等内容。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2012-11-26T02:37:22.000Z">2012-11-26</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>17 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>开发配置 · CSDN</span></div></header><div class="article-grid article-grid--no-toc"><div class="article-content"><div class="prose"><p>1、什么是 shell ？</p>
+<p>其实在接触 linux 之前我已经听过shell的大名，当时周围同学在聊shell编程，我对其一无所知。但令人惊奇的是，记忆力称得上糟糕的我竟然记住了这个名词。好了，废话少说。在上一篇<a href="http://blog.csdn.net/iam333/article/details/8186639"><strong>（一）Linux? Ubuntu or CentOS? Linux安装</strong></a>中，已经讲述过。计算机使用者通过界面（shell，KDE等）与内核（ Kernel ）进行交流，以控制计算机硬件执行我们想要实现的功能。shell的字面意思是壳，也即包裹在核心（Kernel）外面的壳。是我们使用者用来与核心沟通的工具之一。</p>
+<p>2、为什么要学习shell？</p>
+<p>现在linux做的相当人性化。例如ubuntu的窗口界面，已经能完成大部分用户常用的操作。所以，为什么还要学习shell呢？答：虽然基于X-window的操作界面已经相当完善，功能也相当强，但它们都只是将能利用到的软件整合在一起的一组应用程序，并非是一个完整的套件。所以，当你升级其他套件的管理模块时，配置会很麻烦。甚至不同发布版本所设定的X-window接口也不相同，学习起来也有困扰。另外，当远程连接时，文字接口的传输速度比较快。<strong>最重要的是：它可以让你更深入了解linux</strong>。或许作为一般用户只学习操作界面也能解决绝大多数问题，尝尝linux的鲜。但是作为系统管理者或者开发者，学习shell是必要的。</p>
+<p>3、Bash shell？</p>
+<p>知道什么是shell之后，大致了解一下shell的版本。具体的不再详谈，Unix中常见的shell一般有Bourne Shell（sh）、在sun里预设的C Shell、商业上常用的K Shell和TCSH等。linux中使用的shell是Bourne Again Shell（简称Bash），它是Bourne Shell的增强版本，基于GNU架构发展而来。而在linux中可以使用哪些shell呢？目前Linux (以 CentOS 6.x 为例) 有多少我们可以使用的shell呢？ 可以检查一下 /etc/shells 这个文件，发现有底下几种可以用的 shell：</p>
+<p>/bin/sh (已经被 /bin/bash 所取代)</p>
+<p>/bin/bash (就是 Linux 默认的 shell)</p>
+<p>/bin/tcsh (整合 C Shell ，提供更多的功能)</p>
+<p>/bin/csh (已经被 /bin/tcsh 所取代)</p>
+<p>既然有这么多种shell，到底该学习哪一种呢？linux中默认的shell是Bash shell，所以我们先学好它就可以了。</p>
+<p>4、Bash shell的功能</p>
+<p>bash兼容sh。主要功能有：</p>
+<p>1）命令记忆功能。bash能记忆使用过的命令，只需要在命令行处按上下键就可以找到之前/后输入的一个命令。在大多数发布版本中，默认的命令记忆功能可以记忆多达1000个命令。也即，你曾经下达过的命令几乎都被记录下来了。</p>
+<p>这些命令都记录在你的家目录（/home/用户名这个目录）内的.bash_history文件中。不过，~/.bash_history（<del>指家目录，即/home/用户名这个目录。）记录的是上一次登录时运行过的命令，本次登录输入的命令则存储在缓存中，当注销系统后才会被记录到</del>/.bash_history文件中。</p>
+<p>2）命令与文件补全功能（[tab]键的妙用）</p>
+<p>命令与文件补全功能可以让你：少打很多字；确定输入的数据正确。tab键的使用规则为：</p>
+<p>[Tab] 接在一串命令的第一个字的后面，则为命令补全；</p>
+<p>[Tab] 接在一串命令的第二个字以后时，则为文件补齐。</p>
+<p>指令补全：如果在执行命令的时不想按太多按键，例如指令pcprofiledump，如果你输入了 pcprofile 之后，再按下 [Tab] 键，那么 bash 马上会自动的将后面的 dump 接上来！如果有重复的指令呢？按下两次 [Tab] 将会列出所有重复的指令！</p>
+<p>文件名称补全：如果你用 vi 来读取某个文件时，例如 /etc/man.config，当你输入 vi /etc/man. 之后，直接按下 <tab> 键，则该文件名称就会被自动的补齐！</tab></p>
+<p>3）命令别名配置(alias)</p>
+<p>假如我需要知道这个目录底下的所有文件 (包含隐藏档) 及所有的文件属性，那么我需要使用 ls -al命令，稍微有些麻烦，有没有更快的办法？使用命令别名就可以。使用 alias将ls -al命令命名为lm，直接在bash中输入lm就可替代ls -al命令。具体做法为：</p>
+<p>alias lm=‘ls -al’</p>
+<p>4）工作控制(jobs)、前景背景控制</p>
+<p>这部分在之后的资源管理部分会详细论述。使用前、背景的控制可以让工作更为顺利。工作控制(jobs)的可以让我们随时将工作丢到背景中执行，而不怕不小心使用了 Ctrl + C 停掉该程序。也可以在单用户环境中，达到多任务的目的。</p>
+<p>5）Shell scripts</p>
+<p>不知道各位有没有听过批处理文件，就是讲一堆指令写到一个文件中。在 Linux 中的shell scripts功能则更为强大，可以将日常生活当中常需要下达的连续指令写成一个文件，该文件可以通过交互式的方式来进行主机的侦测工作，也可以根据 shell 提供的环境变量及相关指令来进行设计，简直就和程序设计语言的功能相当了。</p>
+<p>通配符(Wildcard)</p>
+<p>除了完整的字符串之外，bash 还支持许多的通配符来帮助用户执行指令。例如，想知道 /usr/bin 目录中有多少以 X 为开头的文件怎么办？执行ls -l /usr/bin/X* 命令就可以。此外，还有其他可供利用的通配符帮助加快使用者的操作。</p>
+<p>5、如何在Bash shell中下达指令？</p>
+<p>command [-options] parameter1 parameter2 …即：命令 [-选项] 参数1 参数2 …</p>
+<p>命令就是命令的名称，比如改变所在目录的命令 cd ；[]不实际出现，-出现，后面跟命令的选项。例如ls -al；参数即命令的参数。（注：命令太长时，可以使用\来延续指令到下一行）</p>
+<p><img src="/images/csdn/csdn-8205832/01.png" alt="图片 1"></p>
+<p>6、变量与变量的设定</p>
+<p>1）变量？</p>
+<p>在输入指令ls的时候，系统如何知道ls指令放在哪里？这是因为有PATH变量，系统会通过这个变量中设定的路径依次去寻找该指令，如果未找到，则会输出command not found，如果找到，就执行指令。在写一个script的时候，如果里面有路径，且在很多地方被使用，有修改需求时逐个修改会很麻烦，如果有了变量，则只需要修改变量值，其他地方因为引用的都是变量所以就无需再修改。所以，变量是一组文字或符号等，用来取代一些设定或一串保留的数据</p>
+<p>2） echo</p>
+<p>刚介绍了变量的概念，那如何显示变量内容呢？使用echo指令。用法为echo $variable。例如echo $PATH</p>
+<p><img src="/images/csdn/csdn-8205832/02.png" alt="图片 2"></p>
+<p>3）env</p>
+<p>echo指令用来显示变量内容，那么我们如何知道系统中有哪些预设变量内容呢？使用env指令即可。</p>
+<p><img src="/images/csdn/csdn-8205832/03.png" alt="图片 3"></p>
+<p>env是environment的简写，该指令将目前系统中的主要变量读出来！但是，我们不是还可以自订变量吗？因此，除了 env 这个读取环境变量的指令之外，还有一个可以将目前系统中所有的 变量数据 都读出来的指令，称为 set ！set 除了会将上面的数据都读出来之外，还会有额外的这些信息也一起读出（通常都与使用者的设定有关！）</p>
+<p>4）set</p>
+<p><img src="/images/csdn/csdn-8205832/04.png" alt="图片 4"></p>
+<p>注：由于系统中变量太多，所以上面的图片只是env指令和set指令输出结果的一部分</p>
+<p>5）自定义变量</p>
+<p>如何自定义变量呢？如果想让该变量对所有使用者都有效，则需修改/etc/profile文件，如果只想对当前使用者有效，则先切换到当前使用者的家目录，然后修改.bashrc或.bash_profile文件。在其中命名变量并对变量赋值</p>
+<p>6）变量的命名规则</p>
+<p>刚才说到命名变量，对变量命名有一定的规则，主要如下：</p>
+<ul>
+<li>变量与变量内容以等号『=』来连结；</li>
+<li>等号两边不能直接接空格符；</li>
+<li>变量名称只能是英文字母与数字，但是数字不能是开头字符；</li>
+<li>若有空格符可以使用双引号『 ” 』或单引号『 ’ 』来将变量内容结合起来，但须要特别留意，双引号内的特殊字符可以保有变量特性，但是单引号内的特殊字符则仅为一般字符；</li>
+<li>必要时需要以跳脱字符『 \ 』来将特殊符号（如Enter, $, \, 空格符, ‘等）变成一般符号；</li>
+<li>在一串指令中，还需要藉由其它的指令提供的信息，可以使用 quote 『 ` command` 』；</li>
+<li>若该变量为扩增变量内容时，则需以双引号及 $变量名称如：『 “$PATH”:/home』继续累加内容；</li>
+<li>若该变量需要在其它子程序执行，则需要以 export 来使变量可以动作，如『export PATH』；</li>
+<li>通常大写字符为系统预设变量，自行设定变量可以使用小写字符，方便判断（纯粹依照使用者兴趣与嗜好）；</li>
+<li>取消变量的方法为：『unset 变量名称』。</li>
+</ul>
+<p>7）一般变量设定</p>
+<p>1name=shan &#x3C;=错误，因为变量开头不能是数字</p>
+<p>name = shan &#x3C;=错误，因为等号两边不能直接接空格</p>
+<p>name=shan &#x3C;=正确</p>
+<p>name=shan name &#x3C;=错误，变量内容中有空格时，必须加双引号</p>
+<p>name=“shan name” &#x3C;=正确</p>
+<p>name=“shan’s name” &#x3C;=正确</p>
+<p>8）变量累加设定</p>
+<p>name=$nameaa &#x3C;=错误，需要对原变量加双引号</p>
+<p>name=“$name”aa &#x3C;=正确，echo $name显示shan’s nameaa。</p>
+<p>name=“$name”:aa &#x3C;=正确</p>
+<p>name=“$name:aa” &#x3C;=正确</p>
+<p>9）变量延伸到子程序</p>
+<p>name=“shan’s name”&#x3C;= 设定name变量</p>
+<p>echo $name &#x3C;=显示name变量内容</p>
+<p>shan’s name</p>
+<p>/bin/bash &#x3C;=打开一个bash子程序</p>
+<p>echo $name &#x3C;=显示name变量内容</p>
+<p>&#x3C;=会显示空字符串，因为name不能使用在子程序</p>
+<p>exit &#x3C;=退出子程序的bash shell</p>
+<p>export name &#x3C;=这样会将name变量延伸到子程序</p>
+<p><img src="/images/csdn/csdn-8205832/05.png" alt="图片 5"></p>
+<p>10）指令中的指令</p>
+<p>cd /lib/modules/`uname -r`/kernel</p>
+<p>上式会限制性`uname -r`这个内嵌指令，然后将结果附加到整个指令中</p>
+<p>11）取消变量设定：</p>
+<p>unset name</p>
+<p>12）在变量的设定中，单引号与双引号有什么不同呢？</p>
+<p>答： 单引号与双引号的最大不同在于双引号仍然可以保有变量的内容，但单引号内仅能是一般字符，而不会有特殊符号。我们以底下的例子做说明：假设您定义了一个变量， name=shan ，现在想以 name 这个变量定义出 myname 显示 shan is me 这个内容，要如何订定呢？</p>
+<p>[root @ test root]# name=shan</p>
+<p>[root @test root]# echo $name</p>
+<p>VBird</p>
+<p>[root @test root]# myname=“$name is me”</p>
+<p>[root @test root]# echo $myname</p>
+<p>shan is me</p>
+<p>[root @test root]# myname=‘$name is me’</p>
+<p>[root @test root]# echo $myname</p>
+<p>$name is me</p>
+<p>13）使用了单引号的时候，那么 $name 将失去原有的变量内容，仅为一般字符的显示型态而已！这里必需要特别小心在意！</p>
+<p>例：在指令下达的过程中，quote ( ` )（注：非’） 这个符号代表的意义为何？</p>
+<p>答： 在一串指令中，在 ` 之内的指令将会被先执行，而其执行出来的结果将做为外部的输入信息！例如 uname –r 会显示出目前的核心版本，而我们的核心版本在 /lib/modules 里面，因此，你可以先执行 uname –r 找出核心版本，然后再以『 cd 目录』到该目录下，当然也可以执行</p>
+<p>cd /lib/modules/`uname –r`直接到该目录中。</p>
+<p>14）变量的有效范围：</p>
+<p>『变量的设定只在目前这个 shell 环境当中存在，在下个或者是在子程序中 ( 子 shell ) 将不会存在！』要让变量在下个程序也可以继续的使用，需要使用 export 这个命令！此外，其实除了 shell 的父、子程序外，在脚本( scripts )的编写当中，由于有的软件会使用到 2 个以上的 scripts 做为一个完整的套件！也就是说，假如你有两支程序，一支为 scripts1.sh 以及 scripts2.sh ，而 scripts2.sh 会去引用 scripts1.sh 的变数，在 scripts1.sh 当中设定的变量请『千万记得以 export 设定』，否则你的变量将无法在两个 scripts 之间互相被引用！当这个 scripts 执行完毕之后，刚刚在 scripts 当中设定的变量也就『失效』。</p>
+<p>15） read ,array,eval</p>
+<p>使用read指令可以动态设定指令内容，而不是静态设定好再使用。</p>
+<p>read 变量名，回车后会等待用户输入变量内容，例如输入read name[回车]，再输入shan，再使用echo $name，输出结果为shan。</p>
+<p>array制定一个变量数组，而eval则可以使用变量的变量。例如</p>
+<p>day=2</p>
+<p>year=day</p>
+<p>echo \$$year &#x3C;=\为转义字符，即将\后面的第一个$改变为一般字符</p>
+<p>$day</p>
+<p>eval echo \$$year &#x3C;=加上eval后，\$$year的变为一个变量（即$day）</p>
+<p>2</p>
+<p>16）history、!number与!command</p>
+<p>使用history命令可以查看过去输入的指令。输出的内容为：编号 指令名。如：66 ls -al。此时，我可以使用!66来执行ls -al指令，也可以使用!ls来执行ls -al指令。number为指令的序号，command为指令前几个字母。如果输入!!，则表示执行上一个指令（刚输入的那个指令）</p>
+<p>7、Bash shell的设置文件</p>
+<p>1）系统设定值：也即每个用户进入bash shell后，会先读取的设定文件。主要有以下几个：</p>
+<p>/etc/profile：设定了几个重要的变量，如PATH,USER,MAIL,HOSTNAME,HISTSIZE,umask等。除此之外还有/etc/bashrc和/etc/man.config文件，具体内容可以百度或谷歌。</p>
+<p>2）个人设定值：就是只针对当前使用者自己的文件。即在个人家目录中的几个隐藏文件。主要有：</p>
+<p>~/.bash_profile：定义了个人路径与环境变量。可以在这里修改你的个人路径，也可以在 ~/.bashrc 这个个人设定的变量里头修改。</p>
+<p>~/.bash_history：这个档案的用途在于将你曾经使用过的命令记录下来，而当你再次的以上下键搜寻或者直接以 history 搜寻的时候，就可以找到曾经使用过的指令。</p>
+<p>~/.bash_logout：里面定义你注销 shell 的时候， BASH 会为你所做的事情！通常预设是只有 clear 清除屏幕这件事情而已。</p>
+<p>8、source</p>
+<p>如果我需要将目前的设定档的内容读入一次，需要重新 logout 再 login 才能够读入，那么有没有办法不注销而直接读入变量设定文件呢？当然可以，就使用 source 即可！具体格式为：source 变量设定文件</p>
+<p>9、万用字符与特殊符号</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">符号</span><span style="color:#9ECBFF">		内容</span></span>
+<span class="line"><span style="color:#F97583">*</span><span style="color:#E1E4E8">		万用字符，代表一个或多个字符（或数字）</span></span>
+<span class="line"><span style="color:#F97583">?</span><span style="color:#E1E4E8">		万用字符，代表一个字母</span></span>
+<span class="line"><span style="color:#6A737D">#		批注，这个最常被使用在 script 当中，视为说明！</span></span>
+<span class="line"><span style="color:#B392F0">\</span><span style="color:#9ECBFF">		跳脱符号，将『特殊字符或万用字符』还原成一般字符</span></span>
+<span class="line"><span style="color:#F97583">|</span><span style="color:#B392F0">		分隔两个管线命令的界定；</span></span>
+<span class="line"><span style="color:#E1E4E8">;		</span><span style="color:#B392F0">连续性命令的界定（注意！与管线命令并不相同）</span></span>
+<span class="line"><span style="color:#F97583">~</span><span style="color:#E1E4E8">		使用者的家目录</span></span>
+<span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF">		亦即是变量之前需要加的变量取代值</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x26;		</span><span style="color:#B392F0">将指令变成背景下工作</span></span>
+<span class="line"><span style="color:#F97583">!</span><span style="color:#B392F0">		逻辑运算意义上的『非』</span><span style="color:#9ECBFF"> not</span><span style="color:#9ECBFF"> 的意思！</span></span>
+<span class="line"><span style="color:#B392F0">/</span><span style="color:#9ECBFF">		路径分隔的符号</span></span>
+<span class="line"><span style="color:#F97583">></span><span style="color:#E1E4E8">, </span><span style="color:#F97583">>></span><span style="color:#E1E4E8">		输出导向，分别是『取代』与『累加』</span></span>
+<span class="line"><span style="color:#B392F0">'		单引号，不具有变量置换的功能</span></span>
+<span class="line"><span style="color:#B392F0">"		具有变量置换的功能！</span></span>
+<span class="line"><span style="color:#B392F0">` `		两个『 ` 』中间为可以先执行的指令！</span></span>
+<span class="line"><span style="color:#B392F0">( )		在中间为子 shell 的起始与结束</span></span>
+<span class="line"><span style="color:#B392F0">[ ]		在中间为字符的组合</span></span>
+<span class="line"><span style="color:#B392F0">{ }		在中间为命令区块的组合！</span></span>
+<span class="line"><span style="color:#B392F0">组合按键	执行结果</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + C	终止目前的命令</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + D	输入结束（EOF），例如邮件结束的时候；</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + M	就是 Enter 啦！</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + S	暂停屏幕的输出</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + Q	恢复屏幕的输出</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + U	在提示字符下，将整列命令删除</span></span>
+<span class="line"><span style="color:#B392F0">Ctrl + Z	『暂停』目前的命令</span></span></code></pre>
+<p>10、连续指令的下达方式：</p>
+<p>两个指令先后写在一起，可以用以下三种方式写：</p>
+<p>command1; command2。代表不论 command1执行结果为何，command2 都会被执行！</p>
+<p>command1 &#x26;&#x26; command2。代表如果command1没有错误，command2才会执行</p>
+<p>command1 || command2。代表如果command1有错误，command2才会执行</p>
+<p>11、绝对路径与相对路径</p>
+<p>以/开头的路径为绝对路径，不以/开头的路径为相对路径。另外，’.’表示本层目录,‘..’表示上层目录,’~‘表示家目录。</p>
+<p>注：文件名前加’.‘表示该文件为隐藏文件。</p>
+<p>12、命令重导向</p>
+<p>命令重导向：就是将你目前的所得资料存储到一个指定地方！最常用的，是将目前的屏幕输出数据转到文件中，可以这么写：ls -l / > test ，符号 > 就是将输出结果导向到 test 这个文件中的意思。</p>
+<p>如果你只执行ls -l / ，屏幕会将根目录的档案与目录都列出在屏幕上；但是当使用 > 导向到 test 这个文件中时，则屏幕不会显示任何讯息，但是会将刚刚你执行的结果输出到 test 这个文件中。</p>
+<p>注：重导向时，若该文件（就是 test ）若不存在，系统会自动创建，如果当这个档案存在，那么系统就会先将这个档案内容清空，然后再将数据写入！</p>
+<p>除了这个 > 的符号之外，在 bash 命令执行的过程中，主要有三种输出入的状况，分别是：</p>
+<p>标准输入；代码为 0 ；或称为 stdin ；使用的方式为 &#x3C;</p>
+<p>标准输出：代码为 1 ；或称为 stdout；使用的方式为 1></p>
+<p>错误输出：代码为 2 ；或称为 stderr；使用的方式为 2></p>
+<p>基本的指令书写方式为：</p>
+<table border="1" width="200" cellspacing="1" cellpadding="1"><tbody><tr><td>指令</td><td>1> <br>1>> <br>2> <br>2>> <br>&#x3C;</td><td>装置或文件</td></tr></tbody></table>
+<p>这里我们来说明一下命令重导向里面几个常用的符号与装置：</p>
+<p>&#x3C;  ：由 &#x3C; 的右边读入参数档案；</p>
+<p>>  ：将原本由屏幕输出的正确数据输出到 > 右边的 file ( 文件名称 ) 或 device ( 装置，如 printer )去；</p>
+<p>>> ：将原本由屏幕输出的正确数据输出到 >> 右边，与 > 不同的是，该文件将不会被覆盖，而新的数据将以『增加的方式』增加到该文件的最后面；</p>
+<p>2> ：将原本应该由屏幕输出的错误数据输出到 2> 的右边去。</p>
+<p>/dev/null ：可以说成是黑洞装置！</p>
+<p>例如：</p>
+<p>ls -al 1> list.txt 2> error.txt</p>
+<p>将显示数据，正确的输出到list.txt，错误的输出到error.txt</p>
+<p>ls -al 1> list.txt 2>&#x26;1</p>
+<p>将显示的数据，无论正确或错误均输出到list.txt中</p>
+<p>注：ls -al 1> list.txt 2> list.txt是错误的写法。</p>
+<p>13、管道命令 ( pipe )</p>
+<p>bash 命令执行的时候有输出的数据会出现！那么如果这群数据必需要经过几道手续之后才能得到我们所想要的格式，应该如何来设定？这就牵涉到逛到命令的问题了（ pipe ），管道命令使用的是『 | 』这个界定符号！另外，管道命令与『连续下达命令』是不一样的，这点底下我们会再说明。底下我们先举一个例子来说明一下简单的管线命令。</p>
+<p>假设我们要读取 last 这个指令中，那个 root 登入的『次数』应该怎么做？我们只需要『次数』。那么我所进行的步骤是：</p>
+<p>执行 last ，将所有这个月的所有人登入数据取出来；</p>
+<p>使用 grep 将上面的输出数据（stdout）当中的 root 撷取出来，其它的不要；</p>
+<p>使用 wc 这个可以计算行数的指令将上一步的数据计算行数！</p>
+<p>由于 last 的输出是一行代表一次登入，所以只要计算几行就代表登入几次的意思，所以啰！经由上面三个步骤，将 last 数据逐步的筛选，就可以得到我们的数据了！整个命令可以写成如下：</p>
+<p>last</p>
+<p>last | grep root</p>
+<p>last | grep root | wc -l</p>
+<p>你可以分别执行『 last 』然后再逐步增加为『 last | grep root 』，最后到上面那一行，那么就马上可以清楚的知道为何会这么做啰！这个管线命令『 | 』仅能处理经由前面一个指令传来的正确信息，也就是 standard output ( STDOUT ) 的信息，对于 stdandard error 并没有直接处理的能力，请记得。那么整体的管线命令可以使用下图表示之：</p>
+<p><img src="/images/csdn/csdn-8205832/06.png" alt="图片 6"></p>
+<p>在每个管线的部分都是『指令』呢！而后一个指令的输入乃是由前一个指令的输出而来的！</p>
+<p>下面我们来谈一谈一些基本的管线命令指令介绍：</p>
+<p>1）cut</p>
+<p>主要用于将同一行的数据进行分割，命令格式为：cut [-dcf] fields</p>
+<p>参数说明：</p>
+<p>-d：后面接的是用来分割的字符，预设为空格符</p>
+<p>-c：后面接的是第几个字符</p>
+<p>-f：后面接的是第几个区块</p>
+<p>2）sort</p>
+<p>主要用于对数据进行排序，命令格式为：sort [-t 分隔符] [(+起始)(-结束)] [-nru]</p>
+<p>参数说明：</p>
+<p>-t 分隔符：使用分隔符来隔开不同区间，预设是tab</p>
+<p>+start -end：由第start区间排序到end区间</p>
+<p>-n：用纯数字排序，否则就会以文字形态排序</p>
+<p>-r：反向昂排序</p>
+<p>-u：相同出现的一行，只列出一次</p>
+<p>3）wc</p>
+<p>主要用于计算档案内容，命令格式为：wc [-lmw]</p>
+<p>参数说明：</p>
+<p>-l：多少行</p>
+<p>-m：多少字符</p>
+<p>-w：多少字</p>
+<p>4）uniq</p>
+<p>重复的行删除掉只显示一个</p>
+<p>5）tee</p>
+<p>在命令重导向的时候，如果将数据输出到文件中，屏幕上就不会显示任何数据，如果需要在屏幕上也显示数据，加上tee就可以。</p>
+<p>6）tr</p>
+<p>在正则表达式中用的比较多。正则表达式在后面会讲。tr [-ds] set1</p>
+<p>参数说明：</p>
+<p>-d：删除set1这个字符串</p>
+<p>-s：取代掉重复的字符</p>
+<p>7）split</p>
+<p>用来分割文件。具体格式为：split [-bl] 输入文件 输出文件前导字符</p>
+<p>参数说明：</p>
+<p>-b：以文件size来分</p>
+<p>-l：以行数来分</p>
+<p>写在末尾的一些话：</p>
+<p>完整的Bash shell应该包括shell script，先写完这部分吧。写博客耗费的时间比看书多的多，不过写出来是一种总结。所以还是写一写的好~</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://blog.csdn.net/iAm333/article/details/8205832" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><a class="tag" href="/tags/CSDN/">CSDN</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2012/11/26/csdn-8225645/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">HTTP解析</span></a><a class="article-nav__item article-nav__item--next" href="/2012/11/20/csdn-8204275/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">Ubuntu12.04中安装deepin-screeshot 2.0</span></a></nav></div><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2015/04/13/csdn-45023681/">git安装配置及基本使用</a></h3><p class="post-card__desc">安装git1）windows安装msysgit，下载地址：http://msysgit.github.io/安装的时候，</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2015-04-13</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>7 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2015/03/11/csdn-44198147/">linux系统中保证不删除重要的文件</a></h3><p class="post-card__desc">safe-rm重新封装了/bin/rm,它可以用来保护重要文件。安装方法：sudo apt-get install sa</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2015-03-11</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE/">开发配置</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2014/10/29/csdn-40585419/">自己动手在Linux下编译JDK</a></h3><p class="post-card__desc">本文介绍了如何在Linux（Ubuntu 14.04 64位）环境下，从获取OpenJDK 1.7源码开始，搭建编译环境</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-10-29</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

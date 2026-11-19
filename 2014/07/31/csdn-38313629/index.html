@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>初学HBase的几个问题 | 中龄程序猿</title><meta name="description" content="本文详细介绍了HBase的概念、适用场景、与Hive及Pig的区别、内部结构及其高速运行原理。"><link rel="canonical" href="https://www.shanruifeng.win/2014/07/31/csdn-38313629/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="初学HBase的几个问题 | 中龄程序猿"><meta property="og:description" content="本文详细介绍了HBase的概念、适用场景、与Hive及Pig的区别、内部结构及其高速运行原理。"><meta property="og:url" content="https://www.shanruifeng.win/2014/07/31/csdn-38313629/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="初学HBase的几个问题 | 中龄程序猿"><meta name="twitter:description" content="本文详细介绍了HBase的概念、适用场景、与Hive及Pig的区别、内部结构及其高速运行原理。"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"初学HBase的几个问题","description":"本文详细介绍了HBase的概念、适用场景、与Hive及Pig的区别、内部结构及其高速运行原理。","datePublished":"2014-07-31T08:29:22.000Z","dateModified":"2014-07-31T08:29:22.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2014/07/31/csdn-38313629/","articleSection":"大数据","keywords":"大数据,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span>/</span><span>初学HBase的几个问题</span></nav><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><h1 class="article-title">初学HBase的几个问题</h1><p class="article-desc">本文详细介绍了HBase的概念、适用场景、与Hive及Pig的区别、内部结构及其高速运行原理。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2014-07-31T08:29:22.000Z">2014-07-31</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>10 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大数据 · CSDN</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><p>本文主要针对对HBase不了解的人。主要想基于个人的理解回答以下几个问题：</p>
+<ul>
+<li>什么是HBase？</li>
+<li>何时用HBase？</li>
+<li>与Hive、Pig的区别？</li>
+<li>HBase的结构</li>
+<li>为何HBase速度很快？</li>
+<li>HBase常用的操作有哪些？</li>
+<li>HBase的一些配置和监控</li>
+</ul>
+<h2 id="什么是hbase">什么是HBase？</h2>
+<p>HBase，是 Hadoop Database，是一个高可靠性、高性能、面向列、可伸缩的分布式存储系统。使用HBase技术可以在廉价的PC服务器上搭建起大规模结构化的存储集群。它底层的文件系统使用HDFS，使用Zookeeper来管理集群的HMaster和各Region server之间的通信，监控各Region server的状态，存储各Region的入口地址等。</p>
+<h2 id="何时用hbase">何时用HBase？</h2>
+<p>首先想想传统的关系型数据库都有哪些特点，大概的特点有：</p>
+<ol>
+<li>支持事务，ACID（原子性、一致性、隔离性和持久性）特性；</li>
+<li>行式存储；</li>
+<li>SQL语句使用起来比较方便；</li>
+<li>支持索引、视图等；</li>
+</ol>
+<p>接下来我们考虑一个场景：我们想要构建一个社交网站，我们可能会选择易于操作的LAMP（ Linux 、Apache、Mysql、PHP）模型来快速的搭建一个原型。随着用户数的不断增加，每天有越来越多的人开始访问，这时候，共享的数据库服务器压力会越来越大，可以选择增加应用服务器，但因为这些应用服务器共享中央数据库，所以，随着数据库的CPU和I/O负载升高，这种方案势必不可长久。</p>
+<p>这时候，我们可能会增加从服务器，以便并行读取，将读写分离。这样做是因为考虑到用户访问产生的读次数比写入次数更多，但是如果用户数目增加很快，产生的内容越来越多，导致读写数目相差没那么大，这种方案也就不能长久。</p>
+<p>接下来的常见做法就是增加 缓存 ，比如使用Memcached。这样，读操作存入到内存中的数据库系统中，但又没办法保证数据一致性，因为用户更新数据到数据库，而数据库不会主动更新缓存中的数据，而且，这种方案只能解决读请求的压力，对于写请求，还是没有解决。所以需要更多的服务器，更快的磁盘，会导致硬件成本快速升高。</p>
+<p>而且，随着用户的增多，网站功能势必增加，业务功能都会使用sql语句进行查询，而表数据过多会导致join操作变慢，所以会不得不采用一些逆范式的方式来设计数据库，这样导致无法使用存储过程。而且，数据过大时，索引的效果也没那么强了。因为索引也会变得很大。</p>
+<p>这时候应该怎么办？有些人采用了数据库分区的方式，将数据拆分。但是大规模的拆分将导致大量复制操作，带来大量的I/O损耗。所以这种方式也不一定好。</p>
+<p>03年，谷歌发表了一片论文叫做《The Google File System》，这个文件系统简称GFS，该文件系统中的数据在节点中冗余存储，即使一台服务器发生故障，也不会影响数据可用性。但是，GFS只适合存储少量非常大的文件，不适合存储数量众多的小文件，因为文件的元信息存储在主节点的内存中，文件越多，主节点压力越大。经过Google的深入研究，在06年，发表了另外一篇重量级论文《BigTable：A Distributed Storage System for Structed Data》。HBase就是BigTable的 开源 实现，当然，也建立在HDFS（GFS的开源实现）和Hadoop（MapReduce的开源实现）、Zookeeper（Chubby的开源实现）的基础上。</p>
+<p>何时用HBase呢？在下面几种情况下，可以考虑使用HBase替代关系数据库：</p>
+<ol>
+<li>系统需要适应不同种类的数据格式和数据源，不能预先严格定义模式，需要处理大规模数据；</li>
+<li>不强调数据之间的关系，所要存储的数据是半结构化或非结构化的；</li>
+<li>数据非常稀疏；</li>
+<li>想要更好的进行扩展；</li>
+</ol>
+<p>比如谷歌就将BigTable用来存储网页的索引数据，索引数据就很好的满足了上面的几点要求。</p>
+<h2 id="与hivepig的区别">与Hive、Pig的区别？</h2>
+<ol>
+<li>HBase是低延迟、非结构化和面向编程的，而Hive是高延迟、结构化和面向分析的；</li>
+<li>Hive本身不存储和计算数据，它完全依赖与HDFS和MapReduce，Hive中的表是逻辑表；</li>
+<li>HBase通过组织起节点内所有机器的内存，提供一个超大的内存Hash表，它需要在磁盘和内存组织自己的数据结构，HBase中的表是物理表；</li>
+<li>如果是全表扫描，就用Hive+Hadoop，如果是索引访问，就用HBase+Hadoop。</li>
+<li>Hive主要用于静态的结构以及需要经常分析的工作；</li>
+<li>Pig相比Hive相对轻量，它主要的优势是相对比于直接使用Hadoop Java APIs可大幅消减代码量；</li>
+<li>Hive和Pig都可以与HBase组合使用，Hive和Pig还为HBase提供了高层语言支持，使得在HBase上进行数据统计处理变得非常简单。</li>
+</ol>
+<h2 id="hbase的结构">HBase的结构</h2>
+<h2 id="1表行列和单元格">1）表、行、列和单元格</h2>
+<p>先做一个简单的总结：最基本的单位是列（column），一列或者多列组成一行（row），并且由唯一的行键（row key）来确定存储。一个表中有很多行，每一列可能有多个版本，在每一个单元格（Cell）中存储了不同的值。</p>
+<p>HBase的行与行之间是有序的，按照row key的字典序进行排序，行键是唯一的，在一个表里只出现一次，否则就是在更新同一行，行键可以是任意的字节数组。一行由若干列组成，其中的某些列又可以构成一个列族（column family），一个列族的所有列存储在同一个底层的存储文件里，这个文件称之为HFile。</p>
+<p>列族需要在创建表的时候就定义好，数量也不宜过多。列族名必须由可打印字符组成，创建表的时候不需要定义好列。对列的引用格式通常为family：qualifier，qualifier也可以是任意的字节数组。同一个列族里qualifier的名称应该唯一，否则就是在更新同一列，列的数量没有限制，可以有数百万个。列值也没有类型和长度限定。HBase会对row key的长度做检查，默认应该小于65536。</p>
+<p>一个可视化的HBase表如下：</p>
+<p><img src="/images/csdn/csdn-38313629/01.png" alt="图片 1"></p>
+<p>Timestamp代表时间戳，默认由系统指定，用户也可以显示设置。使用不同的时间戳来区分不同的版本。一个单元格的不同版本的值按照时间戳降序排列在一起，在读取的时候优先取最新的值。用户可以指定每个值能保存的最大版本数，HBase-0.96版本默认的最大版本数为1。</p>
+<p>HBase的存取模式如下（表，行键，列族，列，时间戳）-> 值。即一个表中的某一行键的某一列族的某一列的某一个版本的值唯一。</p>
+<p>行数据的存取操作是原子的，可以读取任意数目的列。目前还不支持跨行事务和跨表事务。</p>
+<p>同一列族下的数据压缩在一起，访问控制磁盘和内存都在列族层面进行。</p>
+<h2 id="2自动分区">2）自动分区</h2>
+<p>HBase中扩展和负载均衡的基本单元称作region，region本质上是以行键排序的连续存储空间。如果region过大，系统就会把它们动态拆分，相反的，就把多个region合并，以减少存储文件数量。</p>
+<p>一个表最开始只有一个region，用户开始向表中插入数据时，系统会检查region大小，确保不会超过配置的最大值，如果超过，会从region中行键的中间值一分为二，将该region分为大小大致相等的两个region。</p>
+<p>注意，每个region只能由一个region server加载，每一台region服务器可以同时加载多个region。下图展示了一个表，该表实际上是由很多region server加载的region集合组成的逻辑视图。</p>
+<p><img src="/images/csdn/csdn-38313629/02.png" alt="图片 2"></p>
+<p>每台服务器能加载的region数量和每个region的最佳大小取决于单台服务器的有效处理能力。</p>
+<h2 id="3hbase存储格式">3）HBase存储格式</h2>
+<p>HFile：HBase中KeyValue数据的存储格式。HFile是Hadoop的二进制格式文件。</p>
+<p>HLog：HBase中WAL（Write-Ahead-Log，预写式日志）文件的存储格式，物理上是Hadoop的Sequence File。</p>
+<p>HFile的格式如下图：</p>
+<p><img src="/images/csdn/csdn-38313629/03.png" alt="图片 3"></p>
+<p>HFile文件的长度可变，唯一固定的是File Info和Trailer。Trailer存储指向其他块的指针，它在持久化数据到文件结束时写入的，写入后，该文件就会变成不可变的数据存储文件。数据块（data blocks）中存储key-values，可以看做是一个MapFile。当block关闭操作时，第一个key会被写入index中，index文件在hfile关闭操作时写入。</p>
+<p>KeyValue的具体格式如下图：</p>
+<p><img src="/images/csdn/csdn-38313629/04.png" alt="图片 4"></p>
+<p>上图中，keytype有四种类型，分别是Put、Delete、 DeleteColumn和DeleteFamily。RowLength为2个字节，Row长度不固定，ColumnFamilyLength为2个字节，ColumnFamily长度不固定，ColumnQualifier长度不固定，TimeStamp为4个字节，KeyType为1个字节。之所以不记录ColumnQualifier的长度是因为可以通过其他字段计算得到。</p>
+<h2 id="4wal预写式日志">4）WAL（预写式日志）</h2>
+<p>region server会将数据保存到内存，直到积攒到足够多的数据再将其刷写到磁盘，这样可避免很多小文件。但此时如果发生断电或其他故障，存储在内存中的数据没来得及保存到磁盘，就会出现数据丢失情况。WAL能解决这个问题。每次更新（编辑）都会写入日志，只有日志写入成功后才会告知客户端写入成功，然后服务器按需批量处理内存中的数据。</p>
+<p>如果服务器崩溃，region server会回访日志，使得服务器恢复到服务器崩溃前的状态。下图显示了写入过程：</p>
+<p><img src="/images/csdn/csdn-38313629/05.png" alt="图片 5"></p>
+<ul>
+<li>所有的修改都会先保存到WAL，然后再传给MemStore。整个过程是这样的：</li>
+<li>客户端启动一个操作来修改数据，比如Put。每次修改都封装到一个KeyValue对象实例中，通过RPC调用发送出去。这些调用会发送给含有匹配region的Region Server；</li>
+<li>KeyValue实例到达后，它们会被分配到管理对应行HRegion实例，数据被写入WAL，然后被放入实际拥有记录的MemStore中；</li>
+<li>当MemStore达到一定大小或经历一个特定时间，数据会异步的连续的写入到文件系统中（HFile）。</li>
+<li>如果写入过程出现问题，WAL能保证数据不丢失，因为WAL日志HLog存储在HDFS上。其他region server可以读取日志文件并回放修改，恢复数据。</li>
+</ul>
+<h2 id="5hbase系统架构">5）HBase系统架构</h2>
+<p>HBase架构包括HBase Client 、Zookeeper、HMaster、HRegionServer、HStore存储几个部分。下面一一叙述。一个大体的架构图如下：</p>
+<p><img src="/images/csdn/csdn-38313629/06.png" alt="图片 6"></p>
+<h2 id="ahbase-client">a）HBase Client</h2>
+<p>HBase Client使用HBase的RPC机制与HMaster和HRegionServer进行通信。对于管理类操作（如建表，删表等），Client和HMaster进行RPC；对于数据读写类操作，Client和HRegionServer进行RPC。</p>
+<h2 id="bzookeeper">b）Zookeeper</h2>
+<p>一个分布式的，开放源码的分布式应用程序协调服务，分布式应用程序可以基于它实现同步服务，配置维护和命名服务等。它是Chubby的开源实现。</p>
+<p>Zookeeper Quorum中除了存储了-ROOT-表的地址和Master的地址，RegionServer也会把自己注册到Zookeeper中，使Master可以随时感知到各个RegionServer的健康状态。</p>
+<h2 id="chmaster">c）HMaster</h2>
+<ul>
+<li>管理用户对Table的增、删、改、查操作；</li>
+<li>管理HRegionServer的负载均衡，调整Region分布；</li>
+<li>在Region Split后，负责新Region的分配；</li>
+<li>在HRegionServer停机后，负责失效HRegionServer上的Regions迁移。</li>
+</ul>
+<h2 id="dhregionserver">d）HRegionServer</h2>
+<ul>
+<li>主要负责响应用户I/O请求，向HDFS文件系统中读写数据，是HBase中最核心的模块；</li>
+<li>当用户更新数据的时候会被分配到对应的HRegion服务器上提交修改，这些修改显示被写到MemStore写缓存和服务器的Hlog文件里面。在操作写入Hlog之后，commit()调用才会将其返回给客户端；</li>
+<li>在读取数据的时候，HRegion服务器会先访问BlockCache读缓存，如果缓存里没有改数据，才会回到Hstores磁盘上面寻找，每一个列族都会有一个HStore集合，每一个HStore集合包含很多HstoreFile文件。</li>
+</ul>
+<h2 id="e特殊的表">e）特殊的表</h2>
+<p>-ROOT- 表和.META.表是两个比较特殊的表。.META.记录了用户表的Region信息，.META.可以有多个regoin。-ROOT-记录了.META.表的Region信息，-ROOT-只有一个region，Zookeeper中记录了-ROOT-表的location。具体如下：</p>
+<p><img src="/images/csdn/csdn-38313629/07.png" alt="图片 7"></p>
+<h2 id="为何hbase速度很快">为何HBase速度很快？</h2>
+<p>HBase能提供实时计算服务主要原因是由其架构和底层的数据结构决定的，即由LSM-Tree(Log-Structured Merge-Tree) + HTable(region分区) + Cache决定——客户端可以直接定位到要查数据所在的HRegion server服务器，然后直接在服务器的一个region上查找要匹配的数据，并且这些数据部分是经过cache缓存的。</p>
+<p>前面说过HBase会将数据保存到内存中，在内存中的数据是有序的，如果内存空间满了，会刷写到HFile中，而在HFile中保存的内容也是有序的。当数据写入HFile后，内存中的数据会被丢弃。</p>
+<p>HFile文件为磁盘顺序读取做了优化，按页存储。下图展示了在内存中多个块存储并归并到磁盘的过程，合并写入会产生新的结果块，最终多个块被合并为更大块。</p>
+<p><img src="/images/csdn/csdn-38313629/08.png" alt="图片 8"></p>
+<p>多次刷写后会产生很多小文件，后台线程会合并小文件组成大文件，这样磁盘查找会限制在少数几个数据存储文件中。HBase的写入速度快是因为它其实并不是真的立即写入文件中，而是先写入内存，随后异步刷入HFile。所以在客户端看来，写入速度很快。另外，写入时候将随机写入转换成顺序写，数据写入速度也很稳定。</p>
+<p>而读取速度快是因为它使用了LSM树型结构，而不是B或B+树。磁盘的顺序读取速度很快，但是相比而言，寻找磁道的速度就要慢很多。HBase的存储结构导致它需要磁盘寻道时间在可预测范围内，并且读取与所要查询的rowkey连续的任意数量的记录都不会引发额外的寻道开销。比如有5个存储文件，那么最多需要5次磁盘寻道就可以。而关系型数据库，即使有索引，也无法确定磁盘寻道次数。而且，HBase读取首先会在缓存（BlockCache）中查找，它采用了LRU（最近最少使用算法），如果缓存中没找到，会从内存中的MemStore中查找，只有这两个地方都找不到时，才会加载HFile中的内容，而上文也提到了读取HFile速度也会很快，因为节省了寻道开销。</p>
+<h2 id="hbase常用操作">HBase常用操作：</h2>
+<ul>
+<li>List；</li>
+<li>Create；</li>
+<li>Put；</li>
+<li>Scan；</li>
+<li>Get；</li>
+<li>Delete；</li>
+<li>Disable；</li>
+<li>Drop；</li>
+</ul>
+<p>更多内容请查看《<a href="http://blog.csdn.net/iam333/article/details/17420325">HBase学习笔记（一）</a>》</p>
+<h2 id="hbase安装配置和监控">HBase安装、配置和监控：</h2>
+<ol>
+<li>HBase的安装详见：《<a href="http://blog.csdn.net/iam333/article/details/16358087">CentOS分布式环境安装HBase-0.96.0</a>》</li>
+<li>HBase的部分配置详见：《<a href="http://blog.csdn.net/iam333/article/details/17447913">HBase学习笔记（二）</a>》、《<a href="http://blog.csdn.net/iam333/article/details/17616511">HBase学习笔记（三）</a>》以及后续博客；</li>
+<li>HBase的监控详见：《<a href="http://blog.csdn.net/iam333/article/details/16358509">centos集群上安装ganglia-3.6.0监控hadoop-2.2.0和hbase-0.96.0</a>》</li>
+</ol></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://blog.csdn.net/iAm333/article/details/38313629" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><a class="tag" href="/tags/CSDN/">CSDN</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2014/08/01/csdn-38339505/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">Hadoop 2.2.0 HA配置</span></a><a class="article-nav__item article-nav__item--next" href="/2014/07/31/csdn-38264411/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">HBase复制</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#什么是hbase">什么是HBase？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#何时用hbase">何时用HBase？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#与hivepig的区别">与Hive、Pig的区别？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#hbase的结构">HBase的结构</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#1表行列和单元格">1）表、行、列和单元格</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#2自动分区">2）自动分区</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#3hbase存储格式">3）HBase存储格式</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#4wal预写式日志">4）WAL（预写式日志）</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#5hbase系统架构">5）HBase系统架构</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#ahbase-client">a）HBase Client</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#bzookeeper">b）Zookeeper</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#chmaster">c）HMaster</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#dhregionserver">d）HRegionServer</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#e特殊的表">e）特殊的表</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#为何hbase速度很快">为何HBase速度很快？</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#hbase常用操作">HBase常用操作：</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#hbase安装配置和监控">HBase安装、配置和监控：</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2014/11/24/csdn-41442111/">Hive编程指南学习笔记（2）</a></h3><p class="post-card__desc">本文是关于Hive编程的学习笔记，重点探讨了如何在分区表上进行操作。内容包括使用partition子句处理分区表的关键点</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-11-24</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>7 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2014/11/07/csdn-40897445/">Hive编程指南学习笔记（1）</a></h3><p class="post-card__desc">本文介绍了Hive SQL的基本用法，包括命令行操作、数据类型、表结构定义及数据库管理等内容。同时还涵盖了Hive CL</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-11-07</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2014/10/24/csdn-40431371/">HBase文件格式演变之路</a></h3><p class="post-card__desc">本文详细介绍了HBase从0.20版本到当前版本的存储引擎演变过程，包括MapFile、HFile V1、HFile V</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-10-24</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>

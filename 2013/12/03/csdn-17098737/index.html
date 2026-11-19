@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>菜鸟学python-快速入门 | 中龄程序猿</title><meta name="description" content="本文介绍了Python编程的基础概念，包括变量赋值、数据类型、运算符、控制结构、函数定义、类与对象等内容。"><link rel="canonical" href="https://www.shanruifeng.win/2013/12/03/csdn-17098737/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="菜鸟学python-快速入门 | 中龄程序猿"><meta property="og:description" content="本文介绍了Python编程的基础概念，包括变量赋值、数据类型、运算符、控制结构、函数定义、类与对象等内容。"><meta property="og:url" content="https://www.shanruifeng.win/2013/12/03/csdn-17098737/"><meta property="og:image" content="https://www.shanruifeng.win/og-default.png"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="菜鸟学python-快速入门 | 中龄程序猿"><meta name="twitter:description" content="本文介绍了Python编程的基础概念，包括变量赋值、数据类型、运算符、控制结构、函数定义、类与对象等内容。"><meta name="twitter:image" content="https://www.shanruifeng.win/og-default.png"><meta name="theme-color" content="#ffffff"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"菜鸟学python-快速入门","description":"本文介绍了Python编程的基础概念，包括变量赋值、数据类型、运算符、控制结构、函数定义、类与对象等内容。","datePublished":"2013-12-03T09:20:19.000Z","dateModified":"2013-12-03T09:20:19.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2013/12/03/csdn-17098737/","articleSection":"Python","keywords":"Python,随笔,CSDN"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKFL1s0X.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿<span class="brand__dot">.</span></span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span>/</span><a href="/categories/Python/">Python</a><span>/</span><span>菜鸟学python-快速入门</span></nav><header class="article-header"><a class="article-header__category" href="/categories/Python/">Python</a><h1 class="article-title">菜鸟学python-快速入门</h1><p class="article-desc">本文介绍了Python编程的基础概念，包括变量赋值、数据类型、运算符、控制结构、函数定义、类与对象等内容。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2013-12-03T09:20:19.000Z">2013-12-03</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>Python · 随笔 · CSDN</span></div></header><div class="article-grid"><div class="article-content"><div class="prose"><p>两个提示符：主提示符“>>>”和次提示符“…”。</p>
+<p>主提示符解释器用来告诉你它在等待你输入下一个语句，次提示符告诉你解释器正在等待你输入当前语句的其他部分。</p>
+<h2 id="print">print</h2>
+<p>用来输出变量的值。</p>
+<p>注意，在仅用变量名的时候，输出的字符串是用单引号括起来的。这是为了让非字符串对象也能以字符串的方式显示在屏幕上-它显示的是该对象的字符串表示，而不仅仅是字符串本身。</p>
+<p>下划线（_）在解释器中表示最后一个表达式的值。</p>
+<p>print还可以结合字符串格式操作符来使用，可C语言中的printf类似。例如：</p>
+<p>“>>”用来重定向输出。例如：</p>
+<p>下面的例子将输出重定向到日志文件：</p>
+<h2 id="程序输入和raw_input内建函数">程序输入和raw_input()内建函数</h2>
+<p>raw_input()读取标准输入，并将读取的数据赋值给指定的变量。可以使用int()内建函数将用户输入的字符串转换成整形。</p>
+<p>下面的例子将输入的字符串转为整数：</p>
+<h2 id="从交互式解释器中获取帮助">从交互式解释器中获取帮助</h2>
+<p>使用help()函数即可。比如，可以使用help(raw_input)来查看raw_input的帮助信息。</p>
+<h2 id="注释">注释</h2>
+<p>python也使用#进行注释。从#开始，一直到一行结束都是注释。</p>
+<h2 id="操作符">操作符</h2>
+<p>和其他大多数语言一样，python中的操作符也以同样的方式工作。</p>
+<p>+   -   *    /   //   %   **</p>
+<p>单斜杠除法用作传统除法，双斜杠除法用作浮点除法（对结果进行四舍五入）。双星号（**）表示乘方操作。它的优先级比加减乘除高。</p>
+<p>python也有标准比较操作符：</p>
+<p>&#x3C;   &#x3C;=   >    >=    ==    !=    &#x3C;></p>
+<p>python支持两种不登操作：!=和&#x3C;>。后者慢慢被淘汰，所以推荐使用前者。</p>
+<p>python也支持逻辑操作符：</p>
+<p>and    or     not</p>
+<p>下面的操作在其他语言中时不被支持的，但python支持。</p>
+<p>>>> 3 &#x3C; 4 &#x3C; 5</p>
+<p>True</p>
+<p>建议在使用操作符时加上括号，是的程序易读性更好。</p>
+<h2 id="变量和赋值">变量和赋值</h2>
+<p>python中变量命名规则和其他大多数高级语言一样。python的变量名是大小写敏感的。</p>
+<p>python支持增量赋值。即类似：n = n * 10可写成n *= 10</p>
+<p>python不支持自增和自减操作。</p>
+<h2 id="数字">数字</h2>
+<p>python支持五种基本数字类型，其中有3种是整型类型。</p>
+<p>+有符号整型</p>
+<p>-长整形</p>
+<p>-布尔型</p>
+<p>+浮点值</p>
+<p>+复数</p>
+<p>python的长整型仅受限于用户计算机的虚拟内存总数，类似于java中的BigInteger。</p>
+<p>布尔值包括两个值：True和False。如果布尔值被放在一个数值上下文中，比如True和整数相加，它会被看成1，而False被看成0。</p>
+<p>其实还有第六种数字类型，即decimal，用于10进制浮点型。但它不是内建类型。需要导入decimal模块才可以使用。</p>
+<h2 id="字符串">字符串</h2>
+<p>pyhon支持使用成对的单引号、双引号或三引号（三个连续的三引号或者双引号）。使用索引操作符（[]）和切片操作符（[:]）可以得到子字符串。字符串有其特有的索引规则：第一个字符的索引是0，最后一个字符的索引是-1。</p>
+<p>加号（+）用于字符串连接运算，星号（*）则用于字符串重复。</p>
+<h2 id="列表和元组">列表和元组</h2>
+<p>可以将列表和元组当做普通的“数组”，它能保存任意数量任意类型的python对象。和数组一样，通过从0开始的数字索引访问元素，但是列表和元组可以存储不同类型的对象。</p>
+<p>列表和元组的区别：列表元素用中括号（[]）包裹，元素的个数和元素的值可以改变。元组元素用小括号（()）包裹，不可以更改（尽管他们的内容可以）。元组可以看成是只读的列表，切片运算（[]和[:]）可以得到子集，这点和字符串的使用方法一样。</p>
+<p>元组也可以进行切片运算，得到的结果也是元组（不能被修改）。</p>
+<h2 id="字典">字典</h2>
+<p>字典是python中的映射数据类型，工作原理类似perl中的关联数组或哈希表。由key-value对构成。几乎所有类型的python对象都可以用作key，不过一般还是以数字和字符串最常用。值可以是任意类型的python对象，字典元素用大括号（{}）包裹。</p>
+<h2 id="代码块及缩进对齐">代码块及缩进对齐</h2>
+<p>python使用缩进表达代码逻辑，而不是使用大括号。</p>
+<h2 id="判断语句">判断语句</h2>
+<p>if expression:</p>
+<p>if_suite</p>
+<p>或</p>
+<p>if expression:</p>
+<p>if_suite</p>
+<p>else</p>
+<p>if_suite</p>
+<p>或者</p>
+<p>if expression:</p>
+<p>if_suite</p>
+<p>elif</p>
+<p>if_suite</p>
+<p>else</p>
+<p>if_suite</p>
+<h2 id="循环语句">循环语句</h2>
+<p>while expression:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>     while\_suite</span></span></code></pre>
+<p>for item in [‘email’,‘address’]</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>     print item</span></span></code></pre>
+<p>for num in range(3):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>     pirnt num</span></span></code></pre>
+<p>0</p>
+<p>1</p>
+<p>2</p>
+<h2 id="列表解析">列表解析</h2>
+<p>还可以做一些更复杂的事：</p>
+<h2 id="文件和内建函数">文件和内建函数</h2>
+<p>handle=open(file_name,access_mode=‘r’)</p>
+<p>access_mode如果为r表示读取，如果为w表示写入，a表示添加。+表示读写，b表示二进制访问。默认为r。</p>
+<h2 id="错误和异常">错误和异常</h2>
+<p>try:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> 语句</span></span></code></pre>
+<p>except IOError, e:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>print 'exception:',e</span></span></code></pre>
+<h2 id="函数">函数</h2>
+<p>和其他语言类似，python中函数也使用小括号()调用。函数在调用之前必须先定义。如果函数中没有return语句，就会自动返回None对象。</p>
+<p>def function_name([arguments]):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> 语句</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span> return 值</span></span></code></pre>
+<p>比如：</p>
+<p>def addMe2Me(x):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  'apply + operation to argument'</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  return (x + x)</span></span></code></pre>
+<p>调用函数：</p>
+<p>addMe2Me(4.5)</p>
+<p>默认参数</p>
+<p>def addMe2Me(x=0):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  'apply + operation to argument'</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  return (x + x)</span></span></code></pre>
+<p><strong>类</strong></p>
+<p>类是面向对象编程的核心。python并不强求你以面向对象的方式编程。</p>
+<p>定义类：</p>
+<p>class className(base_class[es]):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  "optional documentation strring"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   static\_member\_declarations</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   method\_declarations</span></span></code></pre>
+<p>使用class关键字定义类，可以提供一个可选的父类或者基类；如果没有合适的基类，那就使用object作为基类。class行之后是可选的文档字符串、静态成员定义及方法定义。</p>
+<h2 id="模块">模块</h2>
+<p>模块是一种组织形式，它将彼此有关系的python代码组织到一个个独立文件中。模块可以包含可执行代码，函数和类，或者这些东西的组合。当你创建了一个python源文件，模块的名字就是不带.py后缀的文件名。一个模块创建之后，你可以从另一个模块中使用import语句导入这个模块来使用。</p>
+<p>导入模块：</p>
+<p>import module_name</p>
+<p>访问一个模块函数或访问一个模块变量</p>
+<p>module.function()</p>
+<p>module .variable</p></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://blog.csdn.net/iAm333/article/details/17098737" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/Python/">Python</a><a class="tag" href="/tags/%E9%9A%8F%E7%AC%94/">随笔</a><a class="tag" href="/tags/CSDN/">CSDN</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><a class="article-nav__item" href="/2013/12/08/csdn-17201929/"><span class="article-nav__label">上一篇</span><span class="article-nav__title">Ubuntu12.04 Sublime不能输入中文解决方法</span></a><a class="article-nav__item article-nav__item--next" href="/2013/11/16/csdn-16359133/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">Hadoop错误总结</span></a></nav></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#print">print</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#程序输入和raw_input内建函数">程序输入和raw_input()内建函数</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#从交互式解释器中获取帮助">从交互式解释器中获取帮助</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#注释">注释</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#操作符">操作符</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#变量和赋值">变量和赋值</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#数字">数字</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#字符串">字符串</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#列表和元组">列表和元组</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#字典">字典</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#代码块及缩进对齐">代码块及缩进对齐</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#判断语句">判断语句</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#循环语句">循环语句</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#列表解析">列表解析</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#文件和内建函数">文件和内建函数</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#错误和异常">错误和异常</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#函数">函数</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#模块">模块</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><div class="post-list post-list--single"><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/Python/">Python</a><span class="post-card__index">01</span></div><h3 class="post-card__title"><a href="/2014/11/18/csdn-41247039/">菜鸟学python-基础（3）</a></h3><p class="post-card__desc">本文介绍了Python中模块的概念及如何使用import语句导入模块，同时详细解释了from...import...语句</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/Python/">Python</a><span class="post-card__index">02</span></div><h3 class="post-card__title"><a href="/2014/11/18/csdn-41243249/">菜鸟学python-基础（2）</a></h3><p class="post-card__desc">本文详细介绍了Python的基础语法，包括变量命名规范、全局变量的使用、字符串表示方法、输入输出操作、运算符及其优先级、</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2014-11-18</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 分钟</span></div></article><article class="post-card post-card--compact"><div class="post-card__top"><a class="post-card__category" href="/categories/Python/">Python</a><span class="post-card__index">03</span></div><h3 class="post-card__title"><a href="/2012/11/10/csdn-8168955/">菜鸟学Python-Ubuntu中安装wxpython</a></h3><p class="post-card__desc">本文介绍了在Ubuntu系统中如何安装wxPython，包括通过apt直接安装和手动添加软件源进行安装的方法。此外，还提</p><div class="post-card__footer"><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>2012-11-10</span><span><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 分钟</span></div></article></div></section><section class="follow-card follow-card--article"><h2 class="follow-card__title">关注公众号</h2><div class="follow-card__body"><img src="/images/wechat-qr.png" alt="AI拆解猿 公众号二维码" width="132" height="132" loading="lazy"><div class="follow-card__text"><div class="follow-card__name">AI拆解猿</div><p>微信扫一扫，第一时间读到新文章。也可以在微信里搜索「AI拆解猿」。</p></div></div></section></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><div class="site-footer__inner"><div><div class="footer-brand">中龄程序猿</div><p class="footer-desc">记录数据平台、搜索推荐与大模型时代的工程实践。这里的文字只代表个人观点，与任职机构无关。</p></div><div><div class="footer-heading">浏览</div><div class="footer-links"><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/rss.xml">RSS 订阅</a></div></div><div><div class="footer-heading">连接</div><div class="footer-links"><a href="https://github.com/aaronshan" target="_blank" rel="noopener noreferrer">GitHub</a><a href="http://weibo.com/333521132" target="_blank" rel="noopener noreferrer">微博</a><a href="/about/">关于我</a><a href="/game/pigfarm/">小猪农场</a><a href="/paimon/">Apache Paimon 文档</a></div></div></div><div class="footer-bottom"><span>© 2026 Aaron. 保留所有权利。</span><span>Powered by Astro</span></div></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>
