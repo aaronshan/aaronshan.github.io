@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.4.13"><title>没卡怎么研究大模型，那篇5600赞回答三分之一过时了 | 中龄程序猿</title><meta name="description" content="去年11月，一篇5628赞的回答讨论小算力条件下怎么做大模型研究，给没卡的年轻人列了15个方向。我把同问题下84个回答全过了一遍，又逐条核了这一年公开的论文。结论是5个方向已经过时，2处判断必须改写，还有一条原文完全没提。"><link rel="canonical" href="https://www.shanruifeng.win/2026/11/20/wechat-2247484242-1/"><link rel="icon" href="/favicon.svg?v=0f9b8e" type="image/svg+xml"><link rel="icon" href="/favicon.ico?v=0f9b8e" sizes="any"><link rel="icon" href="/favicon.png?v=0f9b8e" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/apple-touch-icon.png?v=0f9b8e" sizes="180x180"><link rel="alternate" type="application/rss+xml" title="中龄程序猿 RSS" href="/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="中龄程序猿"><meta property="og:title" content="没卡怎么研究大模型，那篇5600赞回答三分之一过时了 | 中龄程序猿"><meta property="og:description" content="去年11月，一篇5628赞的回答讨论小算力条件下怎么做大模型研究，给没卡的年轻人列了15个方向。我把同问题下84个回答全过了一遍，又逐条核了这一年公开的论文。结论是5个方向已经过时，2处判断必须改写，还有一条原文完全没提。"><meta property="og:url" content="https://www.shanruifeng.win/2026/11/20/wechat-2247484242-1/"><meta property="og:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484242-1/cover.jpg"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="没卡怎么研究大模型，那篇5600赞回答三分之一过时了 | 中龄程序猿"><meta name="twitter:description" content="去年11月，一篇5628赞的回答讨论小算力条件下怎么做大模型研究，给没卡的年轻人列了15个方向。我把同问题下84个回答全过了一遍，又逐条核了这一年公开的论文。结论是5个方向已经过时，2处判断必须改写，还有一条原文完全没提。"><meta name="twitter:image" content="https://www.shanruifeng.win/images/wechat/wechat-2247484242-1/cover.jpg"><meta name="theme-color" content="#ffffff"><style>
+html:root{--accent:#0f9b8e;--accent-strong:#0b7f72;--accent-ink:#0b5a51;--accent-soft:#e3f5f1;--accent-on:#052925;}
+html[data-theme="dark"]{--accent:#21b8a6;--accent-strong:#5fe0d0;--accent-ink:#7fe8db;--accent-soft:#12302c;--accent-on:#052925;}
+</style><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme');
+          const theme = saved === 'dark' ? 'dark' : 'light';
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', theme === 'dark' ? '#0d1117' : '#ffffff');
+        } catch {}
+      })();
+    </script><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"中龄程序猿","url":"https://www.shanruifeng.win","description":"Aaron 的技术博客：数据平台、搜索推荐、大模型与工程实践。","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"没卡怎么研究大模型，那篇5600赞回答三分之一过时了","description":"去年11月，一篇5628赞的回答讨论小算力条件下怎么做大模型研究，给没卡的年轻人列了15个方向。我把同问题下84个回答全过了一遍，又逐条核了这一年公开的论文。结论是5个方向已经过时，2处判断必须改写，还有一条原文完全没提。","datePublished":"2026-11-20T09:42:23.000Z","dateModified":"2026-11-20T09:42:23.000Z","author":{"@type":"Person","name":"Aaron","url":"https://www.shanruifeng.win/about/"},"publisher":{"@type":"Organization","name":"中龄程序猿"},"mainEntityOfPage":"https://www.shanruifeng.win/2026/11/20/wechat-2247484242-1/","image":"https://www.shanruifeng.win/images/wechat/wechat-2247484242-1/cover.jpg","articleSection":"大模型","keywords":"大模型,AI,公众号"}</script><link rel="stylesheet" href="/_astro/_slug_.BNLSuGWh.css"><link rel="stylesheet" href="/_astro/BaseLayout.DKd9XlC3.css"></head><body><a class="skip-link" href="#main">跳到正文</a><header class="site-header" data-pagefind-ignore><div class="container site-header__inner"><a class="brand" href="/" aria-label="中龄程序猿 首页"><span>中龄程序猿</span></a><nav class="nav" id="site-nav" aria-label="主导航"><a class="nav__link" href="/">首页</a><a class="nav__link" href="/archives/">归档</a><a class="nav__link" href="/categories/">分类</a><a class="nav__link" href="/tags/">标签</a><a class="nav__link" href="/about/">关于</a><a class="nav__link" href="/reading/">读书</a><a class="nav__link" href="/love/">爱情</a></nav><div class="header-actions"><a class="icon-button" href="/search/" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a><button class="icon-button theme-toggle" type="button" aria-label="切换至深色模式" title="切换至深色模式" data-theme-toggle><span class="theme-toggle__sun"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span><span class="theme-toggle__moon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span></button><button class="icon-button nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button></div></div></header><script type="module">var e=document.querySelector(`[data-nav-toggle]`),t=document.body;e?.addEventListener(`click`,()=>{let n=t.classList.toggle(`nav-open`);e.setAttribute(`aria-expanded`,String(n)),e.setAttribute(`aria-label`,n?`关闭菜单`:`打开菜单`)}),document.querySelectorAll(`#site-nav a`).forEach(n=>{n.addEventListener(`click`,()=>{t.classList.remove(`nav-open`),e?.setAttribute(`aria-expanded`,`false`)})});</script><script type="module">var e=document.documentElement,t=document.querySelector(`[data-theme-toggle]`),n=()=>{let n=e.dataset.theme===`dark`,r=n?`切换至浅色模式`:`切换至深色模式`;t?.setAttribute(`aria-label`,r),t?.setAttribute(`title`,r),document.querySelector(`meta[name="theme-color"]`)?.setAttribute(`content`,n?`#0d1117`:`#ffffff`)};t?.addEventListener(`click`,()=>{let t=e.dataset.theme===`dark`?`light`:`dark`;e.dataset.theme=t,e.style.colorScheme=t;try{localStorage.setItem(`theme`,t)}catch{}n()}),n();</script><main id="main"><article class="article-page" data-pagefind-body><div class="container"><nav class="breadcrumbs" aria-label="面包屑" data-pagefind-ignore><a href="/">首页</a><span class="breadcrumbs__sep" aria-hidden="true">/</span><a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><span class="breadcrumbs__sep" aria-hidden="true">/</span><span class="breadcrumbs__current" aria-current="page">没卡怎么研究大模型，那篇5600赞回答三分之一过时了</span></nav><div class="article-grid"><div class="article-shell"><header class="article-header"><a class="article-header__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><h1 class="article-title">没卡怎么研究大模型，那篇5600赞回答三分之一过时了</h1><p class="article-desc">去年11月，一篇5628赞的回答讨论小算力条件下怎么做大模型研究，给没卡的年轻人列了15个方向。我把同问题下84个回答全过了一遍，又逐条核了这一年公开的论文。结论是5个方向已经过时，2处判断必须改写，还有一条原文完全没提。</p><div class="article-meta"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Aaron</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><time datetime="2026-11-20T09:42:23.000Z">2026-11-20</time></span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>14 分钟阅读</span><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>大模型 · AI · 公众号</span></div></header><figure class="article-cover"><img src="/images/wechat/wechat-2247484242-1/cover.jpg" alt="没卡怎么研究大模型，那篇5600赞回答三分之一过时了"></figure><details class="article-toc-mobile"><summary>目录<span>17 节</span></summary><ul><li class="article-toc-mobile__item article-toc-mobile__item--depth-2"><a href="#一去年这个时候一个问题被顶了上来">一、去年这个时候，一个问题被顶了上来</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-2"><a href="#二十五个方向和八十四个人的押注">二、十五个方向，和八十四个人的押注</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-2"><a href="#三一年后再看有些话已经不能说了">三、一年后再看，有些话已经不能说了</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#八条仍然成立">八条仍然成立</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#自我修正这一条得改">自我修正这一条得改</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#复现bitnet已经没有增量">复现BitNet已经没有增量</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#不必再做的五个">不必再做的五个</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#长上下文反而更糟了">长上下文反而更糟了</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#原文漏掉的那条最重要">原文漏掉的那条最重要</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-2"><a href="#四最值钱的资产换人了">四、最值钱的资产换人了</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-2"><a href="#五如果今天从零开始我会这样排">五、如果今天从零开始，我会这样排</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#如果你只有一台笔记本">如果你只有一台笔记本</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#一张24g卡能撑起什么">一张24G卡能撑起什么</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#八张卡才轮得到这两件事">八张卡才轮得到这两件事</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#三件我不会再碰的事">三件我不会再碰的事</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#十二个月怎么走">十二个月怎么走</a></li><li class="article-toc-mobile__item article-toc-mobile__item--depth-3"><a href="#这套排序做不到的事">这套排序做不到的事</a></li></ul></details><div class="article-content"><div class="prose"><h2 id="一去年这个时候一个问题被顶了上来">一、去年这个时候，一个问题被顶了上来</h2>
+<p>2025年11月，知乎上有个问题被顶了上来：无大算力时，作为学生，LLM还有哪些值得做的研究？</p>
+<p>到今天，它攒下1788个关注、52.7万次浏览和84个回答。最高赞那篇写于2025年11月27日，5628赞。</p>
+<p>作者开头就没留余地。他说拼算力你永远拼不过OpenAI和Google，这就像你非要跟法拉利比直线，必输无疑；得比过弯，比技巧，比对原理的理解。</p>
+<p>这句话能拿五千多赞，是因为它把一个资源问题改写成了选题问题。卡不够是事实，改不了；研究什么可以选，而选对和选错的差别，往往比多两张卡更大。</p>
+<p>我当时的判断是：这篇回答可以照着做，方向挑得不虚。</p>
+<p>一年过去，我想回头核一遍。原因很简单，<strong>这个领域的半衰期现在差不多就是一年</strong>。</p>
+<h2 id="二十五个方向和八十四个人的押注">二、十五个方向，和八十四个人的押注</h2>
+<p>那篇回答最后把自己的清单压成了一句话：数据合成、自动化评估、机械可解释性、高效微调、量化分析、检索增强机理、认知架构设计、推断时计算、Agent社会模拟。</p>
+<p>但正文覆盖的比这九个名词更宽，对抗攻击、长上下文、垂直领域、多模态都在里面。按正文逐条数，是十五个。按「改动发生在哪一层」排一遍，空档就露出来了：</p>
+<p><img src="/images/wechat/wechat-2247484242-1/01.png" alt="图片 1"></p>
+<p><strong>图1｜十五个方向，没有一条落在预训练上</strong></p>
+<p>从上往下是数据、预训练、参数、上下文、轨迹、观测六层，每层标了方向数，只有预训练那层是零。</p>
+<p>想说的不是”方向多”，而是所有方向都绕开了同一个地方。这不是偶然：预训练那道门槛高到没有讨论价值，活就被摊到了前后两头。</p>
+<p>那篇回答之外，同一个问题下还有八十三个答案。我把它们全过了一遍，其中二十五篇逐字读完。有一个分布让我意外：赞同最高的十一条，全部是”一次列十几个方向”的综合清单，合计9159个赞，占全部赞同的77%；而真正把一个方向挖到底的回答，最高只有888赞。</p>
+<p>这说明读者要的是地图，不是路线。也说明清单这个格式本身的局限：十一条清单里绝大多数条目都正确，但没有一条能让人第二天早上就开始干活。</p>
+<p>还有一条只有7个赞的回答，说得更直接：这个问题已经被AI回答占领了，高赞的几个全是。</p>
+<p>我没法证实这句话。但从文风看，高度匀称的段落、每节三到五点的枚举、“不是A而是B”的句式，确实有若干篇带着明显的生成痕迹。这不影响技术内容可以被核查，但它提示了一件事：赞同数是地图受欢迎的程度，不是路线可行的程度。</p>
+<h2 id="三一年后再看有些话已经不能说了">三、一年后再看，有些话已经不能说了</h2>
+<p>先给结论：<strong>多数还站得住，五个不必再做，两处得改写法</strong>，还有一条原文明明白白漏掉了。</p>
+<p><img src="/images/wechat/wechat-2247484242-1/02.png" alt="图片 2"></p>
+<p><strong>图2｜十五个方向一年后的去向</strong></p>
+<p>条长就是方向数，最长那条是「仍成立」，最短那条是原文漏掉的。</p>
+<h3 id="八条仍然成立">八条仍然成立</h3>
+<p>其中四条值得展开，另外三条只是换了问题位置：检索增强的问题从”怎么拼接”移到了”冲突证据听谁的”，提示词编译并入了上下文工程这个正式提法，小模型蒸馏的做法从蒸思维链变成蒸推理轨迹再叠一层小规模强化学习。它们都还在，只是不再是当初那个样子。剩下一条是长上下文，它没被推翻，只是被证得更难，单独放在后面说。</p>
+<p>数据中心AI这一条，原文用Phi-1举例，说1.3B的模型在代码生成上能打败几十倍大的对手。这个引用没问题，但它今天已经不是最好的证据。更好的证据是标准化基准：DataComp-LM放了240T token的语料、从412M到7B的完整训练配方和53项下游评测，让数据配方第一次变成可以公开竞标的实验；它训出的7B模型在2.6T token下MMLU做到64%，算力比Llama 3 8B少约6.6倍。英伟达的Nemotron-CC则把”网页到合成重述再到多样化问答”整条流水线工业化了。</p>
+<p>所以”数据比模型重要”已经不需要再论证，写这个没有增量。但”小模型筛出来的高质量子集能不能迁移到大模型”这个隐含假设，至今没被系统检验过，而它恰好不需要预训练就能做。</p>
+<p>评估这一条，原文说榜单被污染、裁判有偏差，判断完全成立。MT-Bench早就把三类偏差钉死了：位置偏差、冗长偏差、自我增强偏差，强裁判跟人类偏好的一致率大约80%，和人类彼此之间的一致率是同一个量级。</p>
+<p>真正的位移不在偏差，而在问题变了。以前问”裁判跟人像不像”，现在问”裁判能不能当一台可审计的仪器”。前者是相关性研究，后者是测量学研究，后者能直接回答工程问题：我需要多少样本，才能相信这个A/B结论。</p>
+<p>可解释性这一条，原文说GPT-2规模就够研究微观机制。这话不但成立，还被工具链强化了。2025年3月，Anthropic放出Circuit Tracing方法，同时开源了库，配Neuronpedia的交互前端，可以直接在Gemma-2-2B这种开放权重模型上生成归因图；Google的Gemma Scope把Gemma 2的2B和9B每一层的稀疏自编码器全部开放下载。</p>
+<p>代价是”在GPT-2上找到一个新特征”这类工作已经饱和。剩下的空位在两头：跨模型族检验同一个回路是否同构，以及把可解释性当成评估工具用，而不只是解释完就结束。</p>
+<p>推理时计算是原文最有远见的一条。可惜这一节还是旧稿：它借的是Q<em>的传闻，而Q</em>是2023年底的事——写这篇回答的时候，o1已经发布一年多，o3也出来了。传闻不必再借，这条路早被证实了。Snell等人的实验说明，在固定算力预算下，优化测试时计算常常比扩大参数更划算；从o1到o3只隔约三个月，而预训练翻倍是以年计的。</p>
+<h3 id="自我修正这一条得改">自我修正这一条得改</h3>
+<p>原文说Agent第一步错了后面全错，问有没有一种自我修正的机制，并判断这类研究不需要训练模型。前半句的现象成立，后半句的办法有一半是错的。ICLR 2024有一篇论文，标题就是结论：《大语言模型还不能自我纠正推理》。<strong>没有外部反馈时，模型很难纠正自己的推理错误，有时反而更差</strong>。原因是它对答案的置信并不独立于答案本身，它能改的往往只是表述。</p>
+<p>这条反证很硬，它把Agent可靠性研究逼到两个真有出口的方向：让环境、编译器、单测、状态断言提供独立信号，或者干脆不让错误进入下一步的上下文。</p>
+<p>顺带说，同一个问题下有一条31赞的回答独立得出了同样判断：没有外部真实反馈时，模型盲目自纠会把原本正确的答案改错。两个来源撞在一起，基本可以当结论用。</p>
+<h3 id="复现bitnet已经没有增量">复现BitNet已经没有增量</h3>
+<p>原文把复现1.58-bit当成一个有门槛但值得做的题目。2025年4月，微软开源了BitNet b1.58 2B4T，2B参数、4万亿token训练，配套的bitnet.cpp在x86 CPU上报告2.37到6.17倍提速、能耗降71.9%到82.2%。权重和推理框架都给了，复现这个动作本身已经没有增量。</p>
+<p>还活着的是原文自己指出的第二条路：量化之后能力怎么坏。哪些能力先坏、坏在哪些层、幻觉率会不会上升，这些都能做。</p>
+<h3 id="不必再做的五个">不必再做的五个</h3>
+<p>高效微调的新变体、垂直领域的少样本抽取、让模型写代码调OpenCV的视觉路线、通用越狱后缀、单次实验的社会模拟。</p>
+<p>前四个的失效机制是同一个：它们都在补基座的短板，而基座这一年把短板补上了。第五个不一样，它的问题是评价标准太弱。一次实验、一个模型、不报方差，涌现出来的”领导者”和”欺骗”分不清是模型特性还是提示词特性。</p>
+<h3 id="长上下文反而更糟了">长上下文反而更糟了</h3>
+<p>原文说Lost in the Middle是一个具体的、反直觉的现象，建议深挖。这一年它没被解决，反而被更严格地测了一遍。NoLiMa测试了12个宣称支持至少128K上下文的模型，做法是削弱问题和”针”之间的字面重叠，逼模型做隐式联想。结果在32K处，<strong>12个模型里10个掉到一半以下</strong>。</p>
+<p><img src="/images/wechat/wechat-2247484242-1/03.png" alt="图片 3"></p>
+<p><strong>图3｜32K是一条坎，不是终点</strong></p>
+<p>12个模型宣称的上下文都在128K以上，真到32K就有10个跌到不足自己短上下文表现的一半。分档只分「过半」和「不足一半」，不是逐模型的精确数值。</p>
+<p>原来那条U形曲线的解释不够用了，问题变成”当字面线索消失时，长上下文还剩多少真实能力”。这是机制层面的问题，而且必须靠控制变量才答得上来。</p>
+<h3 id="原文漏掉的那条最重要">原文漏掉的那条最重要</h3>
+<p>十五个方向里，没有一条指向可验证奖励的强化学习，这是我认为最重要的遗漏。它提到了推理时计算，但那只是把算力花在推理上，不是用验证器去训练。而过去一年能力提升的主路径恰恰是后者：R1的纯强化学习版本把AIME从15.6%推到71.0%，加上多数投票到86.7%。</p>
+<p>为什么这条对小算力的人反而是好消息？因为<strong>这条路径的瓶颈不在卡，在验证器</strong>。训练要卡，但造一个能自动判定对错的环境不要卡。</p>
+<p>数学和代码的验证器已经饱和了。而绝大多数真实任务——退改签、报销审批、库存调拨、运维处置、法律推理——还没有便宜的验证器。这个空缺是眼下最大的一块空地，也是最不依赖GPU的一块。</p>
+<h2 id="四最值钱的资产换人了">四、最值钱的资产换人了</h2>
+<p>把上面这些放在一起看，我读出三件事。</p>
+<p>一年里贬值或作废的那些，全是具体的技术名词或套路：改进某个变体、适配某个垂直领域、套用某种视觉路线、打某个接口、模拟某个场景。活下来的是<strong>三种形态：造尺子、解释因果、造验证器</strong>。这三种事在2023年成立，在2026年成立，在下一代模型出来之后大概率还成立。</p>
+<p>所以选题时值得多问一句：我这个题目依附的是一个名词，还是一个形态？依附名词的，要赌它两年内不被产品化；依附形态的，只需要赌自己做得够扎实。</p>
+<p>更根本的变化在约束上：凡是能被自动判定对错的任务，原则上都能用强化学习去提升，不能自动判定的只能靠人。所以<strong>一个能判对错的任务台，才是真正的稀缺品</strong>。</p>
+<p>这也解释了为什么”评估”这个看起来最枯燥的方向，一年后反而升值了。评估是验证器的一种：它判的不是任务对错，是模型输出好坏。</p>
+<p><img src="/images/wechat/wechat-2247484242-1/04.png" alt="图片 4"></p>
+<p><strong>图4｜卡住人的东西换了</strong></p>
+<p>左边拼的是预算，右边拼的是领域理解，两边的门槛不在同一个维度上。</p>
+<p>还有一条是关于怎么写结论的。单点结论的寿命在缩短。“某方法在某榜单提升三个点”这种话，半代模型之后基本失效。但”这个方法的收益在什么条件下会消失”这种话，往往跨模型版本还成立。</p>
+<p>这带来两条很实在的写作纪律。主结论写成条件句，别写断言句；主动去找能让自己方法失效的对照，并且写进正文，别藏起来。藏起来的那部分，通常正是评审最想看的。</p>
+<p>这三件事之外，还有一个结构性的原因让空地一直空着：<strong>大厂没有动力去证明自己的模型在什么条件下不行</strong>。失效条件、独立测量、机制解释、垂直领域的验证器，这四件事要么跟产品叙事冲突，要么短期没有产品收益。它们不是没人能做，是没人愿意做。</p>
+<h2 id="五如果今天从零开始我会这样排">五、如果今天从零开始，我会这样排</h2>
+<p>按手里的资源分三档。每一档给两个方向，附上预算和止损线。止损线是我认为最有用的部分，<strong>它规定什么结果算失败、什么时候该放弃</strong>，能省下一整年。</p>
+<p><img src="/images/wechat/wechat-2247484242-1/05.png" alt="图片 5"></p>
+<p><strong>图5｜三档资源，六个方向</strong></p>
+<p>橙色那一行才是重点：先想清楚什么结果算失败，再决定要不要开始。</p>
+<p>图里的钱和周期，是按当前显卡时价和API定价推算的量级，不是实测账单。</p>
+<h3 id="如果你只有一台笔记本">如果你只有一台笔记本</h3>
+<p>这一档的两个方向共享同一套骨架：调用模型、收集输出、做统计、写报告。做完第一个，第二个的成本会掉一半。</p>
+<p>裁判稳定性要回答的不是”裁判有没有偏差”——这个问题已经被回答过了——而是”给定样本量和真实的差距，判决翻转的概率是多少”。做法是固定提示和解码参数，只变三个东西：换六家不同厂商的裁判、把评分标准从粗到细分三档、把两个答案的呈现顺序正反各来一次。必须加一个平局对照：把同一个答案复制两份给裁判，测出来的不一致率就是噪声底线。没有这个对照，所有偏差数字都没法解释。</p>
+<p>内容水印这一条更小众。主流做法是推理时给logits加偏置，不需要微调，检测只需要统计检验。你可以在一张卡上把整条线走完：先实现一种水印，再造三级攻击——同义改写、翻译往返、换个模型重写——然后测每一级攻击下检测的p值分布和文本质量退化。</p>
+<p>这一档最容易犯的错是把评测自建、结论不可比。换一套题结论就可能翻转，所以要么用公开基准，要么自建但把全部题目和评分脚本公开。</p>
+<h3 id="一张24g卡能撑起什么">一张24G卡能撑起什么</h3>
+<p>激活引导是我最推荐的一个方向，理由是它的窗口还开着。这个领域现在的论文形态几乎全是”找到方向、加上去、指标涨了”，而没人回答两个更基本的问题：这个方向跨模型稳定吗，它到底改变了什么。</p>
+<p>具体做法是五维稳定性检验：跨层、跨模型族、跨语言、跨任务、跨提示模板，每一维报效应量和置信区间。然后把机制归因补上：施加这个方向之后，logit分布、注意力模式、稀疏自编码器的特征激活各发生了什么变化。</p>
+<p>知识编辑是另一个。这个方向有一个罕见的好处：它被高光宣传过，也被公开质疑过。有报道称某篇会议论文发现，现有编辑方法在更严格的评估下成功率从文献报告的96.8%掉到38.5%。这个数字我建议你自己去核，但”编辑效果出了分布就衰减”这个现象本身有多个一手来源支持。</p>
+<p>做法是用现成的工具集，在7B模型上做三组：单条事实、同一关系的一百条、跨关系的一千条。每组测四个量：编辑的那条成了没有、同义改写能不能泛化、无关知识有没有被破坏、多跳推理还通不通。画出编辑规模与成功率的曲线，找拐点。</p>
+<p>这两个方向有一个共同的坑：过拟合到单一模板。同一个语义换十种问法，报告方差。只报一个模板的结果，等于没做。</p>
+<h3 id="八张卡才轮得到这两件事">八张卡才轮得到这两件事</h3>
+<p>模型合并值得做，但它值得做的理由不是”能刷分”。社区里已经有人在把两个同源模型的层首尾相接，接缝崩了再用低秩微调修，然后在自建测试上打赢更大的模型。这类实验的具体数字我建议都当参考看——评测是自建的，没走公认基准。</p>
+<p>真正值得问的是它背后那个更基本的命题：能力是模块化的吗？两个在不同目标上微调过的同源模型，差异是集中在少数层和少数方向上，还是均匀地摊在全部权重里？如果是前者，定向合并就能复现全模型合并的效果；如果是后者，模块化假设就被否证了。</p>
+<p>这是一个干净的实验，而且负结果同样有价值——它能解释为什么社区合并的效果高度依赖”选对两个模型”。</p>
+<p>架构对比这一条要小心。劝退的从来不是”测架构”，是”发明架构”。在1.5亿到2亿参数、100亿token的规模上，固定算力和token数，比三四种架构在能力分解上的差异，这是一篇测量学论文，成本单卡十一天左右，这是我按算力估的，没实测。但要先做超参敏感性检验，否则训练不稳定会伪装成”架构差异”。</p>
+<h3 id="三件我不会再碰的事">三件我不会再碰的事</h3>
+<p>从头预训练十亿参数以上的新架构。算力不够会让结论只在极小规模成立，而小规模结论到大模型常常反向。</p>
+<p>通用Agent框架。没有可证伪的科学问题，只有工程组合。</p>
+<p>纯提示词技巧的榜单刷分。半衰期已经短于六个月。</p>
+<h3 id="十二个月怎么走">十二个月怎么走</h3>
+<p>前三个月只做一件事：把一条流水线跑通，换台机器能用同样的命令复现同样的数字。这三个月不要读超过三十篇论文，也不要改选题。</p>
+<p>第四到第七个月，在复现的基础上加一个”本不该有影响”的变量——换个顺序、换个模板、换个随机种子、换个模型族——看结论会不会翻转。这一步的产出通常是全文最有价值的部分，而不是主实验。</p>
+<p>第八到第十二个月做外推，至少跨两个模型族，同时补齐方差、样本量、成本、平局对照。写作顺序建议反过来：先写”结论在什么条件下失效”，再写方法，最后写引言。这样能保证主张不超出证据。</p>
+<p>按这个节奏，第一篇独立工作从零到投稿大约十到十四个月。如果有现成的评测流水线，能压到六到八个月。任何号称三个月出顶会的路径，通常都依赖已有的算力或已有的数据资产。</p>
+<h3 id="这套排序做不到的事">这套排序做不到的事</h3>
+<p>它不能替代真实算力去做大规模验证。所有关于“多大模型上的结论能外推到多大”的判断，最后都要靠真训练来证伪，我给的只是量级推算。</p>
+<p>止损线也一样。它是我从自己项目里总结的经验值，不是行业标准；你的任务越特殊，越应该把它调得更早一些。</p>
+<p><strong>真正该警惕的不是选错方向，是在一个不收敛的题目上耗满一年</strong>。选错方向三个月就能发现，不收敛的题目一年都不会给你信号。</p>
+<hr>
+<p>一年前那篇回答的结尾是：在没有显卡的日子里，让你的大脑成为算力最强的GPU。</p>
+<p>这句话在当时是对的。放到今天，我想把它换掉：让你的验证器成为最贵的资产。</p>
+<p>因为能力提升已经可以被可验证性自动驱动了，而验证器只能由人来设计。</p>
+<p>如果你也在没卡的条件下做研究，评论区说说你手上有什么设备、卡在哪一步，我可以帮你判断该从哪个方向切进去。</p>
+<blockquote>
+<p>我是 Aaron，10 年算法工程经验，每周拆一个 AI 新东西的实现细节。 关注「AI 拆解猿」，每周拆一个 AI 协议、框架、源码或架构，直到你能自己动手。</p>
+</blockquote>
+<hr>
+<p><strong>参考（一手来源，按正文出现顺序）</strong></p>
+<ul>
+<li>
+<p>DataComp-LM / DCLM：arXiv:2406.11794</p>
+</li>
+<li>
+<p>Lost in the Middle：arXiv:2307.03172；NoLiMa：github.com/adobe-research/NoLiMa</p>
+</li>
+<li>
+<p>MT-Bench：arXiv:2306.05685</p>
+</li>
+<li>
+<p>自我纠正的反证：arXiv:2310.01798</p>
+</li>
+<li>
+<p>BitNet b1.58 2B4T：arXiv:2504.12285；bitnet.cpp：github.com/microsoft/BitNet</p>
+</li>
+<li>
+<p>测试时计算：arXiv:2408.03314；DeepSeek-R1：arXiv:2501.12948</p>
+</li>
+</ul></div><div class="article-source" data-pagefind-ignore>本文首发于微信公众号。原文：<a href="https://mp.weixin.qq.com/s/YCsqpE4xc1dnLvSI5juL7Q" target="_blank" rel="noopener noreferrer">查看原文</a></div><div class="article-promo" data-pagefind-ignore><img src="/images/wechat-search-banner.png" alt="微信搜一搜 AI拆解猿" width="640" height="233" loading="lazy"></div><div class="article-tags" data-pagefind-ignore><a class="tag" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="tag" href="/tags/AI/">AI</a><a class="tag" href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div><nav class="article-nav" aria-label="上一篇和下一篇" data-pagefind-ignore><span></span><a class="article-nav__item article-nav__item--next" href="/2026/11/18/wechat-2247484232-1/"><span class="article-nav__label">下一篇</span><span class="article-nav__title">Agent该买还是该造，先看数据能不能出内网</span></a></nav><section class="related" data-pagefind-ignore><h2 class="related__title">相关阅读</h2><ul class="related__list"><li class="related__item"><a class="related__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="related__link" href="/2026/11/18/wechat-2247484232-1/">Agent该买还是该造，先看数据能不能出内网</a><span class="related__date">2026-11-18</span></li><li class="related__item"><a class="related__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="related__link" href="/2026/11/17/wechat-2247484221-1/">133ms一帧，语音模型Haru不会因为你也开口就停下来</a><span class="related__date">2026-11-17</span></li><li class="related__item"><a class="related__category" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="related__link" href="/2026/11/12/wechat-2247484208-1/">AutoResearch：算法优化自动进行</a><span class="related__date">2026-11-12</span></li></ul></section><section class="comments" data-pagefind-ignore><h2 class="comments__title">评论</h2><div class="giscus" data-giscus data-config="{&quot;repo&quot;:&quot;aaronshan/aaronshan.github.io&quot;,&quot;repoId&quot;:&quot;MDEwOlJlcG9zaXRvcnk3NTM1Mzk1OA==&quot;,&quot;category&quot;:&quot;Announcements&quot;,&quot;categoryId&quot;:&quot;DIC_kwDOBH3PZs4DLj3h&quot;,&quot;mapping&quot;:&quot;pathname&quot;,&quot;inputPosition&quot;:&quot;bottom&quot;,&quot;lang&quot;:&quot;zh-CN&quot;}"></div><script>
+      (() => {
+        const mount = document.querySelector('[data-giscus]');
+        if (!mount) return;
+
+        const config = JSON.parse(mount.dataset.config || '{}');
+        const theme = () =>
+          document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        let loaded = false;
+
+        const load = () => {
+          if (loaded) return;
+          loaded = true;
+
+          const script = document.createElement('script');
+          script.src = 'https://giscus.app/client.js';
+          script.async = true;
+          script.crossOrigin = 'anonymous';
+
+          const attrs = {
+            'data-repo': config.repo,
+            'data-repo-id': config.repoId,
+            'data-category': config.category,
+            'data-category-id': config.categoryId,
+            'data-mapping': config.mapping || 'pathname',
+            'data-strict': '0',
+            'data-reactions-enabled': '1',
+            'data-emit-metadata': '0',
+            'data-input-position': config.inputPosition || 'top',
+            'data-theme': theme(),
+            'data-lang': config.lang || 'zh-CN',
+            'data-loading': 'lazy',
+          };
+
+          Object.entries(attrs).forEach(([key, value]) => script.setAttribute(key, value));
+          mount.appendChild(script);
+        };
+
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              if (entries.some((entry) => entry.isIntersecting)) {
+                observer.disconnect();
+                load();
+              }
+            },
+            { rootMargin: '300px 0px' }
+          );
+          observer.observe(mount);
+        } else {
+          load();
+        }
+
+        new MutationObserver(() => {
+          const frame = document.querySelector('iframe.giscus-frame');
+          frame?.contentWindow?.postMessage(
+            { giscus: { setConfig: { theme: theme() } } },
+            'https://giscus.app'
+          );
+        }).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme'],
+        });
+      })();
+    </script></section></div></div><aside class="toc" aria-label="文章目录" data-pagefind-ignore><div class="toc__title">目录</div><ul class="toc__list"><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#一去年这个时候一个问题被顶了上来">一、去年这个时候，一个问题被顶了上来</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#二十五个方向和八十四个人的押注">二、十五个方向，和八十四个人的押注</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#三一年后再看有些话已经不能说了">三、一年后再看，有些话已经不能说了</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#八条仍然成立">八条仍然成立</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#自我修正这一条得改">自我修正这一条得改</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#复现bitnet已经没有增量">复现BitNet已经没有增量</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#不必再做的五个">不必再做的五个</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#长上下文反而更糟了">长上下文反而更糟了</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#原文漏掉的那条最重要">原文漏掉的那条最重要</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#四最值钱的资产换人了">四、最值钱的资产换人了</a></li><li class="toc__item toc__item--depth-2"><a class="toc__link" href="#五如果今天从零开始我会这样排">五、如果今天从零开始，我会这样排</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#如果你只有一台笔记本">如果你只有一台笔记本</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#一张24g卡能撑起什么">一张24G卡能撑起什么</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#八张卡才轮得到这两件事">八张卡才轮得到这两件事</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#三件我不会再碰的事">三件我不会再碰的事</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#十二个月怎么走">十二个月怎么走</a></li><li class="toc__item toc__item--depth-3"><a class="toc__link" href="#这套排序做不到的事">这套排序做不到的事</a></li></ul></aside><script type="module">var e=Array.from(document.querySelectorAll(`.toc__link`)),t=e.map(e=>{let t=decodeURIComponent(e.hash.slice(1));return document.getElementById(t)}).filter(e=>!!e);if(t.length>0){let n=t=>{e.forEach(e=>{e.classList.toggle(`is-active`,decodeURIComponent(e.hash.slice(1))===t)})},r=new IntersectionObserver(e=>{let t=e.filter(e=>e.isIntersecting).sort((e,t)=>e.boundingClientRect.top-t.boundingClientRect.top);t[0]?.target.id&&n(t[0].target.id)},{rootMargin:`-96px 0px -70% 0px`,threshold:[0,1]});t.forEach(e=>r.observe(e))}</script></div></div></article></main><footer class="site-footer" data-pagefind-ignore><div class="container"><p class="footer-line">© 2026 Aaron · 保留所有权利 · Powered by Astro</p></div></footer><button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button><script type="module">var e=document.querySelector(`[data-back-to-top]`),t=()=>{e?.classList.toggle(`is-visible`,window.scrollY>640)};window.addEventListener(`scroll`,t,{passive:!0}),t(),e?.addEventListener(`click`,()=>{window.scrollTo({top:0,behavior:`smooth`})});</script></body></html><script type="module">document.querySelectorAll(`.prose pre`).forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`copy-button`,t.textContent=`复制`,t.setAttribute(`aria-label`,`复制代码`),t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent||e.textContent||``;try{await navigator.clipboard.writeText(n),t.textContent=`已复制`,t.classList.add(`is-copied`),window.setTimeout(()=>{t.textContent=`复制`,t.classList.remove(`is-copied`)},1600)}catch{t.textContent=`复制失败`}}),e.appendChild(t)});</script>
